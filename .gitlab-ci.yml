@@ -1,0 +1,37 @@
+cache:
+  paths:
+    - .cache
+
+before_script:
+  - mkdir -p .cache
+  - export GOPATH="$CI_PROJECT_DIR/.cache"
+
+stages:
+  - test
+  - staging
+
+unit:
+  image: golang:1.13
+  stage: test
+  variables:
+    GOPATH: "~"
+  script:
+    - make tests
+
+lint:
+  image: golangci/golangci-lint
+  stage: test
+  script:
+    - make lint-verbose
+
+staging:
+  image: ruby:latest
+  stage: staging
+  environment:
+    name: staging
+  before_script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+  script:
+    - dpl --provider=heroku --app=$HEROKU_APP_STAGING --api-key=$HEROKU_API_KEY
