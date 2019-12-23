@@ -1,4 +1,4 @@
-# gapi
+# dashboard
 
 Seller Nomics Dashboard
 
