@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -30,7 +31,7 @@ func main() {
 	defer m.Close()
 
 	err = m.Up()
-	if err != nil && err != m.ErrNoChange {
+	if err != nil && err != errors.New("no change") {
 		debug.Error().Err(err).Msg("Error")
 		return
 	}
