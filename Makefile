@@ -30,7 +30,7 @@ run-stack:
 pg:
 	@docker-compose -f ./build/docker-compose.yml run --rm -p 5432:5432 --no-deps pg
 
-${GOBIN}/sql-migrate:
+sql-migrate:
 	go get -v github.com/rubenv/sql-migrate/...
 
 create-user:

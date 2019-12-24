@@ -13,7 +13,7 @@ services:
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
     ports:
-      - "6379:6379"
+      - 6379:6379
   dashboard:
     build:
       context: ..
@@ -23,5 +23,5 @@ services:
     env_file:
       - .env
     ports:
-      - "3000:3000"
+      - 3000:3000
     command: ["dashd"]

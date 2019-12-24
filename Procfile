@@ -1,2 +1,2 @@
-release: make ${GOBIN}/sql-migrate && sql-migrate up
+release: make sql-migrate && bin/sql-migrate up
 web: bin/dashd
