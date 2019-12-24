@@ -41,3 +41,6 @@ create-database:
 
 drop-database:
 	PGPASSWORD=password psql -h localhost -U postgres -c "drop database dashboard_development;"
+
+migrate-database:
+	migrate -source file://db/migrations/ -database "postgres://sellernomics:password@localhost:5432/dashboard_development?sslmode=disable" ${DIRECTION}

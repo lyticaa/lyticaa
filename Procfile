@@ -1,2 +1,2 @@
-release: make GO111MODULE=off sql-migrate && ./bin/sql-migrate up
+release: go get -tags 'postgres' -u github.com/golang-migrate/migrate/cmd/migrate && migrate -source file://db/migrations/ -database ${DATABASE_URL} up
 web: bin/dashd
