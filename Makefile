@@ -40,5 +40,5 @@ drop-database:
 	PGPASSWORD=password psql -h localhost -U postgres -c "drop database dashboard_development;"
 
 migrate:
-	GO111MODULE=off go get -v github.com/rubenv/sql-migrate/...
+	GO111MODULE=off CGO_ENABLED=1 export CC=gcc go get -v github.com/rubenv/sql-migrate/...
 	@sql-migrate ${DIRECTION}
