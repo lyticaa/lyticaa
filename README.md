@@ -66,6 +66,45 @@ make install
 make run-service
 ```
 
+## Database
+
+This project makes use of Postgres.
+
+### Setup
+
+To start a local (Docker) instance of Postgres, simply run:
+
+```bash
+make pg
+```
+
+Then, to create the database and apply the correct role:
+
+```bash
+make create-database
+make create-user
+```
+
+### Migrations
+
+Install the sql migrate tool:
+
+```bash
+make sql-migrate
+```
+
+Add your migrations to the `db/migrations` folder and then run:
+
+```bash
+sql-migrate up
+```
+
+To rollback your recent migrations, run:
+
+```bash
+sql-migrate down
+```
+
 ## Docker
 
 A Docker stack is provided with this project. To boot the stack, simply run:
