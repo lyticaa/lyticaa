@@ -63,14 +63,7 @@ func (d *Dash) Logout(w http.ResponseWriter, r *http.Request) {
 	logoutUrl.Path += "v2/logout"
 	parameters := url.Values{}
 
-	var scheme string
-	if r.TLS == nil {
-		scheme = "http"
-	} else {
-		scheme = "https"
-	}
-
-	returnTo, err := url.Parse(scheme + "://" + r.Host)
+	returnTo, err := url.Parse("https://" + r.Host)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
