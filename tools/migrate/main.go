@@ -18,7 +18,7 @@ func main() {
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
 		os.Getenv("DB_SSLMODE"),
-		)
+	)
 
 	debug := log.With().Str("module", os.Getenv("APP_NAME")).Logger()
 
