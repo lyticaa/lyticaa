@@ -27,9 +27,10 @@ func main() {
 		debug.Error().Err(err).Msg("Error")
 		return
 	}
+	defer m.Close()
 
 	err = m.Up()
-	if err != nil {
+	if err != nil && err != m.ErrNoChange {
 		debug.Error().Err(err).Msg("Error")
 		return
 	}
