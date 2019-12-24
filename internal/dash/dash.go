@@ -2,6 +2,7 @@ package dash
 
 import (
 	"encoding/gob"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -10,6 +11,8 @@ import (
 
 	"github.com/getsentry/sentry-go"
 	"github.com/gorilla/mux"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/newrelic/go-agent"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -23,6 +26,7 @@ type Dash struct {
 	Router       *mux.Router
 	Client       *http.Client
 	SessionStore *redistore.RediStore
+	Db           *gorm.DB
 }
 
 func NewDash() *Dash {
@@ -48,13 +52,27 @@ func NewDash() *Dash {
 		panic(err)
 	}
 
+	dbStr := fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=%v",
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_USERNAME"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_SSLMODE"),
+	)
+
+	db, err := gorm.Open("postgres", dbStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
 	return &Dash{
-		Logger:   log.With().Str("module", types.AppName).Logger(),
-		NewRelic: nr,
-		Router:   mux.NewRouter(),
-		Client: &http.Client{
-			Timeout: 5 * time.Second,
-		},
+		Logger:       log.With().Str("module", types.AppName).Logger(),
+		NewRelic:     nr,
+		Router:       mux.NewRouter(),
+		Client:       &http.Client{Timeout: 5 * time.Second},
 		SessionStore: sessionStore,
+		Db:           db,
 	}
 }

@@ -10,6 +10,7 @@ require (
 	github.com/getsentry/sentry-go v0.3.1
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/sessions v1.2.0
+	github.com/jinzhu/gorm v1.9.11
 	github.com/newrelic/go-agent v3.0.0+incompatible
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/rs/zerolog v1.17.2

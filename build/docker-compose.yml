@@ -1,7 +1,20 @@
 version: '3'
 
 services:
-  dashd:
+  pg:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+    command: postgres -c 'max_connections=250'
+  redis:
+    image: bitnami/redis:latest
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "6379:6379"
+  dashboard:
     build:
       context: ..
       dockerfile: ./build/Dockerfile

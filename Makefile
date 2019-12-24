@@ -26,3 +26,18 @@ run-service:
 
 run-stack:
 	@docker-compose -f ./build/docker-compose.yml up --force-recreate --remove-orphans
+
+pg:
+	@docker-compose -f ./build/docker-compose.yml run --rm -p 5432:5432 --no-deps pg
+
+${GOBIN}/sql-migrate:
+	go get -v github.com/rubenv/sql-migrate/...
+
+create-user:
+	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE USER sellernomics WITH CREATEDB CREATEROLE PASSWORD 'password';"
+
+create-database:
+	 PGPASSWORD=password psql -h localhost -U postgres -c "CREATE DATABASE dashboard_development OWNER sellernomics;"
+
+drop-database:
+	PGPASSWORD=password psql -h localhost -U postgres -c "drop database dashboard_development;"

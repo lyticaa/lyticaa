@@ -1,0 +1,11 @@
+development:
+  dialect: postgres
+  datasource: host=127.0.0.1 dbname=dashboard_development user=sellernomics password=password sslmode=disable
+  dir: ./db/migrations
+  table: migrations
+
+staging:
+  dialect: postgres
+  datasource: host=${DB_HOST} port=${DB_PORT} dbname=${DB_NAME} user=${DB_USERNAME} password=${DB_PASSWORD} sslmode=disable
+  dir: ./db/migrations
+  table: migrations

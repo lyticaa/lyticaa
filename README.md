@@ -26,6 +26,12 @@ AUTH0_URL=
 AUTH0_CLIENT_ID=
 AUTH0_CLIENT_SECRET=
 AUTH0_CALLBACK_URL=
+DB_HOST=
+DB_PORT=
+DB_USERNAME=
+DB_PASSWORD=
+DB_NAME=
+DB_SSLMODE=
 ```
 
 If you are unsure as to what these values ought to be, then please check with a colleague.
