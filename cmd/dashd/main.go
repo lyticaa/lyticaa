@@ -4,7 +4,7 @@ import (
 	"os"
 	"os/signal"
 
-	"gitlab.com/sellernomics/dashboard/internal"
+	"gitlab.com/sellernomics/dashboard/internal/dash"
 )
 
 func main() {

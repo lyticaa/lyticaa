@@ -8,10 +8,6 @@ Seller Nomics Dashboard
 
 If you are new to Golang, please follow the setup instructions [here](https://golang.org/doc/install).
 
-### Swagger
-
-Please see the installation instructions [here](https://goswagger.io/install.html)
-
 ## Setup
 
 ### Environment
@@ -23,6 +19,13 @@ APP_NAME=
 SENTRY_DSN=
 NEWRELIC_LICENSE_KEY=
 PORT=
+SESSION_KEY=
+REDIS_URL=
+REDIS_PASSWORD=
+AUTH0_URL=
+AUTH0_CLIENT_ID=
+AUTH0_CLIENT_SECRET=
+AUTH0_CALLBACK_URL=
 ```
 
 If you are unsure as to what these values ought to be, then please check with a colleague.
