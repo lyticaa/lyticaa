@@ -28,12 +28,14 @@ func (d *Dash) Start() {
 }
 
 func (d *Dash) Handlers() {
+	d.Router.Use(d.forceSsl)
+
 	d.Router.HandleFunc("/", d.Home)
 	d.Router.HandleFunc("/auth/login", d.Login)
 	d.Router.HandleFunc("/auth/logout", d.Logout)
 	d.Router.HandleFunc("/auth/callback", d.Callback)
 	d.Router.Handle("/user", negroni.New(
-		negroni.HandlerFunc(d.IsAuthenticated),
+		negroni.HandlerFunc(d.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(d.User)),
 	))
 
