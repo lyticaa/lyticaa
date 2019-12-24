@@ -29,7 +29,7 @@ func NewAuthenticator() (*Authenticator, error) {
 		ClientID:     os.Getenv("AUTH0_CLIENT_ID"),
 		ClientSecret: os.Getenv("AUTH0_SECRET_KEY"),
 		RedirectURL:  os.Getenv("AUTH0_CALLBACK_URL"),
-		Endpoint: 	  provider.Endpoint(),
+		Endpoint:     provider.Endpoint(),
 		Scopes:       []string{oidc.ScopeOpenID, "profile"},
 	}
 

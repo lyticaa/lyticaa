@@ -14,7 +14,7 @@ import (
 )
 
 func (d *Dash) Home(w http.ResponseWriter, r *http.Request) {
-	d.RenderTemplate(w,"home", nil)
+	d.RenderTemplate(w, "home", nil)
 }
 
 func (d *Dash) Login(w http.ResponseWriter, r *http.Request) {
@@ -70,7 +70,7 @@ func (d *Dash) Logout(w http.ResponseWriter, r *http.Request) {
 		scheme = "https"
 	}
 
-	returnTo, err := url.Parse(scheme + "://" +  r.Host)
+	returnTo, err := url.Parse(scheme + "://" + r.Host)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -125,7 +125,7 @@ func (d *Dash) Callback(w http.ResponseWriter, r *http.Request) {
 	idToken, err := authenticator.Provider.Verifier(oidcConfig).Verify(context.TODO(), rawIDToken)
 
 	if err != nil {
-		http.Error(w, "Failed to verify ID Token: " + err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Failed to verify ID Token: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
