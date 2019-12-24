@@ -1,3 +1,5 @@
+-- +migrate Up
+
 CREATE TABLE users
 (
     id          BIGSERIAL   NOT NULL,
@@ -9,3 +11,7 @@ CREATE TABLE users
     PRIMARY KEY (id),
     UNIQUE (email, user_id)
 );
+
+-- +migrate Down
+
+DROP TABLE users;

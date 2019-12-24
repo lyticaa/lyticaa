@@ -87,22 +87,16 @@ make create-user
 
 ### Migrations
 
-Install the [migrate](https://github.com/golang-migrate/migrate) tool:
+Add your migrations to the `db/migrations` folder. Then install the [migrate](https://github.com/rubenv/sql-migrate) tool and run the migrations:
 
 ```bash
-make sql-migrate
-```
-
-Add your migrations to the `db/migrations` folder and then run:
-
-```bash
-make DIRECTION=up migrate-database
+make DIRECTION=up migrate
 ```
 
 To rollback your recent migrations, run:
 
 ```bash
-make DIRECTION=down migrate-database
+make DIRECTION=down migrate
 ```
 
 ## Docker

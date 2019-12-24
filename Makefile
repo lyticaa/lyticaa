@@ -30,9 +30,6 @@ run-stack:
 pg:
 	@docker-compose -f ./build/docker-compose.yml run --rm -p 5432:5432 --no-deps pg
 
-sql-migrate:
-	go get -v github.com/rubenv/sql-migrate/...
-
 create-user:
 	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE USER sellernomics WITH CREATEDB CREATEROLE PASSWORD 'password';"
 
@@ -42,5 +39,6 @@ create-database:
 drop-database:
 	PGPASSWORD=password psql -h localhost -U postgres -c "drop database dashboard_development;"
 
-migrate-database:
-	migrate -source file://db/migrations/ -database "postgres://sellernomics:password@localhost:5432/dashboard_development?sslmode=disable" ${DIRECTION}
+migrate:
+	go get -v github.com/rubenv/sql-migrate/...
+	@sql-migrate ${DIRECTION}
