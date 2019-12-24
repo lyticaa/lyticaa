@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -10,6 +9,8 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/rs/zerolog/log"
 )
+
+var ErrNoChange = "no change"
 
 func main() {
 	dbStr := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=%v",
@@ -31,7 +32,7 @@ func main() {
 	defer m.Close()
 
 	err = m.Up()
-	if err != nil && err != errors.New("no change") {
+	if err != nil && err.Error() != ErrNoChange {
 		debug.Error().Err(err).Msg("Error")
 		return
 	}
