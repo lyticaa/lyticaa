@@ -19,7 +19,7 @@ clean:
 	rm -f ${GOBIN}/{dashd}
 
 tests:
-	@go test -mod=readonly -v -coverprofile .testCoverage.txt ./...
+	@go test -v -coverprofile .testCoverage.txt ./...
 
 run-service:
 	@dashd
