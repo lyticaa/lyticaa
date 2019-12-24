@@ -1,2 +1,2 @@
-release: make sql-migrate && ./bin/sql-migrate up
+release: make GO111MODULE=off sql-migrate && ./bin/sql-migrate up
 web: bin/dashd
