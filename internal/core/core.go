@@ -1,4 +1,4 @@
-package dash
+package core
 
 import (
 	"encoding/gob"
@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"gitlab.com/sellernomics/dashboard/internal/dash/types"
+	"gitlab.com/sellernomics/dashboard/internal/core/types"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/gorilla/mux"
@@ -19,7 +19,7 @@ import (
 	"gopkg.in/boj/redistore.v1"
 )
 
-type Dash struct {
+type Core struct {
 	Logger       zerolog.Logger
 	NewRelic     newrelic.Application
 	Srv          *http.Server
@@ -29,7 +29,7 @@ type Dash struct {
 	Db           *gorm.DB
 }
 
-func NewDash() *Dash {
+func NewCore() *Core {
 	gob.Register(map[string]interface{}{})
 
 	sentryOpts := sentry.ClientOptions{
@@ -65,9 +65,8 @@ func NewDash() *Dash {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
-	return &Dash{
+	return &Core{
 		Logger:       log.With().Str("module", types.AppName).Logger(),
 		NewRelic:     nr,
 		Router:       mux.NewRouter(),

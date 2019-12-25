@@ -4,15 +4,15 @@ import (
 	"os"
 	"os/signal"
 
-	"gitlab.com/sellernomics/dashboard/internal/dash"
+	"gitlab.com/sellernomics/dashboard/internal/core"
 )
 
 func main() {
-	d := dash.NewDash()
-	d.Start()
+	c := core.NewCore()
+	c.Start()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
-	d.Stop()
+	c.Stop()
 }

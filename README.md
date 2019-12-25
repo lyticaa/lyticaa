@@ -32,6 +32,8 @@ DB_USERNAME=
 DB_PASSWORD=
 DB_NAME=
 DB_SSLMODE=
+STRIPE_PK=
+STRIPE_SK=
 ```
 
 If you are unsure as to what these values ought to be, then please check with a colleague.

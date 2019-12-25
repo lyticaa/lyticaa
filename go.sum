@@ -270,6 +270,8 @@ github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
+github.com/stripe/stripe-go v68.4.0+incompatible h1:FRc4/N7QvA2OjSGAHUp9eiGigt2dSWHSL2MecSCRkPQ=
+github.com/stripe/stripe-go v68.4.0+incompatible/go.mod h1:A1dQZmO/QypXmsL0T8axYZkSN/uA/T/A64pfKdBAMiY=
 github.com/thedevsaddam/renderer v1.2.0 h1:+N0J8t/s2uU2RxX2sZqq5NbaQhjwBjfovMU28ifX2F4=
 github.com/thedevsaddam/renderer v1.2.0/go.mod h1:k/TdZXGcpCpHE/KNj//P2COcmYEfL8OV+IXDX0dvG+U=
 github.com/tidwall/pretty v0.0.0-20180105212114-65a9db5fad51/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=

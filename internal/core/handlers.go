@@ -1,4 +1,4 @@
-package dash
+package core
 
 import (
 	"context"
@@ -7,17 +7,19 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
 	"gitlab.com/sellernomics/dashboard/internal/auth"
+	"gitlab.com/sellernomics/dashboard/internal/models"
 
 	"github.com/coreos/go-oidc"
 )
 
-func (d *Dash) Home(w http.ResponseWriter, r *http.Request) {
-	d.RenderTemplate(w, "home", nil)
+func (c *Core) Home(w http.ResponseWriter, r *http.Request) {
+	c.RenderTemplate(w, "home", nil)
 }
 
-func (d *Dash) Login(w http.ResponseWriter, r *http.Request) {
+func (c *Core) Login(w http.ResponseWriter, r *http.Request) {
 	b := make([]byte, 32)
 	_, err := rand.Read(b)
 	if err != nil {
@@ -26,7 +28,7 @@ func (d *Dash) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	state := base64.StdEncoding.EncodeToString(b)
 
-	session, err := d.SessionStore.Get(r, "auth-session")
+	session, err := c.SessionStore.Get(r, "auth-session")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -47,8 +49,8 @@ func (d *Dash) Login(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, authenticator.Config.AuthCodeURL(state), http.StatusTemporaryRedirect)
 }
 
-func (d *Dash) Logout(w http.ResponseWriter, r *http.Request) {
-	session, err := d.SessionStore.Get(r, "auth-session")
+func (c *Core) Logout(w http.ResponseWriter, r *http.Request) {
+	session, err := c.SessionStore.Get(r, "auth-session")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -74,14 +76,14 @@ func (d *Dash) Logout(w http.ResponseWriter, r *http.Request) {
 
 	session.Options.MaxAge = -1
 	if err = session.Save(r, w); err != nil {
-		d.Logger.Error().Err(err).Msg("error removing session")
+		c.Logger.Error().Err(err).Msg("error removing session")
 	}
 
 	http.Redirect(w, r, logoutUrl.String(), http.StatusTemporaryRedirect)
 }
 
-func (d *Dash) Callback(w http.ResponseWriter, r *http.Request) {
-	session, err := d.SessionStore.Get(r, "auth-session")
+func (c *Core) Callback(w http.ResponseWriter, r *http.Request) {
+	session, err := c.SessionStore.Get(r, "auth-session")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -100,7 +102,7 @@ func (d *Dash) Callback(w http.ResponseWriter, r *http.Request) {
 
 	token, err := authenticator.Config.Exchange(context.TODO(), r.URL.Query().Get("code"))
 	if err != nil {
-		d.Logger.Error().Err(err).Msg("no token found")
+		c.Logger.Error().Err(err).Msg("no token found")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -116,7 +118,6 @@ func (d *Dash) Callback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	idToken, err := authenticator.Provider.Verifier(oidcConfig).Verify(context.TODO(), rawIDToken)
-
 	if err != nil {
 		http.Error(w, "Failed to verify ID Token: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -137,15 +138,23 @@ func (d *Dash) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	parts := strings.Split(profile["sub"].(string), "|")
+	userId := parts[1]
+	models.CreateUser(userId, profile["name"].(string), c.Db)
+
 	http.Redirect(w, r, "/user", http.StatusSeeOther)
 }
 
-func (d *Dash) User(w http.ResponseWriter, r *http.Request) {
-	session, err := d.SessionStore.Get(r, "auth-session")
+func (c *Core) User(w http.ResponseWriter, r *http.Request) {
+	session, err := c.SessionStore.Get(r, "auth-session")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	d.RenderTemplate(w, "user", session.Values["profile"])
+	c.RenderTemplate(w, "user", session.Values["profile"])
+}
+
+func (c *Core) AccountSubscribe(w http.ResponseWriter, r *http.Request) {
+
 }

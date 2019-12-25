@@ -21,6 +21,7 @@ require (
 	github.com/newrelic/go-agent v3.0.0+incompatible
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/rs/zerolog v1.17.2
+	github.com/stripe/stripe-go v68.4.0+incompatible
 	github.com/thedevsaddam/renderer v1.2.0
 	github.com/tools/godep v0.0.0-20180126220526-ce0bfadeb516 // indirect
 	github.com/urfave/negroni v1.0.0
