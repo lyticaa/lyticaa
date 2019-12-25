@@ -6,7 +6,7 @@ import (
 	"github.com/stripe/stripe-go"
 )
 
-type Account struct {}
+type Account struct{}
 
 func init() {
 	stripe.Key = os.Getenv("STRIPE_SK")

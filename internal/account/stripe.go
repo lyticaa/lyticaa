@@ -24,7 +24,7 @@ func (a *Account) Subscribe(plan, customerId string) {
 
 	params := &stripe.SubscriptionParams{
 		Customer: stripe.String(customerId),
-		Items: []*stripe.SubscriptionItemsParams{subParams},
+		Items:    []*stripe.SubscriptionItemsParams{subParams},
 	}
 	_, _ = sub.New(params)
 }
