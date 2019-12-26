@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/gorilla/handlers"
 	"github.com/urfave/negroni"
 )
 
@@ -30,7 +29,6 @@ func (c *Core) Start() {
 
 func (c *Core) Handlers() {
 	c.Router.Use(c.forceSsl)
-	c.Router.Use(handlers.CompressHandler)
 
 	c.Router.HandleFunc("/", c.Home)
 	c.Router.HandleFunc("/auth/login", c.Login)
