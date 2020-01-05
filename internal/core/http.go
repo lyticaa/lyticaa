@@ -91,7 +91,7 @@ func (c *Core) Stop() {
 
 func (c *Core) RenderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 	cwd, _ := os.Getwd()
-	t, err := template.ParseFiles(filepath.Join(cwd, "./web/templates/"+tmpl+".html"), filepath.Join(cwd, "./web/templates/"+baseTmpl+".html"))
+	t, err := template.ParseFiles(filepath.Join(cwd, "./web/templates/"+tmpl+".html"), filepath.Join(cwd, "./web/dist/"+baseTmpl+".html"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

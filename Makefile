@@ -21,7 +21,10 @@ clean:
 tests:
 	@go test -v -coverprofile .testCoverage.txt ./...
 
-run-service:
+setup-yarn:
+	yarn install
+
+run-service: build-assets
 	@dashd
 
 run-stack:
@@ -34,13 +37,16 @@ create-user:
 	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE USER sellernomics WITH CREATEDB CREATEROLE PASSWORD 'password';"
 
 create-database:
-	 PGPASSWORD=password psql -h localhost -U postgres -c "CREATE DATABASE dashboard_development OWNER sellernomics;"
+	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE DATABASE dashboard_development OWNER sellernomics;"
 
 drop-database:
 	PGPASSWORD=password psql -h localhost -U postgres -c "drop database dashboard_development;"
 
 migrate:
 	@go run tools/migrate/main.go
+
+build-assets: setup-yarn
+	yarn build-assets
 
 generate-docs: setup-yarn
 	./node_modules/.bin/redoc-cli bundle ./api/docs/openapi.yml -o ./api/docs/index.html

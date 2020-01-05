@@ -1,0 +1,13 @@
+{
+  "name": "dashboard",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "parcel-bundler": "^1.12.4",
+    "redoc": "^2.0.0-rc.20",
+    "redoc-cli": "^0.9.4"
+  },
+  "scripts": {
+    "build-assets": "./node_modules/.bin/parcel build web/layouts/* -d web/dist"
+  }
+}
