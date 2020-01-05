@@ -4,16 +4,34 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
 
 	"gitlab.com/sellernomics/dashboard/internal/auth"
+	"gitlab.com/sellernomics/dashboard/internal/core/types"
 	"gitlab.com/sellernomics/dashboard/internal/models"
 
 	"github.com/coreos/go-oidc"
 )
+
+func (c *Core) HealthCheck(w http.ResponseWriter, r *http.Request) {
+	response := types.Health{Status: "OK"}
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	_, err = w.Write(jsonResponse)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
 
 func (c *Core) Home(w http.ResponseWriter, r *http.Request) {
 	c.RenderTemplate(w, "home", nil)

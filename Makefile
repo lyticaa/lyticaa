@@ -41,3 +41,6 @@ drop-database:
 
 migrate:
 	@go run tools/migrate/main.go
+
+generate-docs: setup-yarn
+	./node_modules/.bin/redoc-cli bundle ./api/docs/openapi.yml -o ./api/docs/index.html

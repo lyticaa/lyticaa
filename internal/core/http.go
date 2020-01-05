@@ -13,7 +13,10 @@ import (
 
 func (c *Core) Start() {
 	c.Logger.Info().Msgf("starting on %v....", ":"+os.Getenv("PORT"))
+	c.Router.Use(c.forceSsl)
+
 	c.Handlers()
+	c.RestHandlers()
 
 	c.Srv = &http.Server{
 		Addr:    ":" + os.Getenv("PORT"),
@@ -28,8 +31,6 @@ func (c *Core) Start() {
 }
 
 func (c *Core) Handlers() {
-	c.Router.Use(c.forceSsl)
-
 	c.Router.HandleFunc("/", c.Home)
 	c.Router.HandleFunc("/auth/login", c.Login)
 	c.Router.HandleFunc("/auth/logout", c.Logout)
@@ -44,6 +45,10 @@ func (c *Core) Handlers() {
 	))
 
 	c.Router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
+}
+
+func (c *Core) RestHandlers() {
+	c.Router.HandleFunc("/api/v1/health_check", c.HealthCheck)
 }
 
 func (c *Core) Stop() {

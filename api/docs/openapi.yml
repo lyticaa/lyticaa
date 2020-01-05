@@ -1,0 +1,32 @@
+openapi: 3.0.0
+info:
+  title: Market API
+  version: 0.0.1-oas3
+  contact:
+    email: hello@sellernomics.com
+  description: SellerNomics Lytica API
+paths:
+  "/api/health_check":
+    get:
+      summary: Get Health
+      description: Returns the health status.
+      responses:
+        "200":
+          $ref: '#/components/responses/HealthCheckResponse'
+      tags:
+        - Health
+components:
+  responses:
+    HealthCheckResponse:
+      description: Health Check response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: "OK"
+servers:
+  - url: http://127.0.0.1:3000
+  - url: https://127.0.0.1:3000
