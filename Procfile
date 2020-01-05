@@ -1,2 +1,2 @@
-release: make migrate && make build-assets
+release: make migrate
 web: bin/dashd

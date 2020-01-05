@@ -8,6 +8,7 @@
     "redoc-cli": "^0.9.4"
   },
   "scripts": {
-    "build-assets": "./node_modules/.bin/parcel build web/layouts/* -d web/dist"
+    "build-assets": "./node_modules/.bin/parcel build web/layouts/* -d web/dist",
+    "postinstall": "./node_modules/.bin/parcel build web/layouts/* -d web/dist"
   }
 }
