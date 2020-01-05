@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"gitlab.com/sellernomics/dashboard/internal/core/types"
+	"gitlab.com/getlytica/dashboard/internal/core/types"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/gorilla/mux"

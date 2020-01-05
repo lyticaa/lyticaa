@@ -10,9 +10,9 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/sellernomics/dashboard/internal/auth"
-	"gitlab.com/sellernomics/dashboard/internal/core/types"
-	"gitlab.com/sellernomics/dashboard/internal/models"
+	"gitlab.com/getlytica/dashboard/internal/auth"
+	"gitlab.com/getlytica/dashboard/internal/core/types"
+	"gitlab.com/getlytica/dashboard/internal/models"
 
 	"github.com/coreos/go-oidc"
 )

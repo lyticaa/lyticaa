@@ -1,6 +1,6 @@
-module gitlab.com/sellernomics/dashboard
+module gitlab.com/getlytica/dashboard
 
-replace gitlab.com/sellernomics/dashboard => ../sellernomics/dashboard
+replace gitlab.com/getlytica/dashboard => ../getlytica/dashboard
 
 go 1.13
 
