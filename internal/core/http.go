@@ -48,7 +48,7 @@ func (c *Core) Handlers() {
 }
 
 func (c *Core) RestHandlers() {
-	c.Router.HandleFunc("/api/v1/health_check", c.HealthCheck)
+	c.Router.HandleFunc("/api/health_check", c.HealthCheck)
 }
 
 func (c *Core) Stop() {
