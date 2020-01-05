@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/gorilla/handlers"
 	"github.com/urfave/negroni"
 )
 
@@ -17,10 +18,14 @@ func (c *Core) Start() {
 
 	c.Handlers()
 	c.RestHandlers()
+	c.ErrorHandlers()
 
 	c.Srv = &http.Server{
-		Addr:    ":" + os.Getenv("PORT"),
-		Handler: c.Router,
+		Addr:         ":" + os.Getenv("PORT"),
+		Handler:      c.Router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  15 * time.Second,
 	}
 
 	go func() {
@@ -49,6 +54,26 @@ func (c *Core) Handlers() {
 
 func (c *Core) RestHandlers() {
 	c.Router.HandleFunc("/api/health_check", c.HealthCheck)
+}
+
+func (c *Core) ErrorHandlers() {
+	c.Router.NotFoundHandler = handlers.LoggingHandler(
+		os.Stdout,
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusNotFound)
+			},
+		),
+	)
+
+	c.Router.MethodNotAllowedHandler = handlers.LoggingHandler(
+		os.Stdout,
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusMethodNotAllowed)
+			},
+		),
+	)
 }
 
 func (c *Core) Stop() {

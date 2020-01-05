@@ -21,6 +21,7 @@ func (c *Core) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	response := types.Health{Status: "OK"}
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
+		c.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -28,6 +29,7 @@ func (c *Core) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(jsonResponse)
 	if err != nil {
+		c.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -41,6 +43,7 @@ func (c *Core) Login(w http.ResponseWriter, r *http.Request) {
 	b := make([]byte, 32)
 	_, err := rand.Read(b)
 	if err != nil {
+		c.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -48,12 +51,14 @@ func (c *Core) Login(w http.ResponseWriter, r *http.Request) {
 
 	session, err := c.SessionStore.Get(r, "auth-session")
 	if err != nil {
+		c.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	session.Values["state"] = state
 	err = session.Save(r, w)
 	if err != nil {
+		c.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -70,12 +75,14 @@ func (c *Core) Login(w http.ResponseWriter, r *http.Request) {
 func (c *Core) Logout(w http.ResponseWriter, r *http.Request) {
 	session, err := c.SessionStore.Get(r, "auth-session")
 	if err != nil {
+		c.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	logoutUrl, err := url.Parse(os.Getenv("AUTH0_URL"))
 	if err != nil {
+		c.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -85,6 +92,7 @@ func (c *Core) Logout(w http.ResponseWriter, r *http.Request) {
 
 	returnTo, err := url.Parse("https://" + r.Host)
 	if err != nil {
+		c.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -103,24 +111,27 @@ func (c *Core) Logout(w http.ResponseWriter, r *http.Request) {
 func (c *Core) Callback(w http.ResponseWriter, r *http.Request) {
 	session, err := c.SessionStore.Get(r, "auth-session")
 	if err != nil {
+		c.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if r.URL.Query().Get("state") != session.Values["state"] {
+		c.Logger.Error().Err(err)
 		http.Error(w, "Invalid state parameter", http.StatusBadRequest)
 		return
 	}
 
 	authenticator, err := auth.NewAuthenticator()
 	if err != nil {
+		c.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	token, err := authenticator.Config.Exchange(context.TODO(), r.URL.Query().Get("code"))
 	if err != nil {
-		c.Logger.Error().Err(err).Msg("no token found")
+		c.Logger.Error().Err(err)
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -137,6 +148,7 @@ func (c *Core) Callback(w http.ResponseWriter, r *http.Request) {
 
 	idToken, err := authenticator.Provider.Verifier(oidcConfig).Verify(context.TODO(), rawIDToken)
 	if err != nil {
+		c.Logger.Error().Err(err)
 		http.Error(w, "Failed to verify ID Token: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -166,6 +178,7 @@ func (c *Core) Callback(w http.ResponseWriter, r *http.Request) {
 func (c *Core) User(w http.ResponseWriter, r *http.Request) {
 	session, err := c.SessionStore.Get(r, "auth-session")
 	if err != nil {
+		c.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
