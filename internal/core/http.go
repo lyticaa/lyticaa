@@ -51,7 +51,7 @@ func (c *Core) Handlers() {
 		negroni.Wrap(http.HandlerFunc(c.AccountSubscribe)),
 	))
 
-	c.Router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
+	c.Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./web/dist"))))
 }
 
 func (c *Core) RestHandlers() {
