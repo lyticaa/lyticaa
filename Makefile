@@ -22,6 +22,7 @@ tests:
 	@go test -v -coverprofile .testCoverage.txt ./...
 
 setup-yarn:
+	@rm -rf web/dist
 	yarn install
 
 run-service: build-assets
@@ -46,7 +47,6 @@ migrate:
 	@go run tools/migrate/main.go
 
 build-assets: setup-yarn
-	yarn build-assets
 
 generate-docs: setup-yarn
 	./node_modules/.bin/redoc-cli bundle ./api/docs/openapi.yml -o ./api/docs/index.html
