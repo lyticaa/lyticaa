@@ -1,5 +1,8 @@
+require("jquery");
+require("popper.js");
+require("bootstrap");
 require("./js-cookie");
 require("./user");
 
-var T = require("turbolinks");
+let T = require("turbolinks");
 T.start();
