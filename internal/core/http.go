@@ -12,6 +12,8 @@ import (
 	"github.com/urfave/negroni"
 )
 
+var baseTmpl = "app"
+
 func (c *Core) Start() {
 	c.Logger.Info().Msgf("starting on %v....", ":"+os.Getenv("PORT"))
 	c.Router.Use(c.forceSsl)
@@ -89,12 +91,12 @@ func (c *Core) Stop() {
 
 func (c *Core) RenderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 	cwd, _ := os.Getwd()
-	t, err := template.ParseFiles(filepath.Join(cwd, "./web/templates/"+tmpl+".html"))
+	t, err := template.ParseFiles(filepath.Join(cwd, "./web/templates/"+tmpl+".html"), filepath.Join(cwd, "./web/templates/"+baseTmpl+".html"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = t.Execute(w, data)
+	err = t.ExecuteTemplate(w, baseTmpl, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

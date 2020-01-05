@@ -26,7 +26,9 @@ func (c *Core) HealthCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+
 	_, err = w.Write(jsonResponse)
 	if err != nil {
 		c.Logger.Error().Err(err)
