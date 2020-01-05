@@ -22,7 +22,6 @@ tests:
 	@go test -v -coverprofile .testCoverage.txt ./...
 
 setup-yarn:
-	@rm -rf web/dist
 	yarn install
 
 run-service: build-assets

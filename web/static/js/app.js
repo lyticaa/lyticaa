@@ -1,5 +1,5 @@
-import "./js-cookie"
-import "./user"
-import "turbolinks"
+require("./js-cookie");
+require("./user");
 
-Turbolinks.start();
+var T = require("turbolinks");
+T.start();
