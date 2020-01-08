@@ -1,4 +1,4 @@
-package core
+package app
 
 import (
 	"encoding/gob"
@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"os"
 	"time"
-
-	"gitlab.com/getlytica/dashboard/internal/core/types"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/gorilla/mux"
@@ -19,7 +17,7 @@ import (
 	"gopkg.in/boj/redistore.v1"
 )
 
-type Core struct {
+type App struct {
 	Logger       zerolog.Logger
 	NewRelic     newrelic.Application
 	Srv          *http.Server
@@ -29,7 +27,7 @@ type Core struct {
 	Db           *gorm.DB
 }
 
-func NewCore() *Core {
+func NewApp() *App {
 	gob.Register(map[string]interface{}{})
 
 	sentryOpts := sentry.ClientOptions{
@@ -66,8 +64,8 @@ func NewCore() *Core {
 		panic(err)
 	}
 
-	return &Core{
-		Logger:       log.With().Str("module", types.AppName).Logger(),
+	return &App{
+		Logger:       log.With().Str("module", os.Getenv("APP_NAME")).Logger(),
 		NewRelic:     nr,
 		Router:       mux.NewRouter(),
 		Client:       &http.Client{Timeout: 5 * time.Second},

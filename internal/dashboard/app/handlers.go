@@ -1,4 +1,4 @@
-package core
+package app
 
 import (
 	"context"
@@ -10,18 +10,18 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/getlytica/dashboard/internal/auth"
-	"gitlab.com/getlytica/dashboard/internal/core/types"
+	"gitlab.com/getlytica/dashboard/internal/dashboard/app/types"
+	"gitlab.com/getlytica/dashboard/internal/dashboard/auth"
 	"gitlab.com/getlytica/dashboard/internal/models"
 
 	"github.com/coreos/go-oidc"
 )
 
-func (c *Core) HealthCheck(w http.ResponseWriter, r *http.Request) {
+func (a *App) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	response := types.Health{Status: "OK"}
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -31,36 +31,36 @@ func (c *Core) HealthCheck(w http.ResponseWriter, r *http.Request) {
 
 	_, err = w.Write(jsonResponse)
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-func (c *Core) Home(w http.ResponseWriter, r *http.Request) {
-	c.RenderTemplate(w, "home", nil)
+func (a *App) Home(w http.ResponseWriter, r *http.Request) {
+	a.RenderTemplate(w, "home", nil)
 }
 
-func (c *Core) Login(w http.ResponseWriter, r *http.Request) {
+func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 	b := make([]byte, 32)
 	_, err := rand.Read(b)
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	state := base64.StdEncoding.EncodeToString(b)
 
-	session, err := c.SessionStore.Get(r, "auth-session")
+	session, err := a.SessionStore.Get(r, "auth-session")
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	session.Values["state"] = state
 	err = session.Save(r, w)
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -74,17 +74,17 @@ func (c *Core) Login(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, authenticator.Config.AuthCodeURL(state), http.StatusTemporaryRedirect)
 }
 
-func (c *Core) Logout(w http.ResponseWriter, r *http.Request) {
-	session, err := c.SessionStore.Get(r, "auth-session")
+func (a *App) Logout(w http.ResponseWriter, r *http.Request) {
+	session, err := a.SessionStore.Get(r, "auth-session")
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	logoutUrl, err := url.Parse(os.Getenv("AUTH0_URL"))
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -94,7 +94,7 @@ func (c *Core) Logout(w http.ResponseWriter, r *http.Request) {
 
 	returnTo, err := url.Parse("https://" + r.Host)
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -104,36 +104,36 @@ func (c *Core) Logout(w http.ResponseWriter, r *http.Request) {
 
 	session.Options.MaxAge = -1
 	if err = session.Save(r, w); err != nil {
-		c.Logger.Error().Err(err).Msg("error removing session")
+		a.Logger.Error().Err(err).Msg("error removing session")
 	}
 
 	http.Redirect(w, r, logoutUrl.String(), http.StatusTemporaryRedirect)
 }
 
-func (c *Core) Callback(w http.ResponseWriter, r *http.Request) {
-	session, err := c.SessionStore.Get(r, "auth-session")
+func (a *App) Callback(w http.ResponseWriter, r *http.Request) {
+	session, err := a.SessionStore.Get(r, "auth-session")
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if r.URL.Query().Get("state") != session.Values["state"] {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, "Invalid state parameter", http.StatusBadRequest)
 		return
 	}
 
 	authenticator, err := auth.NewAuthenticator()
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	token, err := authenticator.Config.Exchange(context.TODO(), r.URL.Query().Get("code"))
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -150,7 +150,7 @@ func (c *Core) Callback(w http.ResponseWriter, r *http.Request) {
 
 	idToken, err := authenticator.Provider.Verifier(oidcConfig).Verify(context.TODO(), rawIDToken)
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, "Failed to verify ID Token: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -172,22 +172,22 @@ func (c *Core) Callback(w http.ResponseWriter, r *http.Request) {
 
 	parts := strings.Split(profile["sub"].(string), "|")
 	userId := parts[1]
-	models.CreateUser(userId, profile["name"].(string), c.Db)
+	models.CreateUser(userId, profile["name"].(string), a.Db)
 
 	http.Redirect(w, r, "/user", http.StatusSeeOther)
 }
 
-func (c *Core) User(w http.ResponseWriter, r *http.Request) {
-	session, err := c.SessionStore.Get(r, "auth-session")
+func (a *App) User(w http.ResponseWriter, r *http.Request) {
+	session, err := a.SessionStore.Get(r, "auth-session")
 	if err != nil {
-		c.Logger.Error().Err(err)
+		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	c.RenderTemplate(w, "user", session.Values["profile"])
+	a.RenderTemplate(w, "user", session.Values["profile"])
 }
 
-func (c *Core) AccountSubscribe(w http.ResponseWriter, r *http.Request) {
+func (a *App) AccountSubscribe(w http.ResponseWriter, r *http.Request) {
 
 }

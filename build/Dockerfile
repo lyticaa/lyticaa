@@ -16,6 +16,7 @@ RUN go mod verify
 RUN go get -d -v ./...
 
 RUN go build -a -installsuffix cgo -o $GOBIN/dashd ./cmd/dashd
+RUN go build -a -installsuffix cgo -o $GOBIN/workerd ./cmd/workerd
 
 #
 # Main
@@ -24,5 +25,6 @@ FROM alpine
 
 # Copy the compiled binaires over.
 COPY --from=build /go/bin/dashd /usr/bin/
+COPY --from=build /go/bin/workerd /usr/bin/
 
 EXPOSE 3000

@@ -1,6 +1,6 @@
-# dashboard
+# lytica
 
-Seller Nomics Dashboard
+Main Lytica app (dashboard/worker).
 
 ## Setup
 
@@ -34,6 +34,11 @@ DB_NAME=
 DB_SSLMODE=
 STRIPE_PK=
 STRIPE_SK=
+AWS_REGION=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_SQS_QUEUE=
+AWS_S3_UPLOAD_BUCKET=
 ```
 
 If you are unsure as to what these values ought to be, then please check with a colleague.
@@ -56,16 +61,24 @@ make tests
 
 ### Install
 
-To compile and install the binary:
+To compile and install the binaries:
 
 ```bash
 make install
 ```
 
-### Run the Service
+### Run the Dashboard
 
 ```bash
-make run-service
+make run-dashboard-service
+```
+
+The dashboard will then be accessible on http://localhost:3000.
+
+### Run the Worker
+
+```bash
+make run-worker-service
 ```
 
 ## Database

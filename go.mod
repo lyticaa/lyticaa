@@ -6,6 +6,8 @@ go 1.13
 
 require (
 	github.com/Bowery/prompt v0.0.0-20190916142128-fa8279994f75 // indirect
+	github.com/aws/aws-sdk-go v1.17.7
+	github.com/bufferapp/sqs-worker-go v0.0.0-20181101064454-7e780f286181
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/dchest/safefile v0.0.0-20151022103144-855e8d98f185 // indirect
 	github.com/garyburd/redigo v1.6.0 // indirect

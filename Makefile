@@ -14,9 +14,11 @@ lint-verbose: lint-pre
 
 install: go.sum
 	GO111MODULE=on go install -v ./cmd/dashd
+	GO111MODULE=on go install -v ./cmd/workerd
 
 clean:
 	rm -f ${GOBIN}/{dashd}
+	rm -f ${GOBIN}/{workerd}
 
 tests:
 	@go test -v -coverprofile .testCoverage.txt ./...
@@ -24,8 +26,11 @@ tests:
 setup-yarn:
 	yarn install
 
-run-service: build-assets
+run-dashboard-service: build-assets
 	@dashd
+
+run-worker-service:
+	@workerd
 
 run-stack:
 	@docker-compose -f ./build/docker-compose.yml up --force-recreate --remove-orphans
@@ -34,10 +39,10 @@ pg:
 	@docker-compose -f ./build/docker-compose.yml run --rm -p 5432:5432 --no-deps pg
 
 create-user:
-	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE USER sellernomics WITH CREATEDB CREATEROLE PASSWORD 'password';"
+	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE USER lytica WITH CREATEDB CREATEROLE PASSWORD 'password';"
 
 create-database:
-	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE DATABASE dashboard_development OWNER sellernomics;"
+	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE DATABASE dashboard_development OWNER lytica;"
 
 drop-database:
 	PGPASSWORD=password psql -h localhost -U postgres -c "drop database dashboard_development;"

@@ -4,15 +4,15 @@ import (
 	"os"
 	"os/signal"
 
-	"gitlab.com/getlytica/dashboard/internal/core"
+	"gitlab.com/getlytica/dashboard/internal/dashboard/app"
 )
 
 func main() {
-	c := core.NewCore()
-	c.Start()
+	a := app.NewApp()
+	a.Start()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
-	c.Stop()
+	a.Stop()
 }
