@@ -1,6 +1,6 @@
-module gitlab.com/getlytica/dashboard
+module gitlab.com/getlytica/lytica
 
-replace gitlab.com/getlytica/dashboard => ../getlytica/dashboard
+replace gitlab.com/getlytica/lytica => ../getlytica/lytica
 
 go 1.13
 

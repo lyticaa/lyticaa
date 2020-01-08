@@ -1,10 +1,10 @@
 openapi: 3.0.0
 info:
-  title: Lytica Dashboard API
+  title: Lytica API
   version: 0.0.1-oas3
   contact:
     email: hello@sellernomics.com
-  description: Lytica Dashboard API
+  description: Lytica API
 paths:
   "/api/health_check":
     get:

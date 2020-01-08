@@ -10,9 +10,9 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/getlytica/dashboard/internal/dashboard/app/types"
-	"gitlab.com/getlytica/dashboard/internal/dashboard/auth"
-	"gitlab.com/getlytica/dashboard/internal/models"
+	"gitlab.com/getlytica/lytica/internal/dashboard/app/types"
+	"gitlab.com/getlytica/lytica/internal/dashboard/auth"
+	"gitlab.com/getlytica/lytica/internal/models"
 
 	"github.com/coreos/go-oidc"
 )

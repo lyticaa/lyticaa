@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/getlytica/dashboard/internal/worker/app/types"
+	"gitlab.com/getlytica/lytica/internal/worker/app/types"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
