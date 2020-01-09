@@ -1,18 +1,21 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type Fulfillment struct {
-	gorm.Model
-	Id   int64
-	Name string
+	Id        int64
+	Name      string
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }
 
-func GetFulfillments(db *gorm.DB) []Fulfillment {
+func GetFulfillments(db *sqlx.DB) []Fulfillment {
 	var fulfillments []Fulfillment
-	db.Find(&fulfillments)
+	_ = db.Select(&fulfillments, "SELECT id,name,created_at,updated_at FROM fulfillments ORDER BY id DESC")
 
 	return fulfillments
 }

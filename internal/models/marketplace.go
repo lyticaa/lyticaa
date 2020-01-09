@@ -1,18 +1,21 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type Marketplace struct {
-	gorm.Model
-	Id   int64
-	Name string
+	Id        int64
+	Name      string
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }
 
-func GetMarketplaces(db *gorm.DB) []Marketplace {
+func GetMarketplaces(db *sqlx.DB) []Marketplace {
 	var marketplaces []Marketplace
-	db.Find(&marketplaces)
+	_ = db.Select(&marketplaces, "SELECT id,name,created_at,updated_at FROM marketplaces ORDER BY id DESC")
 
 	return marketplaces
 }

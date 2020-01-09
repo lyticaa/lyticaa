@@ -9,8 +9,8 @@ import (
 
 	"github.com/getsentry/sentry-go"
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/newrelic/go-agent"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -24,7 +24,7 @@ type App struct {
 	Router       *mux.Router
 	Client       *http.Client
 	SessionStore *redistore.RediStore
-	Db           *gorm.DB
+	Db           *sqlx.DB
 }
 
 func NewApp() *App {
@@ -59,7 +59,7 @@ func NewApp() *App {
 		os.Getenv("DB_SSLMODE"),
 	)
 
-	db, err := gorm.Open("postgres", dbStr)
+	db, err := sqlx.Connect("postgres", dbStr)
 	if err != nil {
 		panic(err)
 	}

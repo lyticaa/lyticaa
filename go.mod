@@ -19,8 +19,10 @@ require (
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/sessions v1.2.0
 	github.com/jinzhu/gorm v1.9.11
+	github.com/jmoiron/sqlx v1.2.0
 	github.com/kardianos/govendor v1.0.9 // indirect
 	github.com/kr/fs v0.1.0 // indirect
+	github.com/lib/pq v1.1.1
 	github.com/newrelic/go-agent v3.0.0+incompatible
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/rs/zerolog v1.17.2

@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -18,6 +19,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/sqs"
+)
+
+const (
+	customTransaction = "CustomTransaction"
+	unknown           = int64(1)
 )
 
 func (a *App) parseMessage(msg *sqs.Message) error {
@@ -73,14 +79,24 @@ func (a *App) processFile(file string) {
 			return
 		}
 
-		rows := a.mapCsv(file, bytes.NewBuffer(body))
-		a.Logger.Info().Str("user", username).Msgf("total rows to process: %v", len(rows))
-
+		var inputType string
 		if strings.Contains(file, "CustomTransaction") {
-			a.processCustomTransaction(rows)
+			inputType = "CustomTransaction"
 		}
+
+		a.processInput(inputType, username, body)
 	} else {
 		a.Logger.Info().Str("user", username).Msgf("invalid content type: %v", *result.ContentType)
+	}
+}
+
+func (a *App) processInput(file, username string, body []byte) {
+	rows := a.mapCsv(file, bytes.NewBuffer(body))
+	a.Logger.Info().Str("user", username).Msgf("total rows to process: %v", len(rows))
+
+	switch file {
+	case customTransaction:
+		a.saveTransactions(rows, username)
 	}
 }
 
@@ -121,131 +137,134 @@ func (a *App) mapCsv(file string, reader io.Reader) []map[string]string {
 	return rows
 }
 
-func (a *App) getOrderTypes() []models.OrderType {
-	return models.GetOrderTypes(a.Db)
+func (a *App) getTransactionTypes() []models.TransactionType {
+	return models.GetTransactionTypes(a.Db)
 }
 
-func (a *App) getOrderTypeIdByName(name string, orderTypes []models.OrderType) (*models.OrderType, bool) {
-	for _, orderType := range orderTypes {
-		if orderType.Name == name {
-			return &orderType, true
+func (a *App) getTransactionTypeIdByName(name string, txnTypes []models.TransactionType) (int64, bool) {
+	for _, txnType := range txnTypes {
+		if txnType.Name == name {
+			return txnType.Id, true
 		}
 	}
 
-	return &models.OrderType{}, false
+	return unknown, false
 }
 
 func (a *App) getMarketplaces() []models.Marketplace {
 	return models.GetMarketplaces(a.Db)
 }
 
-func (a *App) getMarketplaceIdByName(name string, marketplaces []models.Marketplace) (*models.Marketplace, bool) {
+func (a *App) getMarketplaceIdByName(name string, marketplaces []models.Marketplace) (int64, bool) {
 	for _, marketplace := range marketplaces {
 		if marketplace.Name == name {
-			return &marketplace, true
+			return marketplace.Id, true
 		}
 	}
 
-	return &models.Marketplace{}, false
+	return unknown, false
 }
 
 func (a *App) getFulfillments() []models.Fulfillment {
 	return models.GetFulfillments(a.Db)
 }
 
-func (a *App) getFulfillmentIdByName(name string, fulfillments []models.Fulfillment) (*models.Fulfillment, bool) {
+func (a *App) getFulfillmentIdByName(name string, fulfillments []models.Fulfillment) (int64, bool) {
 	for _, fulfillment := range fulfillments {
 		if fulfillment.Name == name {
-			return &fulfillment, true
+			return fulfillment.Id, true
 		}
 	}
 
-	return &models.Fulfillment{}, false
+	return unknown, false
 }
 
 func (a *App) getTaxCollectionModels() []models.TaxCollectionModel {
 	return models.GetTaxCollectionModels(a.Db)
 }
 
-func (a *App) getTaxCollectionModelIdByName(name string, taxCollectionModels []models.TaxCollectionModel) (*models.TaxCollectionModel, bool) {
+func (a *App) getTaxCollectionModelIdByName(name string, taxCollectionModels []models.TaxCollectionModel) (int64, bool) {
 	for _, taxCollectionModel := range taxCollectionModels {
 		if taxCollectionModel.Name == name {
-			return &taxCollectionModel, true
+			return taxCollectionModel.Id, true
 		}
 	}
 
-	return &models.TaxCollectionModel{}, false
+	return unknown, false
 }
 
-func (a *App) processCustomTransaction(content []map[string]string) {
-	orderTypes := a.getOrderTypes()
+func (a *App) saveTransactions(rows []map[string]string, username string) {
+	user := models.FindUserByUserId(username, a.Db)
+	txnTypes := a.getTransactionTypes()
 	marketplaces := a.getMarketplaces()
 	fulfillments := a.getFulfillments()
 	taxCollectionModels := a.getTaxCollectionModels()
 
-	var txns []models.CustomTransaction
-	for _, row := range content {
-		orderType, ok := a.getOrderTypeIdByName(row["type"], orderTypes)
-		if !ok {
-			a.Logger.Error().Msgf("OrderType %v not found", row["type"])
+	var txns []models.Transaction
+	for idx, row := range rows {
+		txnType, ok := a.getTransactionTypeIdByName(row["type"], txnTypes)
+		if !ok && row["type"] != "" {
+			a.Logger.Error().Msgf("Transaction Type %v not found", row["type"])
 		}
 
-		marketplace, ok := a.getMarketplaceIdByName(row["marketplace"], marketplaces)
-		if !ok {
+		marketplace, ok := a.getMarketplaceIdByName(strings.ToLower(row["marketplace"]), marketplaces)
+		if !ok && row["marketplace"] != "" {
 			a.Logger.Error().Msgf("Marketplace %v not found", row["marketplace"])
 		}
 
 		fulfillment, ok := a.getFulfillmentIdByName(row["fulfillment"], fulfillments)
-		if !ok {
+		if !ok && row["fulfillment"] != "" {
 			a.Logger.Error().Msgf("Fulfillment %v not found", row["fulfillment"])
 		}
 
 		taxCollectionModel, ok := a.getTaxCollectionModelIdByName(row["tax collection model"], taxCollectionModels)
-		if !ok {
+		if !ok && row["tax collection model"] != "" {
 			a.Logger.Error().Msgf("Tax Collection Model %v not found", row["tax collection model"])
 		}
 
-		dateTime, _ := time.Parse(time.RFC3339, row["date/time"])
-		settlementId, _ := strconv.ParseInt(row["settlement id"], 64, 10)
-		quantity, _ := strconv.ParseInt(row["quantity"], 64, 10)
+		dateTime, _ := time.Parse("Jan 2, 2006 3:04:05 PM MST", row["date/time"])
+		settlementId, _ := strconv.ParseInt(row["settlement id"], 10, 64)
+		quantity, _ := strconv.ParseInt(row["quantity"], 10, 64)
 		productSales, _ := strconv.ParseFloat(row["product sales"], 64)
 		productSalesTax, _ := strconv.ParseFloat(row["product sales tax"], 64)
 		shippingCredits, _ := strconv.ParseFloat(row["shipping credits"], 64)
 		shippingCreditsTax, _ := strconv.ParseFloat(row["shipping credits tax"], 64)
-		giftWrapCredits, _ := strconv.ParseFloat(row["gift wrap credits"], 64)
-		giftWrapCreditsTax, _ := strconv.ParseFloat(row["gift wrap credits tax"], 64)
+		giftwrapCredits, _ := strconv.ParseFloat(row["giftwrap credits"], 64)
+		giftwrapCreditsTax, _ := strconv.ParseFloat(row["giftwrap credits tax"], 64)
 		promotionalRebates, _ := strconv.ParseFloat(row["promotional rebates"], 64)
 		promotionalRebatesTax, _ := strconv.ParseFloat(row["promotional rebates tax"], 64)
 		marketplaceWithheldTax, _ := strconv.ParseFloat(row["marketplace withheld tax"], 64)
 		sellingFees, _ := strconv.ParseFloat(row["selling fees"], 64)
 		fbaFees, _ := strconv.ParseFloat(row["fba fees"], 64)
 		otherTransactionFees, _ := strconv.ParseFloat(row["other transaction fees"], 64)
-		order, _ := strconv.ParseFloat(row["order"], 64)
+		other, _ := strconv.ParseFloat(row["other"], 64)
 		total, _ := strconv.ParseFloat(row["total"], 64)
 
-		txn := models.CustomTransaction{
+		txn := models.Transaction{
+			Idx:                    idx,
 			DateTime:               dateTime,
+			User:                   user,
 			SettlementId:           settlementId,
-			OrderType:              *orderType,
+			TransactionType:        models.TransactionType{Id: txnType},
 			OrderId:                row["order id"],
 			Sku:                    row["sku"],
 			Quantity:               quantity,
-			Marketplace:            *marketplace,
-			Fulfillment:            *fulfillment,
-			TaxCollectionModel:     *taxCollectionModel,
+			Marketplace:            models.Marketplace{Id: marketplace},
+			Fulfillment:            models.Fulfillment{Id: fulfillment},
+			TaxCollectionModel:     models.TaxCollectionModel{Id: taxCollectionModel},
 			ProductSales:           productSales,
 			ProductSalesTax:        productSalesTax,
 			ShippingCredits:        shippingCredits,
 			ShippingCreditsTax:     shippingCreditsTax,
-			GiftWrapCredits:        giftWrapCredits,
-			GiftWrapCreditsTax:     giftWrapCreditsTax,
+			GiftwrapCredits:        giftwrapCredits,
+			GiftwrapCreditsTax:     giftwrapCreditsTax,
 			PromotionalRebates:     promotionalRebates,
 			PromotionalRebatesTax:  promotionalRebatesTax,
 			MarketplaceWithheldTax: marketplaceWithheldTax,
 			SellingFees:            sellingFees,
 			FBAFees:                fbaFees,
 			OtherTransactionFees:   otherTransactionFees,
-			Order:                  order,
+			Other:                  other,
 			Total:                  total,
 		}
 
@@ -253,7 +272,7 @@ func (a *App) processCustomTransaction(content []map[string]string) {
 	}
 
 	for _, txn := range txns {
-		models.SaveCustomTransaction(txn, a.Db)
+		models.SaveTransaction(txn, a.Db)
 	}
 }
 

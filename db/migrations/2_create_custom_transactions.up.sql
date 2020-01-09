@@ -1,6 +1,6 @@
-CREATE TABLE order_types
+CREATE TABLE transaction_types
 (
-    id         BIGSERIAL NOT NULL,
+    id         BIGSERIAL,
     name       VARCHAR NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -11,7 +11,7 @@ CREATE TABLE order_types
 
 CREATE TABLE marketplaces
 (
-    id         BIGSERIAL NOT NULL,
+    id         BIGSERIAL,
     name       VARCHAR NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -22,7 +22,7 @@ CREATE TABLE marketplaces
 
 CREATE TABLE fulfillments
 (
-    id         BIGSERIAL NOT NULL,
+    id         BIGSERIAL,
     name       VARCHAR NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -33,7 +33,7 @@ CREATE TABLE fulfillments
 
 CREATE TABLE tax_collection_models
 (
-    id         BIGSERIAL NOT NULL,
+    id         BIGSERIAL,
     name       VARCHAR NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -42,12 +42,14 @@ CREATE TABLE tax_collection_models
     UNIQUE (NAME)
 );
 
-CREATE TABLE custom_transactions
+CREATE TABLE transactions
 (
     id                       BIGSERIAL NOT NULL,
+    idx BIGSERIAL NOT NULL,
+    user_id                  BIGSERIAL REFERENCES users(id),
     date_time                TIMESTAMPTZ NOT NULL,
     settlement_id            BIGSERIAL NOT NULL,
-    type_id                  BIGSERIAL REFERENCES order_types(id),
+    transaction_type_id      BIGSERIAL REFERENCES transaction_types(id),
     order_id                 VARCHAR NOT NULL,
     sku                      VARCHAR NOT NULL,
     quantity                 BIGSERIAL,
@@ -58,8 +60,8 @@ CREATE TABLE custom_transactions
     product_sales_tax        REAL,
     shipping_credits         REAL,
     shipping_credits_tax     REAL,
-    gift_wrap_credits        REAL,
-    gift_wrap_credits_tax    REAL,
+    giftwrap_credits         REAL,
+    giftwrap_credits_tax     REAL,
     promotional_rebates      REAL,
     promotional_rebates_tax  REAL,
     marketplace_withheld_tax REAL,
@@ -72,5 +74,22 @@ CREATE TABLE custom_transactions
     updated_at               TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at               TIMESTAMPTZ,
     PRIMARY KEY (id),
-    UNIQUE (order_id, sku)
+    UNIQUE (idx, user_id, date_time, transaction_type_id, order_id, sku)
 );
+
+INSERT INTO transaction_types (name, created_at, updated_at) VALUES ('UNKNOWN', NOW(), NOW());
+INSERT INTO transaction_types (name, created_at, updated_at) VALUES ('Order', NOW(), NOW());
+INSERT INTO transaction_types (name, created_at, updated_at) VALUES ('Refund', NOW(), NOW());
+INSERT INTO transaction_types (name, created_at, updated_at) VALUES ('Service Fee', NOW(), NOW());
+INSERT INTO transaction_types (name, created_at, updated_at) VALUES ('Adjustment', NOW(), NOW());
+INSERT INTO transaction_types (name, created_at, updated_at) VALUES ('Transfer', NOW(), NOW());
+INSERT INTO transaction_types (name, created_at, updated_at) VALUES ('FBA Inventory Fee', NOW(), NOW());
+
+INSERT INTO marketplaces (name, created_at, updated_at) VALUES ('UNKNOWN', NOW(), NOW());
+INSERT INTO marketplaces (name, created_at, updated_at) VALUES ('amazon.com', NOW(), NOW());
+
+INSERT INTO fulfillments (name, created_at, updated_at) VALUES ('UNKNOWN', NOW(), NOW());
+INSERT INTO fulfillments (name, created_at, updated_at) VALUES ('Amazon', NOW(), NOW());
+
+INSERT INTO tax_collection_models (name, created_at, updated_at) VALUES ('UNKNOWN', NOW(), NOW());
+INSERT INTO tax_collection_models (name, created_at, updated_at) VALUES ('MarketplaceFacilitator', NOW(), NOW());

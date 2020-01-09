@@ -1,18 +1,25 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type TaxCollectionModel struct {
-	gorm.Model
-	Id   int64
-	Name string
+	Id        int64
+	Name      string
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }
 
-func GetTaxCollectionModels(db *gorm.DB) []TaxCollectionModel {
+func GetTaxCollectionModels(db *sqlx.DB) []TaxCollectionModel {
 	var collections []TaxCollectionModel
-	db.Find(&collections)
+
+	err := db.Select(&collections, "SELECT id,name,created_at,updated_at FROM tax_collection_models ORDER BY id DESC")
+	if err != nil {
+		panic(err)
+	}
 
 	return collections
 }
