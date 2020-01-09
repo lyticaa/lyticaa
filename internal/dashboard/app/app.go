@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/gob"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -51,16 +50,7 @@ func NewApp() *App {
 		panic(err)
 	}
 
-	dbStr := fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=%v",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_USERNAME"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_SSLMODE"),
-	)
-
-	db, err := sqlx.Connect("postgres", dbStr)
+	db, err := sqlx.Connect("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		panic(err)
 	}
