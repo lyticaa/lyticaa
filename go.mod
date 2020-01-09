@@ -6,6 +6,7 @@ go 1.13
 
 require (
 	github.com/Bowery/prompt v0.0.0-20190916142128-fa8279994f75 // indirect
+	github.com/DATA-DOG/go-sqlmock v1.4.0
 	github.com/aws/aws-sdk-go v1.17.7
 	github.com/bufferapp/sqs-worker-go v0.0.0-20181101064454-7e780f286181
 	github.com/coreos/go-oidc v2.1.0+incompatible
@@ -18,6 +19,7 @@ require (
 	github.com/gorilla/handlers v1.4.2
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/sessions v1.2.0
+	github.com/heroku/x v0.0.15
 	github.com/jinzhu/gorm v1.9.11
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/kardianos/govendor v1.0.9 // indirect

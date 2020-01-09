@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -9,10 +8,10 @@ import (
 
 type Transaction struct {
 	Id                     int64
-	Idx                    int64
 	User                   User `db:"user_id"`
 	DateTime               time.Time
 	SettlementId           int64
+	SettlementIdx          int64
 	TransactionType        TransactionType `db:"transaction_type_id"`
 	OrderId                string
 	Sku                    string
@@ -36,12 +35,12 @@ type Transaction struct {
 	Total                  float64
 }
 
-func SaveTransaction(txn Transaction, db *sqlx.DB) {
+func SaveTransaction(txn Transaction, db *sqlx.DB) error {
 	query := `INSERT INTO transactions (
-                idx,
 				user_id,
 				date_time,
 				settlement_id,
+            	settlement_idx,     
 				transaction_type_id,
 				order_id,
 				sku,
@@ -64,10 +63,10 @@ func SaveTransaction(txn Transaction, db *sqlx.DB) {
 				other,
 				total)
 			VALUES (
-			    :idx,
 				:user_id,
 				:date_time,
 				:settlement_id,
+			    :settlement_idx,
 				:transaction_type_id,
 				:order_id,
 				:sku,
@@ -91,10 +90,10 @@ func SaveTransaction(txn Transaction, db *sqlx.DB) {
 				:total)`
 
 	_, err := db.NamedExec(query, map[string]interface{}{
-		"idx":                      txn.Idx,
 		"user_id":                  txn.User.Id,
 		"date_time":                txn.DateTime,
 		"settlement_id":            txn.SettlementId,
+		"settlement_idx":           txn.SettlementIdx,
 		"transaction_type_id":      txn.TransactionType.Id,
 		"order_id":                 txn.OrderId,
 		"sku":                      txn.Sku,
@@ -119,7 +118,8 @@ func SaveTransaction(txn Transaction, db *sqlx.DB) {
 	})
 
 	if err != nil {
-		fmt.Printf("%v\n", txn)
-		panic(err)
+		logger().Error().Err(err)
 	}
+
+	return err
 }

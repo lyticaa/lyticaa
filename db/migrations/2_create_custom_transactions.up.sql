@@ -45,10 +45,10 @@ CREATE TABLE tax_collection_models
 CREATE TABLE transactions
 (
     id                       BIGSERIAL NOT NULL,
-    idx BIGSERIAL NOT NULL,
     user_id                  BIGSERIAL REFERENCES users(id),
     date_time                TIMESTAMPTZ NOT NULL,
     settlement_id            BIGSERIAL NOT NULL,
+    settlement_idx           BIGSERIAL NOT NULL,
     transaction_type_id      BIGSERIAL REFERENCES transaction_types(id),
     order_id                 VARCHAR NOT NULL,
     sku                      VARCHAR NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE transactions
     updated_at               TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at               TIMESTAMPTZ,
     PRIMARY KEY (id),
-    UNIQUE (idx, user_id, date_time, transaction_type_id, order_id, sku)
+    UNIQUE (user_id, date_time, settlement_id, settlement_idx, transaction_type_id, order_id, sku)
 );
 
 INSERT INTO transaction_types (name, created_at, updated_at) VALUES ('UNKNOWN', NOW(), NOW());
