@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/getsentry/sentry-go"
+	_ "github.com/heroku/x/hmetrics/onload"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/newrelic/go-agent"
