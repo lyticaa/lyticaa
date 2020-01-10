@@ -4,7 +4,6 @@ CREATE TABLE transaction_types
     name       VARCHAR NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMPTZ,
     PRIMARY KEY (id),
     UNIQUE (NAME)
 );
@@ -15,7 +14,6 @@ CREATE TABLE marketplaces
     name       VARCHAR NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMPTZ,
     PRIMARY KEY (id),
     UNIQUE (NAME)
 );
@@ -26,7 +24,6 @@ CREATE TABLE fulfillments
     name       VARCHAR NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMPTZ,
     PRIMARY KEY (id),
     UNIQUE (NAME)
 );
@@ -37,7 +34,6 @@ CREATE TABLE tax_collection_models
     name       VARCHAR NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMPTZ,
     PRIMARY KEY (id),
     UNIQUE (NAME)
 );
@@ -72,7 +68,6 @@ CREATE TABLE transactions
     total                    REAL,
     created_at               TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at               TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at               TIMESTAMPTZ,
     PRIMARY KEY (id),
     UNIQUE (user_id, date_time, settlement_id, settlement_idx, transaction_type_id, order_id, sku)
 );

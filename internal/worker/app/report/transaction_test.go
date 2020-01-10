@@ -190,6 +190,10 @@ func TestFormatTransactions(t *testing.T) {
 			t.Errorf("invalid user Id")
 		}
 
+		if formatted[0].DateTime.IsZero() {
+			t.Errorf("date/time is invalid")
+		}
+
 		if formatted[0].SettlementIdx != 1 {
 			t.Errorf("invalid settlement index")
 		}

@@ -9,14 +9,18 @@ import (
 )
 
 const (
-	settlementId      = 12447169531
-	sku               = "PF-EV1C-1R5B"
-	quantity          = 1
+	settlementId = 12447169531
+	sku          = "PF-EV1C-1R5B"
+	quantity     = 1
+
 	transactionReport = `"date/time","settlement id","type","order id","sku","quantity","marketplace","fulfillment","total"
 "Dec 1, 2019 12:07:47 AM PST","12447169531","Order","113-0688349-7048213","PF-EV1C-1R5B","1","amazon.com","Amazon","17.04"`
+	sponsoredProductsReport = `"Start Date","End Date","Portfolio name","Currency","Impressions","Clicks","Click-Thru Rate (CTR)","Cost Per Click (CPC)","Spend"
+"Dec 01, 2019","Dec 21, 2019","Not grouped","USD","50293","47","0.0935%","$ 0.35","$ 16.22"`
 
-	userId                = "5de89aea5a61280de1f1bf2b"
-	transactionReportFile = userId + "/" + customTransaction + ".csv"
+	userId                     = "5de89aea5a61280de1f1bf2b"
+	transactionReportFile      = userId + "/" + customTransaction + ".csv"
+	SponsoredProductReportFile = userId + "/" + sponsoredProducts + ".csv"
 )
 
 func SetupTests(t *testing.T) (*Report, sqlmock.Sqlmock, func(*Report)) {
@@ -89,5 +93,15 @@ func TestUserFromKey(t *testing.T) {
 
 	if actual != userId {
 		t.Errorf("expected a user Id of %v but got %v instead!", userId, actual)
+	}
+}
+
+func TestFileType(t *testing.T) {
+	r, _, complete := SetupTests(t)
+	defer complete(r)
+
+	fileType := r.fileType(transactionReportFile)
+	if fileType != customTransaction {
+		t.Error("unable to determine file type")
 	}
 }

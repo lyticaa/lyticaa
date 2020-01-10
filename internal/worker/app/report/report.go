@@ -17,6 +17,7 @@ import (
 
 const (
 	customTransaction = "CustomTransaction"
+	sponsoredProducts = "SponsoredProducts"
 	unknown           = int64(1)
 )
 
@@ -44,12 +45,7 @@ func (r *Report) Run(file string) {
 			return
 		}
 
-		var inputType string
-		if strings.Contains(file, "CustomTransaction") {
-			inputType = "CustomTransaction"
-		}
-
-		r.processReport(inputType, username, body)
+		r.processReport(r.fileType(file), username, body)
 	} else {
 		r.Logger.Info().Str("user", username).Msgf("invalid content type: %v", *result.ContentType)
 	}
@@ -61,9 +57,17 @@ func (r *Report) processReport(file, username string, body []byte) {
 
 	switch file {
 	case customTransaction:
-		txns := r.formatTransactions(rows, username)
-		for _, txn := range txns {
-			err := r.saveTransaction(txn)
+		transactions := r.formatTransactions(rows, username)
+		for _, transaction := range transactions {
+			err := r.saveTransaction(transaction)
+			if err != nil {
+				r.Logger.Error().Err(err)
+			}
+		}
+	case sponsoredProducts:
+		sponsoredProducts := r.formatSponsoredProducts(rows, username)
+		for _, sponsoredProduct := range sponsoredProducts {
+			err := r.saveSponsoredProduct(sponsoredProduct)
 			if err != nil {
 				r.Logger.Error().Err(err)
 			}
@@ -111,4 +115,14 @@ func (r *Report) mapCsv(file string, reader io.Reader) []map[string]string {
 func (r *Report) userFromKey(key string) string {
 	parts := strings.Split(key, "/")
 	return parts[0]
+}
+
+func (r *Report) fileType(file string) string {
+	if strings.Contains(file, "CustomTransaction") {
+		return customTransaction
+	} else if strings.Contains(file, "SponsoredProducts") {
+		return sponsoredProducts
+	} else {
+		return ""
+	}
 }

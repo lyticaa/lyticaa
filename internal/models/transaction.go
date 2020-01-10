@@ -33,6 +33,8 @@ type Transaction struct {
 	OtherTransactionFees   float64
 	Other                  float64
 	Total                  float64
+	CreatedAt              time.Time `db:"created_at"`
+	UpdatedAt              time.Time `db:"updated_at"`
 }
 
 func SaveTransaction(txn Transaction, db *sqlx.DB) error {
@@ -87,7 +89,28 @@ func SaveTransaction(txn Transaction, db *sqlx.DB) error {
 				:fba_fees,
 				:other_transaction_fees,
 				:other,
-				:total)`
+				:total)
+			ON CONFLICT (user_id, date_time, settlement_id, settlement_idx, transaction_type_id, order_id, sku)
+				DO UPDATE SET 
+				    quantity = :quantity,
+					marketplace_id = :marketplace_id,
+					fulfillment_id = :fulfillment_id,
+					tax_collection_model_id = :tax_collection_model_id,
+					product_sales = :product_sales,
+					product_sales_tax = :product_sales_tax,
+					shipping_credits = :shipping_credits,
+					shipping_credits_tax = :shipping_credits_tax,
+					giftwrap_credits = :giftwrap_credits,
+					giftwrap_credits_tax = :giftwrap_credits_tax,
+					promotional_rebates = :promotional_rebates,
+					promotional_rebates_tax = :promotional_rebates_tax,
+					marketplace_withheld_tax = :marketplace_withheld_tax,
+					selling_fees = :selling_fees,
+					fba_fees = :fba_fees,
+					other_transaction_fees = :other_transaction_fees,
+					other = :other,
+					total = :total,
+					updated_at = NOW()`
 
 	_, err := db.NamedExec(query, map[string]interface{}{
 		"user_id":                  txn.User.Id,
