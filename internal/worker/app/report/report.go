@@ -102,7 +102,7 @@ func (r *Report) mapCsv(file string, reader io.Reader) []map[string]string {
 		} else {
 			dict := map[string]string{}
 			for i := range header {
-				dict[header[i]] = record[i]
+				dict[r.translateHeader(header[i])] = record[i]
 			}
 
 			rows = append(rows, dict)
