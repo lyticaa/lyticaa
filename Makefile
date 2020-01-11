@@ -42,10 +42,10 @@ create-user:
 	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE USER lytica WITH CREATEDB CREATEROLE PASSWORD 'password';"
 
 create-database:
-	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE DATABASE dashboard_development OWNER lytica;"
+	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE DATABASE lytica_development OWNER lytica;"
 
 drop-database:
-	PGPASSWORD=password psql -h localhost -U postgres -c "drop database dashboard_development;"
+	PGPASSWORD=password psql -h localhost -U postgres -c "drop database lytica_development;"
 
 migrate:
 	@go run tools/migrate/main.go

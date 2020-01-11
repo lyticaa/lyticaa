@@ -97,7 +97,7 @@ make create-user
 
 ### Migrations
 
-Add your migrations to the `db/migrations` folder. To apply the migrations, simply run:
+Add your migrations to the `db/migrations` folder. To apply the migrations:
 
 ```bash
 make migrate
@@ -105,7 +105,7 @@ make migrate
 
 ## Docker
 
-A Docker stack is provided with this project. To boot the stack, simply run:
+A Docker stack is provided with this project. To boot the stack:
 
 ```bash
 make run-stack
