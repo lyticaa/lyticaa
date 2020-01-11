@@ -110,7 +110,7 @@ func (r *Report) formatTransactions(rows []map[string]string, username string) [
 		productSalesTax, _ := strconv.ParseFloat(row["product sales tax"], 64)
 		shippingCredits, _ := strconv.ParseFloat(row["shipping credits"], 64)
 		shippingCreditsTax, _ := strconv.ParseFloat(row["shipping credits tax"], 64)
-		giftwrapCredits, _ := strconv.ParseFloat(row["giftwrap credits"], 64)
+		giftwrapCredits, _ := strconv.ParseFloat(row["gift wrap credits"], 64)
 		giftwrapCreditsTax, _ := strconv.ParseFloat(row["giftwrap credits tax"], 64)
 		promotionalRebates, _ := strconv.ParseFloat(row["promotional rebates"], 64)
 		promotionalRebatesTax, _ := strconv.ParseFloat(row["promotional rebates tax"], 64)

@@ -1,7 +1,6 @@
 package report
 
 import (
-	"bytes"
 	"testing"
 	"time"
 
@@ -56,8 +55,7 @@ func TestFormatSponsoredProducts(t *testing.T) {
 	r, mock, complete := SetupTests(t)
 	defer complete(r)
 
-	body := []byte(sponsoredProductsReport)
-	content := r.mapCsv(SponsoredProductReportFile, bytes.NewBuffer(body))
+	content := r.mapXlsx(readFile(sponsoredProductReportFile, t))
 
 	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
 		AddRow(1, userId, "test@example.com", time.Now(), time.Now())
@@ -75,43 +73,99 @@ func TestFormatSponsoredProducts(t *testing.T) {
 
 	if len(formatted) > 0 {
 		if formatted[0].User.Id != 1 {
-			t.Errorf("invalid user Id")
+			t.Error()
 		}
 
 		if formatted[0].StartDate.IsZero() {
-			t.Errorf("start date is invalid")
+			t.Error()
 		}
 
 		if formatted[0].EndDate.IsZero() {
-			t.Errorf("end date is invalid")
+			t.Error()
 		}
 
-		if formatted[0].PortfolioName == "" {
-			t.Errorf("portfolio name is invalid")
+		if formatted[0].PortfolioName != "Not grouped" {
+			t.Error()
 		}
 
 		if formatted[0].Currency.Id != 1 {
-			t.Errorf("currency is invalid")
+			t.Error()
 		}
 
-		if formatted[0].Impressions == 0 {
-			t.Errorf("impressions are invalid")
+		if formatted[0].CampaignName != "Flag Football Auto" {
+			t.Error()
 		}
 
-		if formatted[0].Clicks == 0 {
-			t.Errorf("clicks are invalid")
+		if formatted[0].AdGroupName != "Ad Group 1" {
+			t.Error()
 		}
 
-		if formatted[0].CTR == 0 {
-			t.Errorf("click through rate is invalid")
+		if formatted[0].SKU != "PF-EV1C-1R5B" {
+			t.Error()
 		}
 
-		if formatted[0].CPC == 0 {
-			t.Errorf("cost per click is invalid")
+		if formatted[0].ASIN != "B01AQKSLMC" {
+			t.Error()
 		}
 
-		if formatted[0].Spend == 0 {
-			t.Errorf("spend is invalid")
+		if formatted[0].Impressions != 50293 {
+			t.Error()
+		}
+
+		if formatted[0].Clicks != 47 {
+			t.Error()
+		}
+
+		if formatted[0].CTR != 0.0935 {
+			t.Error()
+		}
+
+		if formatted[0].CPC != 0.35 {
+			t.Error()
+		}
+
+		if formatted[0].Spend != 16.22 {
+			t.Error()
+		}
+
+		if formatted[0].TotalSales != 86.48 {
+			t.Error()
+		}
+
+		if formatted[0].ACoS != 18.7558 {
+			t.Error()
+		}
+
+		if formatted[0].RoAS != 5.33 {
+			t.Error()
+		}
+
+		if formatted[0].TotalOrders != 3 {
+			t.Error()
+		}
+
+		if formatted[0].TotalUnits != 3 {
+			t.Error()
+		}
+
+		if formatted[0].ConversionRate != 6.383 {
+			t.Error()
+		}
+
+		if formatted[0].AdvertisedSKUUnits != 3 {
+			t.Error()
+		}
+
+		if formatted[0].OtherSKUUnits != 1 {
+			t.Error()
+		}
+
+		if formatted[0].AdvertisedSKUSales != 86.48 {
+			t.Error()
+		}
+
+		if formatted[0].OtherSKUSales != 1.0 {
+			t.Error()
 		}
 	}
 }
@@ -120,8 +174,7 @@ func TestSaveSponsoredProduct(t *testing.T) {
 	r, mock, complete := SetupTests(t)
 	defer complete(r)
 
-	body := []byte(sponsoredProductsReport)
-	content := r.mapCsv(SponsoredProductReportFile, bytes.NewBuffer(body))
+	content := r.mapXlsx(readFile(sponsoredProductReportFile, t))
 
 	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
 		AddRow(1, userId, "test@example.com", time.Now(), time.Now())
@@ -134,7 +187,6 @@ func TestSaveSponsoredProduct(t *testing.T) {
 
 	formatted := r.formatSponsoredProducts(content, userId)
 	err := r.saveSponsoredProduct(formatted[0])
-
 	if err != nil {
 		t.Error(err)
 	}

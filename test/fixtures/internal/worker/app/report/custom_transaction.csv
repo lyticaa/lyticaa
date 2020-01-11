@@ -1,0 +1,9 @@
+"Includes Amazon Marketplace, Fulfillment by Amazon (FBA), and Amazon Webstore transactions",,,,,,,,,,,,,,,,,,,,,,,,,,
+"All amounts in USD, unless specified",,,,,,,,,,,,,,,,,,,,,,,,,,
+Definitions:,,,,,,,,,,,,,,,,,,,,,,,,,,
+"Sales tax collected: Includes sales tax collected from buyers for product sales, shipping, and gift wrap.",,,,,,,,,,,,,,,,,,,,,,,,,,
+Selling fees: Includes variable closing fees and referral fees.,,,,,,,,,,,,,,,,,,,,,,,,,,
+"Other transaction fees: Includes shipping chargebacks, shipping holdbacks, per-item fees  and sales tax collection fees.",,,,,,,,,,,,,,,,,,,,,,,,,,
+"Other: Includes non-order transaction amounts. For more details, see the ""Type"" and ""Description"" columns for each order ID.",,,,,,,,,,,,,,,,,,,,,,,,,,
+date/time,settlement id,type,order id,sku,description,quantity,marketplace,fulfillment,order city,order state,order postal,tax collection model,product sales,product sales tax,shipping credits,shipping credits tax,gift wrap credits,giftwrap credits tax,promotional rebates,promotional rebates tax,marketplace withheld tax,selling fees,fba fees,other transaction fees,other,total
+"Dec 1, 2019 12:07:47 AM PST",12447169531,Order,113-0688349-7048213,PF-EV1C-1R5B,"Trained Flag Football Set,10 Man Set,Premium Football Gear, Massive 46 Piece Set, Flags, Belts, Cones, More, Bonus: Stylish Carry Bag & Flag Football",1,amazon.com,Amazon,Milford,DE,19963,,26.5,0,0,0,0,0,-0.27,0,0,-3.93,-5.26,0,0,17.04

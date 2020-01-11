@@ -5,7 +5,10 @@ import (
 )
 
 var (
-	valid   = []string{"text/csv"}
+	valid = []string{
+		"text/csv",
+		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+	}
 	invalid = []string{
 		"application/vnd.ms-excel",
 		"application/x-msexcel",
@@ -30,5 +33,19 @@ func TestValidMime(t *testing.T) {
 		if ok {
 			t.Errorf("mime type %v should be invalid but is being returned as valid", mimeType)
 		}
+	}
+}
+
+func TestIsCsv(t *testing.T) {
+	ok := IsCsv(valid[0])
+	if !ok {
+		t.Error("expected CSV")
+	}
+}
+
+func TestIsXlsx(t *testing.T) {
+	ok := IsXlsx(valid[1])
+	if !ok {
+		t.Error("expected XLSX")
 	}
 }

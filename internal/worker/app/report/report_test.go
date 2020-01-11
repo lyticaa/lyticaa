@@ -3,24 +3,18 @@ package report
 import (
 	"bytes"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jmoiron/sqlx"
 )
 
 const (
-	settlementId = 12447169531
-	sku          = "PF-EV1C-1R5B"
-	quantity     = 1
-
-	transactionReport = `"date/time","settlement id","type","order id","sku","quantity","marketplace","fulfillment","total"
-"Dec 1, 2019 12:07:47 AM PST","12447169531","Order","113-0688349-7048213","PF-EV1C-1R5B","1","amazon.com","Amazon","17.04"`
-	sponsoredProductsReport = `"Start Date","End Date","Portfolio name","Currency","Impressions","Clicks","Click-Thru Rate (CTR)","Cost Per Click (CPC)","Spend"
-"Dec 01, 2019","Dec 21, 2019","Not grouped","USD","50293","47","0.0935%","$ 0.35","$ 16.22"`
-
+	typeCsv                    = "text/csv"
+	typeXlsx                   = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 	userId                     = "5de89aea5a61280de1f1bf2b"
-	transactionReportFile      = userId + "/" + customTransaction + ".csv"
-	SponsoredProductReportFile = userId + "/" + sponsoredProducts + ".csv"
+	transactionReportFile      = "../../../../../lytica/test/fixtures/internal/worker/app/report/custom_transaction.csv"
+	sponsoredProductReportFile = "../../../../../lytica/test/fixtures/internal/worker/app/report/sponsored_products.xlsx"
 )
 
 func SetupTests(t *testing.T) (*Report, sqlmock.Sqlmock, func(*Report)) {
@@ -33,75 +27,117 @@ func SetupTests(t *testing.T) (*Report, sqlmock.Sqlmock, func(*Report)) {
 	r := NewReport(db)
 
 	return r, mock, func(r *Report) {
-		r.Db.Close()
+		_ = r.Db.Close()
 	}
 }
 
-func TestMapCsv(t *testing.T) {
-	r, _, complete := SetupTests(t)
+func TestProcessReport(t *testing.T) {
+	r, mock, complete := SetupTests(t)
 	defer complete(r)
 
-	body := []byte(transactionReport)
-	content := r.mapCsv(transactionReportFile, bytes.NewBuffer(body))
+	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
+		AddRow(1, userId, "test@example.com", time.Now(), time.Now())
 
+	transactionTypeRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
+		AddRow(1, transactionType, time.Now(), time.Now())
+	marketplaceRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
+		AddRow(1, marketplace, time.Now(), time.Now())
+	fulfillmentRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
+		AddRow(1, fulfillment, time.Now(), time.Now())
+	taxCollectionModelRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
+		AddRow(1, taxCollectionModel, time.Now(), time.Now())
+
+	mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(user)
+	mock.ExpectQuery("^SELECT (.+) FROM transaction_types").WillReturnRows(transactionTypeRows)
+	mock.ExpectQuery("^SELECT (.+) FROM marketplaces").WillReturnRows(marketplaceRows)
+	mock.ExpectQuery("^SELECT (.+) FROM fulfillments").WillReturnRows(fulfillmentRows)
+	mock.ExpectQuery("^SELECT (.+) FROM tax_collection_models").WillReturnRows(taxCollectionModelRows)
+	mock.ExpectExec("^INSERT INTO transactions").WillReturnResult(sqlmock.NewResult(1, 1))
+
+	body := readFile(transactionReportFile, t)
+	err := r.processReport(customTransaction, userId, typeCsv, body)
+	if err != nil {
+		t.Error(err)
+	}
+
+	currencyRows := sqlmock.NewRows([]string{"id", "name", "symbol", "created_at", "updated_at"}).
+		AddRow(1, currency, currencySymbol, time.Now(), time.Now())
+
+	mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(user)
+	mock.ExpectQuery("^SELECT (.+) FROM currencies").WillReturnRows(currencyRows)
+	mock.ExpectExec("^INSERT INTO sponsored_products").WillReturnResult(sqlmock.NewResult(1, 1))
+
+	body = readFile(sponsoredProductReportFile, t)
+	err = r.processReport(sponsoredProducts, userId, typeXlsx, body)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestProcessTransactions(t *testing.T) {
+	r, mock, complete := SetupTests(t)
+	defer complete(r)
+
+	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
+		AddRow(1, userId, "test@example.com", time.Now(), time.Now())
+	transactionTypeRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
+		AddRow(1, transactionType, time.Now(), time.Now())
+	marketplaceRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
+		AddRow(1, marketplace, time.Now(), time.Now())
+	fulfillmentRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
+		AddRow(1, fulfillment, time.Now(), time.Now())
+	taxCollectionModelRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
+		AddRow(1, taxCollectionModel, time.Now(), time.Now())
+
+	mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(user)
+	mock.ExpectQuery("^SELECT (.+) FROM transaction_types").WillReturnRows(transactionTypeRows)
+	mock.ExpectQuery("^SELECT (.+) FROM marketplaces").WillReturnRows(marketplaceRows)
+	mock.ExpectQuery("^SELECT (.+) FROM fulfillments").WillReturnRows(fulfillmentRows)
+	mock.ExpectQuery("^SELECT (.+) FROM tax_collection_models").WillReturnRows(taxCollectionModelRows)
+	mock.ExpectExec("^INSERT INTO transactions").WillReturnResult(sqlmock.NewResult(1, 1))
+
+	content := r.mapCsv(bytes.NewBuffer(readFile(transactionReportFile, t)))
 	if len(content) == 0 {
 		t.Error("no rows generated")
 	}
 
-	if content[0]["date/time"] != "Dec 1, 2019 12:07:47 AM PST" {
-		t.Error("date/time does not match")
-	}
-
-	if content[0]["settlement id"] != "12447169531" {
-		t.Error("settlement Id does not match")
-	}
-
-	if content[0]["type"] != transactionType {
-		t.Error("order does not match")
-	}
-
-	if content[0]["order id"] != "113-0688349-7048213" {
-		t.Error("order Id does not match")
-	}
-
-	if content[0]["sku"] != sku {
-		t.Error("sku does not match")
-	}
-
-	if content[0]["quantity"] != "1" {
-		t.Error("quantity does not match")
-	}
-
-	if content[0]["marketplace"] != marketplace {
-		t.Error("marketplace does not match")
-	}
-
-	if content[0]["fulfillment"] != fulfillment {
-		t.Error("fulfillment does not match")
-	}
-
-	if content[0]["total"] != "17.04" {
-		t.Error("total does not match")
+	err := r.processTransactions(content, userId)
+	if err != nil {
+		t.Error(err)
 	}
 }
 
-func TestUserFromKey(t *testing.T) {
+func TestProcessSponsoredProducts(t *testing.T) {
+	r, mock, complete := SetupTests(t)
+	defer complete(r)
+
+	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
+		AddRow(1, userId, "test@example.com", time.Now(), time.Now())
+	currencyRows := sqlmock.NewRows([]string{"id", "name", "symbol", "created_at", "updated_at"}).
+		AddRow(1, currency, currencySymbol, time.Now(), time.Now())
+
+	mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(user)
+	mock.ExpectQuery("^SELECT (.+) FROM currencies").WillReturnRows(currencyRows)
+	mock.ExpectExec("^INSERT INTO sponsored_products").WillReturnResult(sqlmock.NewResult(1, 1))
+
+	content := r.mapXlsx(readFile(sponsoredProductReportFile, t))
+	if len(content) == 0 {
+		t.Error("no rows generated")
+	}
+
+	err := r.processSponsoredProducts(content, userId)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestUserFromFilename(t *testing.T) {
 	r, _, complete := SetupTests(t)
 	defer complete(r)
 
-	actual := r.userFromKey(transactionReportFile)
+	actual := r.userFromFilename(userId + "/" + transactionReportFile)
 
 	if actual != userId {
 		t.Errorf("expected a user Id of %v but got %v instead!", userId, actual)
-	}
-}
-
-func TestFileType(t *testing.T) {
-	r, _, complete := SetupTests(t)
-	defer complete(r)
-
-	fileType := r.fileType(transactionReportFile)
-	if fileType != customTransaction {
-		t.Error("unable to determine file type")
 	}
 }

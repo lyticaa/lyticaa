@@ -1,9 +1,6 @@
 package report
 
 import (
-	"bytes"
-	"encoding/csv"
-	"io"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -17,7 +14,7 @@ import (
 
 const (
 	customTransaction = "CustomTransaction"
-	sponsoredProducts = "SponsoredProducts"
+	sponsoredProducts = "Sponsored Products"
 	unknown           = int64(1)
 )
 
@@ -33,10 +30,10 @@ func NewReport(db *sqlx.DB) *Report {
 	}
 }
 
-func (r *Report) Run(file string) {
-	result := r.getS3Object(file)
+func (r *Report) Run(filename string) {
+	result := r.getS3Object(filename)
 	validType := types.ValidMime(*result.ContentType)
-	username := r.userFromKey(file)
+	username := r.userFromFilename(filename)
 
 	if validType {
 		body, err := ioutil.ReadAll(result.Body)
@@ -45,84 +42,60 @@ func (r *Report) Run(file string) {
 			return
 		}
 
-		r.processReport(r.fileType(file), username, body)
+		_ = r.processReport(filename, username, *result.ContentType, body)
 	} else {
 		r.Logger.Info().Str("user", username).Msgf("invalid content type: %v", *result.ContentType)
 	}
 }
 
-func (r *Report) processReport(file, username string, body []byte) {
-	rows := r.mapCsv(file, bytes.NewBuffer(body))
+func (r *Report) processReport(filename, username, contentType string, body []byte) error {
+	rows := r.toMap(contentType, body)
 	r.Logger.Info().Str("user", username).Msgf("total rows to process: %v", len(rows))
 
-	switch file {
-	case customTransaction:
-		transactions := r.formatTransactions(rows, username)
-		for _, transaction := range transactions {
-			err := r.saveTransaction(transaction)
-			if err != nil {
-				r.Logger.Error().Err(err)
-			}
-		}
-	case sponsoredProducts:
-		sponsoredProducts := r.formatSponsoredProducts(rows, username)
-		for _, sponsoredProduct := range sponsoredProducts {
-			err := r.saveSponsoredProduct(sponsoredProduct)
-			if err != nil {
-				r.Logger.Error().Err(err)
-			}
-		}
-	}
-}
-
-func (r *Report) mapCsv(file string, reader io.Reader) []map[string]string {
-	rr := csv.NewReader(reader)
-	var rows []map[string]string
-	var header []string
-	for {
-		record, err := rr.Read()
-		if err == io.EOF {
-			break
-		}
-
-		if len(record) > 0 {
-			shouldSkip := types.ShouldIgnore(record[0])
-			if shouldSkip {
-				r.Logger.Info().Str("user", r.userFromKey(file)).Msgf("skipping record: %v", record[0])
-				continue
-			}
-		}
-
+	if strings.Contains(filename, customTransaction) {
+		err := r.processTransactions(rows, username)
 		if err != nil {
-			r.Logger.Fatal().Err(err)
+			return err
 		}
-
-		if header == nil {
-			header = record
-		} else {
-			dict := map[string]string{}
-			for i := range header {
-				dict[r.translateHeader(header[i])] = record[i]
-			}
-
-			rows = append(rows, dict)
+	} else if strings.Contains(filename, sponsoredProducts) {
+		err := r.processSponsoredProducts(rows, username)
+		if err != nil {
+			return err
 		}
-	}
-
-	return rows
-}
-
-func (r *Report) userFromKey(key string) string {
-	parts := strings.Split(key, "/")
-	return parts[0]
-}
-
-func (r *Report) fileType(file string) string {
-	if strings.Contains(file, "CustomTransaction") {
-		return customTransaction
-	} else if strings.Contains(file, "SponsoredProducts") {
-		return sponsoredProducts
 	} else {
-		return ""
+		r.Logger.Info().Msgf("filename %v is not recognised", filename)
 	}
+
+	return nil
+}
+
+func (r *Report) processTransactions(rows []map[string]string, username string) error {
+	transactions := r.formatTransactions(rows, username)
+	for _, transaction := range transactions {
+		err := r.saveTransaction(transaction)
+		if err != nil {
+			r.Logger.Error().Err(err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (r *Report) processSponsoredProducts(rows []map[string]string, username string) error {
+	sponsoredProducts := r.formatSponsoredProducts(rows, username)
+	for _, sponsoredProduct := range sponsoredProducts {
+		err := r.saveSponsoredProduct(sponsoredProduct)
+		if err != nil {
+			r.Logger.Error().Err(err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (r *Report) userFromFilename(filename string) string {
+	parts := strings.Split(filename, "/")
+	return parts[0]
 }

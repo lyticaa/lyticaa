@@ -159,8 +159,7 @@ func TestFormatTransactions(t *testing.T) {
 	r, mock, complete := SetupTests(t)
 	defer complete(r)
 
-	body := []byte(transactionReport)
-	content := r.mapCsv(transactionReportFile, bytes.NewBuffer(body))
+	content := r.mapCsv(bytes.NewBuffer(readFile(transactionReportFile, t)))
 
 	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
 		AddRow(1, userId, "test@example.com", time.Now(), time.Now())
@@ -187,39 +186,103 @@ func TestFormatTransactions(t *testing.T) {
 
 	if len(formatted) > 0 {
 		if formatted[0].User.Id != 1 {
-			t.Errorf("invalid user Id")
+			t.Error()
 		}
 
 		if formatted[0].DateTime.IsZero() {
-			t.Errorf("date/time is invalid")
+			t.Error()
 		}
 
 		if formatted[0].SettlementIdx != 1 {
-			t.Errorf("invalid settlement index")
+			t.Error()
 		}
 
-		if formatted[0].SettlementId != settlementId {
-			t.Errorf("invalid settlement Id")
+		if formatted[0].SettlementId != 12447169531 {
+			t.Error()
 		}
 
 		if formatted[0].TransactionType.Id != 1 {
-			t.Errorf("invalid transaction type")
+			t.Error()
 		}
 
-		if formatted[0].Sku != sku {
-			t.Errorf("invalid sku")
+		if formatted[0].OrderId != "113-0688349-7048213" {
+			t.Error()
 		}
 
-		if formatted[0].Quantity != quantity {
-			t.Errorf("invalid quantity")
+		if formatted[0].Sku != "PF-EV1C-1R5B" {
+			t.Error()
+		}
+
+		if formatted[0].Quantity != 1 {
+			t.Error()
 		}
 
 		if formatted[0].Marketplace.Id != 1 {
-			t.Errorf("invalid marketplace")
+			t.Error()
 		}
 
 		if formatted[0].Fulfillment.Id != 1 {
-			t.Errorf("invalid fulfillment")
+			t.Error()
+		}
+
+		if formatted[0].TaxCollectionModel.Id != 1 {
+			t.Error()
+		}
+
+		if formatted[0].ProductSales != 26.5 {
+			t.Error()
+		}
+
+		if formatted[0].ProductSalesTax != 0 {
+			t.Error()
+		}
+
+		if formatted[0].ShippingCredits != 0 {
+			t.Error()
+		}
+
+		if formatted[0].ShippingCreditsTax != 0 {
+			t.Error()
+		}
+
+		if formatted[0].GiftwrapCredits != 0 {
+			t.Error()
+		}
+
+		if formatted[0].GiftwrapCreditsTax != 0 {
+			t.Error()
+		}
+
+		if formatted[0].PromotionalRebates != -0.27 {
+			t.Error()
+		}
+
+		if formatted[0].PromotionalRebatesTax != 0 {
+			t.Error()
+		}
+
+		if formatted[0].MarketplaceWithheldTax != 0 {
+			t.Error()
+		}
+
+		if formatted[0].SellingFees != -3.93 {
+			t.Error()
+		}
+
+		if formatted[0].FBAFees != -5.26 {
+			t.Error()
+		}
+
+		if formatted[0].OtherTransactionFees != 0 {
+			t.Error()
+		}
+
+		if formatted[0].Other != 0 {
+			t.Error()
+		}
+
+		if formatted[0].Total != 17.04 {
+			t.Error()
 		}
 	}
 }
@@ -228,8 +291,7 @@ func TestSaveTransaction(t *testing.T) {
 	r, mock, complete := SetupTests(t)
 	defer complete(r)
 
-	body := []byte(transactionReport)
-	content := r.mapCsv(transactionReportFile, bytes.NewBuffer(body))
+	content := r.mapCsv(bytes.NewBuffer(readFile(transactionReportFile, t)))
 
 	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
 		AddRow(1, userId, "test@example.com", time.Now(), time.Now())
