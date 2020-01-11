@@ -2,6 +2,7 @@ package report
 
 import (
 	"os"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -20,7 +21,7 @@ func (r *Report) getS3Object(file string) *s3.GetObjectOutput {
 	svc := s3.New(sess)
 	input := &s3.GetObjectInput{
 		Bucket: aws.String(os.Getenv("AWS_S3_UPLOAD_BUCKET")),
-		Key:    aws.String(file),
+		Key:    aws.String(strings.Replace(file, "+", " ", -1)),
 	}
 
 	result, err := svc.GetObject(input)
