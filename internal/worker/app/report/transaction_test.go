@@ -162,7 +162,7 @@ func TestFormatTransactions(t *testing.T) {
 	content := r.mapCsv(bytes.NewBuffer(readFile(transactionReportFile, t)))
 
 	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
-		AddRow(1, userId, "test@example.com", time.Now(), time.Now())
+		AddRow(1, userId, "test@getlytica.com", time.Now(), time.Now())
 	transactionTypeRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, transactionType, time.Now(), time.Now())
 	marketplaceRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
@@ -294,7 +294,7 @@ func TestSaveTransaction(t *testing.T) {
 	content := r.mapCsv(bytes.NewBuffer(readFile(transactionReportFile, t)))
 
 	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
-		AddRow(1, userId, "test@example.com", time.Now(), time.Now())
+		AddRow(1, userId, "test@getlytica.com", time.Now(), time.Now())
 	transactionTypeRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, transactionType, time.Now(), time.Now())
 	marketplaceRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).

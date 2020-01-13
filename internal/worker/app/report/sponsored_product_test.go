@@ -58,7 +58,7 @@ func TestFormatSponsoredProducts(t *testing.T) {
 	content := r.mapXlsx(readFile(sponsoredProductReportFile, t))
 
 	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
-		AddRow(1, userId, "test@example.com", time.Now(), time.Now())
+		AddRow(1, userId, "test@getlytica.com", time.Now(), time.Now())
 	currencyRows := sqlmock.NewRows([]string{"id", "name", "symbol", "created_at", "updated_at"}).
 		AddRow(1, currency, currencySymbol, time.Now(), time.Now())
 
@@ -177,7 +177,7 @@ func TestSaveSponsoredProduct(t *testing.T) {
 	content := r.mapXlsx(readFile(sponsoredProductReportFile, t))
 
 	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
-		AddRow(1, userId, "test@example.com", time.Now(), time.Now())
+		AddRow(1, userId, "test@getlytica.com", time.Now(), time.Now())
 	currencyRows := sqlmock.NewRows([]string{"id", "name", "symbol", "created_at", "updated_at"}).
 		AddRow(1, currency, currencySymbol, time.Now(), time.Now())
 

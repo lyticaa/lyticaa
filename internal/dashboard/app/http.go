@@ -46,6 +46,10 @@ func (a *App) Handlers() {
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.User)),
 	))
+	a.Router.Handle("/user/change_password", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.UserChangePassword)),
+	))
 	a.Router.Handle("/account/subscribe", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.AccountSubscribe)),

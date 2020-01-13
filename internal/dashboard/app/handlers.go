@@ -12,6 +12,7 @@ import (
 
 	"gitlab.com/getlytica/lytica/internal/dashboard/app/types"
 	"gitlab.com/getlytica/lytica/internal/dashboard/auth"
+	"gitlab.com/getlytica/lytica/internal/dashboard/user"
 	"gitlab.com/getlytica/lytica/internal/models"
 
 	"github.com/coreos/go-oidc"
@@ -164,15 +165,19 @@ func (a *App) Callback(w http.ResponseWriter, r *http.Request) {
 	session.Values["id_token"] = rawIDToken
 	session.Values["access_token"] = token.AccessToken
 	session.Values["profile"] = profile
+
+	parts := strings.Split(profile["sub"].(string), "|")
+	userId := parts[1]
+	models.CreateUser(userId, profile["name"].(string), a.Db)
+
+	session.Values["userId"] = userId
+	session.Values["email"] = profile["name"].(string)
+
 	err = session.Save(r, w)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	parts := strings.Split(profile["sub"].(string), "|")
-	userId := parts[1]
-	models.CreateUser(userId, profile["name"].(string), a.Db)
 
 	http.Redirect(w, r, "/user", http.StatusSeeOther)
 }
@@ -186,6 +191,20 @@ func (a *App) User(w http.ResponseWriter, r *http.Request) {
 	}
 
 	a.RenderTemplate(w, "user", session.Values["profile"])
+}
+
+func (a *App) UserChangePassword(w http.ResponseWriter, r *http.Request) {
+	session, err := a.SessionStore.Get(r, "auth-session")
+	if err != nil {
+		a.Logger.Error().Err(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	u := user.NewUser(session.Values["userId"].(string), session.Values["email"].(string), a.Logger)
+	_ = u.ResetPassword()
+
+	http.Redirect(w, r, "/user", http.StatusSeeOther)
 }
 
 func (a *App) AccountSubscribe(w http.ResponseWriter, r *http.Request) {
