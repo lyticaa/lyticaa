@@ -105,7 +105,7 @@ func (a *App) handlers() {
 
 	a.Router.Handle("/user/notifications", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.changePassword)),
+		negroni.Wrap(http.HandlerFunc(a.notifications)),
 	))
 	a.Router.Handle("/user/invitations", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
