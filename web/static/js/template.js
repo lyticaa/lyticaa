@@ -90,20 +90,20 @@ import feather from "feather-icons"
             });
 
         // close sidebar when click outside on mobile/table
-        $(document).on('click touchstart', function(e){
-            e.stopPropagation();
-
-            // closing of sidebar menu when clicking outside of it
-            if (!$(e.target).closest('.sidebar-toggler').length) {
-                var sidebar = $(e.target).closest('.sidebar').length;
-                var sidebarBody = $(e.target).closest('.sidebar-body').length;
-                if (!sidebar && !sidebarBody) {
-                    if ($('body').hasClass('sidebar-open')) {
-                        $('body').removeClass('sidebar-open');
-                    }
-                }
-            }
-        });
+        // $(document).on('click touchstart', function(e){
+        //     e.stopPropagation();
+        //
+        //     // closing of sidebar menu when clicking outside of it
+        //     if (!$(e.target).closest('.sidebar-toggler').length) {
+        //         var sidebar = $(e.target).closest('.sidebar').length;
+        //         var sidebarBody = $(e.target).closest('.sidebar-body').length;
+        //         if (!sidebar && !sidebarBody) {
+        //             if ($('body').hasClass('sidebar-open')) {
+        //                 $('body').removeClass('sidebar-open');
+        //             }
+        //         }
+        //     }
+        // });
 
         // initializing popover
         $('[data-toggle="popover"]').popover();

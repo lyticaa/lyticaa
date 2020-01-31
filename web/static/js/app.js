@@ -1,13 +1,13 @@
 import $ from "jquery"
+import Turbolinks from "turbolinks";
 
 require("jquery");
 require("bootstrap-datepicker");
 require("js-cookie");
 
-let T = require("turbolinks")
-T.start()
-
 $(document).ready(function(){
+    Turbolinks.start();
+
     // Update profile image.
     let imageUrl = $('.profile-image').attr('rel');
     $('.profile-image-thumb, .profile-image').attr('src', imageUrl);

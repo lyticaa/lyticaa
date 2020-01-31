@@ -16,6 +16,7 @@ import (
 	"gitlab.com/getlytica/lytica/internal/models"
 
 	"github.com/coreos/go-oidc"
+	"github.com/gorilla/sessions"
 )
 
 func (a *App) healthCheck(w http.ResponseWriter, r *http.Request) {
@@ -39,13 +40,7 @@ func (a *App) healthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) home(w http.ResponseWriter, r *http.Request) {
-	session, err := a.SessionStore.Get(r, "auth-session")
-	if err != nil {
-		a.Logger.Error().Err(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
+	session := a.getSession(w, r)
 	a.renderTemplate(w, "home", session.Values)
 }
 
@@ -214,6 +209,16 @@ func (a *App) userChangePassword(w http.ResponseWriter, r *http.Request) {
 	_ = u.ResetPassword()
 
 	http.Redirect(w, r, "/user", http.StatusSeeOther)
+}
+
+func (a *App) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
+	session, err := a.SessionStore.Get(r, "auth-session")
+	if err != nil {
+		a.Logger.Error().Err(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	return session
 }
 
 func (a *App) accountSubscribe(w http.ResponseWriter, r *http.Request) {
