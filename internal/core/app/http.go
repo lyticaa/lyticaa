@@ -38,61 +38,90 @@ func (a *App) Start() {
 }
 
 func (a *App) handlers() {
+	a.Router.HandleFunc("/auth/login", a.login)
+	a.Router.HandleFunc("/auth/logout", a.logout)
+	a.Router.HandleFunc("/auth/callback", a.callback)
+
 	a.Router.Handle("/", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.home)),
 	))
-	a.Router.Handle("/dashboard/sales", negroni.New(
+	a.Router.Handle("/metrics/total_sales", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.sales)),
+		negroni.Wrap(http.HandlerFunc(a.totalSales)),
 	))
-	a.Router.Handle("/dashboard/units_sold", negroni.New(
+	a.Router.Handle("/metrics/units_sold", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.unitsSold)),
 	))
-	a.Router.Handle("/dashboard/amazon/costs", negroni.New(
+	a.Router.Handle("/metrics/amazon_costs", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.amazonCosts)),
 	))
-	a.Router.Handle("/dashboard/advertising", negroni.New(
+	a.Router.Handle("/metrics/advertising", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.advertising)),
 	))
-	a.Router.Handle("/dashboard/refunds", negroni.New(
+	a.Router.Handle("/metrics/refunds", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.refunds)),
 	))
-	a.Router.Handle("/dashboard/shipping_credits", negroni.New(
+	a.Router.Handle("/metrics/shipping_credits", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.shippingCredits)),
 	))
-	a.Router.Handle("/dashboard/promotional_rebates", negroni.New(
+	a.Router.Handle("/metrics/promotional_rebates", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.promotionalRebates)),
 	))
-	a.Router.Handle("/dashboard/total_costs", negroni.New(
+	a.Router.Handle("/metrics/total_costs", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.totalCosts)),
 	))
-	a.Router.Handle("/dashboard/net_margin", negroni.New(
+	a.Router.Handle("/metrics/net_margin", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.netMargin)),
 	))
 
-	a.Router.HandleFunc("/auth/login", a.login)
-	a.Router.HandleFunc("/auth/logout", a.logout)
-	a.Router.HandleFunc("/auth/callback", a.callback)
-	a.Router.Handle("/user", negroni.New(
+	a.Router.Handle("/cohort_analysis", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.user)),
+		negroni.Wrap(http.HandlerFunc(a.cohortAnalysis)),
+	))
+
+	a.Router.Handle("/forecast", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.forecast)),
+	))
+
+	a.Router.Handle("/expenses", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.expenses)),
+	))
+
+	a.Router.Handle("/profit_loss", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.profitLoss)),
+	))
+
+	a.Router.Handle("/user/notifications", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.changePassword)),
+	))
+	a.Router.Handle("/user/invitations", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.invitations)),
+	))
+	a.Router.Handle("/user/subscription", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.subscription)),
 	))
 	a.Router.Handle("/user/change_password", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.userChangePassword)),
+		negroni.Wrap(http.HandlerFunc(a.changePassword)),
 	))
-	a.Router.Handle("/account/subscribe", negroni.New(
+	a.Router.Handle("/user/subscribe", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.accountSubscribe)),
+		negroni.Wrap(http.HandlerFunc(a.subscribe)),
 	))
 
 	a.Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./web/dist"))))

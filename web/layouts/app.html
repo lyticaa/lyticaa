@@ -5,9 +5,10 @@
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
             <title>Lytica</title>
+            <meta name="turbolinks-cache-control" content="no-preview">
             <script src="../static/js/vendors/feather-icons/feather.js"></script>
-            <script src="../static/js/template.js"></script>
-            <script src="../static/js/app.js"></script>
+            <script src="../static/js/template.coffee"></script>
+            <script src="../static/js/app.coffee"></script>
 
             <link rel="stylesheet" href="../static/css/vendors/core/core.css">
             <link rel="stylesheet" href="../static/css/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
@@ -28,65 +29,65 @@
                         <ul class="nav">
                             <li class="nav-item nav-category">Main</li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="collapse" href="#dashboard" role="button" aria-expanded="false" aria-controls="dashboard">
+                                <a class="nav-link" data-toggle="collapse" href="#metrics" role="button" aria-expanded="false" aria-controls="metrics">
                                     <i class="link-icon" data-feather="box"></i>
-                                    <span class="link-title">Dashboard</span>
+                                    <span class="link-title">Metrics</span>
                                     <i class="link-arrow" data-feather="chevron-down"></i>
                                 </a>
-                                <div class="collapse" id="dashboard">
+                                <div class="collapse" id="metrics">
                                     <ul class="nav sub-menu">
                                         <li class="nav-item">
-                                            <a href="dashboard/sales" class="nav-link">Total Sales</a>
+                                            <a href="/metrics/total_sales" class="nav-link">Total Sales</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="dashboard/units" class="nav-link">Units Sold</a>
+                                            <a href="/metrics/units_sold" class="nav-link">Units Sold</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="dashboard/amazon/costs" class="nav-link">Amazon Costs</a>
+                                            <a href="/metrics/amazon_costs" class="nav-link">Amazon Costs</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="dashboard/advertising" class="nav-link">Advertising</a>
+                                            <a href="/metrics/advertising" class="nav-link">Advertising</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="dashboard/refunds" class="nav-link">Refunds</a>
+                                            <a href="/metrics/refunds" class="nav-link">Refunds</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="dashboard/shipping_credits" class="nav-link">Shipping Credits</a>
+                                            <a href="/metrics/shipping_credits" class="nav-link">Shipping Credits</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="dashboard/promotional_rebates" class="nav-link">Promotional Rebates</a>
+                                            <a href="/metrics/promotional_rebates" class="nav-link">Promotional Rebates</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="dashboard/total_costs" class="nav-link">Total Costs</a>
+                                            <a href="/metrics/total_costs" class="nav-link">Total Costs</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="dashboard/net_margin" class="nav-link">Net Margin</a>
+                                            <a href="/metrics/net_margin" class="nav-link">Net Margin</a>
                                         </li>
                                     </ul>
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a href="cohort" class="nav-link">
+                                <a href="/cohort_analysis" class="nav-link">
                                     <i class="link-icon" data-feather="book-open"></i>
                                     <span class="link-title">Cohort Analysis</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="trends" class="nav-link">
+                                <a href="/forecast" class="nav-link">
                                     <i class="link-icon" data-feather="bar-chart"></i>
-                                    <span class="link-title">Trends/Forecasting</span>
+                                    <span class="link-title">Forecast</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="costs" class="nav-link">
+                                <a href="/expenses" class="nav-link">
                                     <i class="link-icon" data-feather="columns"></i>
-                                    <span class="link-title">Costs/Expenses</span>
+                                    <span class="link-title">Expenses</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="profit_loss" class="nav-link">
+                                <a href="/profit_loss" class="nav-link">
                                     <i class="link-icon" data-feather="dollar-sign"></i>
-                                    <span class="link-title">Profit/Loss</span>
+                                    <span class="link-title">Profit & Loss</span>
                                 </a>
                             </li>
                             <li class="nav-item nav-category">Support</li>
@@ -187,25 +188,19 @@
                                         <div class="dropdown-body">
                                             <ul class="profile-nav p-0 pt-3">
                                                 <li class="nav-item">
-                                                    <a href="account/settings/notifications" class="nav-link">
+                                                    <a href="/user/notifications" class="nav-link">
                                                         <i data-feather="bell"></i>
                                                         <span class="link-title">Notifications</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="account/settings/details" class="nav-link">
-                                                        <i data-feather="user"></i>
-                                                        <span class="link-title">Account Details</span>
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="account/users" class="nav-link">
+                                                    <a href="/user/invitations" class="nav-link">
                                                         <i data-feather="users"></i>
-                                                        <span class="link-title">User Management</span>
+                                                        <span class="link-title">Invitations</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="account/subscription" class="nav-link">
+                                                    <a href="/user/subscription" class="nav-link">
                                                         <i data-feather="credit-card"></i>
                                                         <span class="link-title">Subscription</span>
                                                     </a>

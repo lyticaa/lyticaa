@@ -10,9 +10,8 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/getlytica/lytica/internal/dashboard/app/types"
-	"gitlab.com/getlytica/lytica/internal/dashboard/auth"
-	"gitlab.com/getlytica/lytica/internal/dashboard/user"
+	"gitlab.com/getlytica/lytica/internal/core/app/types"
+	"gitlab.com/getlytica/lytica/internal/core/auth"
 	"gitlab.com/getlytica/lytica/internal/models"
 
 	"github.com/coreos/go-oidc"
@@ -186,31 +185,6 @@ func (a *App) callback(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/user", http.StatusSeeOther)
 }
 
-func (a *App) user(w http.ResponseWriter, r *http.Request) {
-	session, err := a.SessionStore.Get(r, "auth-session")
-	if err != nil {
-		a.Logger.Error().Err(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	a.renderTemplate(w, "user", session.Values["profile"])
-}
-
-func (a *App) userChangePassword(w http.ResponseWriter, r *http.Request) {
-	session, err := a.SessionStore.Get(r, "auth-session")
-	if err != nil {
-		a.Logger.Error().Err(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	u := user.NewUser(session.Values["userId"].(string), session.Values["email"].(string), a.Logger)
-	_ = u.ResetPassword()
-
-	http.Redirect(w, r, "/user", http.StatusSeeOther)
-}
-
 func (a *App) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
 	session, err := a.SessionStore.Get(r, "auth-session")
 	if err != nil {
@@ -219,8 +193,4 @@ func (a *App) getSession(w http.ResponseWriter, r *http.Request) *sessions.Sessi
 	}
 
 	return session
-}
-
-func (a *App) accountSubscribe(w http.ResponseWriter, r *http.Request) {
-
 }
