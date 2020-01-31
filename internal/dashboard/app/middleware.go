@@ -13,7 +13,7 @@ func (a *App) isAuthenticated(w http.ResponseWriter, r *http.Request, next http.
 	}
 
 	if _, ok := session.Values["profile"]; !ok {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
 	} else {
 		next(w, r)
 	}

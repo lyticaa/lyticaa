@@ -18,7 +18,7 @@ import (
 	"github.com/coreos/go-oidc"
 )
 
-func (a *App) HealthCheck(w http.ResponseWriter, r *http.Request) {
+func (a *App) healthCheck(w http.ResponseWriter, r *http.Request) {
 	response := types.Health{Status: "OK"}
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
@@ -38,11 +38,18 @@ func (a *App) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (a *App) Home(w http.ResponseWriter, r *http.Request) {
-	a.RenderTemplate(w, "home", nil)
+func (a *App) home(w http.ResponseWriter, r *http.Request) {
+	session, err := a.SessionStore.Get(r, "auth-session")
+	if err != nil {
+		a.Logger.Error().Err(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	a.renderTemplate(w, "home", session.Values)
 }
 
-func (a *App) Login(w http.ResponseWriter, r *http.Request) {
+func (a *App) login(w http.ResponseWriter, r *http.Request) {
 	b := make([]byte, 32)
 	_, err := rand.Read(b)
 	if err != nil {
@@ -75,7 +82,7 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, authenticator.Config.AuthCodeURL(state), http.StatusTemporaryRedirect)
 }
 
-func (a *App) Logout(w http.ResponseWriter, r *http.Request) {
+func (a *App) logout(w http.ResponseWriter, r *http.Request) {
 	session, err := a.SessionStore.Get(r, "auth-session")
 	if err != nil {
 		a.Logger.Error().Err(err)
@@ -111,7 +118,7 @@ func (a *App) Logout(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, logoutUrl.String(), http.StatusTemporaryRedirect)
 }
 
-func (a *App) Callback(w http.ResponseWriter, r *http.Request) {
+func (a *App) callback(w http.ResponseWriter, r *http.Request) {
 	session, err := a.SessionStore.Get(r, "auth-session")
 	if err != nil {
 		a.Logger.Error().Err(err)
@@ -171,7 +178,9 @@ func (a *App) Callback(w http.ResponseWriter, r *http.Request) {
 	models.CreateUser(userId, profile["name"].(string), a.Db)
 
 	session.Values["userId"] = userId
+	session.Values["nickname"] = profile["nickname"].(string)
 	session.Values["email"] = profile["name"].(string)
+	session.Values["picture"] = profile["picture"].(string)
 
 	err = session.Save(r, w)
 	if err != nil {
@@ -182,7 +191,7 @@ func (a *App) Callback(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/user", http.StatusSeeOther)
 }
 
-func (a *App) User(w http.ResponseWriter, r *http.Request) {
+func (a *App) user(w http.ResponseWriter, r *http.Request) {
 	session, err := a.SessionStore.Get(r, "auth-session")
 	if err != nil {
 		a.Logger.Error().Err(err)
@@ -190,10 +199,10 @@ func (a *App) User(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	a.RenderTemplate(w, "user", session.Values["profile"])
+	a.renderTemplate(w, "user", session.Values["profile"])
 }
 
-func (a *App) UserChangePassword(w http.ResponseWriter, r *http.Request) {
+func (a *App) userChangePassword(w http.ResponseWriter, r *http.Request) {
 	session, err := a.SessionStore.Get(r, "auth-session")
 	if err != nil {
 		a.Logger.Error().Err(err)
@@ -207,6 +216,6 @@ func (a *App) UserChangePassword(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/user", http.StatusSeeOther)
 }
 
-func (a *App) AccountSubscribe(w http.ResponseWriter, r *http.Request) {
+func (a *App) accountSubscribe(w http.ResponseWriter, r *http.Request) {
 
 }

@@ -66,6 +66,8 @@ make install
 
 ### Run the Dashboard
 
+The dashboard will require active Redis and Postgres instances. See below for how to start these. 
+
 ```bash
 make run-dashboard-service
 ```
@@ -78,16 +80,24 @@ The dashboard will then be accessible on http://localhost:3000.
 make run-worker-service
 ```
 
+## Sessions
+
+Session and all other temporary data is stored in Redis. To start a local Redis instance, run:
+
+```bash
+make docker-redis
+```
+
 ## Database
 
 This project makes use of Postgres.
 
 ### Setup
 
-To start a local (Docker) instance of Postgres, simply run:
+To start a local Postgres instance, run:
 
 ```bash
-make pg
+make docker-pg
 ```
 
 Then, to create the database and apply the correct role:

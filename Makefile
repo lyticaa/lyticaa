@@ -17,14 +17,15 @@ install: go.sum
 	GO111MODULE=on go install -v ./cmd/workerd
 
 clean:
-	rm -f ${GOBIN}/{dashd}
-	rm -f ${GOBIN}/{workerd}
+	rm -f ${GOBIN}/{dashd,workerd}
 
 tests:
 	@go test -v -coverprofile .testCoverage.txt ./...
 
 setup-yarn:
 	yarn install
+
+build-assets: setup-yarn
 
 run-dashboard-service: build-assets
 	@dashd
@@ -35,8 +36,11 @@ run-worker-service:
 run-stack:
 	@docker-compose -f ./build/docker-compose.yml up --force-recreate --remove-orphans
 
-pg:
+docker-pg:
 	@docker-compose -f ./build/docker-compose.yml run --rm -p 5432:5432 --no-deps pg
+
+docker-redis:
+	@docker-compose -f ./build/docker-compose.yml run --rm -p 6379:6379 --no-deps -d redis
 
 create-user:
 	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE USER lytica WITH CREATEDB CREATEROLE PASSWORD 'password';"
@@ -49,8 +53,6 @@ drop-database:
 
 migrate:
 	@go run tools/migrate/main.go
-
-build-assets: setup-yarn
 
 generate-docs: setup-yarn
 	./node_modules/.bin/redoc-cli bundle ./api/docs/openapi.yml -o ./api/docs/index.html
