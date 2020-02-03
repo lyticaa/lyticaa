@@ -153,6 +153,11 @@ func (a *App) handlers() {
 		negroni.Wrap(http.HandlerFunc(a.complete)),
 	))
 
+	a.Router.Handle("/upload", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.upload)),
+	))
+
 	a.Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./web/dist"))))
 }
 
