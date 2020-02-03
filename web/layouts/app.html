@@ -1,3 +1,6 @@
+{{ define "filters" }}
+{{ end }}
+
 {{ define "app" }}
     <!DOCTYPE html>
     <html lang="en">
@@ -24,80 +27,7 @@
                             <span></span>
                         </div>
                     </div>
-                    <div class="sidebar-body">
-                        <ul class="nav">
-                            <li class="nav-item nav-category">Main</li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="collapse" href="#metrics" role="button" aria-expanded="false" aria-controls="metrics">
-                                    <i class="link-icon" data-feather="box"></i>
-                                    <span class="link-title">Metrics</span>
-                                    <i class="link-arrow" data-feather="chevron-down"></i>
-                                </a>
-                                <div class="collapse" id="metrics">
-                                    <ul class="nav sub-menu">
-                                        <li class="nav-item">
-                                            <a href="/metrics/total_sales" class="nav-link">Total Sales</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/metrics/units_sold" class="nav-link">Units Sold</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/metrics/amazon_costs" class="nav-link">Amazon Costs</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/metrics/advertising" class="nav-link">Advertising</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/metrics/refunds" class="nav-link">Refunds</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/metrics/shipping_credits" class="nav-link">Shipping Credits</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/metrics/promotional_rebates" class="nav-link">Promotional Rebates</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/metrics/total_costs" class="nav-link">Total Costs</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="/metrics/net_margin" class="nav-link">Net Margin</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/cohort_analysis" class="nav-link">
-                                    <i class="link-icon" data-feather="book-open"></i>
-                                    <span class="link-title">Cohort Analysis</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/forecast" class="nav-link">
-                                    <i class="link-icon" data-feather="bar-chart"></i>
-                                    <span class="link-title">Forecast</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/expenses" class="nav-link">
-                                    <i class="link-icon" data-feather="columns"></i>
-                                    <span class="link-title">Expenses</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/profit_loss" class="nav-link">
-                                    <i class="link-icon" data-feather="dollar-sign"></i>
-                                    <span class="link-title">Profit & Loss</span>
-                                </a>
-                            </li>
-                            <li class="nav-item nav-category">Support</li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="link-icon" data-feather="hash"></i>
-                                    <span class="link-title">Documentation</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                    {{ template "nav" . }}
                 </nav>
                 <div class="page-wrapper">
                     <nav class="navbar">
@@ -224,32 +154,13 @@
                         </div>
                     </nav>
                     <div class="page-content">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
-                            <div>
-                                <h4 class="mb-3 mb-md-0">Welcome to Lytica</h4>
-                            </div>
-                            
-                            {{ template "content" . }}
+                        <div class="row">
+                            {{ template "filters" . }}
 
-                            <div class="d-flex align-items-center flex-wrap text-nowrap">
-                                <div class="input-group date datepicker dashboard-date mr-2 mb-2 mb-md-0 d-md-none d-xl-flex" id="dashboardDate">
-                                    <span class="input-group-addon bg-transparent"><i data-feather="calendar" class=" text-primary"></i></span>
-                                    <input type="text" class="form-control">
-                                </div>
-                                <button type="button" class="btn btn-outline-info btn-icon-text mr-2 d-none d-md-block">
-                                    <i class="btn-icon-prepend" data-feather="download"></i>
-                                    Import
-                                </button>
-                                <button type="button" class="btn btn-primary btn-icon-text mb-2 mb-md-0">
-                                    <i class="btn-icon-prepend" data-feather="download-cloud"></i>
-                                    Download Report
-                                </button>
-                            </div>
+                            {{ template "content" . }}
                         </div>
                     </div>
-                    <footer class="footer d-flex flex-column flex-md-row align-items-center justify-content-between">
-                        <p class="text-muted text-center text-md-left">Copyright &copy;&nbsp;<a href="https://www.getlytica.com" target="_blank">Lytica</a>. All rights reserved</p>
-                    </footer>
+                    {{ template "footer" . }}
                 </div>
             </div>
         </body>

@@ -29,6 +29,6 @@ initialize = ->
 
 
 Turbolinks.start()
-$(document).on 'turbolinks:load', ->
+$(document).on 'ready, turbolinks:load', ->
   initialize()
   return

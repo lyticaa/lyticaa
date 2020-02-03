@@ -8,17 +8,23 @@ import (
 
 func (a *App) notifications(w http.ResponseWriter, r *http.Request) {
 	session := a.getSession(w, r)
-	a.renderTemplate(w, "user/notifications", session.Values)
+	t := []string{"user/notifications", "partials/_filters"}
+
+	a.renderTemplate(w, t, session.Values)
 }
 
 func (a *App) invitations(w http.ResponseWriter, r *http.Request) {
 	session := a.getSession(w, r)
-	a.renderTemplate(w, "user/invitations", session.Values)
+	t := []string{"user/invitations"}
+
+	a.renderTemplate(w, t, session.Values)
 }
 
 func (a *App) subscription(w http.ResponseWriter, r *http.Request) {
 	session := a.getSession(w, r)
-	a.renderTemplate(w, "user/subscription", session.Values)
+	t := []string{"user/subscription"}
+
+	a.renderTemplate(w, t, session.Values)
 }
 
 func (a *App) changePassword(w http.ResponseWriter, r *http.Request) {

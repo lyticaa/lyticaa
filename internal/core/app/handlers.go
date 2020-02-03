@@ -40,7 +40,9 @@ func (a *App) healthCheck(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) home(w http.ResponseWriter, r *http.Request) {
 	session := a.getSession(w, r)
-	a.renderTemplate(w, "home", session.Values)
+	t := []string{"home", "partials/_filters"}
+
+	a.renderTemplate(w, t, session.Values)
 }
 
 func (a *App) login(w http.ResponseWriter, r *http.Request) {
@@ -169,9 +171,16 @@ func (a *App) callback(w http.ResponseWriter, r *http.Request) {
 
 	parts := strings.Split(profile["sub"].(string), "|")
 	userId := parts[1]
-	models.CreateUser(userId, profile["name"].(string), a.Db)
 
-	session.Values["userId"] = userId
+	user, err := models.CreateUser(userId, profile["name"].(string), a.Db)
+	if err != nil {
+		a.Logger.Error().Err(err).Msg("unable to create user")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	session.Values["Id"] = user.Id
+	session.Values["userId"] = user.UserId
 	session.Values["nickname"] = profile["nickname"].(string)
 	session.Values["email"] = profile["name"].(string)
 	session.Values["picture"] = profile["picture"].(string)

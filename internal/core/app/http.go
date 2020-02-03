@@ -12,7 +12,15 @@ import (
 	"github.com/urfave/negroni"
 )
 
-var baseTmpl = "app"
+var (
+	cwd, _   = os.Getwd()
+	baseTmpl = "app"
+	baseFiles = []string{
+		filepath.Join(cwd, "./web/dist/"+baseTmpl+".html"),
+		filepath.Join(cwd, "./web/templates/partials/_nav.gohtml"),
+		filepath.Join(cwd, "./web/templates/partials/_footer.gohtml"),
+	}
+)
 
 func (a *App) Start() {
 	a.Logger.Info().Msgf("starting on %v....", ":"+os.Getenv("PORT"))
@@ -124,6 +132,23 @@ func (a *App) handlers() {
 		negroni.Wrap(http.HandlerFunc(a.subscribe)),
 	))
 
+	a.Router.Handle("/onboard/details", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.details)),
+	))
+	a.Router.Handle("/onboard/team", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.team)),
+	))
+	a.Router.Handle("/onboard/import_data", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.importData)),
+	))
+	a.Router.Handle("/onboard/complete", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.complete)),
+	))
+
 	a.Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./web/dist"))))
 }
 
@@ -162,10 +187,20 @@ func (a *App) Stop() {
 	a.Logger.Info().Msg("server exiting....")
 }
 
-func (a *App) renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
-	cwd, _ := os.Getwd()
+func (a *App) templateList(fileList []string) []string {
+	var container []string
+	container = append(container, baseFiles...)
 
-	t, err := template.ParseFiles(filepath.Join(cwd, "./web/templates/"+tmpl+".gohtml"), filepath.Join(cwd, "./web/dist/"+baseTmpl+".html"))
+	for _, file := range fileList {
+		container = append(container, filepath.Join(cwd, "./web/templates/"+file+".gohtml"))
+	}
+
+	return container
+}
+
+func (a *App) renderTemplate(w http.ResponseWriter, templates []string, data interface{}) {
+	files := a.templateList(templates)
+	t, err := template.ParseFiles(files...)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
