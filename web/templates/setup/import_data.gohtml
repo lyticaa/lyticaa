@@ -1,9 +1,19 @@
+{{ define "breadcrumbs" }}
+    <nav class="page-breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/setup/details">Setup</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Import Data<li>
+        </ol>
+    </nav>
+{{ end }}
+
 {{ define "content" }}
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Setup / Import Data</h4>
                     <div id="wizard">
                         <div class="progress">
                             <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div>
@@ -20,8 +30,8 @@
                             <span>Drop files here to upload</span>
                         </div>
                     </form>
-                    <a class="btn btn-primary float-right" href="/onboard/complete" role="button">NEXT</a>
-                    <a class="btn btn-outline-primary float-right mr-2" href="/onboard/subscribe" role="button">PREVIOUS</a>
+                    <a class="btn btn-primary float-right" href="/setup/complete" role="button">NEXT</a>
+                    <a class="btn btn-outline-primary float-right mr-2" href="/setup/subscribe" role="button">PREVIOUS</a>
                 </div>
             </div>
         </div>

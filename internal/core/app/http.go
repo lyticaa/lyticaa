@@ -132,23 +132,27 @@ func (a *App) handlers() {
 		negroni.Wrap(http.HandlerFunc(a.subscribe)),
 	))
 
-	a.Router.Handle("/onboard/details", negroni.New(
+	a.Router.Handle("/setup", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.details)),
 	))
-	a.Router.Handle("/onboard/team", negroni.New(
+	a.Router.Handle("/setup/details", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.team)),
+		negroni.Wrap(http.HandlerFunc(a.details)),
 	))
-	a.Router.Handle("/onboard/subscribe", negroni.New(
+	a.Router.Handle("/setup/invite", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.invite)),
+	))
+	a.Router.Handle("/setup/subscribe", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.subscribe)),
 	))
-	a.Router.Handle("/onboard/import_data", negroni.New(
+	a.Router.Handle("/setup/import_data", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.importData)),
 	))
-	a.Router.Handle("/onboard/complete", negroni.New(
+	a.Router.Handle("/setup/complete", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.complete)),
 	))

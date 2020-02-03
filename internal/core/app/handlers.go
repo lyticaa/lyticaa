@@ -194,6 +194,8 @@ func (a *App) callback(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+
+
 func (a *App) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
 	session, err := a.SessionStore.Get(r, "auth-session")
 	if err != nil {

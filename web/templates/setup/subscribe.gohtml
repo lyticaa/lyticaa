@@ -1,9 +1,19 @@
+{{ define "breadcrumbs" }}
+    <nav class="page-breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/setup/details">Setup</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Subscribe<li>
+        </ol>
+    </nav>
+{{ end }}
+
 {{ define "content" }}
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Setup / Subscription</h4>
                     <div id="wizard">
                         <div class="progress">
                             <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">60%</div>
@@ -15,8 +25,8 @@
                                 Nam tellus dolor, tristique ac tempus nec, iaculis quis nisi.</p>
                         </section>
                     </div>
-                    <a class="btn btn-primary float-right" href="/onboard/import_data" role="button">NEXT</a>
-                    <a class="btn btn-outline-primary float-right mr-2" href="/onboard/team" role="button">PREVIOUS</a>
+                    <a class="btn btn-primary float-right" href="/setup/import_data" role="button">NEXT</a>
+                    <a class="btn btn-outline-primary float-right mr-2" href="/setup/invite" role="button">PREVIOUS</a>
                 </div>
             </div>
         </div>

@@ -1,3 +1,6 @@
+{{ define "breadcrumbs" }}
+{{ end }}
+
 {{ define "filters" }}
 {{ end }}
 
@@ -155,8 +158,14 @@
                     </nav>
                     <div class="page-content">
                         <div class="row">
-                            {{ template "filters" . }}
-
+                            <div class="col-md-6">
+                                {{ template "breadcrumbs" . }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ template "filters" . }}
+                            </div>
+                        </div>
+                        <div class="row">
                             {{ template "content" . }}
                         </div>
                     </div>
