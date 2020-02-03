@@ -140,6 +140,10 @@ func (a *App) handlers() {
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.team)),
 	))
+	a.Router.Handle("/onboard/subscribe", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.subscribe)),
+	))
 	a.Router.Handle("/onboard/import_data", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.importData)),

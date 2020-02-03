@@ -23,6 +23,13 @@ func (a *App) importData(w http.ResponseWriter, r *http.Request) {
 	a.renderTemplate(w, t, session.Values)
 }
 
+func (a *App) subscribe(w http.ResponseWriter, r *http.Request) {
+	session := a.getSession(w, r)
+	t := []string{"onboard/subscribe"}
+
+	a.renderTemplate(w, t, session.Values)
+}
+
 func (a *App) complete(w http.ResponseWriter, r *http.Request) {
 	session := a.getSession(w, r)
 	t := []string{"onboard/complete"}

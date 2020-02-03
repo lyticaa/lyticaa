@@ -34,7 +34,3 @@ func (a *App) changePassword(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-
-func (a *App) subscribe(w http.ResponseWriter, r *http.Request) {
-
-}
