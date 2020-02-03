@@ -19197,8 +19197,8 @@ input:-webkit-autofill:active {
 
 @font-face {
   font-family: 'AdelleSans';
-  src: url("../fonts/adelle-sans/AdelleSans-SemiBold.eot");
-  src: url("../fonts/adelle-sans/AdelleSans-SemiBold.eot?#iefix") format("embedded-opentype"), url("../fonts/adelle-sans/AdelleSans-SemiBold.woff2") format("woff2"), url("../fonts/adelle-sans/AdelleSans-SemiBold.woff") format("woff");
+  src: url("../fonts/adelle-sans/AdelleSans-Semibold.eot");
+  src: url("../fonts/adelle-sans/AdelleSans-Semibold.eot?#iefix") format("embedded-opentype"), url("../fonts/adelle-sans/AdelleSans-Semibold.woff2") format("woff2"), url("../fonts/adelle-sans/AdelleSans-Semibold.woff") format("woff");
   font-weight: 600;
   font-style: normal; }
 
