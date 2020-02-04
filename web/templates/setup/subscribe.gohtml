@@ -25,6 +25,7 @@
                         </p>
                     </section>
                     {{ if .showPlans }}
+                        <input type="hidden" class="stripe-pk" data-stripe-pk="{{.stripePk}}"/>
                         <div class="row">
                             <div class="col-md-4 offset-md-2">
                                 <div class="card">

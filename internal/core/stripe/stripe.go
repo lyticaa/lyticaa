@@ -2,16 +2,20 @@ package stripe
 
 import (
 	"fmt"
-	"github.com/stripe/stripe-go/checkout/session"
 	"os"
 
+	"gitlab.com/getlytica/lytica/internal/models"
+
 	"github.com/stripe/stripe-go"
+	"github.com/stripe/stripe-go/checkout/session"
 )
 
-func CheckoutSession(plan string) (*stripe.CheckoutSession, error) {
+func CheckoutSession(user models.User, plan string) (*stripe.CheckoutSession, error) {
 	stripe.Key = os.Getenv("STRIPE_SK")
 
 	params := &stripe.CheckoutSessionParams{
+		ClientReferenceID: &user.UserId,
+		CustomerEmail: &user.Email,
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
 		}),

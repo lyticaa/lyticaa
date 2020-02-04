@@ -46,8 +46,8 @@ uploads = ->
 # Payments
 #
 payments = ->
-  stripe = Stripe('pk_test_XeE1Vs3wGJk57YfXO96XbYm700hMgNYZrT')
   if $('a.stripe').length > 0
+    stripe = Stripe($('.stripe-pk').data('stripe-pk'))
     $('a.stripe').on 'click', ->
       stripe.redirectToCheckout(sessionId: $(this).attr('rel')).then (result) ->
         alert result.error.message

@@ -2,6 +2,7 @@ package app
 
 import (
 	"net/http"
+	"os"
 	"strings"
 
 	"gitlab.com/getlytica/lytica/internal/core/app/types"
@@ -34,6 +35,7 @@ func (a *App) subscribe(w http.ResponseWriter, r *http.Request) {
 	a.stripeSessions(w, session)
 
 	session.Values["showPlans"] = true
+	session.Values["stripePk"] = os.Getenv("STRIPE_PK")
 
 	t := []string{"partials/nav/_setup", "setup/subscribe"}
 	a.renderTemplate(w, t, session.Values)
@@ -73,6 +75,7 @@ func (a *App) subscribeCancel(w http.ResponseWriter, r *http.Request) {
 		Error: types.FlashMessages["setup"]["subscribe"]["error"],
 	}
 	session.Values["showPlans"] = true
+	session.Values["stripePk"] = os.Getenv("STRIPE_PK")
 
 	t := []string{"partials/nav/_setup", "setup/subscribe", "partials/_flash"}
 	a.renderTemplate(w, t, session.Values)
@@ -133,13 +136,15 @@ func (a *App) isSubscribed(w http.ResponseWriter, r *http.Request) bool {
 }
 
 func (a *App) stripeSessions(w http.ResponseWriter, session *sessions.Session) {
-	monthly, err := stripe.CheckoutSession("monthly")
+	user := session.Values["User"].(models.User)
+
+	monthly, err := stripe.CheckoutSession(user, "monthly")
 	if err != nil {
 		a.Logger.Error().Err(err).Msg("unable to generate a new stripe session")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	annual, err := stripe.CheckoutSession("annual")
+	annual, err := stripe.CheckoutSession(user, "annual")
 	if err != nil {
 		a.Logger.Error().Err(err).Msg("unable to generate a new stripe session")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
