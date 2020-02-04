@@ -10,24 +10,51 @@
 {{ end }}
 
 {{ define "content" }}
-    <div class="row">
-        <div class="col-md-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                    <div id="wizard">
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">60%</div>
-                        </div>
-                        <h4 class="pt-3 pb-3">Subscription</h4>
-                        <section>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut nulla nunc. Maecenas arcu sem, hendrerit a tempor quis,
-                                sagittis accumsan tellus. In hac habitasse platea dictumst. Donec a semper dui. Nunc eget quam libero. Nam at felis metus.
-                                Nam tellus dolor, tristique ac tempus nec, iaculis quis nisi.</p>
-                        </section>
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div id="wizard" class="pb-3">
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">60%</div>
                     </div>
-                    <a class="btn btn-primary float-right" href="/setup/import_data" role="button">NEXT</a>
-                    <a class="btn btn-outline-primary float-right mr-2" href="/setup/invite" role="button">PREVIOUS</a>
+                    <h4 class="pt-3 pb-3">Subscription</h4>
+                    <section class="pb-3">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut nulla nunc. Maecenas arcu sem, hendrerit a tempor quis,
+                            sagittis accumsan tellus. In hac habitasse platea dictumst. Donec a semper dui. Nunc eget quam libero. Nam at felis metus.
+                            Nam tellus dolor, tristique ac tempus nec, iaculis quis nisi.
+                        </p>
+                    </section>
+                    {{ if .showPlans }}
+                        <div class="row">
+                            <div class="col-md-4 offset-md-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        MONTHLY
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <p class="card-text">Monthly Plan</p>
+                                        <a class="btn btn-outline-primary stripe mt-3" rel="{{.stripeMonthlyId}}" href="#" role="button">SUBSCRIBE</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        ANNUAL
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <p class="card-text">Annual Plan</p>
+                                        <a class="btn btn-outline-primary stripe mt-3" rel="{{.stripeAnnualId}}" href="#" role="button">SUBSCRIBE</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {{ end }}
                 </div>
+                {{ if .allowNext }}
+                    <a class="btn btn-primary float-right" href="/setup/import_data" role="button">NEXT</a>
+                {{ end }}
+                <a class="btn btn-outline-primary float-right mr-2" href="/setup/invite" role="button">PREVIOUS</a>
             </div>
         </div>
     </div>

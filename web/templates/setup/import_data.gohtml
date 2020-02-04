@@ -10,29 +10,28 @@
 {{ end }}
 
 {{ define "content" }}
-    <div class="row">
-        <div class="col-md-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                    <div id="wizard">
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div>
-                        </div>
-                        <h4 class="pt-3 pb-3">Import your historical data</h4>
-                        <section>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut nulla nunc. Maecenas arcu sem, hendrerit a tempor quis,
-                                sagittis accumsan tellus. In hac habitasse platea dictumst. Donec a semper dui. Nunc eget quam libero. Nam at felis metus.
-                                Nam tellus dolor, tristique ac tempus nec, iaculis quis nisi.</p>
-                        </section>
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div id="wizard">
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">80%</div>
                     </div>
-                    <form action="/upload" class="dropzone dz-clickable mt-3 mb-3" id="dropzone">
-                        <div class="dz-default dz-message text-center pt-4">
-                            <span>Drop files here to upload</span>
-                        </div>
-                    </form>
-                    <a class="btn btn-primary float-right" href="/setup/complete" role="button">NEXT</a>
-                    <a class="btn btn-outline-primary float-right mr-2" href="/setup/subscribe" role="button">PREVIOUS</a>
+                    <h4 class="pt-3 pb-3">Import your historical data</h4>
+                    <section>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut nulla nunc. Maecenas arcu sem, hendrerit a tempor quis,
+                            sagittis accumsan tellus. In hac habitasse platea dictumst. Donec a semper dui. Nunc eget quam libero. Nam at felis metus.
+                            Nam tellus dolor, tristique ac tempus nec, iaculis quis nisi.
+                        </p>
+                    </section>
                 </div>
+                <form action="/upload" class="dropzone dz-clickable mt-3 mb-3" id="dropzone">
+                    <div class="dz-default dz-message text-center pt-4">
+                        <span>Drop files here to upload</span>
+                    </div>
+                </form>
+                <a class="btn btn-primary float-right" href="/setup/complete" role="button">NEXT</a>
+                <a class="btn btn-outline-primary float-right mr-2" href="/setup/subscribe" role="button">PREVIOUS</a>
             </div>
         </div>
     </div>

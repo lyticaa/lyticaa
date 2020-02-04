@@ -15,6 +15,8 @@ If you are new to Golang, please follow the setup instructions [here](https://go
 Before running this project, please ensure that you have the following environment variables set:
 
 ```bash
+ENV=
+BASE_URL=
 APP_NAME=
 SENTRY_DSN=
 NEWRELIC_LICENSE_KEY=
@@ -29,13 +31,17 @@ AUTH0_CLIENT_SECRET=
 AUTH0_CALLBACK_URL=
 AUTH0_PASSWORD_RESET_URL=
 DATABASE_URL=
-STRIPE_PK=
-STRIPE_SK=
 AWS_REGION=
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 AWS_SQS_QUEUE=
 AWS_S3_UPLOAD_BUCKET=
+STRIPE_PK=
+STRIPE_SK=
+STRIPE_MONTHLY_PLAN_ID=
+STRIPE_ANNUAL_PLAN_ID=
+STRIPE_SUCCESS_URI=
+STRIPE_CANCEL_URI=
 ```
 
 If you are unsure as to what these values ought to be, then please check with a colleague.

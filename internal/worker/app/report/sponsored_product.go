@@ -56,7 +56,7 @@ func (r *Report) formatSponsoredProducts(rows []map[string]string, username stri
 		otherSKUSales, _ := strconv.ParseFloat(reg.ReplaceAllString(row["7 Day Other SKU Sales"], ""), 64)
 
 		sponsoredProduct := models.SponsoredProduct{
-			User:               user,
+			User:               *user,
 			StartDate:          startDate,
 			EndDate:            endDate,
 			PortfolioName:      row["Portfolio name"],

@@ -6,6 +6,9 @@ import (
 	"os"
 	"time"
 
+	"gitlab.com/getlytica/lytica/internal/core/app/types"
+	"gitlab.com/getlytica/lytica/internal/models"
+
 	"github.com/getsentry/sentry-go"
 	"github.com/gorilla/mux"
 	_ "github.com/heroku/x/hmetrics/onload"
@@ -29,6 +32,8 @@ type App struct {
 
 func NewApp() *App {
 	gob.Register(map[string]interface{}{})
+	gob.Register(types.Flash{})
+	gob.Register(models.User{})
 
 	sentryOpts := sentry.ClientOptions{
 		Dsn: os.Getenv("SENTRY_DSN"),

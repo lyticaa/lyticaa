@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	cwd, _   = os.Getwd()
-	baseTmpl = "app"
+	cwd, _    = os.Getwd()
+	baseTmpl  = "app"
 	baseFiles = []string{
 		filepath.Join(cwd, "./web/dist/"+baseTmpl+".html"),
 		filepath.Join(cwd, "./web/templates/partials/_nav.gohtml"),
@@ -52,62 +52,76 @@ func (a *App) handlers() {
 
 	a.Router.Handle("/", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.home)),
 	))
 	a.Router.Handle("/metrics/total_sales", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.totalSales)),
 	))
 	a.Router.Handle("/metrics/units_sold", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.unitsSold)),
 	))
 	a.Router.Handle("/metrics/amazon_costs", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.amazonCosts)),
 	))
 	a.Router.Handle("/metrics/advertising", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.advertising)),
 	))
 	a.Router.Handle("/metrics/refunds", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.refunds)),
 	))
 	a.Router.Handle("/metrics/shipping_credits", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.shippingCredits)),
 	))
 	a.Router.Handle("/metrics/promotional_rebates", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.promotionalRebates)),
 	))
 	a.Router.Handle("/metrics/total_costs", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.totalCosts)),
 	))
 	a.Router.Handle("/metrics/net_margin", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.netMargin)),
 	))
 
 	a.Router.Handle("/cohort_analysis", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.cohortAnalysis)),
 	))
 
 	a.Router.Handle("/forecast", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.forecast)),
 	))
 
 	a.Router.Handle("/expenses", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.expenses)),
 	))
 
 	a.Router.Handle("/profit_loss", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.profitLoss)),
 	))
 
@@ -147,6 +161,14 @@ func (a *App) handlers() {
 	a.Router.Handle("/setup/subscribe", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(a.subscribe)),
+	))
+	a.Router.Handle("/setup/subscribe/success", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.subscribeSuccess)),
+	))
+	a.Router.Handle("/setup/subscribe/cancel", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(a.subscribeCancel)),
 	))
 	a.Router.Handle("/setup/import_data", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),

@@ -3,21 +3,9 @@ package app
 import (
 	"net/http"
 	"os"
+
+	"gitlab.com/getlytica/lytica/internal/models"
 )
-
-func (a *App) isAuthenticated(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	session, err := a.SessionStore.Get(r, "auth-session")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if _, ok := session.Values["profile"]; !ok {
-		http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
-	} else {
-		next(w, r)
-	}
-}
 
 func (a *App) forceSsl(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -31,4 +19,29 @@ func (a *App) forceSsl(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+func (a *App) isAuthenticated(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	session := a.getSession(w, r)
+	if _, ok := session.Values["profile"]; !ok {
+		http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+	} else {
+		next(w, r)
+	}
+}
+
+func (a *App) setupComplete(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	session := a.getSession(w, r)
+	if session.Values["User"] == nil {
+		http.Redirect(w, r, "/setup", http.StatusSeeOther)
+		return
+	}
+
+	user := session.Values["User"].(models.User)
+	if !user.SetupCompleted {
+		http.Redirect(w, r, "/setup", http.StatusSeeOther)
+		return
+	} else {
+		next(w, r)
+	}
 }

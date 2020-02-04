@@ -123,7 +123,7 @@ func (r *Report) formatTransactions(rows []map[string]string, username string) [
 
 		txn := models.Transaction{
 			DateTime:               dateTime,
-			User:                   user,
+			User:                   *user,
 			SettlementId:           settlementId,
 			SettlementIdx:          settlementIdx,
 			TransactionType:        models.TransactionType{Id: txnType},

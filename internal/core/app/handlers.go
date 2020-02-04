@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"gitlab.com/getlytica/lytica/internal/core/app/types"
-	"gitlab.com/getlytica/lytica/internal/core/auth"
+	"gitlab.com/getlytica/lytica/internal/core/auth0"
 	"gitlab.com/getlytica/lytica/internal/models"
 
 	"github.com/coreos/go-oidc"
@@ -40,7 +40,7 @@ func (a *App) healthCheck(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) home(w http.ResponseWriter, r *http.Request) {
 	session := a.getSession(w, r)
-	t := []string{"home", "partials/_filters"}
+	t := []string{"partials/nav/_main", "home", "partials/_filters"}
 
 	a.renderTemplate(w, t, session.Values)
 }
@@ -69,7 +69,7 @@ func (a *App) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authenticator, err := auth.NewAuthenticator()
+	authenticator, err := auth0.NewAuthenticator()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -128,7 +128,7 @@ func (a *App) callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authenticator, err := auth.NewAuthenticator()
+	authenticator, err := auth0.NewAuthenticator()
 	if err != nil {
 		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -179,8 +179,7 @@ func (a *App) callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session.Values["Id"] = user.Id
-	session.Values["userId"] = user.UserId
+	session.Values["User"] = user
 	session.Values["nickname"] = profile["nickname"].(string)
 	session.Values["email"] = profile["name"].(string)
 	session.Values["picture"] = profile["picture"].(string)
@@ -194,8 +193,6 @@ func (a *App) callback(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-
-
 func (a *App) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
 	session, err := a.SessionStore.Get(r, "auth-session")
 	if err != nil {
@@ -203,5 +200,10 @@ func (a *App) getSession(w http.ResponseWriter, r *http.Request) *sessions.Sessi
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
+	return a.resetFlash(session)
+}
+
+func (a *App) resetFlash(session *sessions.Session) *sessions.Session {
+	session.Values["Flash"] = nil
 	return session
 }
