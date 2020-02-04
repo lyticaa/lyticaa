@@ -98,10 +98,16 @@ func (a *App) complete(w http.ResponseWriter, r *http.Request) {
 
 	user := session.Values["User"].(models.User)
 	user.SetupCompleted = true
-	user.Save(a.Db)
-
-	err := session.Save(r, w)
+	err := user.Save(a.Db)
 	if err != nil {
+		a.Logger.Error().Err(err).Msg("unable to save the user")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = session.Save(r, w)
+	if err != nil {
+		a.Logger.Error().Err(err).Msg("unable to save the session")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -111,17 +117,19 @@ func (a *App) complete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) isSubscribed(w http.ResponseWriter, r *http.Request) bool {
+	ok := false
+
 	session := a.getSession(w, r)
 	if session.Values["isSubscribed"] == nil {
-		return false
+		ok = false
 	}
 
 	subscribed := session.Values["isSubscribed"].(bool)
-	if !subscribed {
-		return false
+	if subscribed {
+		ok = true
 	}
 
-	return true
+	return ok
 }
 
 func (a *App) stripeSessions(w http.ResponseWriter, session *sessions.Session) {
