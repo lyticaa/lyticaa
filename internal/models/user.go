@@ -60,7 +60,7 @@ func FindUser(userId string, db *sqlx.DB) *User {
 }
 
 func (u *User) Save(db *sqlx.DB) error {
-	_, err := db.NamedExec(`UPDATE users SET email=:email, first_name=:first_name, company_name=:company_name, setup_completed=:set_completed_at WHERE user_id=:user_id`,
+	_, err := db.NamedExec(`UPDATE users SET email=:email, first_name=:first_name, company_name=:company_name, setup_completed=:set_completed WHERE user_id=:user_id`,
 		map[string]interface{}{
 			"user_id":         u.UserId,
 			"email":           u.Email,
