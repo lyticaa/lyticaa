@@ -121,7 +121,7 @@ func (a *App) isSubscribed(w http.ResponseWriter, r *http.Request) bool {
 
 	session := a.getSession(w, r)
 	if session.Values["isSubscribed"] == nil {
-		ok = false
+		return false
 	}
 
 	subscribed := session.Values["isSubscribed"].(bool)
