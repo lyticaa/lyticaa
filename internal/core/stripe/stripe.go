@@ -8,6 +8,7 @@ import (
 
 	"github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/checkout/session"
+	"github.com/stripe/stripe-go/webhook"
 )
 
 func CheckoutSession(user models.User, plan string) (*stripe.CheckoutSession, error) {
@@ -15,7 +16,7 @@ func CheckoutSession(user models.User, plan string) (*stripe.CheckoutSession, er
 
 	params := &stripe.CheckoutSessionParams{
 		ClientReferenceID: &user.UserId,
-		CustomerEmail: &user.Email,
+		CustomerEmail:     &user.Email,
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
 		}),
@@ -51,4 +52,16 @@ func Monthly() string {
 
 func Annual() string {
 	return os.Getenv("STRIPE_ANNUAL_PLAN_ID")
+}
+
+func CustomerRefId(session *stripe.CheckoutSession) string {
+	return session.ClientReferenceID
+}
+
+func CustomerId(session *stripe.CheckoutSession) string {
+	return session.Customer.ID
+}
+
+func ConstructEvent(body []byte, sig string) (stripe.Event, error) {
+	return webhook.ConstructEvent(body, sig, os.Getenv("STRIPE_WHSEC"))
 }

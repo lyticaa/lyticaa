@@ -4,39 +4,17 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
-	"encoding/json"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/types"
 	"gitlab.com/getlytica/lytica/internal/core/auth0"
 	"gitlab.com/getlytica/lytica/internal/models"
 
 	"github.com/coreos/go-oidc"
 	"github.com/gorilla/sessions"
 )
-
-func (a *App) healthCheck(w http.ResponseWriter, r *http.Request) {
-	response := types.Health{Status: "OK"}
-	jsonResponse, err := json.Marshal(response)
-	if err != nil {
-		a.Logger.Error().Err(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	_, err = w.Write(jsonResponse)
-	if err != nil {
-		a.Logger.Error().Err(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
 
 func (a *App) home(w http.ResponseWriter, r *http.Request) {
 	session := a.getSession(w, r)

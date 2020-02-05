@@ -2,6 +2,7 @@ CREATE TABLE users
 (
     id                 BIGSERIAL NOT NULL,
     user_id            VARCHAR NOT NULL,
+    stripe_user_id     VARCHAR NULL,
     email              VARCHAR NOT NULL,
     first_name         VARCHAR NULL,
     company_name       VARCHAR NULL,

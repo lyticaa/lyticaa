@@ -26,9 +26,10 @@ func (a *App) Start() {
 	a.Logger.Info().Msgf("starting on %v....", ":"+os.Getenv("PORT"))
 	a.Router.Use(a.forceSsl)
 
-	a.handlers()
 	a.restHandlers()
+	a.webhookHandlers()
 	a.errorHandlers()
+	a.handlers()
 
 	a.Srv = &http.Server{
 		Addr:         ":" + os.Getenv("PORT"),
@@ -188,7 +189,15 @@ func (a *App) handlers() {
 }
 
 func (a *App) restHandlers() {
-	a.Router.HandleFunc("/api/health_check", a.healthCheck)
+	a.Router.Handle("/api/health_check", negroni.New(
+		negroni.Wrap(http.HandlerFunc(a.healthCheck)),
+	))
+}
+
+func (a *App) webhookHandlers() {
+	a.Router.Handle("/webhooks/stripe", negroni.New(
+		negroni.Wrap(http.HandlerFunc(a.stripeWebhooks)),
+	))
 }
 
 func (a *App) errorHandlers() {
