@@ -108,6 +108,7 @@ func (a *App) complete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	session.Values["User"] = user
 	err = session.Save(r, w)
 	if err != nil {
 		a.Logger.Error().Err(err).Msg("unable to save the session")

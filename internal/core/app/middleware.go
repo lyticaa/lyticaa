@@ -39,6 +39,7 @@ func (a *App) setupComplete(w http.ResponseWriter, r *http.Request, next http.Ha
 
 	user := session.Values["User"].(models.User)
 	if !user.SetupCompleted {
+		a.Logger.Info().Msgf("%v", user)
 		http.Redirect(w, r, "/setup", http.StatusSeeOther)
 		return
 	} else {
