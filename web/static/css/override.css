@@ -2,3 +2,12 @@
     box-shadow: none !important;
     -webkit-box-shadow: none !important;
 }
+
+.sidebar .sidebar-header .sidebar-brand {
+    letter-spacing: 0px !important;
+    color: #423789 !important;
+}
+
+.sidebar .sidebar-header .sidebar-toggler span {
+    background: #423789 !important;
+}
