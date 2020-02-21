@@ -1,6 +1,6 @@
 # lytica
 
-Main Lytica app (dashboard/worker).
+Lytica webapp (dashboard/worker).
 
 ## Setup
 
