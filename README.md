@@ -8,8 +8,6 @@ Main Lytica app (dashboard/worker).
 
 If you are new to Golang, please follow the setup instructions [here](https://golang.org/doc/install).
 
-## Setup
-
 ### Environment
 
 Before running this project, please ensure that you have the following environment variables set:
