@@ -1,10 +1,19 @@
 package app
 
-import "net/http"
+import (
+	"net/http"
 
-func (a *App) forecast(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
+	"gitlab.com/getlytica/lytica/internal/core/app/forecast"
 
-	t := []string{"partials/nav/_main", "forecast", "partials/_filters"}
-	a.renderTemplate(w, t, session.Values)
+	"github.com/urfave/negroni"
+)
+
+func (a *App) forecastHandlers() {
+	f := forecast.NewForecast(a.Db, a.SessionStore, a.Logger)
+
+	a.Router.Handle("/forecast", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(f.Overview)),
+	))
 }

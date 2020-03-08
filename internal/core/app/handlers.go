@@ -9,7 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/getlytica/lytica/internal/core/auth0"
+	"gitlab.com/getlytica/lytica/internal/core/app/helpers"
+	"gitlab.com/getlytica/lytica/internal/core/auth"
 	"gitlab.com/getlytica/lytica/internal/models"
 
 	"github.com/coreos/go-oidc"
@@ -17,10 +18,10 @@ import (
 )
 
 func (a *App) home(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
-	t := []string{"partials/nav/_main", "home", "partials/_filters"}
+	session := helpers.GetSession(a.SessionStore, a.Logger, w, r)
 
-	a.renderTemplate(w, t, session.Values)
+	t := []string{"partials/nav/_main", "home", "partials/_filters"}
+	helpers.RenderTemplate(w, t, session.Values)
 }
 
 func (a *App) login(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +48,7 @@ func (a *App) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authenticator, err := auth0.NewAuthenticator()
+	authenticator, err := auth.NewAuthenticator()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -106,7 +107,7 @@ func (a *App) callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authenticator, err := auth0.NewAuthenticator()
+	authenticator, err := auth.NewAuthenticator()
 	if err != nil {
 		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

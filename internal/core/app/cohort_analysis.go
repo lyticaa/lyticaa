@@ -1,10 +1,19 @@
 package app
 
-import "net/http"
+import (
+	"net/http"
 
-func (a *App) cohortAnalysis(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
+	"gitlab.com/getlytica/lytica/internal/core/app/cohort_analysis"
 
-	t := []string{"partials/nav/_main", "cohort_analysis", "partials/_filters"}
-	a.renderTemplate(w, t, session.Values)
+	"github.com/urfave/negroni"
+)
+
+func (a *App) cohortAnalysisHandlers() {
+	c := cohort_analysis.NewCohortAnalysis(a.Db, a.SessionStore, a.Logger)
+
+	a.Router.Handle("/cohort_analysis", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(c.Overview)),
+	))
 }

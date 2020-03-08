@@ -1,66 +1,59 @@
 package app
 
-import "net/http"
+import (
+	"net/http"
 
-func (a *App) totalSales(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
+	"gitlab.com/getlytica/lytica/internal/core/app/metrics"
 
-	t := []string{"partials/nav/_main", "metrics/total_sales", "partials/_filters"}
-	a.renderTemplate(w, t, session.Values)
-}
+	"github.com/urfave/negroni"
+)
 
-func (a *App) unitsSold(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
+func (a *App) metricsHandlers() {
+	m := metrics.NewMetrics(a.Db, a.SessionStore, a.Logger)
 
-	t := []string{"partials/nav/_main", "metrics/units_sold", "partials/_filters"}
-	a.renderTemplate(w, t, session.Values)
-}
-
-func (a *App) amazonCosts(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
-
-	t := []string{"partials/nav/_main", "metrics/amazon_costs", "partials/_filters"}
-	a.renderTemplate(w, t, session.Values)
-}
-
-func (a *App) advertising(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
-
-	t := []string{"partials/nav/_main", "metrics/advertising", "partials/_filters"}
-	a.renderTemplate(w, t, session.Values)
-}
-
-func (a *App) refunds(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
-
-	t := []string{"partials/nav/_main", "metrics/refunds", "partials/_filters"}
-	a.renderTemplate(w, t, session.Values)
-}
-
-func (a *App) shippingCredits(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
-	t := []string{"partials/nav/_main", "metrics/shipping_credits", "partials/_filters"}
-
-	a.renderTemplate(w, t, session.Values)
-}
-
-func (a *App) promotionalRebates(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
-
-	t := []string{"partials/nav/_main", "metrics/promotional_rebates", "partials/_filters"}
-	a.renderTemplate(w, t, session.Values)
-}
-
-func (a *App) totalCosts(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
-
-	t := []string{"partials/nav/_main", "metrics/total_costs", "partials/_filters"}
-	a.renderTemplate(w, t, session.Values)
-}
-
-func (a *App) netMargin(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
-
-	t := []string{"partials/nav/_main", "metrics/net_margin", "partials/_filters"}
-	a.renderTemplate(w, t, session.Values)
+	a.Router.Handle("/metrics/total_sales", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.TotalSales)),
+	))
+	a.Router.Handle("/metrics/units_sold", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.UnitsSold)),
+	))
+	a.Router.Handle("/metrics/amazon_costs", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.AmazonCosts)),
+	))
+	a.Router.Handle("/metrics/advertising", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.Advertising)),
+	))
+	a.Router.Handle("/metrics/refunds", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.Refunds)),
+	))
+	a.Router.Handle("/metrics/shipping_credits", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.ShippingCredits)),
+	))
+	a.Router.Handle("/metrics/promotional_rebates", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.PromotionalRebates)),
+	))
+	a.Router.Handle("/metrics/total_costs", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.TotalCosts)),
+	))
+	a.Router.Handle("/metrics/net_margin", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.NetMargin)),
+	))
 }

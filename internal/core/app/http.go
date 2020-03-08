@@ -2,24 +2,12 @@ package app
 
 import (
 	"context"
-	"html/template"
 	"net/http"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/gorilla/handlers"
 	"github.com/urfave/negroni"
-)
-
-var (
-	cwd, _    = os.Getwd()
-	baseTmpl  = "app"
-	baseFiles = []string{
-		filepath.Join(cwd, "./web/dist/"+baseTmpl+".html"),
-		filepath.Join(cwd, "./web/templates/partials/_nav.gohtml"),
-		filepath.Join(cwd, "./web/templates/partials/_footer.gohtml"),
-	}
 )
 
 func (a *App) Start() {
@@ -29,6 +17,15 @@ func (a *App) Start() {
 	a.restHandlers()
 	a.webhookHandlers()
 	a.errorHandlers()
+
+	a.accountHandlers()
+	a.cohortAnalysisHandlers()
+	a.dataHandlers()
+	a.expensesHandlers()
+	a.forecastHandlers()
+	a.metricsHandlers()
+	a.profitLossHandlers()
+	a.setupHandlers()
 	a.handlers()
 
 	a.Srv = &http.Server{
@@ -55,134 +52,6 @@ func (a *App) handlers() {
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(a.home)),
-	))
-	a.Router.Handle("/metrics/total_sales", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.totalSales)),
-	))
-	a.Router.Handle("/metrics/units_sold", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.unitsSold)),
-	))
-	a.Router.Handle("/metrics/amazon_costs", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.amazonCosts)),
-	))
-	a.Router.Handle("/metrics/advertising", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.advertising)),
-	))
-	a.Router.Handle("/metrics/refunds", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.refunds)),
-	))
-	a.Router.Handle("/metrics/shipping_credits", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.shippingCredits)),
-	))
-	a.Router.Handle("/metrics/promotional_rebates", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.promotionalRebates)),
-	))
-	a.Router.Handle("/metrics/total_costs", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.totalCosts)),
-	))
-	a.Router.Handle("/metrics/net_margin", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.netMargin)),
-	))
-
-	a.Router.Handle("/cohort_analysis", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.cohortAnalysis)),
-	))
-
-	a.Router.Handle("/forecast", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.forecast)),
-	))
-
-	a.Router.Handle("/expenses", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.expenses)),
-	))
-
-	a.Router.Handle("/profit_loss", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.profitLoss)),
-	))
-
-	a.Router.Handle("/user/notifications", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.notifications)),
-	))
-	a.Router.Handle("/user/invitations", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.invitations)),
-	))
-	a.Router.Handle("/user/subscription", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.subscription)),
-	))
-	a.Router.Handle("/user/change_password", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.changePassword)),
-	))
-	a.Router.Handle("/user/subscribe", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.subscribe)),
-	))
-
-	a.Router.Handle("/setup", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.details)),
-	))
-	a.Router.Handle("/setup/details", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.details)),
-	))
-	a.Router.Handle("/setup/invite", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.invite)),
-	))
-	a.Router.Handle("/setup/subscribe", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.subscribe)),
-	))
-	a.Router.Handle("/setup/subscribe/success", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.subscribeSuccess)),
-	))
-	a.Router.Handle("/setup/subscribe/cancel", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.subscribeCancel)),
-	))
-	a.Router.Handle("/setup/import_data", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.importData)),
-	))
-	a.Router.Handle("/setup/complete", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.complete)),
-	))
-
-	a.Router.Handle("/upload", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(a.upload)),
 	))
 
 	a.Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./web/dist"))))
@@ -229,28 +98,4 @@ func (a *App) Stop() {
 	}
 
 	a.Logger.Info().Msg("server exiting....")
-}
-
-func (a *App) templateList(fileList []string) []string {
-	var container []string
-	container = append(container, baseFiles...)
-
-	for _, file := range fileList {
-		container = append(container, filepath.Join(cwd, "./web/templates/"+file+".gohtml"))
-	}
-
-	return container
-}
-
-func (a *App) renderTemplate(w http.ResponseWriter, templates []string, data interface{}) {
-	files := a.templateList(templates)
-	t, err := template.ParseFiles(files...)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	err = t.ExecuteTemplate(w, baseTmpl, data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 }

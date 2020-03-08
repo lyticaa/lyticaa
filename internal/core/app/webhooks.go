@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	payment "gitlab.com/getlytica/lytica/internal/core/stripe"
+	"gitlab.com/getlytica/lytica/internal/core/payments"
 	"gitlab.com/getlytica/lytica/internal/models"
 
 	"github.com/stripe/stripe-go"
@@ -46,7 +46,7 @@ func (a *App) readWebhookBody(w http.ResponseWriter, r *http.Request) ([]byte, e
 }
 
 func (a *App) getStripeWebhookEvent(body []byte, w http.ResponseWriter, r *http.Request) (stripe.Event, error) {
-	e, err := payment.ConstructEvent(body, r.Header.Get("Stripe-Signature"))
+	e, err := payments.ConstructEvent(body, r.Header.Get("Stripe-Signature"))
 	if err != nil {
 		a.Logger.Error().Err(err).Msg("bad signature")
 		w.WriteHeader(http.StatusBadRequest)
@@ -67,11 +67,11 @@ func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter)
 		}
 
 		var customer sql.NullString
-		if err := customer.Scan(payment.CustomerId(&session)); err != nil {
+		if err := customer.Scan(payments.CustomerId(&session)); err != nil {
 			a.Logger.Error().Err(err).Msg("unable to assign customer reference")
 		}
 
-		customerRefId := payment.CustomerRefId(&session)
+		customerRefId := payments.CustomerRefId(&session)
 		user := models.FindUser(customerRefId, a.Db)
 		user.StripeUserId = customer
 

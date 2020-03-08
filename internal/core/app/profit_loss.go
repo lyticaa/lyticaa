@@ -1,10 +1,19 @@
 package app
 
-import "net/http"
+import (
+	"net/http"
 
-func (a *App) profitLoss(w http.ResponseWriter, r *http.Request) {
-	session := a.getSession(w, r)
-	t := []string{"partials/nav/_main", "profit_loss", "partials/_filters"}
+	"gitlab.com/getlytica/lytica/internal/core/app/profit_loss"
 
-	a.renderTemplate(w, t, session.Values)
+	"github.com/urfave/negroni"
+)
+
+func (a *App) profitLossHandlers() {
+	p := profit_loss.NewProfitLoss(a.Db, a.SessionStore, a.Logger)
+
+	a.Router.Handle("/profit_loss", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(p.Overview)),
+	))
 }
