@@ -1,3 +1,12 @@
+import Turbolinks from 'turbolinks'
+
+import $ from 'jquery'
+window.jQuery = $
+window.$ = $
+
+import 'js-cookie'
+import 'dropzone'
+
 initialize = ->
   user()
   filters()

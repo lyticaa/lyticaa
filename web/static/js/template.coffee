@@ -1,9 +1,11 @@
-require 'bootstrap'
-require 'clipboard'
+import $ from 'jquery'
+window.jQuery = $
+window.$ = $
 
-$ = require('jquery')
-jQuery = require('jquery')
-feather = require('feather-icons')
+import 'bootstrap'
+import 'bootstrap-datepicker'
+import 'clipboard'
+import feather from 'feather-icons'
 
 $(document).on 'turbolinks:load', ->
   (($) ->
@@ -77,7 +79,7 @@ $(document).on 'turbolinks:load', ->
         return
 
       # initializing popover
-      $('[data-toggle="popover"]').popover()
+      # $('[data-toggle="popover"]').popover()
 
       # checkbox and radios
       $('.form-check label,.form-radio label').append '<i class="input-frame"></i>'

@@ -28,7 +28,7 @@ func NewAuthenticator() (*Authenticator, error) {
 
 	conf := oauth2.Config{
 		ClientID:     os.Getenv("AUTH0_CLIENT_ID"),
-		ClientSecret: os.Getenv("AUTH0_SECRET_KEY"),
+		ClientSecret: os.Getenv("AUTH0_CLIENT_SECRET"),
 		RedirectURL:  fmt.Sprintf("%v%v", os.Getenv("BASE_URL"), os.Getenv("AUTH0_CALLBACK_URI")),
 		Endpoint:     provider.Endpoint(),
 		Scopes:       []string{oidc.ScopeOpenID, "profile"},
