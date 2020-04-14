@@ -3,6 +3,7 @@ window.jQuery = $
 window.$ = $
 
 import 'bootstrap'
+import 'bootstrap/js/src/collapse'
 import 'bootstrap-datepicker'
 import 'clipboard'
 import feather from 'feather-icons'
@@ -63,10 +64,10 @@ $(document).on 'turbolinks:load', ->
         addActiveClass $this
         return
 
-      $('.horizontal-menu .nav li a').each ->
-        $this = $(this)
-        addActiveClass $this
-        return
+#      $('.horizontal-menu .nav li a').each ->
+#        $this = $(this)
+#        addActiveClass $this
+#        return
 
       #  open sidebar-folded when hover
       $('.sidebar .sidebar-body').hover (->

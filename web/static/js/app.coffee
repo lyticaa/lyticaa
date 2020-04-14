@@ -9,7 +9,6 @@ import 'dropzone'
 
 initialize = ->
   user()
-  filters()
   uploads()
   payments()
   
@@ -27,20 +26,6 @@ initialize = ->
 user = ->
   imageUrl = $('.profile-image').attr('rel')
   $('.profile-image-thumb, .profile-image').attr 'src', imageUrl
-  return
-
-#
-# Filters
-#
-filters = ->
-  if $('#dashboardDate').length
-    date = new Date
-    today = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-    $('#dashboardDate').datepicker
-      format: 'dd-MM-yyyy'
-      todayHighlight: true
-      autoclose: true
-    $('#dashboardDate').datepicker 'setDate', today
   return
 
 #
