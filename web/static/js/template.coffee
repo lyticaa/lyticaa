@@ -64,10 +64,10 @@ $(document).on 'turbolinks:load', ->
         addActiveClass $this
         return
 
-#      $('.horizontal-menu .nav li a').each ->
-#        $this = $(this)
-#        addActiveClass $this
-#        return
+      #$('.horizontal-menu .nav li a').each ->
+      #  $this = $(this)
+      #  addActiveClass $this
+      #  return
 
       #  open sidebar-folded when hover
       $('.sidebar .sidebar-body').hover (->
