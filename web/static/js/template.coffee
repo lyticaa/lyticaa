@@ -3,7 +3,6 @@ window.jQuery = $
 window.$ = $
 
 import 'bootstrap'
-import 'bootstrap/js/src/collapse'
 import 'bootstrap-datepicker'
 import 'clipboard'
 import feather from 'feather-icons'
