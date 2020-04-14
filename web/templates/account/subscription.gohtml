@@ -1,2 +1,98 @@
+{{ define "breadcrumbs" }}
+    <nav class="page-breadcrumb">
+        <ol class="breadcrumb pt-2">
+            <li class="breadcrumb-item">
+                <a href="#">Account</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Subscription<li>
+        </ol>
+    </nav>
+{{ end }}
+
 {{ define "content" }}
+    <div class="row">
+        <div class="col-md-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="text-center mb-3 mt-4">Your Subscription</h4>
+                    <p class="text-muted text-center mb-4 pb-2">Upgrade, downgrade or cancel your account.</p>
+                    <div class="container">
+                        <div class="row">
+                            <div class="offset-md-2 col-md-8 stretch-card grid-margin grid-margin-md-0">
+                                <div class="alert alert-info">
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad corporis dolores
+                                    doloribus esse et iste laboriosam maiores maxime, mollitia nisi numquam omnis praesentium provident quam quasi quia quisquam recusandae vel.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="offset-md-2 col-md-4 stretch-card grid-margin grid-margin-md-0">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="text-center text-uppercase mt-3 mb-4">Monthly</h5>
+                                        <h3 class="text-center font-weight-light">$150</h3>
+                                        <button class="btn btn-primary d-block mx-auto mt-4">Downgrade</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 stretch-card">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="text-center text-uppercase mt-3 mb-4">
+                                            Annual
+                                        </h5>
+                                        <h3 class="text-center font-weight-light">$1500</h3>
+                                        <button class="btn btn-warning d-block mx-auto mt-4">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="dataTable" class="table">
+                            <thead>
+                            <tr>
+                                <th>Invoice #</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>12345</td>
+                                    <td>2020/04/25</td>
+                                    <td>
+                                        <span class="badge badge-success">PAID</span>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-primary float-right"><i data-feather="download" class="mr-3 icon-md"></i>Download Invoice</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>12346</td>
+                                    <td>2020/05/25</td>
+                                    <td>
+                                        <span class="badge badge-danger">UNPAID</span>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-primary float-right"><i data-feather="download" class="mr-3 icon-md"></i>Download Invoice</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {{ end }}

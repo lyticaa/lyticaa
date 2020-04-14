@@ -20,9 +20,12 @@
             <script src="../static/js/template.coffee"></script>
             <script src="../static/js/app.coffee"></script>
 
+            <script src="../static/js/account.coffee"></script>
+
             <link rel="stylesheet" href="../static/css/vendors/core/core.css">
             <link rel="stylesheet" href="../static/css/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
-            <link rel="stylesheet" href="../static/css/fonts.css">
+            <link rel="stylesheet" href="../static/css/vendors/feather-icons/feather-icons.css">
+
             <link rel="stylesheet" href="../static/css/style.css">
             <link rel="stylesheet" href="../static/css/override.css">
         </head>
@@ -30,7 +33,9 @@
             <div class="main-wrapper">
                 <nav class="sidebar">
                     <div class="sidebar-header">
-                        <a href="#" class="sidebar-brand">lytica</a>
+                        <a href="/" class="sidebar-brand">
+                            <img src="../static/images/logo.png" class="ht-40"/>
+                        </a>
                         <div class="sidebar-toggler not-active">
                             <span></span>
                             <span></span>
@@ -177,9 +182,7 @@
                                 {{ template "flash" . }}
                             </div>
                         </div>
-                        <div class="row">
-                            {{ template "content" . }}
-                        </div>
+                        {{ template "content" . }}
                     </div>
                     {{ template "footer" . }}
                 </div>

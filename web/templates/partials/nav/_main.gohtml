@@ -1,6 +1,12 @@
 {{ define "menu" }}
     <li class="nav-item nav-category">Main</li>
     <li class="nav-item">
+        <a href="/" class="nav-link">
+            <i class="link-icon" data-feather="anchor"></i>
+            <span class="link-title">Dashboard</span>
+        </a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link" data-toggle="collapse" href="#metrics" role="button" aria-expanded="false" aria-controls="metrics">
             <i class="link-icon" data-feather="box"></i>
             <span class="link-title">Metrics</span>
@@ -18,7 +24,7 @@
                     <a href="/metrics/amazon_costs" class="nav-link">Amazon Costs</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/metrics/advertising" class="nav-link">Advertising</a>
+                    <a href="/metrics/advertising_spend" class="nav-link">Advertising Spend</a>
                 </li>
                 <li class="nav-item">
                     <a href="/metrics/refunds" class="nav-link">Refunds</a>

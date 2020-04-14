@@ -9,20 +9,12 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/helpers"
 	"gitlab.com/getlytica/lytica/internal/core/auth"
 	"gitlab.com/getlytica/lytica/internal/models"
 
 	"github.com/coreos/go-oidc"
 	"github.com/gorilla/sessions"
 )
-
-func (a *App) home(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(a.SessionStore, a.Logger, w, r)
-
-	t := []string{"partials/nav/_main", "home", "partials/_filters"}
-	helpers.RenderTemplate(w, t, session.Values)
-}
 
 func (a *App) login(w http.ResponseWriter, r *http.Request) {
 	b := make([]byte, 32)

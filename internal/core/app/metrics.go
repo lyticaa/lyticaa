@@ -26,10 +26,10 @@ func (a *App) metricsHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.AmazonCosts)),
 	))
-	a.Router.Handle("/metrics/advertising", negroni.New(
+	a.Router.Handle("/metrics/advertising_spend", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(m.Advertising)),
+		negroni.Wrap(http.HandlerFunc(m.AdvertisingSpend)),
 	))
 	a.Router.Handle("/metrics/refunds", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),

@@ -1,6 +1,6 @@
 {{ define "breadcrumbs" }}
     <nav class="page-breadcrumb">
-        <ol class="breadcrumb">
+        <ol class="breadcrumb pt-2">
             <li class="breadcrumb-item">
                 <a href="/setup/details">Setup</a>
             </li>
@@ -10,7 +10,8 @@
 {{ end }}
 
 {{ define "content" }}
-    <div class="col-md-12 grid-margin stretch-card">
+    <div class="row">
+        <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
                 <div id="wizard">
@@ -28,5 +29,6 @@
                 <a class="btn btn-primary float-right mr-2" href="/" role="button">Finish</a>
             </div>
         </div>
+    </div>
     </div>
 {{ end }}

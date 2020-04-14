@@ -11,3 +11,25 @@
 .sidebar .sidebar-header .sidebar-toggler span {
     background: #423789 !important;
 }
+
+a:focus {
+    outline: 0 !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+}
+
+.table-responsive {
+    overflow-x: unset !important;
+}
+
+.modal-content {
+    border: none !important;
+}
+
+.modal-header {
+    border-bottom: none !important;
+}
+
+.modal-footer {
+    border-top: none !important;
+}

@@ -1,10 +1,321 @@
 {{ define "breadcrumbs" }}
     <nav class="page-breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item active" aria-current="page">Metrics</li>
+        <ol class="breadcrumb pt-2">
+            <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
         </ol>
     </nav>
 {{ end }}
 
 {{ define "content" }}
+    <div class="row">
+        <div class="col-12 col-xl-12 grid-margin stretch-card">
+            <div class="card overflow-hidden">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
+                        <h6 class="card-title mb-0">Total Revenue</h6>
+                    </div>
+                    <div class="flot-wrapper">
+                        <div id="revenue-chart" class="flot-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="row flex-grow">
+                <div class="col-md-4 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <h6 class="card-title mb-0">Total Sales</h6>
+                                <div class="dropdown mb-2">
+                                    <button class="btn p-0" type="button" id="total-sales-actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="total-sales-actions">
+                                        <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-md-12 col-xl-5">
+                                    <h3 class="mb-2">$3,897.29</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-success">
+                                            <span>+3.3%</span>
+                                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-12 col-xl-7">
+                                    <div id="apexChart1" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <h6 class="card-title mb-0">Units Sold</h6>
+                                <div class="dropdown mb-2">
+                                    <button class="btn p-0" type="button" id="units-sold-actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="units-sold-actions">
+                                        <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-md-12 col-xl-5">
+                                    <h3 class="mb-2">35,084</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-danger">
+                                            <span>-2.8%</span>
+                                            <i data-feather="arrow-down" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-12 col-xl-7">
+                                    <div id="apexChart2" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <h6 class="card-title mb-0">Amazon Costs</h6>
+                                <div class="dropdown mb-2">
+                                    <button class="btn p-0" type="button" id="amazon-costs-actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="amazon-costs-actions">
+                                        <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-md-12 col-xl-5">
+                                    <h3 class="mb-2">$3,003.44</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-danger">
+                                            <span>+2.8%</span>
+                                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-12 col-xl-7">
+                                    <div id="apexChart3" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="row flex-grow">
+                <div class="col-md-4 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <h6 class="card-title mb-0">Advertising Spend</h6>
+                                <div class="dropdown mb-2">
+                                    <button class="btn p-0" type="button" id="advertising-spend-actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="advertising-spend-actions">
+                                        <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-md-12 col-xl-5">
+                                    <h3 class="mb-2">$1003.14</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-danger">
+                                            <span>+3.3%</span>
+                                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-12 col-xl-7">
+                                    <div id="apexChart1" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <h6 class="card-title mb-0">Refunds</h6>
+                                <div class="dropdown mb-2">
+                                    <button class="btn p-0" type="button" id="refunds-actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="refunds-actions">
+                                        <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-md-12 col-xl-5">
+                                    <h3 class="mb-2">8</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-success">
+                                            <span>-12.8%</span>
+                                            <i data-feather="arrow-down" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-12 col-xl-7">
+                                    <div id="apexChart2" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <h6 class="card-title mb-0">Shipping Credits</h6>
+                                <div class="dropdown mb-2">
+                                    <button class="btn p-0" type="button" id="shipping-credits-actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="shipping-credits-actions">
+                                        <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-md-12 col-xl-5">
+                                    <h3 class="mb-2">$2001.33</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-success">
+                                            <span>+11.8%</span>
+                                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-12 col-xl-7">
+                                    <div id="apexChart3" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="row flex-grow">
+                <div class="col-md-4 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <h6 class="card-title mb-0">Promotional Rebates</h6>
+                                <div class="dropdown mb-2">
+                                    <button class="btn p-0" type="button" id="promotional-rebates-actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="promotional-rebates-actions">
+                                        <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-md-12 col-xl-5">
+                                    <h3 class="mb-2">$1003.14</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-warning">
+                                            <span>-3.3%</span>
+                                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-12 col-xl-7">
+                                    <div id="apexChart1" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <h6 class="card-title mb-0">Total Costs</h6>
+                                <div class="dropdown mb-2">
+                                    <button class="btn p-0" type="button" id="total-costs-actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="total-costs-actions">
+                                        <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-md-12 col-xl-5">
+                                    <h3 class="mb-2">$10,325.57</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-success">
+                                            <span>-12.8%</span>
+                                            <i data-feather="arrow-down" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-12 col-xl-7">
+                                    <div id="apexChart2" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <h6 class="card-title mb-0">Net Margin</h6>
+                                <div class="dropdown mb-2">
+                                    <button class="btn p-0" type="button" id="net-margin-actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="net-margin-actions">
+                                        <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 col-md-12 col-xl-5">
+                                    <h3 class="mb-2">49.88%</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-success">
+                                            <span>+20.8%</span>
+                                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-12 col-xl-7">
+                                    <div id="apexChart3" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {{ end }}

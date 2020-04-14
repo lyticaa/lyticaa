@@ -1,18 +1,24 @@
 {{ define "filters" }}
     <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin float-md-right">
-        <div class="d-flex align-items-center flex-wrap text-nowrap">
-            <div class="input-group date datepicker dashboard-date mr-2 mb-2 mb-md-0 d-md-none d-xl-flex" id="dashboardDate">
-                <span class="input-group-addon bg-transparent"><i data-feather="calendar" class=" text-primary"></i></span>
-                <input type="text" class="form-control">
+        <button type="button" class="btn btn-outline-info btn-icon-text mr-2 d-none d-md-block">
+            <i class="btn-icon-prepend" data-feather="upload"></i>
+            Import
+        </button>
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary dropdown-toggle btn-icon-text mr-2 d-none d-md-block" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="btn-icon-prepend" data-feather="calendar"></i>
+                Date Range
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Today</a>
+                <a class="dropdown-item" href="#">Last 30 Days</a>
+                <a class="dropdown-item" href="#">This Month</a>
+                <a class="dropdown-item" href="#">Last Month</a>
+                <a class="dropdown-item" href="#">Last 3 Months</a>
+                <a class="dropdown-item" href="#">Last 6 Months</a>
+                <a class="dropdown-item" href="#">This Year</a>
+                <a class="dropdown-item" href="#">All Time</a>
             </div>
-            <button type="button" class="btn btn-outline-info btn-icon-text mr-2 d-none d-md-block">
-                <i class="btn-icon-prepend" data-feather="download"></i>
-                Import
-            </button>
-            <button type="button" class="btn btn-primary btn-icon-text mb-2 mb-md-0">
-                <i class="btn-icon-prepend" data-feather="download-cloud"></i>
-                Download Report
-            </button>
         </div>
     </div>
 {{ end }}
