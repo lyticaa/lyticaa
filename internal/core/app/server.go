@@ -14,19 +14,7 @@ func (a *App) Start() {
 	a.Logger.Info().Msgf("starting on %v....", ":"+os.Getenv("PORT"))
 	a.Router.Use(a.forceSsl)
 
-	a.restHandlers()
-	a.webhookHandlers()
-	a.errorHandlers()
-
-	a.accountHandlers()
-	a.cohortAnalysisHandlers()
-	a.dataHandlers()
-	a.expensesHandlers()
-	a.forecastHandlers()
-	a.metricsHandlers()
-	a.profitLossHandlers()
-	a.setupHandlers()
-	a.handlers()
+	a.initializeHandlers()
 
 	a.Srv = &http.Server{
 		Addr:         ":" + os.Getenv("PORT"),
@@ -43,7 +31,22 @@ func (a *App) Start() {
 	}()
 }
 
-func (a *App) handlers() {
+func (a *App) initializeHandlers() {
+	a.restHandlers()
+	a.webhookHandlers()
+	a.errorHandlers()
+	a.accountHandlers()
+	a.cohortAnalysisHandlers()
+	a.dataHandlers()
+	a.expensesHandlers()
+	a.forecastHandlers()
+	a.metricsHandlers()
+	a.profitLossHandlers()
+	a.setupHandlers()
+	a.authHandlers()
+}
+
+func (a *App) authHandlers() {
 	a.Router.HandleFunc("/auth/login", a.login)
 	a.Router.HandleFunc("/auth/logout", a.logout)
 	a.Router.HandleFunc("/auth/callback", a.callback)

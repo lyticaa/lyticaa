@@ -17,6 +17,7 @@ func (a *App) forceSsl(next http.Handler) http.Handler {
 			}
 		}
 
+		a.setSessionVars(w, r)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -45,4 +46,9 @@ func (a *App) setupComplete(w http.ResponseWriter, r *http.Request, next http.Ha
 	} else {
 		next(w, r)
 	}
+}
+
+func (a *App) setSessionVars(w http.ResponseWriter, r *http.Request) {
+	session := a.getSession(w, r)
+	session.Values["intercom_id"] = os.Getenv("INTERCOM_ID")
 }
