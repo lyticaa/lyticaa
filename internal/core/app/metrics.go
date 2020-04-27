@@ -21,11 +21,6 @@ func (a *App) metricsHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.UnitsSold)),
 	))
-	a.Router.Handle("/metrics/amazon_costs", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(m.AmazonCosts)),
-	))
 	a.Router.Handle("/metrics/advertising_spend", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
