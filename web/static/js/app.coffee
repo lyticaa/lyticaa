@@ -16,13 +16,6 @@ initialize = ->
   uploads()
   payments()
   pageComponents()
-
-  # Logout.
-  $(document).ready ->
-    $('.log-out').click (e) ->
-      Cookies.remove 'auth-session'
-      return
-    return
   return
 
 #
@@ -31,6 +24,10 @@ initialize = ->
 user = ->
   imageUrl = $('.profile-image').attr('rel')
   $('.profile-image-thumb, .profile-image').attr 'src', imageUrl
+
+  $('.log-out').click (e) ->
+    Cookies.remove 'auth-session'
+    return
   return
 
 #
