@@ -36,7 +36,7 @@ func (a *App) initializeHandlers() {
 	a.webhookHandlers()
 	a.errorHandlers()
 	a.accountHandlers()
-	a.cohortAnalysisHandlers()
+	a.cohortsHandlers()
 	a.dataHandlers()
 	a.expensesHandlers()
 	a.forecastHandlers()

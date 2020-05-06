@@ -43,10 +43,24 @@
         </div>
     </li>
     <li class="nav-item">
-        <a href="/cohort_analysis" class="nav-link">
+        <a class="nav-link" data-toggle="collapse" href="#cohorts" role="button" aria-expanded="false" aria-controls="cohorts">
             <i class="link-icon" data-feather="book-open"></i>
             <span class="link-title">Cohort Analysis</span>
+            <i class="link-arrow" data-feather="chevron-down"></i>
         </a>
+        <div class="collapse" id="cohorts">
+            <ul class="nav sub-menu">
+                <li class="nav-item">
+                    <a href="/cohorts/high_margin" class="nav-link">High Margin</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/cohorts/low_margin" class="nav-link">Low Margin</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/cohorts/negative_margin" class="nav-link">Negative Margin</a>
+                </li>
+            </ul>
+        </div>
     </li>
     <li class="nav-item">
         <a href="/forecast" class="nav-link">
