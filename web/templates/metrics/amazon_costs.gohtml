@@ -1,0 +1,50 @@
+{{ define "breadcrumbs" }}
+    <nav class="page-breadcrumb">
+        <ol class="breadcrumb pt-2">
+            <li class="breadcrumb-item">
+                <a href="/">Metrics</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Amazon Costs</li>
+        </ol>
+    </nav>
+{{ end }}
+
+{{ define "content" }}
+    <div class="row">
+        <div class="col-12 col-xl-12 grid-margin stretch-card">
+            <div class="card overflow-hidden">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
+                        <h6 class="card-title mb-0">Amazon Costs</h6>
+                    </div>
+                    <div class="flot-wrapper">
+                        <div id="revenue-chart" class="flot-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive overflow-auto">
+                        <table id="dataTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>SKU</th>
+                                    <th>ASIN</th>
+                                    <th>Product Name</th>
+                                    <th>Type</th>
+                                    <th>Amazon Costs</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}
