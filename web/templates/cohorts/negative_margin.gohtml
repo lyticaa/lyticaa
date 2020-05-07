@@ -10,4 +10,143 @@
 {{ end }}
 
 {{ define "content" }}
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="row flex-grow">
+                <div class="col grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                <h6 class="card-title mb-0">Total Sales</h6>
+                            </div>
+                            <div class="row">
+                                <div class="col col-md-12 col-xl-12">
+                                    <h3 class="mb-2">$3,897.29</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-success">
+                                            <span>+3.3%</span>
+                                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                <h6 class="card-title mb-0">Amazon Costs</h6>
+                            </div>
+                            <div class="row">
+                                <div class="col col-md-12 col-xl-12">
+                                    <h3 class="mb-2">$5,084.13</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-danger">
+                                            <span>-2.8%</span>
+                                            <i data-feather="arrow-down" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                <h6 class="card-title mb-0">Product Costs</h6>
+                            </div>
+                            <div class="row">
+                                <div class="col col-md-12 col-xl-12">
+                                    <h3 class="mb-2">$3,003.44</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-danger">
+                                            <span>+2.8%</span>
+                                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                <h6 class="card-title mb-0">Advertising Spend</h6>
+                            </div>
+                            <div class="row">
+                                <div class="col col-md-12 col-xl-12">
+                                    <h3 class="mb-2">$3,003.44</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-success">
+                                            <span>-2.8%</span>
+                                            <i data-feather="arrow-down" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                <h6 class="card-title mb-0">Margin</h6>
+                            </div>
+                            <div class="row">
+                                <div class="col col-md-12 col-xl-12">
+                                    <h3 class="mb-2">30.3%</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-warning">
+                                            <span>+2.8%</span>
+                                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive overflow-auto">
+                        <table id="dataTable" class="table">
+                            <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>ASIN</th>
+                                <th>Product Name</th>
+                                <th>Total Sales</th>
+                                <th>Gross Quantity Sold</th>
+                                <th>Net Quantity Sold</th>
+                                <th>Amazon Costs</th>
+                                <th>Product Costs</th>
+                                <th>Cost of Coupons</th>
+                                <th>Advertising Spend</th>
+                                <th>Coupons</th>
+                                <th>Refunds</th>
+                                <th>Shipping Credits</th>
+                                <th>Promotional Rebates</th>
+                                <th>Total Cost</th>
+                                <th>Net Margin</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {{ end }}
