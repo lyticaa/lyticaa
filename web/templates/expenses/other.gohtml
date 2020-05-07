@@ -1,0 +1,40 @@
+{{ define "breadcrumbs" }}
+    <nav class="page-breadcrumb">
+        <ol class="breadcrumb pt-2">
+            <li class="breadcrumb-item">
+                <a href="/">Expenses</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Other</li>
+        </ol>
+    </nav>
+{{ end }}
+
+{{ define "content" }}
+    <div class="row">
+        <div class="col-12 col-xl-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive overflow-auto">
+                        <table id="dataTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Type</th>
+                                    <th>Cost</th>
+                                    <th>
+                                        <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#cog-modal">
+                                            Add a Cost
+                                        </button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}
