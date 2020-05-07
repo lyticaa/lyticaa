@@ -1,6 +1,6 @@
 {{ define "filters" }}
     <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin float-md-right">
-        <button type="button" class="btn btn-outline-info btn-icon-text mr-2 d-none d-md-block">
+        <button type="button" class="btn btn-outline-info btn-icon-text mr-2 d-none d-md-block" data-toggle="modal" data-target="#import-modal">
             <i class="btn-icon-prepend" data-feather="upload"></i>
             Import
         </button>
@@ -18,6 +18,32 @@
                 <a class="dropdown-item" href="#">Last 6 Months</a>
                 <a class="dropdown-item" href="#">This Year</a>
                 <a class="dropdown-item" href="#">All Time</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="import-modal" tabindex="-1" role="dialog" aria-labelledby="import-modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="invite-user-label">Import</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <div class="dz-default dz-message text-center pt-4">
+                                <span>Drop files here to import</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
             </div>
         </div>
     </div>

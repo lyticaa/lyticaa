@@ -26,9 +26,10 @@
                                     <th>End Date</th>
                                     <th>Type</th>
                                     <th>Cost</th>
+                                    <th>Currency</th>
                                     <th>
-                                        <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#cog-modal">
-                                            Add a Cost
+                                        <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#expenses-cog-modal">
+                                            Add Expense
                                         </button>
                                     </th>
                                 </tr>
@@ -36,6 +37,102 @@
                             <tbody></tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="expenses-cog-modal" tabindex="-1" role="dialog" aria-labelledby="expenses-cog-modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="invite-user-label">Add Expense</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="product">Product</label>
+                            <select id="product" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <div class="alert alert-info">
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad corporis dolores
+                                doloribus esse et iste laboriosam maiores maxime, mollitia nisi numquam omnis praesentium provident quam quasi quia quisquam recusandae vel.
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Description</label>
+                            <input type="text" class="form-control" id="description" value="" placeholder="">
+                        </div>
+                        <div class="form-group">
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="type" id="" value="once">
+                                    One-off
+                                    <i class="input-frame"></i>
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="type" id="" value="recurring">
+                                    Recurring
+                                    <i class="input-frame"></i>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="frequency">Frequency</label>
+                            <select id="frequency" class="form-control">
+                                <option value="day">Daily</option>
+                                <option value="week">Weekly</option>
+                                <option value="month">Monthly</option>
+                                <option value="year">Annually</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="start-date">Start Date</label>
+                                    <div class="input-group date datepicker" id="start-date">
+                                        <input type="text" class="form-control"/>
+                                        <span class="input-group-addon bg-transparent"><i data-feather="calendar" class=""></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="end-date">End Date</label>
+                                    <div class="input-group date datepicker" id="end-date">
+                                        <input type="text" class="form-control"/>
+                                        <span class="input-group-addon bg-transparent"><i data-feather="calendar" class=""></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="cost">Cost</label>
+                                    <input type="text" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="currency">Currency</label>
+                                    <select id="currency" class="form-control">
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
                 </div>
             </div>
         </div>
