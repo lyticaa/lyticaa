@@ -63,11 +63,6 @@ $(document).on 'turbolinks:load', ->
         addActiveClass $this
         return
 
-      #$('.horizontal-menu .nav li a').each ->
-      #  $this = $(this)
-      #  addActiveClass $this
-      #  return
-
       #  open sidebar-folded when hover
       $('.sidebar .sidebar-body').hover (->
         if body.hasClass('sidebar-folded')
@@ -77,9 +72,6 @@ $(document).on 'turbolinks:load', ->
         if body.hasClass('sidebar-folded')
           body.removeClass 'open-sidebar-folded'
         return
-
-      # initializing popover
-      # $('[data-toggle="popover"]').popover()
 
       # checkbox and radios
       $('.form-check label,.form-radio label').append '<i class="input-frame"></i>'
