@@ -7,6 +7,7 @@
             <i class="btn-icon-prepend" data-feather="upload"></i>
             Import
         </button>
+        {{ template "filters-extra" . }}
         <div class="btn-group">
             <button type="button" class="btn btn-primary dropdown-toggle btn-icon-text mr-2 d-none d-md-block" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="btn-icon-prepend" data-feather="calendar"></i>
@@ -23,7 +24,6 @@
                 <a class="dropdown-item" href="#">All Time</a>
             </div>
         </div>
-        {{ template "filters-extra" . }}
     </div>
 
     <div class="modal fade" id="import-modal" tabindex="-1" role="dialog" aria-labelledby="import-modal-label" aria-hidden="true">
