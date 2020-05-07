@@ -7,6 +7,9 @@
 {{ define "filters" }}
 {{ end }}
 
+{{ define "js-extra" }}
+{{ end }}
+
 {{ define "app" }}
     <!DOCTYPE html>
     <html lang="en">
@@ -15,7 +18,6 @@
             <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
             <title>Lytica</title>
             <link rel="icon" type="image/png" href="../static/images/favicon.png">
-            <script src="https://js.stripe.com/v3/"></script>
 
             <script src="../static/js/template.coffee"></script>
             <script src="../static/js/app.coffee"></script>
@@ -186,6 +188,7 @@
                 </div>
             </div>
             <div class="hide intercom" data-intercom-id="{{.intercom_id}}" data-name="{{.nickname}}" data-email="{{.email}}" data-created-at="{{.created_at}}"></div>
+            {{ template "js-extra" . }}
         </body>
     </html>
 {{ end }}
