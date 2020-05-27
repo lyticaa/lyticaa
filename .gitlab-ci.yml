@@ -15,15 +15,15 @@ unit:
   stage: test
   services:
     - redis:latest
-    - name: bitnami/memcache:latest
-      alias: memcache
+    - name: bitnami/memcached:latest
+      alias: memcached
   variables:
     GOPATH: "~"
     REDIS_URL: redis:6379
     REDIS_PASSWORD: ""
     MEMCACHED_USERNAME: admin
     MEMCACHED_PASSWORD: password
-    MEMCACHED_SERVERS: bitnami-memcache:11211
+    MEMCACHED_SERVERS: memcached:11211
     SESSION_KEY: Abmobep8MzV2BRAoBIZ4mQagALxbgkYZ
   script:
     - make tests
