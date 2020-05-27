@@ -41,6 +41,8 @@ STRIPE_MONTHLY_PLAN_ID=
 STRIPE_ANNUAL_PLAN_ID=
 STRIPE_SUCCESS_URI=
 STRIPE_CANCEL_URI=
+INTERCOM_ID=
+SUPPORT_EMAIL=
 ```
 
 If you are unsure as to what these values ought to be, then please check with a colleague.
