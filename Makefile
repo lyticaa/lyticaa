@@ -33,9 +33,6 @@ run-dashboard-service: build-assets
 run-worker-service:
 	@workerd
 
-run-stack:
-	@docker-compose -f ./build/docker-compose.yml up --force-recreate --remove-orphans
-
 docker-pg:
 	@docker-compose -f ./build/docker-compose.yml run --rm -p 5432:5432 --no-deps pg
 

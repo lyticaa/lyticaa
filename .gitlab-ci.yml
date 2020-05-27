@@ -13,8 +13,13 @@ stages:
 unit:
   image: golang:1.13
   stage: test
+  services:
+    - redis:latest
   variables:
     GOPATH: "~"
+    REDIS_URL: redis:6379
+    REDIS_PASSWORD: ""
+    SESSION_KEY: Abmobep8MzV2BRAoBIZ4mQagALxbgkYZ
   script:
     - make tests
 

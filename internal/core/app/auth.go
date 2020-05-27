@@ -154,7 +154,6 @@ func (a *App) callback(w http.ResponseWriter, r *http.Request) {
 	session.Values["nickname"] = profile["nickname"].(string)
 	session.Values["email"] = profile["name"].(string)
 	session.Values["picture"] = profile["picture"].(string)
-	session.Values["created_at"] = user.CreatedAt.Unix()
 
 	err = session.Save(r, w)
 	if err != nil {

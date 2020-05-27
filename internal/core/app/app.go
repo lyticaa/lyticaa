@@ -33,6 +33,7 @@ type App struct {
 func NewApp() *App {
 	gob.Register(map[string]interface{}{})
 	gob.Register(types.Flash{})
+	gob.Register(types.Config{})
 	gob.Register(models.User{})
 
 	sentryOpts := sentry.ClientOptions{

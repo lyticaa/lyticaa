@@ -119,13 +119,3 @@ Add your migrations to the `db/migrations` folder. To apply the migrations:
 ```bash
 make migrate
 ```
-
-## Docker
-
-A Docker stack is provided with this project. To boot the stack:
-
-```bash
-make run-stack
-```
-
-Please ensure that prior to running this, you add the above environment variables to the `build/.env` file. Docker Compose will use these when building the container.

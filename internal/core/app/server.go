@@ -37,6 +37,7 @@ func (a *App) initializeHandlers() {
 	a.errorHandlers()
 	a.accountHandlers()
 	a.cohortsHandlers()
+	a.dashboardHandlers()
 	a.dataHandlers()
 	a.expensesHandlers()
 	a.forecastHandlers()
@@ -44,20 +45,14 @@ func (a *App) initializeHandlers() {
 	a.profitLossHandlers()
 	a.setupHandlers()
 	a.authHandlers()
+
+	a.Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./web/dist"))))
 }
 
 func (a *App) authHandlers() {
 	a.Router.HandleFunc("/auth/login", a.login)
 	a.Router.HandleFunc("/auth/logout", a.logout)
 	a.Router.HandleFunc("/auth/callback", a.callback)
-
-	a.Router.Handle("/", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(a.home)),
-	))
-
-	a.Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./web/dist"))))
 }
 
 func (a *App) restHandlers() {

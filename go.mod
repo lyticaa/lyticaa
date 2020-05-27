@@ -13,6 +13,7 @@ require (
 	github.com/dchest/safefile v0.0.0-20151022103144-855e8d98f185 // indirect
 	github.com/garyburd/redigo v1.6.0 // indirect
 	github.com/getsentry/sentry-go v0.3.1
+	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/golang-migrate/migrate v3.5.4+incompatible // indirect
 	github.com/golang-migrate/migrate/v4 v4.7.1
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
@@ -24,6 +25,7 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/kardianos/govendor v1.0.9 // indirect
 	github.com/kr/fs v0.1.0 // indirect
+	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/lib/pq v1.1.1
 	github.com/newrelic/go-agent v3.0.0+incompatible
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
@@ -37,6 +39,7 @@ require (
 	golang.org/x/sys v0.0.0-20191223224216-5a3cf8467b4e // indirect
 	golang.org/x/tools v0.0.0-20191224055732-dd894d0a8a40 // indirect
 	gopkg.in/boj/redistore.v1 v1.0.0-20160128113310-fc113767cd6b
+	gopkg.in/go-playground/validator.v9 v9.31.0
 	gopkg.in/square/go-jose.v2 v2.4.1 // indirect
 	gopkg.in/yaml.v2 v2.2.7 // indirect
 )

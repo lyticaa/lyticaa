@@ -189,7 +189,7 @@
                     {{ template "footer" . }}
                 </div>
             </div>
-            <div class="hide intercom" data-intercom-id="{{.intercom_id}}" data-name="{{.nickname}}" data-email="{{.email}}" data-created-at="{{.created_at}}"></div>
+            <div class="hide intercom" data-intercom-id="{{.Config.IntercomId}}" data-name="{{.nickname}}" data-email="{{.email}}" data-created-at="{{.User.CreatedAt}}"></div>
             {{ template "js-extra-bottom" . }}
         </body>
     </html>

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 
+	"gitlab.com/getlytica/lytica/internal/core/app/types"
 	"gitlab.com/getlytica/lytica/internal/models"
 )
 
@@ -17,7 +18,7 @@ func (a *App) forceSsl(next http.Handler) http.Handler {
 			}
 		}
 
-		a.setSessionVars(w, r)
+		a.setConfig(w, r)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -48,7 +49,7 @@ func (a *App) setupComplete(w http.ResponseWriter, r *http.Request, next http.Ha
 	}
 }
 
-func (a *App) setSessionVars(w http.ResponseWriter, r *http.Request) {
+func (a *App) setConfig(w http.ResponseWriter, r *http.Request) {
 	session := a.getSession(w, r)
-	session.Values["intercom_id"] = os.Getenv("INTERCOM_ID")
+	session.Values["Config"] = types.NewConfig()
 }
