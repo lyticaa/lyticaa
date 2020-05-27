@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/getlytica/lytica/internal/worker/app/report/types"
+	"gitlab.com/getlytica/lytica-app/internal/worker/app/report/types"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"

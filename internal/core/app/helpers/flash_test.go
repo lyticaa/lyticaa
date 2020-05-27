@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/types"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
 )
 
 const (

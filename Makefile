@@ -39,6 +39,9 @@ docker-pg:
 docker-redis:
 	@docker-compose -f ./build/docker-compose.yml run --rm -p 6379:6379 --no-deps -d redis
 
+docker-memcache:
+	@docker-compose -f ./build/docker-compose.yml run --rm -p 11211:11211 --no-deps -d memcache
+
 create-user:
 	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE USER lytica WITH CREATEDB CREATEROLE PASSWORD 'password';"
 

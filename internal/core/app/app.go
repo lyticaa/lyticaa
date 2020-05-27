@@ -6,14 +6,15 @@ import (
 	"os"
 	"time"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/types"
-	"gitlab.com/getlytica/lytica/internal/models"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
+	"gitlab.com/getlytica/lytica-app/internal/models"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/gorilla/mux"
 	_ "github.com/heroku/x/hmetrics/onload"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"github.com/memcachier/mc"
 	"github.com/newrelic/go-agent"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -27,6 +28,7 @@ type App struct {
 	Router       *mux.Router
 	Client       *http.Client
 	SessionStore *redistore.RediStore
+	Cache        *mc.Client
 	Db           *sqlx.DB
 }
 
@@ -56,6 +58,10 @@ func NewApp() *App {
 		panic(err)
 	}
 
+	cache := mc.NewMC(os.Getenv("MEMCACHED_SERVERS"),
+		os.Getenv("MEMCACHED_USERNAME"),
+		os.Getenv("MEMCACHED_PASSWORD"))
+
 	db, err := sqlx.Connect("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		panic(err)
@@ -67,6 +73,7 @@ func NewApp() *App {
 		Router:       mux.NewRouter(),
 		Client:       &http.Client{Timeout: 5 * time.Second},
 		SessionStore: sessionStore,
+		Cache:        cache,
 		Db:           db,
 	}
 }

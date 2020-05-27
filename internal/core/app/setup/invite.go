@@ -3,7 +3,7 @@ package setup
 import (
 	"net/http"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/helpers"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
 )
 
 func (s *Setup) Invite(w http.ResponseWriter, r *http.Request) {

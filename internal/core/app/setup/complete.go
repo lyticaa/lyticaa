@@ -3,8 +3,8 @@ package setup
 import (
 	"net/http"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/helpers"
-	"gitlab.com/getlytica/lytica/internal/models"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
+	"gitlab.com/getlytica/lytica-app/internal/models"
 )
 
 func (s *Setup) Complete(w http.ResponseWriter, r *http.Request) {

@@ -3,8 +3,8 @@ package account
 import (
 	"net/http"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/helpers"
-	"gitlab.com/getlytica/lytica/internal/core/user"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
+	"gitlab.com/getlytica/lytica-app/internal/core/user"
 )
 
 func (a *Account) ChangePassword(w http.ResponseWriter, r *http.Request) {

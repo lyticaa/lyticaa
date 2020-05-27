@@ -3,7 +3,7 @@ package metrics
 import (
 	"net/http"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/helpers"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
 )
 
 func (m *Metrics) NetMargin(w http.ResponseWriter, r *http.Request) {

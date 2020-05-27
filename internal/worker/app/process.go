@@ -3,8 +3,8 @@ package app
 import (
 	"encoding/json"
 
-	"gitlab.com/getlytica/lytica/internal/worker/app/report"
-	"gitlab.com/getlytica/lytica/internal/worker/app/types"
+	"gitlab.com/getlytica/lytica-app/internal/worker/app/report"
+	"gitlab.com/getlytica/lytica-app/internal/worker/app/types"
 
 	"github.com/aws/aws-sdk-go/service/sqs"
 )

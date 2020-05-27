@@ -5,10 +5,10 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/helpers"
-	"gitlab.com/getlytica/lytica/internal/core/app/types"
-	"gitlab.com/getlytica/lytica/internal/core/payments"
-	"gitlab.com/getlytica/lytica/internal/models"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
+	"gitlab.com/getlytica/lytica-app/internal/core/payments"
+	"gitlab.com/getlytica/lytica-app/internal/models"
 
 	"github.com/gorilla/sessions"
 )

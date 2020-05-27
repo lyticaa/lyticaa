@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/getlytica/lytica/internal/core/auth"
-	"gitlab.com/getlytica/lytica/internal/models"
+	"gitlab.com/getlytica/lytica-app/internal/core/auth"
+	"gitlab.com/getlytica/lytica-app/internal/models"
 
 	"github.com/coreos/go-oidc"
 	"github.com/gorilla/sessions"

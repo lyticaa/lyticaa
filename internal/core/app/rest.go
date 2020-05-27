@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/types"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
 )
 
 func (a *App) healthCheck(w http.ResponseWriter, r *http.Request) {

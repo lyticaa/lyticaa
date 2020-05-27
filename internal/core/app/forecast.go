@@ -3,7 +3,7 @@ package app
 import (
 	"net/http"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/forecast"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/forecast"
 
 	"github.com/urfave/negroni"
 )

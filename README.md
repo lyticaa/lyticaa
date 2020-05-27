@@ -22,6 +22,9 @@ PORT=
 SESSION_KEY=
 REDIS_URL=
 REDIS_PASSWORD=
+MEMCACHED_USERNAME=
+MEMCACHED_SERVERS=
+MEMCACHED_PASSWORD=
 AUTH0_DOMAIN=
 AUTH0_URL=
 AUTH0_CLIENT_ID=
@@ -89,10 +92,18 @@ make run-worker-service
 
 ## Sessions
 
-Session and all other temporary data is stored in Redis. To start a local Redis instance, run:
+Session data is stored in Redis. To start a local Redis instance, run:
 
 ```bash
 make docker-redis
+```
+
+## Cache
+
+Memcache is used to cache frequently requested objects. To start a local Memcache instance, run:
+
+```bash
+make docker-memcache
 ```
 
 ## Database

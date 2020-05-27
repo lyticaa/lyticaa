@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"os"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/types"
-	"gitlab.com/getlytica/lytica/internal/models"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
+	"gitlab.com/getlytica/lytica-app/internal/models"
 )
 
 func (a *App) forceSsl(next http.Handler) http.Handler {

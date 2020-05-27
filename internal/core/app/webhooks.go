@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"gitlab.com/getlytica/lytica/internal/core/payments"
-	"gitlab.com/getlytica/lytica/internal/models"
+	"gitlab.com/getlytica/lytica-app/internal/core/payments"
+	"gitlab.com/getlytica/lytica-app/internal/models"
 
 	"github.com/stripe/stripe-go"
 )

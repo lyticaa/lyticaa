@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"gitlab.com/getlytica/lytica/internal/models"
+	"gitlab.com/getlytica/lytica-app/internal/models"
 )
 
 func (r *Report) getTransactionTypes() []models.TransactionType {

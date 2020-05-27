@@ -3,7 +3,7 @@ package profit_loss
 import (
 	"net/http"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/helpers"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
 )
 
 func (p *ProfitLoss) Overview(w http.ResponseWriter, r *http.Request) {

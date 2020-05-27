@@ -3,7 +3,7 @@ package app
 import (
 	"net/http"
 
-	"gitlab.com/getlytica/lytica/internal/core/app/account"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/account"
 
 	"github.com/urfave/negroni"
 )

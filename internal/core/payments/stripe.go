@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"gitlab.com/getlytica/lytica/internal/models"
+	"gitlab.com/getlytica/lytica-app/internal/models"
 
 	"github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/checkout/session"

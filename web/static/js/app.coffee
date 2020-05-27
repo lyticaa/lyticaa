@@ -10,16 +10,20 @@ import 'dropzone'
 require('datatables.net') window, $
 require('datatables.net-bs4') window, $
 
+#
+# Initialize.
+#
 initialize = ->
   user()
+  dashboard()
+
   support()
   uploads()
   payments()
-  pageComponents()
   return
 
 #
-# User
+# User.
 #
 user = ->
   imageUrl = $('.profile-image').attr('rel')
@@ -31,7 +35,55 @@ user = ->
   return
 
 #
-# Support (intercom)
+# Dashboard.
+#
+dashboard = ->
+  if $('input.location').data('section') != 'dashboard'
+    return
+
+  loadDashboardMetrics()
+
+  $('.date-filter').on 'click', (e) ->
+    e.preventDefault()
+    $('.date-filter.active').removeClass 'active'
+    $(this).addClass 'active'
+
+    loadDashboardMetrics()
+
+    return
+  return
+
+#
+# Load Metrics.
+#
+loadDashboardMetrics = ->
+  tbStart()
+  resetErrors()
+
+  $('button.loading').show()
+
+  $.ajax
+    type: 'GET'
+    url: window.location.href + 'dashboard/metrics/filter/' + $('.date-filter.active').data('range')
+    timeout: 10000
+    statusCode:
+      200: (data) ->
+        tbStop()
+        $('button.loading').hide()
+
+        # feather.replace()
+      500: ->
+        tbStop()
+        $('button.loading').hide()
+        $('.alert.alert-danger.metrics').show()
+    error: ->
+      tbStop()
+      $('button.loading').hide()
+      $('.alert.alert-danger.metrics').show()
+  return
+
+#
+# Support (intercom).
 #
 support = ->
   intercomId = $('.intercom').data('intercom-id')
@@ -79,7 +131,7 @@ support = ->
     return
 
 #
-# Uploads
+# Uploads.
 #
 uploads = ->
   if $('#dropzone').length > 0
@@ -87,7 +139,7 @@ uploads = ->
   return
 
 #
-# Payments
+# Payments.
 #
 payments = ->
   if $('a.stripe').length > 0
@@ -99,24 +151,35 @@ payments = ->
   return
 
 #
-# Page components
+# Reset errors.
 #
-pageComponents = ->
-  if $("#dataTable").length > 0
-    $('#dataTable').DataTable
-      'bFilter': false
-      'lengthChange': false
-      preDrawCallback: (settings) ->
-        api = new ($.fn.dataTable.Api)(settings)
-        pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate')
-        pagination.toggle api.page.info().pages > 1
+resetErrors = ->
+  $('.alert.alert-danger').each ->
+    if $(this).is(':visible')
+      $(this).hide()
+    return
 
-    $('#dataTable').each ->
-      datatable = $(this)
-      length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select')
-      length_sel.removeClass 'form-control-sm'
-      return
-  return
+#
+# Reset warnings.
+#
+resetWarnings = ->
+  $('.alert.alert-warning').each ->
+    if $(this).is(':visible')
+      $(this).hide()
+    return
+
+#
+# Start Turbolinks progress bar.
+#
+tbStart = ->
+  Turbolinks.controller.adapter.progressBar.setValue 0
+  Turbolinks.controller.adapter.progressBar.show()
+
+#
+# Stop Turbolinks progress bar.
+#
+tbStop = ->
+  Turbolinks.controller.adapter.progressBar.hide()
 
 #
 # Init
