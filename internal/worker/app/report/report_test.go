@@ -13,8 +13,8 @@ const (
 	typeCsv                    = "text/csv"
 	typeXlsx                   = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 	userId                     = "5de89aea5a61280de1f1bf2b"
-	transactionReportFile      = "../../../../../lytica/test/fixtures/internal/worker/app/report/custom_transaction.csv"
-	sponsoredProductReportFile = "../../../../../lytica/test/fixtures/internal/worker/app/report/sponsored_products.xlsx"
+	transactionReportFile      = "../../../../../lytica-app/test/fixtures/internal/worker/app/report/custom_transaction.csv"
+	sponsoredProductReportFile = "../../../../../lytica-app/test/fixtures/internal/worker/app/report/sponsored_products.xlsx"
 )
 
 func SetupTests(t *testing.T) (*Report, sqlmock.Sqlmock, func(*Report)) {
