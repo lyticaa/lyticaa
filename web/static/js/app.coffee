@@ -43,6 +43,9 @@ initialize = ->
   # Profit Loss
   profitLoss()
 
+  # Account
+  accountNotifications()
+
   support()
   uploads()
   payments()
@@ -733,7 +736,7 @@ expensesOther = ->
   dtCleanup($('#expenses-other-table'))
 
 #
-# Forecast.
+# Profit & Loss.
 #
 profitLoss = ->
   if $('input.location').data('section') != 'profit-loss'
@@ -772,6 +775,47 @@ profitLoss = ->
     dtReload(this, $('#profit-loss-table'))
 
   dtCleanup($('#profit-loss-table'))
+
+#
+# Account: Notifications
+#
+accountNotifications = ->
+  if $('input.location').data('section') != 'account-notifications'
+    return
+
+  $('button.loading').show()
+
+  $('#account-notifications-table').DataTable
+    'serverSide': true,
+    'bFilter': false
+    'lengthChange': false
+    'ajax':
+      'url': window.location.href + '/filter/today'
+      'dataSrc': (j) ->
+        $('button.loading').hide()
+
+        if j.data.length > 0
+          resetErrors()
+          resetWarnings()
+
+        return j.data
+      'error': (j) ->
+        $('.alert.alert-error.account-error').show()
+    'columns': [
+      { 'data': 'notification' }
+      { 'data': 'date' }
+    ]
+    'language': {
+      'infoFiltered': ''
+    }
+    preDrawCallback: (settings) ->
+      dtPreDrawCallback(this, settings)
+
+  $('.date-filter').on 'click', (e) ->
+    e.preventDefault()
+    dtReload(this, $('#account-notifications-table'))
+
+  dtCleanup($('#account-notifications-table'))
 
 #
 # Support (intercom).

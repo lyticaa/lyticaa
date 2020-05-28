@@ -38,3 +38,7 @@ table.dataTable thead th {
 .modal-footer {
     border-top: none !important;
 }
+
+table > thead > tr > th:hover {
+    cursor: pointer;
+}

@@ -15,6 +15,10 @@ func (a *App) accountHandlers() {
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(acct.Notifications)),
 	))
+	a.Router.Handle("/account/notifications/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(acct.NotificationsByDate)),
+	))
 	a.Router.Handle("/account/invitations", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(acct.Invitations)),
