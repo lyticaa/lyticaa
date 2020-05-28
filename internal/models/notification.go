@@ -10,7 +10,7 @@ import (
 type Notification struct {
 	Id           int64     `db:"id"`
 	UserId       string    `db:"user_id"`
-	Notification string    `db:"email"`
+	Notification string    `db:"notification"`
 	CreatedAt    time.Time `db:"created_at"`
 	UpdatedAt    time.Time `db:"updated_at"`
 }
@@ -27,7 +27,7 @@ func FindNotificationsByUser(userId int64, filter *Filter, db *sqlx.DB) *[]Notif
 
 	err := db.Select(
 		&notifications,
-		`SELECT notification, created_at FROM assets WHERE user_id = $1 AND created_at BETWEEN $2 AND $3 ORDER BY $4 LIMIT $5 OFFSET $6`,
+		`SELECT notification, created_at FROM notifications WHERE user_id = $1 AND created_at BETWEEN $2 AND $3 ORDER BY $4 LIMIT $5 OFFSET $6`,
 		userId,
 		filter.StartDate,
 		filter.EndDate,
@@ -51,7 +51,7 @@ func FindNotificationsByUser(userId int64, filter *Filter, db *sqlx.DB) *[]Notif
 func TotalNotificationsByUser(userId int64, db *sqlx.DB) int64 {
 	var count int64
 
-	err := db.QueryRow("SELECT COUNT(*) FROM notifications WHERE user_id = ?", userId).Scan(&count)
+	err := db.QueryRow(`SELECT COUNT(id) FROM notifications WHERE user_id = $1`, userId).Scan(&count)
 	if err != nil {
 		logger().Error().Err(err).Msgf("unable to count the notifications for the user %v", userId)
 	}

@@ -36,6 +36,11 @@ func (a *Account) NotificationsByDate(w http.ResponseWriter, r *http.Request) {
 		byDate.Data = append(byDate.Data, t)
 	}
 
+	if len(byDate.Data) == 0 {
+		byDate.Data = []types.NotificationTable{}
+	}
+
+	byDate.Draw = helpers.DtDraw(r)
 	byDate.RecordsTotal = models.TotalNotificationsByUser(user.Id, a.db)
 
 	js, err := json.Marshal(byDate)
