@@ -870,6 +870,8 @@ dtCleanup = (table) ->
 # Datatable Reload.
 #
 dtReload = (obj, table) ->
+  $('button.loading').show()
+
   $('.date-filter.active').removeClass 'active'
   $(obj).addClass 'active'
   table.DataTable().ajax.url(window.location.href + '/filter/' + $(obj).data('range')).load()
