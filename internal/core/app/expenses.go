@@ -16,9 +16,19 @@ func (a *App) expensesHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.CostOfGoods)),
 	))
+	a.Router.Handle("/expenses/cost_of_goods/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(e.CostOfGoodsByDate)),
+	))
 	a.Router.Handle("/expenses/other", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.Other)),
+	))
+	a.Router.Handle("/expenses/other/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(e.OtherByDate)),
 	))
 }

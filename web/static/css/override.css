@@ -22,6 +22,11 @@ a:focus {
     overflow-x: unset !important;
 }
 
+table.dataTable tbody td,
+table.dataTable thead th {
+    outline: none;
+}
+
 .modal-content {
     border: none !important;
 }

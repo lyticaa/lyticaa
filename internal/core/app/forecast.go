@@ -16,4 +16,9 @@ func (a *App) forecastHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(f.Overview)),
 	))
+	a.Router.Handle("/forecast/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(f.ForecastByDate)),
+	))
 }

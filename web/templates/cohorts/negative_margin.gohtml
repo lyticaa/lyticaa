@@ -10,6 +10,22 @@
 {{ end }}
 
 {{ define "content" }}
+    <input type="hidden" class="location" data-section="cohorts-negative-margin"/>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="alert alert-danger text-center pt-3 w-100 cohorts-error" style="display: none;">
+                Unable to load your data. Please try again by refreshing the page. Should the problem persist, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <button class="btn btn-primary loading mb-3" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+            </button>
+        </div>
+    </div>
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
             <div class="row flex-grow">
@@ -21,11 +37,10 @@
                             </div>
                             <div class="row">
                                 <div class="col col-md-12 col-xl-12">
-                                    <h3 class="mb-2">$3,897.29</h3>
+                                    <h3 class="mb-2">0</h3>
                                     <div class="d-flex align-items-baseline">
-                                        <p class="text-success">
-                                            <span>+3.3%</span>
-                                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                        <p class="text-warning">
+                                            <span class="diff">+0%</span>
                                         </p>
                                     </div>
                                 </div>
@@ -41,11 +56,10 @@
                             </div>
                             <div class="row">
                                 <div class="col col-md-12 col-xl-12">
-                                    <h3 class="mb-2">$5,084.13</h3>
+                                    <h3 class="mb-2">0</h3>
                                     <div class="d-flex align-items-baseline">
-                                        <p class="text-danger">
-                                            <span>-2.8%</span>
-                                            <i data-feather="arrow-down" class="icon-sm mb-1"></i>
+                                        <p class="text-warning">
+                                            <span class="diff">+0%</span>
                                         </p>
                                     </div>
                                 </div>
@@ -61,11 +75,10 @@
                             </div>
                             <div class="row">
                                 <div class="col col-md-12 col-xl-12">
-                                    <h3 class="mb-2">$3,003.44</h3>
+                                    <h3 class="mb-2">0</h3>
                                     <div class="d-flex align-items-baseline">
-                                        <p class="text-danger">
-                                            <span>+2.8%</span>
-                                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                        <p class="text-warning">
+                                            <span class="diff">+0%</span>
                                         </p>
                                     </div>
                                 </div>
@@ -81,11 +94,10 @@
                             </div>
                             <div class="row">
                                 <div class="col col-md-12 col-xl-12">
-                                    <h3 class="mb-2">$3,003.44</h3>
+                                    <h3 class="mb-2">0</h3>
                                     <div class="d-flex align-items-baseline">
-                                        <p class="text-success">
-                                            <span>-2.8%</span>
-                                            <i data-feather="arrow-down" class="icon-sm mb-1"></i>
+                                        <p class="text-warning">
+                                            <span class="diff">+0%</span>
                                         </p>
                                     </div>
                                 </div>
@@ -101,11 +113,10 @@
                             </div>
                             <div class="row">
                                 <div class="col col-md-12 col-xl-12">
-                                    <h3 class="mb-2">30.3%</h3>
+                                    <h3 class="mb-2">0</h3>
                                     <div class="d-flex align-items-baseline">
                                         <p class="text-warning">
-                                            <span>+2.8%</span>
-                                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                                            <span class="diff">+0%</span>
                                         </p>
                                     </div>
                                 </div>
@@ -121,7 +132,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive overflow-auto">
-                        <table id="dataTable" class="table">
+                        <table id="cohorts-table" class="table w-100">
                             <thead>
                             <tr>
                                 <th>SKU</th>
@@ -138,7 +149,7 @@
                                 <th>Refunds</th>
                                 <th>Shipping Credits</th>
                                 <th>Promotional Rebates</th>
-                                <th>Total Cost</th>
+                                <th>Total Costs</th>
                                 <th>Net Margin</th>
                             </tr>
                             </thead>

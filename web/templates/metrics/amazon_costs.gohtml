@@ -10,6 +10,22 @@
 {{ end }}
 
 {{ define "content" }}
+    <input type="hidden" class="location" data-section="metrics-amazon-costs"/>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="alert alert-danger text-center pt-3 w-100 metrics-error" style="display: none;">
+                Unable to load your data. Please try again by refreshing the page. Should the problem persist, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <button class="btn btn-primary loading mb-3" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+            </button>
+        </div>
+    </div>
     <div class="row">
         <div class="col-12 col-xl-12 grid-margin stretch-card">
             <div class="card overflow-hidden">
@@ -18,7 +34,7 @@
                         <h6 class="card-title mb-0">Amazon Costs</h6>
                     </div>
                     <div class="flot-wrapper">
-                        <div id="revenue-chart" class="flot-chart"></div>
+                        <div id="metrics-amazon-costs-chart" class="flot-chart"></div>
                     </div>
                 </div>
             </div>
@@ -29,7 +45,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive overflow-auto">
-                        <table id="dataTable" class="table">
+                        <table id="metrics-amazon-costs-table" class="table w-100">
                             <thead>
                                 <tr>
                                     <th>Date</th>

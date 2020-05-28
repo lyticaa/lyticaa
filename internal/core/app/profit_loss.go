@@ -16,4 +16,9 @@ func (a *App) profitLossHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(p.Overview)),
 	))
+	a.Router.Handle("/profit_loss/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(p.ProfitLossByDate)),
+	))
 }

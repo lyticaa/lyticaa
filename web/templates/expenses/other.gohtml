@@ -9,13 +9,38 @@
     </nav>
 {{ end }}
 
+{{ define "filters-extra"}}
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary float-right create-asset mr-2 btn-icon-text mr-2 d-none d-md-block" data-toggle="modal" data-target="#expenses-other-modal">
+            <i class="btn-icon-prepend" data-feather="dollar-sign"></i>
+            Add Expense
+        </button>
+    </div>
+{{ end }}
+
 {{ define "content" }}
+    <input type="hidden" class="location" data-section="expenses-other"/>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="alert alert-danger text-center pt-3 w-100 expenses-error" style="display: none;">
+                Unable to load your data. Please try again by refreshing the page. Should the problem persist, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <button class="btn btn-primary loading mb-3" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+            </button>
+        </div>
+    </div>
     <div class="row">
         <div class="col-12 col-xl-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive overflow-auto">
-                        <table id="dataTable" class="table">
+                        <table id="expenses-other-table" class="table w-100">
                             <thead>
                                 <tr>
                                     <th>Description</th>
@@ -24,11 +49,6 @@
                                     <th>Type</th>
                                     <th>Cost</th>
                                     <th>Currency</th>
-                                    <th>
-                                        <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#expenses-other-modal">
-                                            Add Expense
-                                        </button>
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody></tbody>

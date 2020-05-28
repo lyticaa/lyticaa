@@ -16,44 +16,89 @@ func (a *App) metricsHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.TotalSales)),
 	))
+	a.Router.Handle("/metrics/total_sales/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.TotalSalesByDate)),
+	))
 	a.Router.Handle("/metrics/units_sold", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.UnitsSold)),
+	))
+	a.Router.Handle("/metrics/units_sold/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.UnitsSoldByDate)),
 	))
 	a.Router.Handle("/metrics/amazon_costs", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.AmazonCosts)),
 	))
+	a.Router.Handle("/metrics/amazon_costs/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.AmazonCostsByDate)),
+	))
 	a.Router.Handle("/metrics/advertising_spend", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.AdvertisingSpend)),
+	))
+	a.Router.Handle("/metrics/advertising_spend/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.AdvertisingSpendByDate)),
 	))
 	a.Router.Handle("/metrics/refunds", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.Refunds)),
 	))
+	a.Router.Handle("/metrics/refunds/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.RefundsByDate)),
+	))
 	a.Router.Handle("/metrics/shipping_credits", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.ShippingCredits)),
+	))
+	a.Router.Handle("/metrics/shipping_credits/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.ShippingCreditsByDate)),
 	))
 	a.Router.Handle("/metrics/promotional_rebates", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.PromotionalRebates)),
 	))
+	a.Router.Handle("/metrics/promotional_rebates/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.PromotionalRebatesByDate)),
+	))
 	a.Router.Handle("/metrics/total_costs", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.TotalCosts)),
 	))
+	a.Router.Handle("/metrics/total_costs/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.TotalCostsByDate)),
+	))
 	a.Router.Handle("/metrics/net_margin", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.NetMargin)),
+	))
+	a.Router.Handle("/metrics/net_margin/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(m.NetMarginByDate)),
 	))
 }
