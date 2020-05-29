@@ -4,6 +4,7 @@ import $ from 'jquery'
 window.jQuery = $
 window.$ = $
 
+import feather from 'feather-icons'
 import 'js-cookie'
 import 'dropzone'
 
@@ -45,6 +46,7 @@ initialize = ->
 
   # Account
   accountNotifications()
+  accountSubscription()
 
   support()
   uploads()
@@ -816,6 +818,61 @@ accountNotifications = ->
     dtReload(this, $('#account-notifications-table'))
 
   dtCleanup($('#account-notifications-table'))
+
+#
+# Account: Subscription.
+#
+accountSubscription = ->
+  if $('input.location').data('section') != 'account-subscription'
+    return
+
+  $('button.loading').show()
+
+  $('#account-subscription-invoice-table').DataTable
+    'serverSide': true,
+    'bFilter': false
+    'ordering': false
+    'lengthChange': false
+    'initComplete': ->
+      feather.replace()
+    'ajax':
+      'url': window.location.href + '/invoices'
+      'dataSrc': (j) ->
+        $('button.loading').hide()
+
+        if j.data.length > 0
+          resetErrors()
+          resetWarnings()
+
+        return j.data
+      'error': (j) ->
+        $('.alert.alert-error.account-error').show()
+    'columns': [
+      { 'data': 'number' }
+      { 'data': 'date' }
+      { 'data': 'amount' }
+      {
+        'data': 'status'
+        'fnCreatedCell': (nTd, sData, oData, iRow, iCol) ->
+          $(nTd).html "<span class='badge " + oData.statusClass + "'>" + oData.status + "</span>"
+          return
+      }
+      {
+        'data': 'pdf'
+        'fnCreatedCell': (nTd, sData, oData, iRow, iCol) ->
+          $(nTd).html "<a href='" + oData.pdf + "' class='btn btn-primary float-right' target='_blank'><i data-feather='download' class='mr-3 icon-md'></i>Download</a>"
+          return
+      }
+    ]
+    'language': {
+      'infoFiltered': ''
+    }
+    preDrawCallback: (settings) ->
+      dtPreDrawCallback(this, settings)
+
+  dtCleanup($('#account-subscription-invoice-table'))
+
+  return
 
 #
 # Support (intercom).

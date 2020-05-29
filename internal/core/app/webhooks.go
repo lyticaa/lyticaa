@@ -68,12 +68,24 @@ func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter)
 
 		var customer sql.NullString
 		if err := customer.Scan(payments.CustomerId(&session)); err != nil {
-			a.Logger.Error().Err(err).Msg("unable to assign customer reference")
+			a.Logger.Error().Err(err).Msg("unable to assign stripe customer id")
 		}
 
 		customerRefId := payments.CustomerRefId(&session)
 		user := models.FindUser(customerRefId, a.Db)
 		user.StripeUserId = customer
+
+		var subscription sql.NullString
+		if err := subscription.Scan(payments.SubscriptionId(&session)); err != nil {
+			a.Logger.Error().Err(err).Msg("unable to assign stripe subscription id")
+		}
+		user.StripeSubscriptionId = subscription
+
+		var plan sql.NullString
+		if err := plan.Scan(payments.PlanId(&session)); err != nil {
+			a.Logger.Error().Err(err).Msg("unable to assign stripe plan id")
+		}
+		user.StripePlanId = plan
 
 		if err := user.Save(a.Db); err != nil {
 			a.Logger.Error().Err(err).Msg("unable to save user")

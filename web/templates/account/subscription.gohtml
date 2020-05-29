@@ -14,6 +14,14 @@
 {{ end }}
 
 {{ define "content" }}
+    <input type="hidden" class="location" data-section="account-subscription"/>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="alert alert-danger text-center pt-3 w-100 account-error" style="display: none;">
+                Unable to load your data. Please try again by refreshing the page. Should the problem persist, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
@@ -57,41 +65,29 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <button class="btn btn-primary loading mb-3" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+            </button>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="dataTable" class="table">
+                        <table id="account-subscription-invoice-table" class="table w-100">
                             <thead>
                             <tr>
                                 <th>Invoice #</th>
                                 <th>Date</th>
+                                <th>Amount</th>
                                 <th>Status</th>
-                                <th>
-                                </th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>12345</td>
-                                    <td>2020/04/25</td>
-                                    <td>
-                                        <span class="badge badge-success">PAID</span>
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-primary float-right"><i data-feather="download" class="mr-3 icon-md"></i>Download</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>12346</td>
-                                    <td>2020/05/25</td>
-                                    <td>
-                                        <span class="badge badge-danger">UNPAID</span>
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-primary float-right"><i data-feather="download" class="mr-3 icon-md"></i>Download</a>
-                                    </td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
