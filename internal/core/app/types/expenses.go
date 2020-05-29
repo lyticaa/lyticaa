@@ -17,7 +17,8 @@ type ExpensesTable struct {
 }
 
 type Expenses struct {
-	Data         []ExpensesTable `json:"data"`
-	Draw         int64           `json:"draw"`
-	RecordsTotal int64           `json:"recordsTotal"`
+	Data            []ExpensesTable `json:"data"`
+	Draw            int64           `json:"draw"`
+	RecordsTotal    int64           `json:"recordsTotal"`
+	RecordsFiltered int64           `json:"recordsFiltered"`
 }

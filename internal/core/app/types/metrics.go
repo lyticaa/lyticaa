@@ -25,10 +25,11 @@ type TotalSalesTable struct {
 }
 
 type TotalSales struct {
-	Chart        Flot              `json:"chart"`
-	Data         []TotalSalesTable `json:"data"`
-	Draw         int64             `json:"draw"`
-	RecordsTotal int64             `json:"recordsTotal"`
+	Chart           Flot              `json:"chart"`
+	Data            []TotalSalesTable `json:"data"`
+	Draw            int64             `json:"draw"`
+	RecordsTotal    int64             `json:"recordsTotal"`
+	RecordsFiltered int64             `json:"recordsFiltered"`
 }
 
 type UnitsSoldTable struct {
@@ -41,10 +42,11 @@ type UnitsSoldTable struct {
 }
 
 type UnitsSold struct {
-	Chart        Flot             `json:"chart"`
-	Data         []UnitsSoldTable `json:"data"`
-	Draw         int64            `json:"draw"`
-	RecordsTotal int64            `json:"recordsTotal"`
+	Chart           Flot             `json:"chart"`
+	Data            []UnitsSoldTable `json:"data"`
+	Draw            int64            `json:"draw"`
+	RecordsTotal    int64            `json:"recordsTotal"`
+	RecordsFiltered int64            `json:"recordsFiltered"`
 }
 
 type AmazonCostsTable struct {
@@ -57,10 +59,11 @@ type AmazonCostsTable struct {
 }
 
 type AmazonCosts struct {
-	Chart        Flot               `json:"chart"`
-	Data         []AmazonCostsTable `json:"data"`
-	Draw         int64              `json:"draw"`
-	RecordsTotal int64              `json:"recordsTotal"`
+	Chart           Flot               `json:"chart"`
+	Data            []AmazonCostsTable `json:"data"`
+	Draw            int64              `json:"draw"`
+	RecordsTotal    int64              `json:"recordsTotal"`
+	RecordsFiltered int64              `json:"recordsFiltered"`
 }
 
 type AdvertisingSpendTable struct {
@@ -73,10 +76,11 @@ type AdvertisingSpendTable struct {
 }
 
 type AdvertisingSpend struct {
-	Chart        Flot                    `json:"chart"`
-	Data         []AdvertisingSpendTable `json:"data"`
-	Draw         int64                   `json:"draw"`
-	RecordsTotal int64                   `json:"recordsTotal"`
+	Chart           Flot                    `json:"chart"`
+	Data            []AdvertisingSpendTable `json:"data"`
+	Draw            int64                   `json:"draw"`
+	RecordsTotal    int64                   `json:"recordsTotal"`
+	RecordsFiltered int64                   `json:"recordsFiltered"`
 }
 
 type RefundsTable struct {
@@ -89,10 +93,11 @@ type RefundsTable struct {
 }
 
 type Refunds struct {
-	Chart        Flot           `json:"chart"`
-	Data         []RefundsTable `json:"data"`
-	Draw         int64          `json:"draw"`
-	RecordsTotal int64          `json:"recordsTotal"`
+	Chart           Flot           `json:"chart"`
+	Data            []RefundsTable `json:"data"`
+	Draw            int64          `json:"draw"`
+	RecordsTotal    int64          `json:"recordsTotal"`
+	RecordsFiltered int64          `json:"recordsFiltered"`
 }
 
 type ShippingCreditsTable struct {
@@ -104,10 +109,11 @@ type ShippingCreditsTable struct {
 }
 
 type ShippingCredits struct {
-	Chart        Flot                   `json:"chart"`
-	Data         []ShippingCreditsTable `json:"data"`
-	Draw         int64                  `json:"draw"`
-	RecordsTotal int64                  `json:"recordsTotal"`
+	Chart           Flot                   `json:"chart"`
+	Data            []ShippingCreditsTable `json:"data"`
+	Draw            int64                  `json:"draw"`
+	RecordsTotal    int64                  `json:"recordsTotal"`
+	RecordsFiltered int64                  `json:"recordsFiltered"`
 }
 
 type PromotionalRebatesTable struct {
@@ -121,10 +127,11 @@ type PromotionalRebatesTable struct {
 }
 
 type PromotionalRebates struct {
-	Chart        Flot                      `json:"chart"`
-	Data         []PromotionalRebatesTable `json:"data"`
-	Draw         int64                     `json:"draw"`
-	RecordsTotal int64                     `json:"recordsTotal"`
+	Chart           Flot                      `json:"chart"`
+	Data            []PromotionalRebatesTable `json:"data"`
+	Draw            int64                     `json:"draw"`
+	RecordsTotal    int64                     `json:"recordsTotal"`
+	RecordsFiltered int64                     `json:"recordsFiltered"`
 }
 
 type TotalCostsTable struct {
@@ -141,10 +148,11 @@ type TotalCostsTable struct {
 }
 
 type TotalCosts struct {
-	Chart        Flot              `json:"chart"`
-	Data         []TotalCostsTable `json:"data"`
-	Draw         int64             `json:"draw"`
-	RecordsTotal int64             `json:"recordsTotal"`
+	Chart           Flot              `json:"chart"`
+	Data            []TotalCostsTable `json:"data"`
+	Draw            int64             `json:"draw"`
+	RecordsTotal    int64             `json:"recordsTotal"`
+	RecordsFiltered int64             `json:"recordsFiltered"`
 }
 
 type NetMarginTable struct {
@@ -159,8 +167,9 @@ type NetMarginTable struct {
 }
 
 type NetMargin struct {
-	Chart        Flot             `json:"chart"`
-	Data         []NetMarginTable `json:"data"`
-	Draw         int64            `json:"draw"`
-	RecordsTotal int64            `json:"recordsTotal"`
+	Chart           Flot             `json:"chart"`
+	Data            []NetMarginTable `json:"data"`
+	Draw            int64            `json:"draw"`
+	RecordsTotal    int64            `json:"recordsTotal"`
+	RecordsFiltered int64            `json:"recordsFiltered"`
 }

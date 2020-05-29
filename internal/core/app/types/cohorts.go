@@ -28,8 +28,9 @@ type CohortTable struct {
 }
 
 type Cohort struct {
-	CohortSummary `json:"cohortSummary"`
-	Data          []CohortTable `json:"data"`
-	Draw          int64         `json:"draw"`
-	RecordsTotal  int64         `json:"recordsTotal"`
+	CohortSummary   `json:"cohortSummary"`
+	Data            []CohortTable `json:"data"`
+	Draw            int64         `json:"draw"`
+	RecordsTotal    int64         `json:"recordsTotal"`
+	RecordsFiltered int64         `json:"recordsFiltered"`
 }
