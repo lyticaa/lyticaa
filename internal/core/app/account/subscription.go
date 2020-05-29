@@ -44,7 +44,7 @@ func (a *Account) InvoicesByUser(w http.ResponseWriter, r *http.Request) {
 
 		t := types.InvoiceTable{
 			Number:      invoice.Number,
-			Date:        fmt.Sprintf("%s", invoice.Date.Format("2006-01-02")),
+			Date:        invoice.Date.Format("2006-01-02"),
 			Amount:      fmt.Sprintf("%v %v", currency.Symbol(unit), invoice.Amount),
 			Status:      strings.ToUpper(string(invoice.Status)),
 			StatusClass: a.invoiceClass(string(invoice.Status)),
