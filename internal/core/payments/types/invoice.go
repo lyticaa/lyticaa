@@ -3,7 +3,7 @@ package types
 import (
 	"time"
 
-	"github.com/stripe/stripe-go"
+	"github.com/stripe/stripe-go/v71"
 )
 
 type Invoices []Invoice

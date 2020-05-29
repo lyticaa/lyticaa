@@ -43,7 +43,15 @@
                                     <div class="card-body">
                                         <h5 class="text-center text-uppercase mt-3 mb-4">Monthly</h5>
                                         <h3 class="text-center font-weight-light">$150</h3>
-                                        <button class="btn btn-primary d-block mx-auto mt-4">Downgrade</button>
+                                        {{ if .User.StripePlanId.String }}
+                                            {{ if eq .User.StripePlanId.String .Config.Stripe.MonthlyPlanId }}
+                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Cancel</button>
+                                            {{ else }}
+                                                <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Change Plan</button>
+                                            {{ end }}
+                                        {{ else }}
+                                            <button class="btn btn-success d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Subscribe</button>
+                                        {{ end }}
                                     </div>
                                 </div>
                             </div>
@@ -54,7 +62,15 @@
                                             Annual
                                         </h5>
                                         <h3 class="text-center font-weight-light">$1500</h3>
-                                        <button class="btn btn-warning d-block mx-auto mt-4">Cancel</button>
+                                        {{ if .User.StripePlanId.String }}
+                                            {{ if eq .User.StripePlanId.String .Config.Stripe.AnnualPlanId }}
+                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Cancel</button>
+                                            {{ else }}
+                                                <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Change Plan</button>
+                                            {{ end }}
+                                        {{ else }}
+                                            <button class="btn btn-success d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Subscribe</button>
+                                        {{ end }}
                                     </div>
                                 </div>
                             </div>

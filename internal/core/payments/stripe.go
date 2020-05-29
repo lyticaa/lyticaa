@@ -8,10 +8,11 @@ import (
 	"gitlab.com/getlytica/lytica-app/internal/core/payments/types"
 	"gitlab.com/getlytica/lytica-app/internal/models"
 
-	"github.com/stripe/stripe-go"
-	"github.com/stripe/stripe-go/checkout/session"
-	"github.com/stripe/stripe-go/invoice"
-	"github.com/stripe/stripe-go/webhook"
+	"github.com/stripe/stripe-go/v71"
+	"github.com/stripe/stripe-go/v71/checkout/session"
+	"github.com/stripe/stripe-go/v71/invoice"
+	"github.com/stripe/stripe-go/v71/price"
+	"github.com/stripe/stripe-go/v71/webhook"
 )
 
 func CheckoutSession(user models.User, plan string) (*stripe.CheckoutSession, error) {
@@ -26,7 +27,7 @@ func CheckoutSession(user models.User, plan string) (*stripe.CheckoutSession, er
 		SubscriptionData: &stripe.CheckoutSessionSubscriptionDataParams{
 			Items: []*stripe.CheckoutSessionSubscriptionDataItemsParams{
 				&stripe.CheckoutSessionSubscriptionDataItemsParams{
-					Plan: stripe.String(GetPlan(plan)),
+					Plan: stripe.String(getPlan(plan)),
 				},
 			},
 			TrialFromPlan: stripe.Bool(true),
@@ -36,6 +37,22 @@ func CheckoutSession(user models.User, plan string) (*stripe.CheckoutSession, er
 	}
 
 	return session.New(params)
+}
+
+func CustomerRefId(session *stripe.CheckoutSession) string {
+	return session.ClientReferenceID
+}
+
+func CustomerId(session *stripe.CheckoutSession) string {
+	return session.Customer.ID
+}
+
+func PlanId(session *stripe.CheckoutSession) string {
+	return session.Subscription.Plan.ID
+}
+
+func ConstructEvent(body []byte, sig string) (stripe.Event, error) {
+	return webhook.ConstructEvent(body, sig, os.Getenv("STRIPE_WHSEC"))
 }
 
 func InvoicesByUser(customer string) *types.Invoices {
@@ -52,56 +69,104 @@ func InvoicesByUser(customer string) *types.Invoices {
 			formattedAmount = float64(total / 100)
 		}
 
-		invoices = append(invoices, types.Invoice{
-			Number:   list.Invoice().Number,
-			Date:     time.Unix(list.Invoice().Created, 0),
-			Currency: list.Invoice().Currency,
-			Amount:   formattedAmount,
-			Status:   list.Invoice().Status,
-			PDF:      list.Invoice().InvoicePDF,
-		})
+		invoices = append(
+			invoices,
+			types.Invoice{
+				Number:   list.Invoice().Number,
+				Date:     time.Unix(list.Invoice().Created, 0),
+				Currency: list.Invoice().Currency,
+				Amount:   formattedAmount,
+				Status:   list.Invoice().Status,
+				PDF:      list.Invoice().InvoicePDF,
+			},
+		)
 	}
 
 	return &invoices
 }
 
-func GetPlan(plan string) string {
-	switch plan {
-	case "monthly":
-		return Monthly()
-	case "annual":
-		return Annual()
+func Plans(user models.User) *types.Plans {
+	var plans types.Plans
+
+	for _, plan := range getPlans() {
+		p := types.Plan{ID: plan}
+
+		for _, product := range getProducts() {
+			p.Products = append(p.Products,
+				types.Product{
+					ID:     product,
+					Prices: *pricesByProduct(product),
+				},
+			)
+		}
+
+		plans = append(plans, p)
 	}
 
-	return Monthly()
+	return &plans
 }
 
-func Monthly() string {
+func pricesByProduct(product string) *[]types.Price {
+	setStripeKey()
+
+	params := &stripe.PriceListParams{}
+	params.Filters.AddFilter("product", "=", product)
+
+	var prices []types.Price
+
+	list := price.List(params)
+	for list.Next() {
+		prices = append(
+			prices,
+			types.Price{
+				ID:     list.Price().ID,
+				Amount: list.Price().UnitAmountDecimal,
+			},
+		)
+	}
+
+	return &prices
+}
+
+func getPlan(plan string) string {
+	switch plan {
+	case "monthly":
+		return monthlyPlan()
+	case "annual":
+		return annualPlan()
+	}
+
+	return monthlyPlan()
+}
+
+func getPlans() []string {
+	return []string{
+		monthlyPlan(),
+		annualPlan(),
+	}
+}
+
+func getProducts() []string {
+	return []string{
+		monthlyProduct(),
+		annualProduct(),
+	}
+}
+
+func monthlyPlan() string {
 	return os.Getenv("STRIPE_MONTHLY_PLAN_ID")
 }
 
-func Annual() string {
+func annualPlan() string {
 	return os.Getenv("STRIPE_ANNUAL_PLAN_ID")
 }
 
-func CustomerRefId(session *stripe.CheckoutSession) string {
-	return session.ClientReferenceID
+func monthlyProduct() string {
+	return os.Getenv("STRIPE_MONTHLY_PRODUCT_ID")
 }
 
-func CustomerId(session *stripe.CheckoutSession) string {
-	return session.Customer.ID
-}
-
-func SubscriptionId(session *stripe.CheckoutSession) string {
-	return session.Subscription.ID
-}
-
-func PlanId(session *stripe.CheckoutSession) string {
-	return session.Subscription.Plan.ID
-}
-
-func ConstructEvent(body []byte, sig string) (stripe.Event, error) {
-	return webhook.ConstructEvent(body, sig, os.Getenv("STRIPE_WHSEC"))
+func annualProduct() string {
+	return os.Getenv("STRIPE_ANNUAL_PRODUCT_ID")
 }
 
 func setStripeKey() {

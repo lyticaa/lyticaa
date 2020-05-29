@@ -17,17 +17,6 @@ var (
 	}
 )
 
-func templateList(fileList []string) []string {
-	var container []string
-	container = append(container, baseFiles...)
-
-	for _, file := range fileList {
-		container = append(container, filepath.Join(cwd, "./web/templates/"+file+".gohtml"))
-	}
-
-	return container
-}
-
 func RenderTemplate(w http.ResponseWriter, templates []string, data interface{}) {
 	files := templateList(templates)
 	t, err := template.ParseFiles(files...)
@@ -39,4 +28,15 @@ func RenderTemplate(w http.ResponseWriter, templates []string, data interface{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func templateList(fileList []string) []string {
+	var container []string
+	container = append(container, baseFiles...)
+
+	for _, file := range fileList {
+		container = append(container, filepath.Join(cwd, "./web/templates/"+file+".gohtml"))
+	}
+
+	return container
 }
