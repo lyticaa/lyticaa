@@ -17,6 +17,15 @@ import (
 	"github.com/stripe/stripe-go/v71/webhook"
 )
 
+const (
+	CheckoutSessionCompleted    = "checkout.session.completed"
+	CustomerSubscriptionCreated = "customer.subscription.created"
+	CustomerSubscriptionDeleted = "customer.subscription.deleted"
+	InvoiceCreated              = "invoice.created"
+	InvoicePaymentFailed        = "invoice.payment_failed"
+	InvoicePaymentSucceeded     = "invoice.payment_succeeded"
+)
+
 var (
 	stripeMonthlyPlanId    = os.Getenv("STRIPE_MONTHLY_PLAN_ID")
 	stripeMonthlyProductId = os.Getenv("STRIPE_MONTHLY_PRODUCT_ID")

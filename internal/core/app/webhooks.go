@@ -14,15 +14,6 @@ import (
 	"github.com/stripe/stripe-go/v71"
 )
 
-const (
-	checkoutSessionCompleted    = "checkout.session.completed"
-	customerSubscriptionCreated = "customer.subscription.created"
-	customerSubscriptionDeleted = "customer.subscription.deleted"
-	invoiceCreated              = "invoice.created"
-	invoicePaymentFailed        = "invoice.payment_failed"
-	invoicePaymentSucceeded     = "invoice.payment_succeeded"
-)
-
 func (a *App) stripeWebhooks(w http.ResponseWriter, r *http.Request) {
 	body, err := a.readWebhookBody(w, r)
 	if err != nil {
@@ -65,7 +56,7 @@ func (a *App) getStripeWebhookEvent(body []byte, w http.ResponseWriter, r *http.
 
 func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter) error {
 	switch event.Type {
-	case checkoutSessionCompleted:
+	case payments.CheckoutSessionCompleted:
 		session, err := payments.EventSession(event)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -96,7 +87,7 @@ func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter)
 		if err := user.Save(a.Db); err != nil {
 			a.Logger.Error().Err(err).Msg("unable to save user")
 		}
-	case customerSubscriptionCreated:
+	case payments.CustomerSubscriptionCreated:
 		subscription, err := payments.EventSubscription(event)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -110,9 +101,9 @@ func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter)
 			return nil
 		}
 
-		message := fmt.Sprintf(types.NotificationMessages[customerSubscriptionCreated], subscription.Plan.Nickname)
+		message := fmt.Sprintf(types.NotificationMessages[payments.CustomerSubscriptionCreated], subscription.Plan.Nickname)
 		_ = models.CreateNotification(user.Id, message, a.Db)
-	case customerSubscriptionDeleted:
+	case payments.CustomerSubscriptionDeleted:
 		subscription, err := payments.EventSubscription(event)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -126,9 +117,9 @@ func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter)
 			return nil
 		}
 
-		message := fmt.Sprintf(types.NotificationMessages[customerSubscriptionDeleted], subscription.Plan.Nickname)
+		message := fmt.Sprintf(types.NotificationMessages[payments.CustomerSubscriptionDeleted], subscription.Plan.Nickname)
 		_ = models.CreateNotification(user.Id, message, a.Db)
-	case invoiceCreated:
+	case payments.InvoiceCreated:
 		inv, err := payments.EventInvoice(event)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -144,12 +135,12 @@ func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter)
 
 		unit, _ := currency.ParseISO(string(inv.Lines.Data[0].Currency))
 		message := fmt.Sprintf(
-			types.NotificationMessages[invoiceCreated],
+			types.NotificationMessages[payments.InvoiceCreated],
 			inv.Lines.Data[0].Description,
 			fmt.Sprintf("%v %v", currency.Symbol(unit), payments.FormatAmount(inv.Lines.Data[0].Amount)),
 		)
 		_ = models.CreateNotification(user.Id, message, a.Db)
-	case invoicePaymentFailed:
+	case payments.InvoicePaymentFailed:
 		inv, err := payments.EventInvoice(event)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -165,12 +156,12 @@ func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter)
 
 		unit, _ := currency.ParseISO(string(inv.Lines.Data[0].Currency))
 		message := fmt.Sprintf(
-			types.NotificationMessages[invoicePaymentFailed],
+			types.NotificationMessages[payments.InvoicePaymentFailed],
 			inv.Lines.Data[0].Description,
 			fmt.Sprintf("%v %v", currency.Symbol(unit), payments.FormatAmount(inv.Lines.Data[0].Amount)),
 		)
 		_ = models.CreateNotification(user.Id, message, a.Db)
-	case invoicePaymentSucceeded:
+	case payments.InvoicePaymentSucceeded:
 		inv, err := payments.EventInvoice(event)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -186,7 +177,7 @@ func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter)
 
 		unit, _ := currency.ParseISO(string(inv.Lines.Data[0].Currency))
 		message := fmt.Sprintf(
-			types.NotificationMessages[invoicePaymentSucceeded],
+			types.NotificationMessages[payments.InvoicePaymentSucceeded],
 			inv.Lines.Data[0].Description,
 			fmt.Sprintf("%v %v", currency.Symbol(unit), payments.FormatAmount(inv.Lines.Data[0].Amount)),
 		)
