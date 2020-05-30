@@ -22,6 +22,33 @@ var (
 	}
 )
 
+func CreateNotification(userId int64, notification string, db *sqlx.DB) error {
+	query := `INSERT INTO notifications (
+					user_id,
+					notification,
+					created_at,
+					updated_at)
+				VALUES (
+					:user_id,
+					:notification,
+					:created_at,
+					:updated_at)`
+
+	_, err := db.NamedExec(query,
+		map[string]interface{}{
+			"user_id":      userId,
+			"notification": notification,
+			"created_at":   time.Now(),
+			"updated_at":   time.Now(),
+		})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func FindNotificationsByUser(userId int64, filter *Filter, db *sqlx.DB) *[]Notification {
 	var notifications []Notification
 

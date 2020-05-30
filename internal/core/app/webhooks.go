@@ -13,7 +13,12 @@ import (
 )
 
 const (
-	checkoutCompletedEvent = "checkout.session.completed"
+	checkoutSessionCompleted    = "checkout.session.completed"
+	customerSubscriptionCreated = "customer.subscription.created"
+	customerSubscriptionDeleted = "customer.subscription.deleted"
+	invoiceCreated              = "invoice.created"
+	invoicePaymentFailed        = "invoice.payment_failed"
+	invoicePaymentSucceeded     = "invoice.payment_succeeded"
 )
 
 func (a *App) stripeWebhooks(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +63,7 @@ func (a *App) getStripeWebhookEvent(body []byte, w http.ResponseWriter, r *http.
 
 func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter) error {
 	switch event.Type {
-	case checkoutCompletedEvent:
+	case checkoutSessionCompleted:
 		var session stripe.CheckoutSession
 		if err := json.Unmarshal(event.Data.Raw, &session); err != nil {
 			a.Logger.Error().Err(err).Msg("unable to unmarshal stripe webhook JSON")
@@ -90,6 +95,16 @@ func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter)
 		if err := user.Save(a.Db); err != nil {
 			a.Logger.Error().Err(err).Msg("unable to save user")
 		}
+	case customerSubscriptionCreated:
+		a.Logger.Info().Msg("not implemented")
+	case customerSubscriptionDeleted:
+		a.Logger.Info().Msg("not implemented")
+	case invoiceCreated:
+		a.Logger.Info().Msg("not implemented")
+	case invoicePaymentFailed:
+		a.Logger.Info().Msg("not implemented")
+	case invoicePaymentSucceeded:
+		a.Logger.Info().Msg("not implemented")
 	}
 
 	return nil
