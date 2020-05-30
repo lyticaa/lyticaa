@@ -833,6 +833,7 @@ accountSubscription = ->
     'bFilter': false
     'ordering': false
     'lengthChange': false
+    'paging': false
     'initComplete': ->
       renderIcons()
     'ajax':
