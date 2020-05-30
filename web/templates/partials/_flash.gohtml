@@ -1,15 +1,21 @@
 {{ define "flash" }}
-    {{ if .Flash.Success }}
-        <div class="alert alert-success" role="alert">
-            {{ .Flash.Success }}
-        </div>
-    {{ else if .Flash.Error }}
-        <div class="alert alert-danger" role="alert">
-            {{ .Flash.Error }}
-        </div>
-    {{ else if .Flash.Info }}
-        <div class="alert alert-info" role="alert">
-            {{ .Flash.Info }}
-        </div>
+    {{ if .Flash }}
+        {{ if .Flash.Success }}
+            <div class="alert alert-success text-center pt-3 w-100" role="alert">
+                {{ .Flash.Success }}
+            </div>
+        {{ else if .Flash.Error }}
+            <div class="alert alert-danger text-center pt-3 w-100" role="alert">
+                {{ .Flash.Error }}
+            </div>
+        {{ else if .Flash.Warning }}
+            <div class="alert alert-warning text-center pt-3 w-100" role="alert">
+                {{ .Flash.Warning }}
+            </div>
+        {{ else if .Flash.Info }}
+            <div class="alert alert-info text-center pt-3 w-100" role="alert">
+                {{ .Flash.Info }}
+            </div>
+        {{ end }}
     {{ end }}
 {{ end }}

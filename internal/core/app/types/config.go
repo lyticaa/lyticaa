@@ -3,6 +3,7 @@ package types
 import "os"
 
 type Stripe struct {
+	PK            string
 	AnnualPlanId  string
 	MonthlyPlanId string
 }
@@ -16,6 +17,7 @@ type Config struct {
 func NewConfig() *Config {
 	return &Config{
 		Stripe: Stripe{
+			PK:            os.Getenv("STRIPE_PK"),
 			AnnualPlanId:  os.Getenv("STRIPE_ANNUAL_PLAN_ID"),
 			MonthlyPlanId: os.Getenv("STRIPE_MONTHLY_PLAN_ID"),
 		},

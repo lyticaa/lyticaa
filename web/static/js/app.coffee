@@ -50,7 +50,7 @@ initialize = ->
 
   support()
   uploads()
-  payments()
+  subscribe()
   return
 
 #
@@ -883,7 +883,6 @@ accountSubscription = ->
     $('button.change, button.cancel').attr('disabled', true)
 
     planId = $(this).data('stripe-plan')
-    currentButton = $(this)
 
     $.ajax
       type: 'PUT'
@@ -913,6 +912,47 @@ accountSubscription = ->
           $('.alert.alert-danger.account-subscription-error').show()
           $('button.processing').hide()
           $('button.change, button.cancel').removeAttr('disabled')
+
+  $('button.subscribe').on 'click', (e) ->
+    e.preventDefault()
+
+    resetSuccess()
+    resetErrors()
+    resetWarnings()
+
+    $('button.processing').show()
+    $('button.subscribe').attr('disabled', true)
+
+    planId = $(this).data('stripe-plan')
+
+    $.ajax
+      type: 'POST'
+      url: window.location.href + '/subscribe/' + planId
+      statusCode:
+        200: ->
+          tbStop()
+          $('button.processing').hide()
+          $('button.subscribe').removeAttr('disabled')
+
+          $('button.subscribe').each () ->
+            $(this).addClass('hide')
+
+            if $(this).data('stripe-plan') == planId
+              $(this).next().next().removeClass('hide')
+            else
+              $(this).next().removeClass('hide')
+            return
+
+          $('.alert.alert-success').show()
+
+          $('button.loading').show()
+          $('#account-subscription-invoice-table').DataTable().ajax.reload () ->
+            renderIcons()
+        500: ->
+          tbStop()
+          $('.alert.alert-danger.account-subscription-error').show()
+          $('button.processing').hide()
+          $('button.subscribe').removeAttr('disabled')
 
   $('form#account-subscription-cancel').submit (e) ->
     e.preventDefault()
@@ -1002,13 +1042,13 @@ uploads = ->
   return
 
 #
-# Payments.
+# Subscribe.
 #
-payments = ->
+subscribe = ->
   if $('a.stripe').length > 0
     stripe = Stripe($('.stripe-pk').data('stripe-pk'))
     $('a.stripe').on 'click', ->
-      stripe.redirectToCheckout(sessionId: $(this).attr('rel')).then (result) ->
+      stripe.redirectToCheckout(sessionId: $(this).data('stripe-plan')).then (result) ->
         alert result.error.message
       return
 

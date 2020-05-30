@@ -30,7 +30,7 @@
                         </p>
                     </section>
                     {{ if .showPlans }}
-                        <input type="hidden" class="stripe-pk" data-stripe-pk="{{.stripePk}}"/>
+                        <input type="hidden" class="stripe-pk" data-stripe-pk="{{.Config.StripePk}}"/>
                         <div class="row">
                             <div class="col-md-4 offset-md-2">
                                 <div class="card">
@@ -39,7 +39,7 @@
                                     </div>
                                     <div class="card-body text-center">
                                         <p class="card-text">Monthly Plan</p>
-                                        <a class="btn btn-primary stripe mt-3" rel="{{.stripeMonthlyId}}" href="#" role="button">Subscribe</a>
+                                        <a class="btn btn-primary stripe mt-3" data-stripe-plan="{{.Config.MonthlyPlanId}}" href="#" role="button">Subscribe</a>
                                     </div>
                                 </div>
                             </div>
@@ -50,7 +50,7 @@
                                     </div>
                                     <div class="card-body text-center">
                                         <p class="card-text">Annual Plan</p>
-                                        <a class="btn btn-primary stripe mt-3" rel="{{.stripeAnnualId}}" href="#" role="button">Subscribe</a>
+                                        <a class="btn btn-primary stripe mt-3" data-stripe-plan="{{.Config.AnnualPlanId}}" href="#" role="button">Subscribe</a>
                                     </div>
                                 </div>
                             </div>

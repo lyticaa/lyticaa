@@ -27,6 +27,10 @@ func (a *App) accountHandlers() {
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(acct.Subscription)),
 	))
+	a.Router.Handle("/account/subscription/subscribe/{planId}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.Wrap(http.HandlerFunc(acct.Subscribe)),
+	))
 	a.Router.Handle("/account/subscription/cancel", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(acct.CancelSubscription)),

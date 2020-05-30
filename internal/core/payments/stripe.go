@@ -12,6 +12,7 @@ import (
 	"github.com/stripe/stripe-go/v71"
 	"github.com/stripe/stripe-go/v71/checkout/session"
 	"github.com/stripe/stripe-go/v71/invoice"
+	"github.com/stripe/stripe-go/v71/paymentmethod"
 	"github.com/stripe/stripe-go/v71/price"
 	"github.com/stripe/stripe-go/v71/sub"
 	"github.com/stripe/stripe-go/v71/webhook"
@@ -115,6 +116,37 @@ func FormatAmount(amount int64) float64 {
 	return formattedAmount
 }
 
+func CreateSubscription(customerId, planId string) (*stripe.Subscription, error) {
+	setStripeKey()
+
+	priceId, ok := priceIdByPlan(planId)
+	if !ok {
+		return nil, errors.New("unable to find the price for the plan")
+	}
+
+	method := paymentMethodByCustomer(customerId)
+	if method == nil {
+		return nil, errors.New("unable to find the payment method for the user")
+	}
+
+	params := &stripe.SubscriptionParams{
+		Customer: stripe.String(customerId),
+		Items: []*stripe.SubscriptionItemsParams{
+			{
+				Price: stripe.String(*priceId),
+			},
+		},
+		DefaultPaymentMethod: stripe.String(*method),
+	}
+
+	subscription, err := sub.New(params)
+	if err != nil {
+		return nil, err
+	}
+
+	return subscription, nil
+}
+
 func ChangePlan(subscriptionId, planId string) error {
 	setStripeKey()
 
@@ -183,6 +215,22 @@ func EventInvoice(e stripe.Event) (stripe.Invoice, error) {
 	}
 
 	return inv, nil
+}
+
+func paymentMethodByCustomer(customerId string) *string {
+	setStripeKey()
+
+	params := &stripe.PaymentMethodListParams{
+		Customer: stripe.String(customerId),
+		Type:     stripe.String("card"),
+	}
+	i := paymentmethod.List(params)
+
+	for i.Next() {
+		return &i.PaymentMethod().ID
+	}
+
+	return nil
 }
 
 func priceIdByPlan(planId string) (*string, bool) {

@@ -35,6 +35,7 @@ func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 
 	t := []string{
 		helpers.NavForSession(helpers.IsSubscribed(a.sessionStore, a.logger, w, r)),
+		"partials/_flash",
 		"account/subscription",
 	}
 	helpers.RenderTemplate(w, t, session.Values)
@@ -91,7 +92,7 @@ func (a *Account) ChangePlan(w http.ResponseWriter, r *http.Request) {
 	planId := mux.Vars(r)["planId"]
 	if user.StripePlanId.String == planId {
 		a.logger.Error().Msgf("user %v already on plan %v", user.UserId, user.StripePlanId)
-		w.WriteHeader(http.StatusUnprocessableEntity)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -144,6 +145,48 @@ func (a *Account) CancelSubscription(w http.ResponseWriter, r *http.Request) {
 	_ = session.Save(r, w)
 
 	_ = helpers.SetFlash("success", types.FlashMessages["account"]["subscription"]["cancel"], session, r, w)
+	w.WriteHeader(http.StatusOK)
+}
+
+func (a *Account) Subscribe(w http.ResponseWriter, r *http.Request) {
+	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
+	user := session.Values["User"].(models.User)
+
+	planId := mux.Vars(r)["planId"]
+	if user.StripePlanId.String == planId {
+		a.logger.Error().Msgf("user %v already on plan %v", user.UserId, user.StripePlanId)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	s, err := payments.CreateSubscription(user.StripeUserId.String, planId)
+	if err != nil {
+		a.logger.Error().Err(err).Msg("unable to subscribe")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var subscription sql.NullString
+	if err := subscription.Scan(s.ID); err != nil {
+		a.logger.Error().Err(err).Msg("unable to assign stripe plan id")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var plan sql.NullString
+	if err := plan.Scan(planId); err != nil {
+		a.logger.Error().Err(err).Msg("unable to assign stripe plan id")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	user.StripeSubscriptionId = subscription
+	user.StripePlanId = plan
+	_ = user.Save(a.db)
+
+	session.Values["User"] = user
+	_ = session.Save(r, w)
+
 	w.WriteHeader(http.StatusOK)
 }
 
