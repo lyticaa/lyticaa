@@ -137,6 +137,7 @@ func CreateSubscription(customerId, planId string) (*stripe.Subscription, error)
 			},
 		},
 		DefaultPaymentMethod: stripe.String(*method),
+		TrialFromPlan:        stripe.Bool(true),
 	}
 
 	subscription, err := sub.New(params)

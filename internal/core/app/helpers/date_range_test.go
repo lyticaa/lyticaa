@@ -43,7 +43,7 @@ func TestLastThirtyDays(t *testing.T) {
 		t.Error()
 	}
 
-	if end.Day() != date.Day() {
+	if end.Day() != time.Now().Day() {
 		t.Error()
 	}
 }
