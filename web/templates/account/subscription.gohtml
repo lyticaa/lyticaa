@@ -42,7 +42,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="text-center mb-3 mt-4">Your Subscription</h4>
-                    <p class="text-muted text-center mb-4 pb-2">Upgrade, downgrade or cancel your account.</p>
+                    <p class="text-muted text-center mb-4 pb-2">Upgrade, downgrade or cancel your subscription.</p>
                     <div class="container">
                         <div class="row">
                             <div class="offset-md-2 col-md-8 stretch-card grid-margin grid-margin-md-0">
@@ -60,11 +60,11 @@
                                         <h3 class="text-center font-weight-light">$150</h3>
                                         {{ if .User.StripePlanId.String }}
                                             {{ if eq .User.StripePlanId.String .Config.Stripe.MonthlyPlanId }}
-                                                <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Change Plan</button>
-                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Cancel</button>
+                                                <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Downgrade</button>
+                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
                                             {{ else }}
-                                                <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Change Plan</button>
-                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel hide"data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Cancel</button>
+                                                <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Downgrade</button>
+                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel hide"data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
                                             {{ end }}
                                         {{ else }}
                                             <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Subscribe</button>
@@ -81,11 +81,11 @@
                                         <h3 class="text-center font-weight-light">$1500</h3>
                                         {{ if .User.StripePlanId.String }}
                                             {{ if eq .User.StripePlanId.String .Config.Stripe.AnnualPlanId }}
-                                                <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Change Plan</button>
-                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Cancel</button>
+                                                <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Upgrade</button>
+                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
                                             {{ else }}
-                                                <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Change Plan</button>
-                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Cancel</button>
+                                                <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Upgrade</button>
+                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
                                             {{ end }}
                                         {{ else }}
                                             <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Subscribe</button>
@@ -134,6 +134,46 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="account-subscription-cancel-modal" tabindex="-1" role="dialog" aria-labelledby="account-subscription-cancel-modal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="invite-user-label">Cancel Subscription</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="account-subscription-cancel">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div class="alert alert-warning text-justify">
+                                Your subscription will remain active and your sales data will be processed as per normal until your anniversary date.
+                            </div>
+                            <div class="alert alert-danger text-justify validate-cancel" style="display: none;">
+                                Please enter the text exactly as shown below.
+                            </div>
+                            <div class="alert alert-danger text-justify cancel" style="display: none;">
+                                It appears that something went wrong while trying to cancel your subscription. Please try again and if the problem persists, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="alert alert-info">
+                                Please type <code>CANCEL</code> into the box below.
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="cancel" name="cancel" value="" placeholder="" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary cancel">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

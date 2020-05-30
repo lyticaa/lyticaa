@@ -26,6 +26,10 @@ var (
 	}
 )
 
+type Cancellation struct {
+	Data string `validate:"required,eq=CANCEL"`
+}
+
 func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 
@@ -34,6 +38,7 @@ func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 		"account/subscription",
 	}
 	helpers.RenderTemplate(w, t, session.Values)
+	helpers.ClearFlash(session, r, w)
 }
 
 func (a *Account) InvoicesByUser(w http.ResponseWriter, r *http.Request) {
@@ -108,6 +113,37 @@ func (a *Account) ChangePlan(w http.ResponseWriter, r *http.Request) {
 	session.Values["User"] = user
 	_ = session.Save(r, w)
 
+	w.WriteHeader(http.StatusOK)
+}
+
+func (a *Account) CancelSubscription(w http.ResponseWriter, r *http.Request) {
+	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
+	user := session.Values["User"].(models.User)
+
+	cancel := r.FormValue("cancel")
+	validate := Cancellation{Data: cancel}
+
+	ok, _ := helpers.ValidateInput(validate, &a.logger)
+	if !ok {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+
+	err := payments.CancelSubscription(user.StripeSubscriptionId.String)
+	if err != nil {
+		a.logger.Error().Err(err).Msg("unable to cancel subscription")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	user.StripeSubscriptionId = sql.NullString{}
+	user.StripePlanId = sql.NullString{}
+	_ = user.Save(a.db)
+
+	session.Values["User"] = user
+	_ = session.Save(r, w)
+
+	_ = helpers.SetFlash("success", types.FlashMessages["account"]["subscription"]["cancel"], session, r, w)
 	w.WriteHeader(http.StatusOK)
 }
 

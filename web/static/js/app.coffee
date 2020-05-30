@@ -914,6 +914,33 @@ accountSubscription = ->
           $('button.processing').hide()
           $('button.change, button.cancel').removeAttr('disabled')
 
+  $('form#account-subscription-cancel').submit (e) ->
+    e.preventDefault()
+    resetErrors()
+
+    $('button.close-modal').attr('disabled', 'true')
+    $('button.submit').html('Processing...').attr('disabled', 'true')
+
+    tbStart()
+
+    $.ajax
+      type: 'POST'
+      url: window.location.href + '/cancel'
+      data: $('form#account-subscription-cancel').serialize()
+      statusCode:
+        200: ->
+          tbStop()
+          location.reload()
+        422: ->
+          tbStop()
+          resetModal('Submit')
+          $('.alert.alert-danger.validate-cancel').show()
+        500: ->
+          tbStop()
+          resetModal('Submit')
+          $('.alert.alert-danger.cancel').show()
+    return
+
   return
 
 #
@@ -1020,6 +1047,13 @@ dtReload = (obj, table) ->
   table.DataTable().ajax.url(window.location.href + '/filter/' + $(obj).data('range')).load()
 
   return
+
+#
+# Reset Modal.
+#
+resetModal = (text) ->
+  $('button.close-modal').removeAttr('disabled')
+  $('button.create, button.submit').html(text).removeAttr('disabled')
 
 #
 # Reset success.

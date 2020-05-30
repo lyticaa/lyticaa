@@ -7,4 +7,9 @@ var FlashMessages = map[string]map[string]map[string]string{
 			"error":   "There was an issue while processing your subscription. Please try again.",
 		},
 	},
+	"account": {
+		"subscription": {
+			"cancel": "Your cancellation request was processed successfully.",
+		},
+	},
 }

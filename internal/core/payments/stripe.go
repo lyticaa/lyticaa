@@ -133,6 +133,18 @@ func ChangePlan(subscriptionId, planId string) error {
 	return nil
 }
 
+func CancelSubscription(subscriptionId string) error {
+	params := &stripe.SubscriptionParams{
+		CancelAtPeriodEnd: stripe.Bool(true),
+	}
+	_, err := sub.Update(subscriptionId, params)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func priceIdByPlan(planId string) (*string, bool) {
 	productId := stripePlanProductMap[planId]
 	if productId == "" {
