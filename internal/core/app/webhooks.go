@@ -75,9 +75,15 @@ func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter)
 		user := models.FindUser(customerRefId, a.Db)
 		user.StripeUserId = customer
 
+		var subscription sql.NullString
+		if err := subscription.Scan(payments.SubscriptionId(&session)); err != nil {
+			a.Logger.Error().Err(err).Msg("unable to assign stripe subscription id")
+		}
+		user.StripeSubscriptionId = subscription
+
 		var plan sql.NullString
 		if err := plan.Scan(payments.PlanId(&session)); err != nil {
-			a.Logger.Error().Err(err).Msg("unable to assign stripe subscription id")
+			a.Logger.Error().Err(err).Msg("unable to assign stripe plan id")
 		}
 		user.StripePlanId = plan
 

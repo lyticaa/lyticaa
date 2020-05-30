@@ -42,3 +42,7 @@ table.dataTable thead th {
 table > thead > tr > th:hover {
     cursor: pointer;
 }
+
+.hide {
+    display:none !important;
+}

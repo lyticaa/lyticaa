@@ -8,16 +8,17 @@ import (
 )
 
 type User struct {
-	Id             int64          `db:"id"`
-	UserId         string         `db:"user_id"`
-	StripeUserId   sql.NullString `db:"stripe_user_id"`
-	StripePlanId   sql.NullString `db:"stripe_plan_id"`
-	Email          string         `db:"email"`
-	FirstName      sql.NullString `db:"first_name"`
-	CompanyName    sql.NullString `db:"company_name"`
-	SetupCompleted bool           `db:"setup_completed"`
-	CreatedAt      time.Time      `db:"created_at"`
-	UpdatedAt      time.Time      `db:"updated_at"`
+	Id                   int64          `db:"id"`
+	UserId               string         `db:"user_id"`
+	StripeUserId         sql.NullString `db:"stripe_user_id"`
+	StripeSubscriptionId sql.NullString `db:"stripe_subscription_id"`
+	StripePlanId         sql.NullString `db:"stripe_plan_id"`
+	Email                string         `db:"email"`
+	FirstName            sql.NullString `db:"first_name"`
+	CompanyName          sql.NullString `db:"company_name"`
+	SetupCompleted       bool           `db:"setup_completed"`
+	CreatedAt            time.Time      `db:"created_at"`
+	UpdatedAt            time.Time      `db:"updated_at"`
 }
 
 func CreateUser(userId, email string, db *sqlx.DB) (*User, error) {
@@ -78,6 +79,7 @@ func (u *User) Save(db *sqlx.DB) error {
 	query := `UPDATE users SET
 				email=:email,
 				stripe_user_id=:stripe_user_id,
+                stripe_subscription_id=:stripe_subscription_id,
                 stripe_plan_id=:stripe_plan_id,
 				first_name=:first_name,
 				company_name=:company_name,
@@ -86,14 +88,15 @@ func (u *User) Save(db *sqlx.DB) error {
 
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
-			"user_id":         u.UserId,
-			"stripe_user_id":  u.StripeUserId,
-			"stripe_plan_id":  u.StripeUserId,
-			"email":           u.Email,
-			"first_name":      u.FirstName,
-			"company_name":    u.CompanyName,
-			"setup_completed": u.SetupCompleted,
-			"updated_at":      time.Now(),
+			"user_id":                u.UserId,
+			"stripe_user_id":         u.StripeUserId,
+			"stripe_subscription_id": u.StripeSubscriptionId,
+			"stripe_plan_id":         u.StripePlanId,
+			"email":                  u.Email,
+			"first_name":             u.FirstName,
+			"company_name":           u.CompanyName,
+			"setup_completed":        u.SetupCompleted,
+			"updated_at":             time.Now(),
 		})
 	if err != nil {
 		return err

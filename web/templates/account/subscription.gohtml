@@ -17,9 +17,24 @@
     <input type="hidden" class="location" data-section="account-subscription"/>
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
-            <div class="alert alert-danger text-center pt-3 w-100 account-error" style="display: none;">
-                Unable to load your data. Please try again by refreshing the page. Should the problem persist, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
+            <div class="alert alert-danger text-center pt-3 w-100 account-subscription-error" style="display: none;">
+                Unable to change your plan. Please try again. Should the problem persist, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="alert alert-success text-center pt-3 w-100" style="display: none;">
+                Your subscription was updated successfully. If you have any questions regarding this, then please contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <button class="btn btn-primary processing mb-3" type="button" disabled style="display: none;">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Processing...
+            </button>
         </div>
     </div>
     <div class="row">
@@ -45,12 +60,14 @@
                                         <h3 class="text-center font-weight-light">$150</h3>
                                         {{ if .User.StripePlanId.String }}
                                             {{ if eq .User.StripePlanId.String .Config.Stripe.MonthlyPlanId }}
+                                                <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Change Plan</button>
                                                 <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Cancel</button>
                                             {{ else }}
                                                 <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Change Plan</button>
+                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel hide"data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Cancel</button>
                                             {{ end }}
                                         {{ else }}
-                                            <button class="btn btn-success d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Subscribe</button>
+                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Subscribe</button>
                                         {{ end }}
                                     </div>
                                 </div>
@@ -64,12 +81,14 @@
                                         <h3 class="text-center font-weight-light">$1500</h3>
                                         {{ if .User.StripePlanId.String }}
                                             {{ if eq .User.StripePlanId.String .Config.Stripe.AnnualPlanId }}
+                                                <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Change Plan</button>
                                                 <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Cancel</button>
                                             {{ else }}
                                                 <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Change Plan</button>
+                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Cancel</button>
                                             {{ end }}
                                         {{ else }}
-                                            <button class="btn btn-success d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Subscribe</button>
+                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Subscribe</button>
                                         {{ end }}
                                     </div>
                                 </div>
@@ -77,6 +96,13 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="alert alert-danger text-center pt-3 w-100 account-error" style="display: none;">
+                Unable to load your data. Please try again by refreshing the page. Should the problem persist, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
             </div>
         </div>
     </div>

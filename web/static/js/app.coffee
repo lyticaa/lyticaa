@@ -834,7 +834,7 @@ accountSubscription = ->
     'ordering': false
     'lengthChange': false
     'initComplete': ->
-      feather.replace()
+      renderIcons()
     'ajax':
       'url': window.location.href + '/invoices'
       'dataSrc': (j) ->
@@ -871,6 +871,48 @@ accountSubscription = ->
       dtPreDrawCallback(this, settings)
 
   dtCleanup($('#account-subscription-invoice-table'))
+
+  $('button.change').on 'click', (e) ->
+    e.preventDefault()
+
+    resetSuccess()
+    resetErrors()
+    resetWarnings()
+
+    $('button.processing').show()
+    $('button.change, button.cancel').attr('disabled', true)
+
+    planId = $(this).data('stripe-plan')
+    currentButton = $(this)
+
+    $.ajax
+      type: 'PUT'
+      url: window.location.href + '/change/' + planId
+      statusCode:
+        200: ->
+          tbStop()
+          $('button.processing').hide()
+          $('button.change, button.cancel').removeAttr('disabled')
+
+          $('button.change').each () ->
+            if $(this).data('stripe-plan') == planId
+              $(this).addClass('hide')
+              $(this).next().removeClass('hide')
+            else if $(this).next().is(':visible')
+              $(this).removeClass('hide')
+              $(this).next().addClass('hide')
+            return
+
+          $('.alert.alert-success').show()
+
+          $('button.loading').show()
+          $('#account-subscription-invoice-table').DataTable().ajax.reload () ->
+            renderIcons()
+        500: ->
+          tbStop()
+          $('.alert.alert-danger.account-subscription-error').show()
+          $('button.processing').hide()
+          $('button.change, button.cancel').removeAttr('disabled')
 
   return
 
@@ -980,6 +1022,17 @@ dtReload = (obj, table) ->
   return
 
 #
+# Reset success.
+#
+resetSuccess = ->
+  $('.alert.alert-success').each ->
+    if $(this).is(':visible')
+      $(this).hide()
+    return
+
+  return
+
+#
 # Reset errors.
 #
 resetErrors = ->
@@ -1000,6 +1053,13 @@ resetWarnings = ->
     return
 
   return
+
+#
+# Render Icons.
+#
+renderIcons = ->
+  feather.replace()
+
 #
 # Start Turbolinks progress bar.
 #

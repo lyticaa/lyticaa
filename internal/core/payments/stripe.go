@@ -1,26 +1,39 @@
 package payments
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"time"
 
 	"gitlab.com/getlytica/lytica-app/internal/core/payments/types"
-	"gitlab.com/getlytica/lytica-app/internal/models"
 
 	"github.com/stripe/stripe-go/v71"
 	"github.com/stripe/stripe-go/v71/checkout/session"
 	"github.com/stripe/stripe-go/v71/invoice"
 	"github.com/stripe/stripe-go/v71/price"
+	"github.com/stripe/stripe-go/v71/sub"
 	"github.com/stripe/stripe-go/v71/webhook"
 )
 
-func CheckoutSession(user models.User, plan string) (*stripe.CheckoutSession, error) {
+var (
+	stripeMonthlyPlanId    = os.Getenv("STRIPE_MONTHLY_PLAN_ID")
+	stripeMonthlyProductId = os.Getenv("STRIPE_MONTHLY_PRODUCT_ID")
+	stripeAnnualPlanId     = os.Getenv("STRIPE_ANNUAL_PLAN_ID")
+	stripeAnnualProductId  = os.Getenv("STRIPE_ANNUAL_PRODUCT_ID")
+
+	stripePlanProductMap = map[string]string{
+		stripeMonthlyPlanId: stripeMonthlyProductId,
+		stripeAnnualPlanId:  stripeAnnualProductId,
+	}
+)
+
+func CheckoutSession(userId, email string, plan string) (*stripe.CheckoutSession, error) {
 	setStripeKey()
 
 	params := &stripe.CheckoutSessionParams{
-		ClientReferenceID: &user.UserId,
-		CustomerEmail:     &user.Email,
+		ClientReferenceID: &userId,
+		CustomerEmail:     &email,
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
 		}),
@@ -45,6 +58,10 @@ func CustomerRefId(session *stripe.CheckoutSession) string {
 
 func CustomerId(session *stripe.CheckoutSession) string {
 	return session.Customer.ID
+}
+
+func SubscriptionId(session *stripe.CheckoutSession) string {
+	return session.Subscription.ID
 }
 
 func PlanId(session *stripe.CheckoutSession) string {
@@ -85,47 +102,63 @@ func InvoicesByUser(customer string) *types.Invoices {
 	return &invoices
 }
 
-func Plans(user models.User) *types.Plans {
-	var plans types.Plans
+func ChangePlan(subscriptionId, planId string) error {
+	setStripeKey()
 
-	for _, plan := range getPlans() {
-		p := types.Plan{ID: plan}
-
-		for _, product := range getProducts() {
-			p.Products = append(p.Products,
-				types.Product{
-					ID:     product,
-					Prices: *pricesByProduct(product),
-				},
-			)
-		}
-
-		plans = append(plans, p)
+	priceId, ok := priceIdByPlan(planId)
+	if !ok {
+		return errors.New("unable to find the price for the plan")
 	}
 
-	return &plans
+	subscription, err := sub.Get(subscriptionId, nil)
+	if err != nil {
+		return err
+	}
+
+	params := &stripe.SubscriptionParams{
+		CancelAtPeriodEnd: stripe.Bool(false),
+		ProrationBehavior: stripe.String(string(stripe.SubscriptionProrationBehaviorCreateProrations)),
+		Items: []*stripe.SubscriptionItemsParams{
+			{
+				ID:    stripe.String(subscription.Items.Data[0].ID),
+				Price: stripe.String(*priceId),
+			},
+		},
+	}
+
+	if _, err = sub.Update(subscriptionId, params); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func pricesByProduct(product string) *[]types.Price {
+func priceIdByPlan(planId string) (*string, bool) {
+	productId := stripePlanProductMap[planId]
+	if productId == "" {
+		return nil, false
+	}
+
+	priceId := priceIdByProduct(productId)
+	if priceId != nil {
+		return priceId, true
+	}
+
+	return nil, false
+}
+
+func priceIdByProduct(productId string) *string {
 	setStripeKey()
 
 	params := &stripe.PriceListParams{}
-	params.Filters.AddFilter("product", "=", product)
-
-	var prices []types.Price
+	params.Filters.AddFilter("product", "", productId)
 
 	list := price.List(params)
 	for list.Next() {
-		prices = append(
-			prices,
-			types.Price{
-				ID:     list.Price().ID,
-				Amount: list.Price().UnitAmountDecimal,
-			},
-		)
+		return &list.Price().ID
 	}
 
-	return &prices
+	return nil
 }
 
 func getPlan(plan string) string {
@@ -139,34 +172,12 @@ func getPlan(plan string) string {
 	return monthlyPlan()
 }
 
-func getPlans() []string {
-	return []string{
-		monthlyPlan(),
-		annualPlan(),
-	}
-}
-
-func getProducts() []string {
-	return []string{
-		monthlyProduct(),
-		annualProduct(),
-	}
-}
-
 func monthlyPlan() string {
-	return os.Getenv("STRIPE_MONTHLY_PLAN_ID")
+	return stripeMonthlyPlanId
 }
 
 func annualPlan() string {
-	return os.Getenv("STRIPE_ANNUAL_PLAN_ID")
-}
-
-func monthlyProduct() string {
-	return os.Getenv("STRIPE_MONTHLY_PRODUCT_ID")
-}
-
-func annualProduct() string {
-	return os.Getenv("STRIPE_ANNUAL_PRODUCT_ID")
+	return stripeAnnualPlanId
 }
 
 func setStripeKey() {
