@@ -2,10 +2,12 @@ package app
 
 import (
 	"database/sql"
-	"encoding/json"
+	"fmt"
+	"golang.org/x/text/currency"
 	"io/ioutil"
 	"net/http"
 
+	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
 	"gitlab.com/getlytica/lytica-app/internal/core/payments"
 	"gitlab.com/getlytica/lytica-app/internal/models"
 
@@ -64,9 +66,8 @@ func (a *App) getStripeWebhookEvent(body []byte, w http.ResponseWriter, r *http.
 func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter) error {
 	switch event.Type {
 	case checkoutSessionCompleted:
-		var session stripe.CheckoutSession
-		if err := json.Unmarshal(event.Data.Raw, &session); err != nil {
-			a.Logger.Error().Err(err).Msg("unable to unmarshal stripe webhook JSON")
+		session, err := payments.EventSession(event)
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return err
 		}
@@ -96,15 +97,100 @@ func (a *App) parseStripeWebhookEvent(event stripe.Event, w http.ResponseWriter)
 			a.Logger.Error().Err(err).Msg("unable to save user")
 		}
 	case customerSubscriptionCreated:
-		a.Logger.Info().Msg("not implemented")
+		subscription, err := payments.EventSubscription(event)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return err
+		}
+
+		user := models.FindUserByEmail(subscription.Customer.Email, a.Db)
+		if user.Id == 0 {
+			a.Logger.Error().Msg("unable to find user")
+			w.WriteHeader(http.StatusBadRequest)
+			return nil
+		}
+
+		message := fmt.Sprintf(types.NotificationMessages[customerSubscriptionCreated], subscription.Plan.Nickname)
+		_ = models.CreateNotification(user.Id, message, a.Db)
 	case customerSubscriptionDeleted:
-		a.Logger.Info().Msg("not implemented")
+		subscription, err := payments.EventSubscription(event)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return err
+		}
+
+		user := models.FindUserByEmail(subscription.Customer.Email, a.Db)
+		if user.Id == 0 {
+			a.Logger.Error().Msg("unable to find user")
+			w.WriteHeader(http.StatusBadRequest)
+			return nil
+		}
+
+		message := fmt.Sprintf(types.NotificationMessages[customerSubscriptionDeleted], subscription.Plan.Nickname)
+		_ = models.CreateNotification(user.Id, message, a.Db)
 	case invoiceCreated:
-		a.Logger.Info().Msg("not implemented")
+		inv, err := payments.EventInvoice(event)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return err
+		}
+
+		user := models.FindUserByEmail(inv.Customer.Email, a.Db)
+		if user.Id == 0 {
+			a.Logger.Error().Msg("unable to find user")
+			w.WriteHeader(http.StatusBadRequest)
+			return nil
+		}
+
+		unit, _ := currency.ParseISO(string(inv.Lines.Data[0].Currency))
+		message := fmt.Sprintf(
+			types.NotificationMessages[invoiceCreated],
+			inv.Lines.Data[0].Description,
+			fmt.Sprintf("%v %v", currency.Symbol(unit), payments.FormatAmount(inv.Lines.Data[0].Amount)),
+		)
+		_ = models.CreateNotification(user.Id, message, a.Db)
 	case invoicePaymentFailed:
-		a.Logger.Info().Msg("not implemented")
+		inv, err := payments.EventInvoice(event)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return err
+		}
+
+		user := models.FindUserByEmail(inv.Customer.Email, a.Db)
+		if user.Id == 0 {
+			a.Logger.Error().Msg("unable to find user")
+			w.WriteHeader(http.StatusBadRequest)
+			return nil
+		}
+
+		unit, _ := currency.ParseISO(string(inv.Lines.Data[0].Currency))
+		message := fmt.Sprintf(
+			types.NotificationMessages[invoicePaymentFailed],
+			inv.Lines.Data[0].Description,
+			fmt.Sprintf("%v %v", currency.Symbol(unit), payments.FormatAmount(inv.Lines.Data[0].Amount)),
+		)
+		_ = models.CreateNotification(user.Id, message, a.Db)
 	case invoicePaymentSucceeded:
-		a.Logger.Info().Msg("not implemented")
+		inv, err := payments.EventInvoice(event)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return err
+		}
+
+		user := models.FindUserByEmail(inv.Customer.Email, a.Db)
+		if user.Id == 0 {
+			a.Logger.Error().Msg("unable to find user")
+			w.WriteHeader(http.StatusBadRequest)
+			return nil
+		}
+
+		unit, _ := currency.ParseISO(string(inv.Lines.Data[0].Currency))
+		message := fmt.Sprintf(
+			types.NotificationMessages[invoicePaymentSucceeded],
+			inv.Lines.Data[0].Description,
+			fmt.Sprintf("%v %v", currency.Symbol(unit), payments.FormatAmount(inv.Lines.Data[0].Amount)),
+		)
+		_ = models.CreateNotification(user.Id, message, a.Db)
 	}
 
 	return nil

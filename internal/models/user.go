@@ -64,7 +64,23 @@ func FindUser(userId string, db *sqlx.DB) *User {
 
 	err := db.Select(&users, "SELECT * FROM users WHERE user_id = $1", userId)
 	if err != nil {
-		logger().Error().Err(err).Msgf("unable to load the user: %v", userId)
+		logger().Error().Err(err).Msgf("unable to load the user %v", userId)
+		return &User{}
+	}
+
+	if len(users) > 0 {
+		return &users[0]
+	}
+
+	return &User{}
+}
+
+func FindUserByEmail(email string, db *sqlx.DB) *User {
+	var users []User
+
+	err := db.Select(&users, "SELECT * FROM users WHERE email = $1", email)
+	if err != nil {
+		logger().Error().Err(err).Msgf("unable to load the user %v", email)
 		return &User{}
 	}
 

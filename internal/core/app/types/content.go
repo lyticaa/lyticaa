@@ -15,10 +15,10 @@ var (
 		},
 	}
 	NotificationMessages = map[string]string{
-		"customer.subscription.created": "",
-		"customer.subscription.deleted": "",
-		"invoice.created":               "A new",
-		"invoice.payment_failed":        "",
-		"invoice.payment_succeeded":     "",
+		"customer.subscription.created": "Subscribed to the plan %v.",
+		"customer.subscription.deleted": "Unsubscribed from the plan %v.",
+		"invoice.created":               "A new invoice %v for %v was created.",
+		"invoice.payment_failed":        "Payment of the invoice %v for %v was unsuccessful.",
+		"invoice.payment_succeeded":     "Payment of the invoice %v for %v was successful.",
 	}
 )

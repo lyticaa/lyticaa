@@ -1,6 +1,7 @@
 package payments
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -80,19 +81,13 @@ func InvoicesByUser(customer string) *types.Invoices {
 	list := invoice.List(params)
 
 	for list.Next() {
-		var formattedAmount float64
-		total := list.Invoice().Total
-		if total > 0 {
-			formattedAmount = float64(total / 100)
-		}
-
 		invoices = append(
 			invoices,
 			types.Invoice{
 				Number:   list.Invoice().Number,
 				Date:     time.Unix(list.Invoice().Created, 0),
 				Currency: list.Invoice().Currency,
-				Amount:   formattedAmount,
+				Amount:   FormatAmount(list.Invoice().Total),
 				Status:   list.Invoice().Status,
 				PDF:      list.Invoice().InvoicePDF,
 			},
@@ -100,6 +95,15 @@ func InvoicesByUser(customer string) *types.Invoices {
 	}
 
 	return &invoices
+}
+
+func FormatAmount(amount int64) float64 {
+	var formattedAmount float64
+	if amount > 0 {
+		formattedAmount = float64(amount / 100)
+	}
+
+	return formattedAmount
 }
 
 func ChangePlan(subscriptionId, planId string) error {
@@ -143,6 +147,33 @@ func CancelSubscription(subscriptionId string) error {
 	}
 
 	return nil
+}
+
+func EventSession(e stripe.Event) (stripe.CheckoutSession, error) {
+	var session stripe.CheckoutSession
+	if err := json.Unmarshal(e.Data.Raw, &session); err != nil {
+		return session, err
+	}
+
+	return session, nil
+}
+
+func EventSubscription(e stripe.Event) (stripe.Subscription, error) {
+	var subscription stripe.Subscription
+	if err := json.Unmarshal(e.Data.Raw, &subscription); err != nil {
+		return subscription, err
+	}
+
+	return subscription, nil
+}
+
+func EventInvoice(e stripe.Event) (stripe.Invoice, error) {
+	var inv stripe.Invoice
+	if err := json.Unmarshal(e.Data.Raw, &inv); err != nil {
+		return inv, err
+	}
+
+	return inv, nil
 }
 
 func priceIdByPlan(planId string) (*string, bool) {
