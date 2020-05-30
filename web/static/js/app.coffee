@@ -95,7 +95,7 @@ loadDashboard = ->
 
   $.ajax
     type: 'GET'
-    url: window.location.href + 'dashboard/metrics/filter/' + $('.date-filter.active').data('range')
+    url: cleanUrl() + 'dashboard/metrics/filter/' + $('.date-filter.active').data('range')
     timeout: 10000
     statusCode:
       200: (data) ->
@@ -127,7 +127,7 @@ metricsTotalSales = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -171,7 +171,7 @@ metricsUnitsSold = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -216,7 +216,7 @@ metricsAmazonCosts = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -261,7 +261,7 @@ metricsAdvertisingSpend = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -306,7 +306,7 @@ metricsRefunds = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -351,7 +351,7 @@ metricsShippingCredits = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -395,7 +395,7 @@ metricsPromotionalRebates = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -441,7 +441,7 @@ metricsTotalCosts = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -490,7 +490,7 @@ metricsNetMargin = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -561,7 +561,7 @@ loadCohort = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -632,7 +632,7 @@ loadForecast = (obj) ->
 
   $.ajax
     type: 'POST'
-    url: window.location.href + '/filter/' + $(obj).data('range')
+    url: cleanUrl() + '/filter/' + $(obj).data('range')
     statusCode:
       200: ->
         tbStop()
@@ -658,7 +658,7 @@ expensesCostOfGoods = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -706,7 +706,7 @@ expensesOther = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -751,7 +751,7 @@ profitLoss = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -792,7 +792,7 @@ accountNotifications = ->
     'bFilter': false
     'lengthChange': false
     'ajax':
-      'url': window.location.href + '/filter/today'
+      'url': cleanUrl() + '/filter/today'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -837,7 +837,7 @@ accountSubscription = ->
     'initComplete': ->
       renderIcons()
     'ajax':
-      'url': window.location.href + '/invoices'
+      'url': cleanUrl() + '/invoices'
       'dataSrc': (j) ->
         $('button.loading').hide()
 
@@ -887,7 +887,7 @@ accountSubscription = ->
 
     $.ajax
       type: 'PUT'
-      url: window.location.href + '/change/' + planId
+      url: cleanUrl() + '/change/' + planId
       statusCode:
         200: ->
           tbStop()
@@ -928,7 +928,7 @@ accountSubscription = ->
 
     $.ajax
       type: 'POST'
-      url: window.location.href + '/subscribe/' + planId
+      url: cleanUrl() + '/subscribe/' + planId
       statusCode:
         200: ->
           tbStop()
@@ -966,7 +966,7 @@ accountSubscription = ->
 
     $.ajax
       type: 'POST'
-      url: window.location.href + '/cancel'
+      url: cleanUrl() + '/cancel'
       data: $('form#account-subscription-cancel').serialize()
       statusCode:
         200: ->
@@ -1151,6 +1151,12 @@ tbStop = ->
   Turbolinks.controller.adapter.progressBar.hide()
 
   return
+
+#
+# Clean URL
+#
+cleanUrl = ->
+  return window.location.href.split("#")[0]
 
 #
 # Init
