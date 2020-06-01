@@ -22,10 +22,21 @@ clean:
 tests:
 	@go test -v -coverprofile .testCoverage.txt ./...
 
+integration-tests: clean install build-assets
+	@dashd &
+	@make run-cypress
+	@make stop-dashboard-service
+
+run-cypress:
+	@yarn cypress:open
+
 setup-yarn:
 	yarn install
 
 build-assets: setup-yarn
+
+stop-dashboard-service:
+	@kill -SIGINT $(shell pgrep dashd)
 
 run-dashboard-service: build-assets
 	@dashd
