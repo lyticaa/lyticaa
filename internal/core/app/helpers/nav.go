@@ -1,14 +1,24 @@
 package helpers
 
 const (
-	setupNav = "partials/nav/_setup"
-	mainNav  = "partials/nav/_main"
+	setupPrimaryNav = "partials/nav/_setup"
+	mainPrimaryNav  = "partials/nav/_main"
+	setupAccountNav = "partials/nav/account/_setup"
+	mainAccountNav  = "partials/nav/account/_main"
 )
 
-func NavForSession(subscribed bool) string {
+func PrimaryNavForSession(subscribed bool) string {
 	if subscribed {
-		return mainNav
+		return mainPrimaryNav
 	}
 
-	return setupNav
+	return setupPrimaryNav
+}
+
+func AccountNavForSession(subscribed bool) string {
+	if subscribed {
+		return mainAccountNav
+	}
+
+	return setupAccountNav
 }

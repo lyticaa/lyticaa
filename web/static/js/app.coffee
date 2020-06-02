@@ -16,6 +16,11 @@ require('datatables.net-bs4') window, $
 #
 initialize = ->
   user()
+
+  # Setup
+  setupSubscribe()
+
+  # Dashboard
   dashboard()
 
   # Metrics
@@ -47,10 +52,10 @@ initialize = ->
   # Account
   accountNotifications()
   accountSubscription()
+  accountResetPassword()
 
   support()
   uploads()
-  subscribe()
   return
 
 #
@@ -88,8 +93,9 @@ dashboard = ->
 # Load Summary.
 #
 loadDashboard = ->
+  resetAlerts()
+
   tbStart()
-  resetErrors()
 
   $('button.loading').show()
 
@@ -132,8 +138,7 @@ metricsTotalSales = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -176,8 +181,7 @@ metricsUnitsSold = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -221,8 +225,7 @@ metricsAmazonCosts = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -266,8 +269,7 @@ metricsAdvertisingSpend = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -311,8 +313,7 @@ metricsRefunds = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -356,8 +357,7 @@ metricsShippingCredits = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -400,8 +400,7 @@ metricsPromotionalRebates = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -446,8 +445,7 @@ metricsTotalCosts = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -495,8 +493,7 @@ metricsNetMargin = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -566,8 +563,7 @@ loadCohort = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -623,8 +619,8 @@ forecast = ->
 # Load Forecast.
 #
 loadForecast = (obj) ->
-  resetErrors()
-  resetWarnings()
+  resetAlerts()
+
   tbStart()
 
   $('.date-filter.active').removeClass 'active'
@@ -663,8 +659,7 @@ expensesCostOfGoods = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -711,8 +706,7 @@ expensesOther = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -756,8 +750,7 @@ profitLoss = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -797,8 +790,7 @@ accountNotifications = ->
         $('button.loading').hide()
 
         if j.data.length > 0
-          resetErrors()
-          resetWarnings()
+          resetAlerts()
 
         return j.data
       'error': (j) ->
@@ -876,9 +868,7 @@ accountSubscription = ->
   $('button.change').on 'click', (e) ->
     e.preventDefault()
 
-    resetSuccess()
-    resetErrors()
-    resetWarnings()
+    resetAlerts()
 
     $('button.processing').show()
     $('button.change, button.cancel').attr('disabled', true)
@@ -917,9 +907,7 @@ accountSubscription = ->
   $('button.subscribe').on 'click', (e) ->
     e.preventDefault()
 
-    resetSuccess()
-    resetErrors()
-    resetWarnings()
+    resetAlerts()
 
     $('button.processing').show()
     $('button.subscribe').attr('disabled', true)
@@ -957,7 +945,8 @@ accountSubscription = ->
 
   $('form#account-subscription-cancel').submit (e) ->
     e.preventDefault()
-    resetErrors()
+
+    resetAlerts()
 
     $('button.close-modal').attr('disabled', 'true')
     $('button.submit').html('Processing...').attr('disabled', 'true')
@@ -980,6 +969,31 @@ accountSubscription = ->
           tbStop()
           resetModal('Submit')
           $('.alert.alert-danger.cancel').show()
+    return
+
+  return
+
+#
+# Account: Reset Password
+#
+accountResetPassword = ->
+  $('a.account-change-password ').on 'click', (e)->
+    e.preventDefault()
+
+    resetAlerts()
+
+    tbStart()
+
+    $.ajax
+      type: 'GET'
+      url: '/account/change_password'
+      statusCode:
+        200: ->
+          tbStop()
+          $('.alert.alert-success.account-change-password').show()
+        500: ->
+          tbStop()
+          $('.alert.alert-danger.account-change-password').show()
     return
 
   return
@@ -1043,15 +1057,17 @@ uploads = ->
   return
 
 #
-# Subscribe.
+# Setup: Subscribe.
 #
-subscribe = ->
-  if $('a.stripe').length > 0
-    stripe = Stripe($('.stripe-pk').data('stripe-pk'))
-    $('a.stripe').on 'click', ->
-      stripe.redirectToCheckout(sessionId: $(this).data('stripe-plan')).then (result) ->
-        alert result.error.message
-      return
+setupSubscribe = ->
+  if $('input.location').data('section') != 'setup-subscribe'
+    return
+
+  stripe = Stripe($('.stripe-pk').data('stripe-pk'))
+  $('button.subscribe').on 'click', ->
+    stripe.redirectToCheckout(sessionId: $(this).data('stripe-session')).then (result) ->
+      alert result.error.message
+    return
 
   return
 
@@ -1095,6 +1111,14 @@ dtReload = (obj, table) ->
 resetModal = (text) ->
   $('button.close-modal').removeAttr('disabled')
   $('button.create, button.submit').html(text).removeAttr('disabled')
+
+#
+# Reset alerts.
+#
+resetAlerts = ->
+  resetSuccess()
+  resetErrors()
+  resetWarnings()
 
 #
 # Reset success.

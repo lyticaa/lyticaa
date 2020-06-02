@@ -13,7 +13,9 @@ func (f *Forecast) Overview(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(f.sessionStore, f.logger, w, r)
 
 	t := []string{
+		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/account/_main",
 		"forecast/overview",
 		"partials/_filters",
 	}

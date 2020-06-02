@@ -10,7 +10,9 @@ func (a *Account) Invitations(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 
 	t := []string{
-		helpers.NavForSession(helpers.IsSubscribed(a.sessionStore, a.logger, w, r)),
+		"partials/_nav",
+		"partials/nav/_main",
+		"partials/nav/account/_main",
 		"account/invitations",
 		"partials/_filters",
 	}

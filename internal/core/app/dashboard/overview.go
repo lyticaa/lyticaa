@@ -11,7 +11,9 @@ func (d *Dashboard) Overview(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(d.sessionStore, d.logger, w, r)
 
 	t := []string{
+		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/account/_main",
 		"dashboard/overview",
 		"partials/_filters",
 	}

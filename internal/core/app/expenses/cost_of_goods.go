@@ -13,7 +13,9 @@ func (e *Expenses) CostOfGoods(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
 
 	t := []string{
+		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/account/_main",
 		"expenses/cost_of_goods",
 		"partials/_filters",
 	}

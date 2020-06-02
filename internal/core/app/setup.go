@@ -13,15 +13,7 @@ func (a *App) setupHandlers() {
 
 	a.Router.Handle("/setup", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(s.Details)),
-	))
-	a.Router.Handle("/setup/details", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(s.Details)),
-	))
-	a.Router.Handle("/setup/invite", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(s.Invite)),
+		negroni.Wrap(http.HandlerFunc(s.Subscribe)),
 	))
 	a.Router.Handle("/setup/subscribe", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),

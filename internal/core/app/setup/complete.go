@@ -32,6 +32,11 @@ func (s *Setup) Complete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t := []string{"partials/nav/_setup", "setup/complete"}
+	t := []string{
+		"partials/_nav",
+		"partials/nav/_setup",
+		"partials/nav/account/_setup",
+		"setup/complete",
+	}
 	helpers.RenderTemplate(w, t, session.Values)
 }

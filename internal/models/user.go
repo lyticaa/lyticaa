@@ -14,8 +14,6 @@ type User struct {
 	StripeSubscriptionId sql.NullString `db:"stripe_subscription_id"`
 	StripePlanId         sql.NullString `db:"stripe_plan_id"`
 	Email                string         `db:"email"`
-	FirstName            sql.NullString `db:"first_name"`
-	CompanyName          sql.NullString `db:"company_name"`
 	SetupCompleted       bool           `db:"setup_completed"`
 	CreatedAt            time.Time      `db:"created_at"`
 	UpdatedAt            time.Time      `db:"updated_at"`
@@ -97,8 +95,6 @@ func (u *User) Save(db *sqlx.DB) error {
 				stripe_user_id=:stripe_user_id,
                 stripe_subscription_id=:stripe_subscription_id,
                 stripe_plan_id=:stripe_plan_id,
-				first_name=:first_name,
-				company_name=:company_name,
 				setup_completed=:setup_completed
 				WHERE user_id=:user_id`
 
@@ -109,8 +105,6 @@ func (u *User) Save(db *sqlx.DB) error {
 			"stripe_subscription_id": u.StripeSubscriptionId,
 			"stripe_plan_id":         u.StripePlanId,
 			"email":                  u.Email,
-			"first_name":             u.FirstName,
-			"company_name":           u.CompanyName,
 			"setup_completed":        u.SetupCompleted,
 			"updated_at":             time.Now(),
 		})

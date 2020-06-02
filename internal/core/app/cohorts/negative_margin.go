@@ -13,7 +13,9 @@ func (c *Cohorts) NegativeMargin(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(c.sessionStore, c.logger, w, r)
 
 	t := []string{
+		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/account/_main",
 		"cohorts/negative_margin",
 		"partials/_filters",
 	}

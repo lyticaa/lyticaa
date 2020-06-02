@@ -13,7 +13,9 @@ func (p *ProfitLoss) Overview(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(p.sessionStore, p.logger, w, r)
 
 	t := []string{
+		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/account/_main",
 		"profit_loss/overview",
 		"partials/_filters",
 	}

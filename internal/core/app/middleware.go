@@ -35,13 +35,13 @@ func (a *App) isAuthenticated(w http.ResponseWriter, r *http.Request, next http.
 func (a *App) setupComplete(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	session := a.getSession(w, r)
 	if session.Values["User"] == nil {
-		http.Redirect(w, r, "/setup", http.StatusSeeOther)
+		http.Redirect(w, r, "/setup/subscribe", http.StatusSeeOther)
 		return
 	}
 
 	user := session.Values["User"].(models.User)
 	if !user.SetupCompleted {
-		http.Redirect(w, r, "/setup", http.StatusSeeOther)
+		http.Redirect(w, r, "/setup/subscribe", http.StatusSeeOther)
 		return
 	} else {
 		next(w, r)

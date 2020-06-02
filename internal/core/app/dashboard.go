@@ -13,10 +13,12 @@ func (a *App) dashboardHandlers() {
 
 	a.Router.Handle("/", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(dashboard.Overview)),
 	))
 	a.Router.Handle("/dashboard/metrics/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(dashboard.Metrics)),
 	))
 }

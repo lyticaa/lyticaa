@@ -4,7 +4,7 @@ var (
 	FlashMessages = map[string]map[string]map[string]string{
 		"setup": {
 			"subscribe": {
-				"success": "Thanks for subscribing.",
+				"success": "Thanks for subscribing. Please click Next to continue.",
 				"error":   "There was an issue while processing your subscription. Please try again.",
 			},
 		},

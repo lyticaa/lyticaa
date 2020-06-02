@@ -5,13 +5,23 @@ import (
 )
 
 func TestNavForSession(t *testing.T) {
-	nav := NavForSession(true)
-	if nav != mainNav {
+	nav := PrimaryNavForSession(true)
+	if nav != mainPrimaryNav {
 		t.Error()
 	}
 
-	nav = NavForSession(false)
-	if nav != setupNav {
+	nav = PrimaryNavForSession(false)
+	if nav != setupPrimaryNav {
+		t.Error()
+	}
+
+	nav = AccountNavForSession(true)
+	if nav != mainAccountNav {
+		t.Error()
+	}
+
+	nav = AccountNavForSession(false)
+	if nav != setupAccountNav {
 		t.Error()
 	}
 }

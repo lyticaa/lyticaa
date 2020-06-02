@@ -13,7 +13,9 @@ func (e *Expenses) Other(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
 
 	t := []string{
+		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/account/_main",
 		"expenses/other",
 		"partials/_filters",
 	}

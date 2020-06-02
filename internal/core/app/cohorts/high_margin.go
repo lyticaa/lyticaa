@@ -13,7 +13,9 @@ func (c *Cohorts) HighMargin(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(c.sessionStore, c.logger, w, r)
 
 	t := []string{
+		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/account/_main",
 		"cohorts/high_margin",
 		"partials/_filters",
 	}

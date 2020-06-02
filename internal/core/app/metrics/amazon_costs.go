@@ -13,7 +13,9 @@ func (m *Metrics) AmazonCosts(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
 
 	t := []string{
+		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/account/_main",
 		"metrics/amazon_costs",
 		"partials/_filters",
 	}
