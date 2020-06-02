@@ -108,7 +108,7 @@ loadDashboard = ->
         tbStop()
         $('button.loading').hide()
 
-        #feather.replace()
+        #renderIcons()
       500: ->
         tbStop()
         $('button.loading').hide()

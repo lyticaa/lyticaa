@@ -27,10 +27,6 @@ func (a *App) setupHandlers() {
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(s.SubscribeCancel)),
 	))
-	a.Router.Handle("/setup/import_data", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(s.ImportData)),
-	))
 	a.Router.Handle("/setup/complete", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.Wrap(http.HandlerFunc(s.Complete)),

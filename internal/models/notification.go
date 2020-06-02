@@ -9,7 +9,7 @@ import (
 
 type Notification struct {
 	Id           int64     `db:"id"`
-	UserId       string    `db:"user_id"`
+	UserId       int64    `db:"user_id"`
 	Notification string    `db:"notification"`
 	CreatedAt    time.Time `db:"created_at"`
 	UpdatedAt    time.Time `db:"updated_at"`

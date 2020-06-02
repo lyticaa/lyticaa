@@ -21,11 +21,6 @@ func (a *App) accountHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.NotificationsByDate)),
 	))
-	a.Router.Handle("/account/invitations", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(acct.Invitations)),
-	))
 	a.Router.Handle("/account/subscription", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
