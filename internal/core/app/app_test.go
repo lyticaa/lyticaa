@@ -13,20 +13,20 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type AppSuite struct {
+type appSuite struct {
 	a *App
 }
 
-var _ = Suite(&AppSuite{})
+var _ = Suite(&appSuite{})
 
 func Test(t *testing.T) { TestingT(t) }
 
-func (s *AppSuite) SetUpSuite(c *C) {
+func (s *appSuite) SetUpSuite(c *C) {
 	s.a = NewApp()
 	s.a.Start()
 }
 
-func (s *AppSuite) TestApp(c *C) {
+func (s *appSuite) TestApp(c *C) {
 	c.Assert(s.a.Logger, NotNil)
 	c.Assert(s.a.NewRelic, NotNil)
 	c.Assert(s.a.Srv, NotNil)
@@ -36,7 +36,7 @@ func (s *AppSuite) TestApp(c *C) {
 	c.Assert(s.a.Db, NotNil)
 }
 
-func (s *AppSuite) TestHealth(c *C) {
+func (s *appSuite) TestHealth(c *C) {
 	url := fmt.Sprintf("%v/api/health_check", os.Getenv("BASE_URL"))
 	req, err := http.NewRequest("GET", url, nil)
 	c.Assert(err, IsNil)
@@ -56,6 +56,6 @@ func (s *AppSuite) TestHealth(c *C) {
 	c.Assert(health.Status, Equals, "OK")
 }
 
-func (s *AppSuite) TearDownSuite(c *C) {
+func (s *appSuite) TearDownSuite(c *C) {
 	s.a.Stop()
 }

@@ -14,16 +14,16 @@ import (
 func (r *Report) toMap(contentType string, body []byte) []map[string]string {
 	var rows []map[string]string
 
-	if types.IsCsv(contentType) {
-		rows = r.mapCsv(bytes.NewBuffer(body))
-	} else if types.IsXlsx(contentType) {
-		rows = r.mapXlsx(body)
+	if types.IsCSV(contentType) {
+		rows = r.mapCSV(bytes.NewBuffer(body))
+	} else if types.IsXLSX(contentType) {
+		rows = r.mapXLSX(body)
 	}
 
 	return rows
 }
 
-func (r *Report) mapCsv(reader io.Reader) []map[string]string {
+func (r *Report) mapCSV(reader io.Reader) []map[string]string {
 	rr := csv.NewReader(reader)
 	var rows []map[string]string
 	var header []string
@@ -61,7 +61,7 @@ func (r *Report) mapCsv(reader io.Reader) []map[string]string {
 	return rows
 }
 
-func (r *Report) mapXlsx(body []byte) []map[string]string {
+func (r *Report) mapXLSX(body []byte) []map[string]string {
 	var rows []map[string]string
 	var header []string
 

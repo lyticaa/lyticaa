@@ -17,7 +17,7 @@ func ValidMime(contentType string) bool {
 	return false
 }
 
-func IsCsv(contentType string) bool {
+func IsCSV(contentType string) bool {
 	match := false
 	if contentType == csv {
 		match = true
@@ -26,7 +26,7 @@ func IsCsv(contentType string) bool {
 	return match
 }
 
-func IsXlsx(contentType string) bool {
+func IsXLSX(contentType string) bool {
 	match := false
 	if contentType == xlsx {
 		match = true
