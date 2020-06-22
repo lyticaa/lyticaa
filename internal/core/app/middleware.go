@@ -12,7 +12,7 @@ import (
 
 func (a *App) forceSsl(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if os.Getenv("ENV") != "development" {
+		if os.Getenv("ENV") != "development" && os.Getenv("ENV") != "test" {
 			if r.Header.Get("x-forwarded-proto") != "https" {
 				sslUrl := "https://" + r.Host + r.RequestURI
 				http.Redirect(w, r, sslUrl, http.StatusTemporaryRedirect)

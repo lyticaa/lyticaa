@@ -11,7 +11,7 @@ stages:
   - staging
 
 unit:
-  image: golang:1.13
+  image: golang:1.14
   stage: test
   services:
     - redis:latest

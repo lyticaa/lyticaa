@@ -2,7 +2,7 @@ module gitlab.com/getlytica/lytica-app
 
 replace gitlab.com/getlytica/lytica-app => ../getlytica/lytica-app
 
-go 1.13
+go 1.14
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.4.1
