@@ -9,6 +9,7 @@ import (
 )
 
 type Filter struct {
+	DateRange string
 	Start     int64
 	Length    int64
 	Sort      int64

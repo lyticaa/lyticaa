@@ -4,12 +4,13 @@ import (
 	"net/http"
 
 	"gitlab.com/getlytica/lytica-app/internal/core/app/setup"
+	"gitlab.com/getlytica/lytica-app/internal/core/payments"
 
 	"github.com/urfave/negroni"
 )
 
 func (a *App) setupHandlers() {
-	s := setup.NewSetup(a.Db, a.SessionStore, a.Logger)
+	s := setup.NewSetup(a.Db, a.SessionStore, a.Logger, payments.NewStripePayments())
 
 	a.Router.Handle("/setup", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),

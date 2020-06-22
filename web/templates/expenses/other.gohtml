@@ -22,8 +22,9 @@
     <input type="hidden" class="location" data-section="expenses-other"/>
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
-            <div class="alert alert-danger text-center pt-3 w-100 expenses-error" style="display: none;">
-                Unable to load your data. Please try again by refreshing the page. Should the problem persist, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
+            <div class="alert alert-icon-danger text-center pt-3 w-100 expenses-other-load-error" style="display: none;">
+                <i data-feather="alert-triangle"></i>
+                Loading your expenses has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
             </div>
         </div>
     </div>

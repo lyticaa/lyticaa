@@ -6,6 +6,8 @@ import (
 
 	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
 	"gitlab.com/getlytica/lytica-app/internal/models"
+
+	"github.com/gorilla/sessions"
 )
 
 func (a *App) forceSsl(next http.Handler) http.Handler {
@@ -51,4 +53,14 @@ func (a *App) setupComplete(w http.ResponseWriter, r *http.Request, next http.Ha
 func (a *App) setConfig(w http.ResponseWriter, r *http.Request) {
 	session := a.getSession(w, r)
 	session.Values["Config"] = types.NewConfig()
+}
+
+func (a *App) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
+	session, err := a.SessionStore.Get(r, "auth-session")
+	if err != nil {
+		a.Logger.Error().Err(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	return session
 }

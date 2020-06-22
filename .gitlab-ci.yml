@@ -17,6 +17,14 @@ unit:
     - redis:latest
     - name: bitnami/memcached:latest
       alias: memcached
+    - postgres:latest
+  variables:
+    POSTGRES_DB: lytica_test
+    POSTGRES_USER: lytica
+    POSTGRES_PASSWORD: password
+    POSTGRES_HOST_AUTH_METHOD: trust
+  before_script:
+    - make migrate
   script:
     - make tests
 

@@ -7,9 +7,10 @@ import (
 )
 
 func BuildFilter(r *http.Request) *models.Filter {
-	startDate, endDate := DateRange(r)
+	dateRange, startDate, endDate := DateRange(r)
 
 	filter := models.NewFilter()
+	filter.DateRange = dateRange
 	filter.StartDate = startDate
 	filter.EndDate = endDate
 	filter.Start = DtStart(r)

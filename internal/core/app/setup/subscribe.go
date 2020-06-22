@@ -1,11 +1,11 @@
 package setup
 
 import (
+	"net/http"
+
 	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
 	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
-	"gitlab.com/getlytica/lytica-app/internal/core/payments"
 	"gitlab.com/getlytica/lytica-app/internal/models"
-	"net/http"
 
 	"github.com/gorilla/sessions"
 )
@@ -13,13 +13,13 @@ import (
 func (s *Setup) stripeSessions(w http.ResponseWriter, session *sessions.Session) {
 	user := session.Values["User"].(models.User)
 
-	monthly, err := payments.CheckoutSession(user.UserId, user.Email, "monthly")
+	monthly, err := s.stripe.CheckoutSession(user.UserId, user.Email, "monthly")
 	if err != nil {
 		s.logger.Error().Err(err).Msg("unable to generate a new stripe session")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	annual, err := payments.CheckoutSession(user.UserId, user.Email, "annual")
+	annual, err := s.stripe.CheckoutSession(user.UserId, user.Email, "annual")
 	if err != nil {
 		s.logger.Error().Err(err).Msg("unable to generate a new stripe session")
 		http.Error(w, err.Error(), http.StatusInternalServerError)

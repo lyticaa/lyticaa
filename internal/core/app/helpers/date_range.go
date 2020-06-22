@@ -7,54 +7,108 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func DateRange(r *http.Request) (time.Time, time.Time) {
+var (
+	rangeToday               = "today"
+	rangeYesterday           = "yesterday"
+	rangeLastThirtyDays      = "last_thirty_days"
+	rangePreviousThirtyDays  = "previous_thirty_days"
+	rangeThisMonth           = "this_month"
+	rangeLastMonth           = "last_month"
+	rangeMonthBeforeLast     = "month_before_last"
+	rangeLastThreeMonths     = "last_three_months"
+	rangePreviousThreeMonths = "previous_three_months"
+	rangeLastSixMonths       = "last_six_months"
+	rangePreviousSixMonths   = "previous_six_months"
+	rangeThisYear            = "this_year"
+	rangeLastYear            = "last_year"
+	rangeAllTime             = "all_time"
+)
+
+func DateRange(r *http.Request) (string, time.Time, time.Time) {
 	params := mux.Vars(r)
 	dateRange := params["dateRange"]
+
+	var start time.Time
+	var end time.Time
+
 	switch dateRange {
-	case "today":
-		return today()
-	case "last_30_days":
-		return lastThirtyDays()
-	case "this_month":
-		return thisMonth()
-	case "last_month":
-		return lastMonth()
-	case "last_3_months":
-		return lastThreeMonths()
-	case "last_6_months":
-		return lastSixMonths()
-	case "this_year":
-		return thisYear()
-	case "all_time":
-		return allTime()
+	case rangeToday:
+		start, end = today()
+	case rangeLastThirtyDays:
+		start, end = lastThirtyDays()
+	case rangeThisMonth:
+		start, end = thisMonth()
+	case rangeLastMonth:
+		start, end = lastMonth()
+	case rangeLastThreeMonths:
+		start, end = lastThreeMonths()
+	case rangeLastSixMonths:
+		start, end = lastSixMonths()
+	case rangeThisYear:
+		start, end = thisYear()
+	case rangeAllTime:
+		start, end = allTime()
+	default:
+		start, end = today()
 	}
 
-	return today()
+	return dateRange, start, end
 }
 
 func PreviousDateRange(r *http.Request) (time.Time, time.Time) {
 	params := mux.Vars(r)
 	dateRange := params["dateRange"]
 	switch dateRange {
-	case "today":
+	case rangeToday:
 		return yesterday()
-	case "last_30_days":
+	case rangeLastThirtyDays:
 		return previousThirtyDays()
-	case "this_month":
+	case rangeThisMonth:
 		return lastMonth()
-	case "last_month":
-		return previousMonth()
-	case "last_3_months":
+	case rangeLastMonth:
+		return monthBeforeLast()
+	case rangeLastThreeMonths:
 		return previousThreeMonths()
-	case "last_6_months":
+	case rangeLastSixMonths:
 		return previousSixMonths()
-	case "this_year":
+	case rangeThisYear:
 		return lastYear()
-	case "all_time":
+	case rangeAllTime:
 		return allTime()
 	}
 
 	return yesterday()
+}
+
+func PreviousDateRangeLabel(dateRange string) string {
+	switch dateRange {
+	case rangeToday:
+		return rangeYesterday
+	case rangeLastThirtyDays:
+		return rangePreviousThirtyDays
+	case rangeThisMonth:
+		return rangeLastMonth
+	case rangeLastMonth:
+		return rangeMonthBeforeLast
+	case rangeLastThreeMonths:
+		return rangePreviousThreeMonths
+	case rangeLastSixMonths:
+		return rangePreviousSixMonths
+	case rangeThisYear:
+		return rangeLastYear
+	}
+
+	return dateRange
+}
+
+func IsDateRangeAllTime(dateRange string) bool {
+	allTime := false
+
+	if dateRange == rangeAllTime {
+		allTime = true
+	}
+
+	return allTime
 }
 
 func today() (time.Time, time.Time) {
@@ -87,7 +141,7 @@ func lastMonth() (time.Time, time.Time) {
 	return startDate(year, month, day), time.Now()
 }
 
-func previousMonth() (time.Time, time.Time) {
+func monthBeforeLast() (time.Time, time.Time) {
 	year, month, day := dateByMonths(-2, 0).Date()
 	return startDate(year, month, day), time.Now().AddDate(0, -2, 0)
 }

@@ -4,8 +4,8 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type DashbordSuite struct{}
+type DashboardSuite struct{}
 
-var _ = Suite(&DashbordSuite{})
+var _ = Suite(&DashboardSuite{})
 
-func (s *DashbordSuite) TestDashboard(c *C) {}
+func (s *DashboardSuite) TestDashboard(c *C) {}

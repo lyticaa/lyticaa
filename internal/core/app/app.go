@@ -48,7 +48,7 @@ func NewApp() *App {
 
 	config := newrelic.NewConfig(
 		os.Getenv("APP_NAME"),
-		os.Getenv("NEWRELIC_LICENSE_KEY"),
+		os.Getenv("NEW_RELIC_LICENSE_KEY"),
 	)
 	nr, _ := newrelic.NewApplication(config)
 

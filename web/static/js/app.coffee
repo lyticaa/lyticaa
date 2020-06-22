@@ -4,70 +4,160 @@ import $ from 'jquery'
 window.jQuery = $
 window.$ = $
 
-import feather from 'feather-icons'
-import 'js-cookie'
-import 'dropzone'
+import 'bootstrap'
+import './vendors/nobleui/nobleui'
+import './vendors/intercom/intercom'
 
-require('datatables.net') window, $
-require('datatables.net-bs4') window, $
+import AccountNotifications       from './account/notifications'
+import AccountPassword            from './account/password'
+import AccountSubscription        from './account/subscription'
+import Cohorts                    from './cohorts/cohorts'
+import DashboardOverview          from './dashboard/overview'
+import ExpensesCostOfGoods        from './expenses/cost_of_goods'
+import ExpensesOther              from './expenses/other'
+import ForecastOverview           from './forecast/overview'
+import MetricsAdvertisingSpend    from './metrics/advertising_spend'
+import MetricsAmazonCosts         from './metrics/amazon_costs'
+import MetricsNetMargin           from './metrics/net_margin'
+import MetricsPromotionalRebates  from './metrics/promotional_rebates'
+import MetricsRefunds             from './metrics/refunds'
+import MetricsShippingCredits     from './metrics/shipping_credits'
+import MetricsTotalCosts          from './metrics/total_costs'
+import MetricsUnitsSold           from './metrics/units_sold'
+import MetricsTotalSales          from './metrics/total_sales'
+import ProfitLossOverview         from './profit_loss/overview'
+import SetupSubscribe             from './setup/subscribe'
+import TemplateHelper             from './helpers/template'
+import UserHelper                 from './helpers/user'
+
+#
+# Start.
+#
+Turbolinks.start()
+$(document).on 'ready, turbolinks:load', ->
+  init()
+
+  return
 
 #
 # Initialize.
 #
-initialize = ->
-  user()
-
-  # Setup
-  setupSubscribe()
-
-  # Dashboard
-  dashboard()
-
-  # Metrics
-  metricsTotalSales()
-  metricsUnitsSold()
-  metricsAmazonCosts()
-  metricsAdvertisingSpend()
-  metricsRefunds()
-  metricsShippingCredits()
-  metricsPromotionalRebates()
-  metricsTotalCosts()
-  metricsNetMargin()
+init = ->
+  # Account
+  accountNotifications()
+  accountSubscription()
+  accountResetPassword()
 
   # Cohorts
   cohortsHighMargin()
   cohortsLowMargin()
   cohortsNegativeMargin()
 
-  # Forecast
-  forecast()
+  # Dashboard
+  dashboard()
 
   # Expenses
   expensesCostOfGoods()
   expensesOther()
 
+  # Forecast
+  forecast()
+
+  # Metrics
+  metricsAdvertisingSpend()
+  metricsAmazonCosts()
+  metricsNetMargin()
+  metricsPromotionalRebates()
+  metricsRefunds()
+  metricsShippingCredits()
+  metricsTotalCosts()
+  metricsTotalSales()
+  metricsUnitsSold()
+
   # Profit Loss
   profitLoss()
 
-  # Account
-  accountNotifications()
-  accountSubscription()
-  accountResetPassword()
+  # Setup
+  setupSubscribe()
 
-  support()
-  uploads()
+  # User.
+  user()
+
+  # Icons.
+  renderIcons()
+
   return
 
 #
-# User.
+# Account: Notifications
 #
-user = ->
-  imageUrl = $('.profile-image').attr('rel')
-  $('.profile-image-thumb, .profile-image').attr 'src', imageUrl
-
-  $('.log-out').click (e) ->
-    Cookies.remove 'auth-session'
+accountNotifications = ->
+  if $('input.location').data('section') != 'account-notifications'
     return
+
+  a = new AccountNotifications()
+  a.init()
+
+  return
+
+#
+# Account: Reset Password.
+#
+accountResetPassword = ->
+  $('a.account-change-password ').on 'click', (e)->
+    e.preventDefault()
+
+    a = new AccountPassword()
+    a.reset()
+
+  return
+
+#
+# Account: Subscription.
+#
+accountSubscription = ->
+  if $('input.location').data('section') != 'account-subscription'
+    return
+
+  a = new AccountSubscription()
+  a.init()
+
+  return
+
+#
+# Cohorts: High Margin.
+#
+cohortsHighMargin = ->
+  if $('input.location').data('section') != 'cohorts-high-margin'
+    return
+
+  c = new Cohorts()
+  c.init()
+
+  return
+
+#
+# Cohorts: Low Margin.
+#
+cohortsLowMargin = ->
+  if $('input.location').data('section') != 'cohorts-low-margin'
+    return
+
+  c = new Cohorts()
+  c.init()
+
+  return
+
+#
+# Cohorts: Negative Margin.
+#
+cohortsNegativeMargin = ->
+  if $('input.location').data('section') != 'cohorts-negative-margin'
+    return
+
+  c = new Cohorts()
+  c.init()
+
   return
 
 #
@@ -77,566 +167,8 @@ dashboard = ->
   if $('input.location').data('section') != 'dashboard'
     return
 
-  loadDashboard()
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    $('.date-filter.active').removeClass 'active'
-    $(this).addClass 'active'
-
-    loadDashboard()
-
-    return
-  return
-
-#
-# Load Summary.
-#
-loadDashboard = ->
-  resetAlerts()
-
-  tbStart()
-
-  $('button.loading').show()
-
-  $.ajax
-    type: 'GET'
-    url: cleanUrl() + 'dashboard/metrics/filter/' + $('.date-filter.active').data('range')
-    timeout: 10000
-    statusCode:
-      200: (data) ->
-        tbStop()
-        $('button.loading').hide()
-
-        #renderIcons()
-      500: ->
-        tbStop()
-        $('button.loading').hide()
-        $('.alert.alert-danger.metrics').show()
-    error: ->
-      tbStop()
-      $('button.loading').hide()
-      $('.alert.alert-danger.metrics').show()
-  return
-
-#
-# Metrics: Total Sales.
-#
-metricsTotalSales = ->
-  if $('input.location').data('section') != 'metrics-total-sales'
-    return
-
-  $('button.loading').show()
-
-  $('#metrics-total-sales-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.metrics-error').show()
-    'columns': [
-      { 'data': 'date' }
-      { 'data': 'sku' }
-      { 'data': 'asin' }
-      { 'data': 'productName' }
-      { 'data': 'sales' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#metrics-total-sales-table'))
-
-  dtCleanup($('#metrics-total-sales-table'))
-
-#
-# Metrics: Units Sold.
-#
-metricsUnitsSold = ->
-  if $('input.location').data('section') != 'metrics-units-sold'
-    return
-
-  $('button.loading').show()
-
-  $('#metrics-units-sold-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.metrics-error').show()
-    'columns': [
-      { 'data': 'date' }
-      { 'data': 'sku' }
-      { 'data': 'asin' }
-      { 'data': 'productName' }
-      { 'data': 'grossQuantitySold' }
-      { 'data': 'netQuantitySold' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#metrics-units-sold-table'))
-
-  dtCleanup($('#metrics-units-sold-table'))
-
-#
-# Metrics: Amazon Costs.
-#
-metricsAmazonCosts = ->
-  if $('input.location').data('section') != 'metrics-amazon-costs'
-    return
-
-  $('button.loading').show()
-
-  $('#metrics-amazon-costs-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.metrics-error').show()
-    'columns': [
-      { 'data': 'date' }
-      { 'data': 'sku' }
-      { 'data': 'asin' }
-      { 'data': 'productName' }
-      { 'data': 'type' }
-      { 'data': 'amazonCosts' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#metrics-amazon-costs-table'))
-
-  dtCleanup($('#metrics-amazon-costs-table'))
-
-#
-# Metrics: Advertising Spend.
-#
-metricsAdvertisingSpend = ->
-  if $('input.location').data('section') != 'metrics-advertising-spend'
-    return
-
-  $('button.loading').show()
-
-  $('#metrics-advertising-spend-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.metrics-error').show()
-    'columns': [
-      { 'data': 'date' }
-      { 'data': 'sku' }
-      { 'data': 'asin' }
-      { 'data': 'productName' }
-      { 'data': 'advertisingSpend' }
-      { 'data': 'percentageOfSales' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#metrics-advertising-spend-table'))
-
-  dtCleanup($('#metrics-advertising-spend-table'))
-
-#
-# Metrics: Refunds.
-#
-metricsRefunds = ->
-  if $('input.location').data('section') != 'metrics-refunds'
-    return
-
-  $('button.loading').show()
-
-  $('#metrics-refunds-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.metrics-error').show()
-    'columns': [
-      { 'data': 'date' }
-      { 'data': 'sku' }
-      { 'data': 'asin' }
-      { 'data': 'productName' }
-      { 'data': 'refunds' }
-      { 'data': 'percentageOfSales' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#metrics-refunds-table'))
-
-  dtCleanup($('#metrics-refunds-table'))
-
-#
-# Metrics: Shipping Credits.
-#
-metricsShippingCredits = ->
-  if $('input.location').data('section') != 'metrics-shipping-credits'
-    return
-
-  $('button.loading').show()
-
-  $('#metrics-shipping-credits-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.metrics-error').show()
-    'columns': [
-      { 'data': 'date' }
-      { 'data': 'sku' }
-      { 'data': 'asin' }
-      { 'data': 'productName' }
-      { 'data': 'shippingCredits' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#metrics-shipping-credits-table'))
-
-  dtCleanup($('#metrics-shipping-credits-table'))
-
-#
-# Metrics: Promotional Rebates.
-#
-metricsPromotionalRebates = ->
-  if $('input.location').data('section') != 'metrics-promotional-rebates'
-    return
-
-  $('button.loading').show()
-
-  $('#metrics-promotional-rebates-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.metrics-error').show()
-    'columns': [
-      { 'data': 'date' }
-      { 'data': 'sku' }
-      { 'data': 'asin' }
-      { 'data': 'productName' }
-      { 'data': 'costOfCoupons' }
-      { 'data': 'quantity' }
-      { 'data': 'promotionalRebates' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#metrics-promotional-rebates-table'))
-
-  dtCleanup($('#metrics-promotional-rebates-table'))
-
-#
-# Metrics: Total Costs.
-#
-metricsTotalCosts = ->
-  if $('input.location').data('section') != 'metrics-total-costs'
-    return
-
-  $('button.loading').show()
-
-  $('#metrics-total-costs-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.metrics-error').show()
-    'columns': [
-      { 'data': 'date' }
-      { 'data': 'sku' }
-      { 'data': 'asin' }
-      { 'data': 'productName' }
-      { 'data': 'amazonCosts' }
-      { 'data': 'productCosts' }
-      { 'data': 'productCostPerUnit' }
-      { 'data': 'totalCosts' }
-      { 'data': 'percentage' }
-      { 'data': 'percentageOfSales' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#metrics-total-costs-table'))
-
-  dtCleanup($('#metrics-total-costs-table'))
-
-#
-# Metrics: Net Margin.
-#
-metricsNetMargin = ->
-  if $('input.location').data('section') != 'metrics-net-margin'
-    return
-
-  $('button.loading').show()
-
-  $('#metrics-net-margin-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.metrics-error').show()
-    'columns': [
-      { 'data': 'date' }
-      { 'data': 'sku' }
-      { 'data': 'asin' }
-      { 'data': 'productName' }
-      { 'data': 'netMargin' }
-      { 'data': 'percentage' }
-      { 'data': 'netMarginPerUnit' }
-      { 'data': 'roi' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#metrics-net-margin-table'))
-
-  dtCleanup($('#metrics-net-margin-table'))
-
-#
-# Cohorts: High Margin.
-#
-cohortsHighMargin = ->
-  if $('input.location').data('section') != 'cohorts-high-margin'
-    return
-
-  loadCohort()
-
-#
-# Cohorts: Low Margin.
-#
-cohortsLowMargin = ->
-  if $('input.location').data('section') != 'cohorts-low-margin'
-    return
-
-  loadCohort()
-
-#
-# Cohorts: Negative Margin.
-#
-cohortsNegativeMargin = ->
-  if $('input.location').data('section') != 'cohorts-negative-margin'
-    return
-
-  loadCohort()
-
-#
-# Load Cohorts Data.
-#
-loadCohort = ->
-  $('button.loading').show()
-
-  $('#cohorts-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.metrics-error').show()
-    'columns': [
-      { 'data': 'sku' }
-      { 'data': 'asin' }
-      { 'data': 'productName' }
-      { 'data': 'totalSales' }
-      { 'data': 'grossQuantitySold' }
-      { 'data': 'netQuantitySold' }
-      { 'data': 'amazonCosts' }
-      { 'data': 'productCosts' }
-      { 'data': 'costOfCoupons' }
-      { 'data': 'advertisingSpend' }
-      { 'data': 'coupons' }
-      { 'data': 'refunds' }
-      { 'data': 'shippingCredits' }
-      { 'data': 'promotionalRebates' }
-      { 'data': 'totalCosts' }
-      { 'data': 'netMargin' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#cohorts-table'))
-
-  dtCleanup($('#cohorts-table'))
-
-  return
-
-#
-# Forecast.
-#
-forecast = ->
-  if $('input.location').data('section') != 'forecast'
-    return
-
-  loadForecast($('.date-filter.active'))
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    loadForecast($(this))
-
-  return
-
-#
-# Load Forecast.
-#
-loadForecast = (obj) ->
-  resetAlerts()
-
-  tbStart()
-
-  $('.date-filter.active').removeClass 'active'
-  $(obj).addClass 'active'
-
-  $.ajax
-    type: 'POST'
-    url: cleanUrl() + '/filter/' + $(obj).data('range')
-    statusCode:
-      200: ->
-        tbStop()
-        $('button.loading').hide()
-      500: ->
-        tbStop()
-        $('.alert.alert-danger.forecast').show()
-        $('button.loading').hide()
+  d = new DashboardOverview()
+  d.init()
 
   return
 
@@ -647,45 +179,10 @@ expensesCostOfGoods = ->
   if $('input.location').data('section') != 'expenses-cost-of-goods'
     return
 
-  $('button.loading').show()
+  e = new ExpensesCostOfGoods()
+  e.init()
 
-  $('#expenses-cost-of-goods-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.expenses-error').show()
-    'columns': [
-      { 'data': 'sku' }
-      { 'data': 'asin' }
-      { 'data': 'productName' }
-      { 'data': 'description' }
-      { 'data': 'startDate' }
-      { 'data': 'endDate' }
-      { 'data': 'type' }
-      { 'data': 'cost' }
-      { 'data': 'currency' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#expenses-cost-of-goods-table'))
-
-  dtCleanup($('#expenses-cost-of-goods-table'))
+  return
 
 #
 # Expenses: Other
@@ -694,42 +191,130 @@ expensesOther = ->
   if $('input.location').data('section') != 'expenses-other'
     return
 
-  $('button.loading').show()
+  e = new ExpensesOther()
+  e.init()
 
-  $('#expenses-other-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
+  return
 
-        if j.data.length > 0
-          resetAlerts()
+#
+# Forecast.
+#
+forecast = ->
+  if $('input.location').data('section') != 'forecast'
+    return
 
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.expenses-error').show()
-    'columns': [
-      { 'data': 'description' }
-      { 'data': 'startDate' }
-      { 'data': 'endDate' }
-      { 'data': 'type' }
-      { 'data': 'cost' }
-      { 'data': 'currency' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
+  f = new ForecastOverview()
+  f.init()
 
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#expenses-other-table'))
+  return
 
-  dtCleanup($('#expenses-other-table'))
+#
+# Metrics: Advertising Spend.
+#
+metricsAdvertisingSpend = ->
+  if $('input.location').data('section') != 'metrics-advertising-spend'
+    return
+
+  m = new MetricsAdvertisingSpend()
+  m.init()
+
+  return
+
+#
+# Metrics: Amazon Costs.
+#
+metricsAmazonCosts = ->
+  if $('input.location').data('section') != 'metrics-amazon-costs'
+    return
+
+  m = new MetricsAmazonCosts()
+  m.init()
+
+  return
+
+#
+# Metrics: Net Margin.
+#
+metricsNetMargin = ->
+  if $('input.location').data('section') != 'metrics-net-margin'
+    return
+
+  m = new MetricsNetMargin()
+  m.init()
+
+  return
+
+#
+# Metrics: Promotional Rebates.
+#
+metricsPromotionalRebates = ->
+  if $('input.location').data('section') != 'metrics-promotional-rebates'
+    return
+
+  m = new MetricsPromotionalRebates()
+  m.init()
+
+  return
+
+#
+# Metrics: Refunds.
+#
+metricsRefunds = ->
+  if $('input.location').data('section') != 'metrics-refunds'
+    return
+
+  m = new MetricsRefunds()
+  m.init()
+
+  return
+
+#
+# Metrics: Shipping Credits.
+#
+metricsShippingCredits = ->
+  if $('input.location').data('section') != 'metrics-shipping-credits'
+    return
+
+  m = new MetricsShippingCredits()
+  m.init()
+
+  return
+
+#
+# Metrics: Total Costs.
+#
+metricsTotalCosts = ->
+  if $('input.location').data('section') != 'metrics-total-costs'
+    return
+
+  m = new MetricsTotalCosts()
+  m.init()
+
+  return
+
+#
+# Metrics: Total Sales.
+#
+metricsTotalSales = ->
+  if $('input.location').data('section') != 'metrics-total-sales'
+    return
+
+  m = new MetricsTotalSales()
+  m.init()
+
+  return
+
+#
+# Metrics: Units Sold.
+#
+metricsUnitsSold = ->
+  if $('input.location').data('section') != 'metrics-units-sold'
+    return
+
+  m = new MetricsUnitsSold()
+  m.init()
+
+  return
 
 #
 # Profit & Loss.
@@ -738,321 +323,8 @@ profitLoss = ->
   if $('input.location').data('section') != 'profit-loss'
     return
 
-  $('button.loading').show()
-
-  $('#profit-loss-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.profit-loss-error').show()
-    'columns': [
-      { 'data': 'particulars' }
-      { 'data': 'amount' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#profit-loss-table'))
-
-  dtCleanup($('#profit-loss-table'))
-
-#
-# Account: Notifications
-#
-accountNotifications = ->
-  if $('input.location').data('section') != 'account-notifications'
-    return
-
-  $('button.loading').show()
-
-  $('#account-notifications-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'lengthChange': false
-    'ajax':
-      'url': cleanUrl() + '/filter/today'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetAlerts()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.account-error').show()
-    'columns': [
-      { 'data': 'notification' }
-      { 'data': 'date' }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  $('.date-filter').on 'click', (e) ->
-    e.preventDefault()
-    dtReload(this, $('#account-notifications-table'))
-
-  dtCleanup($('#account-notifications-table'))
-
-#
-# Account: Subscription.
-#
-accountSubscription = ->
-  if $('input.location').data('section') != 'account-subscription'
-    return
-
-  $('button.loading').show()
-
-  $('#account-subscription-invoice-table').DataTable
-    'serverSide': true,
-    'bFilter': false
-    'ordering': false
-    'lengthChange': false
-    'paging': false
-    'initComplete': ->
-      renderIcons()
-    'ajax':
-      'url': cleanUrl() + '/invoices'
-      'dataSrc': (j) ->
-        $('button.loading').hide()
-
-        if j.data.length > 0
-          resetErrors()
-          resetWarnings()
-
-        return j.data
-      'error': (j) ->
-        $('.alert.alert-error.account-error').show()
-    'columns': [
-      { 'data': 'number' }
-      { 'data': 'date' }
-      { 'data': 'amount' }
-      {
-        'data': 'status'
-        'fnCreatedCell': (nTd, sData, oData, iRow, iCol) ->
-          $(nTd).html "<span class='badge " + oData.statusClass + "'>" + oData.status + "</span>"
-          return
-      }
-      {
-        'data': 'pdf'
-        'fnCreatedCell': (nTd, sData, oData, iRow, iCol) ->
-          $(nTd).html "<a href='" + oData.pdf + "' class='btn btn-primary float-right' target='_blank'><i data-feather='download' class='mr-3 icon-md'></i>Download</a>"
-          return
-      }
-    ]
-    'language': {
-      'infoFiltered': ''
-    }
-    preDrawCallback: (settings) ->
-      dtPreDrawCallback(this, settings)
-
-  dtCleanup($('#account-subscription-invoice-table'))
-
-  $('button.change').on 'click', (e) ->
-    e.preventDefault()
-
-    resetAlerts()
-
-    $('button.processing').show()
-    $('button.change, button.cancel').attr('disabled', true)
-
-    planId = $(this).data('stripe-plan')
-
-    $.ajax
-      type: 'PUT'
-      url: cleanUrl() + '/change/' + planId
-      statusCode:
-        200: ->
-          tbStop()
-          $('button.processing').hide()
-          $('button.change, button.cancel').removeAttr('disabled')
-
-          $('button.change').each () ->
-            if $(this).data('stripe-plan') == planId
-              $(this).addClass('hide')
-              $(this).next().removeClass('hide')
-            else if $(this).next().is(':visible')
-              $(this).removeClass('hide')
-              $(this).next().addClass('hide')
-            return
-
-          $('.alert.alert-success').show()
-
-          $('button.loading').show()
-          $('#account-subscription-invoice-table').DataTable().ajax.reload () ->
-            renderIcons()
-        500: ->
-          tbStop()
-          $('.alert.alert-danger.account-subscription-error').show()
-          $('button.processing').hide()
-          $('button.change, button.cancel').removeAttr('disabled')
-
-  $('button.subscribe').on 'click', (e) ->
-    e.preventDefault()
-
-    resetAlerts()
-
-    $('button.processing').show()
-    $('button.subscribe').attr('disabled', true)
-
-    planId = $(this).data('stripe-plan')
-
-    $.ajax
-      type: 'POST'
-      url: cleanUrl() + '/subscribe/' + planId
-      statusCode:
-        200: ->
-          tbStop()
-          $('button.processing').hide()
-          $('button.subscribe').removeAttr('disabled')
-
-          $('button.subscribe').each () ->
-            $(this).addClass('hide')
-
-            if $(this).data('stripe-plan') == planId
-              $(this).next().next().removeClass('hide')
-            else
-              $(this).next().removeClass('hide')
-            return
-
-          $('.alert.alert-success').show()
-
-          $('button.loading').show()
-          $('#account-subscription-invoice-table').DataTable().ajax.reload () ->
-            renderIcons()
-        500: ->
-          tbStop()
-          $('.alert.alert-danger.account-subscription-error').show()
-          $('button.processing').hide()
-          $('button.subscribe').removeAttr('disabled')
-
-  $('form#account-subscription-cancel').submit (e) ->
-    e.preventDefault()
-
-    resetAlerts()
-
-    $('button.close-modal').attr('disabled', 'true')
-    $('button.submit').html('Processing...').attr('disabled', 'true')
-
-    tbStart()
-
-    $.ajax
-      type: 'POST'
-      url: cleanUrl() + '/cancel'
-      data: $('form#account-subscription-cancel').serialize()
-      statusCode:
-        200: ->
-          tbStop()
-          location.reload()
-        422: ->
-          tbStop()
-          resetModal('Submit')
-          $('.alert.alert-danger.validate-cancel').show()
-        500: ->
-          tbStop()
-          resetModal('Submit')
-          $('.alert.alert-danger.cancel').show()
-    return
-
-  return
-
-#
-# Account: Reset Password
-#
-accountResetPassword = ->
-  $('a.account-change-password ').on 'click', (e)->
-    e.preventDefault()
-
-    resetAlerts()
-
-    tbStart()
-
-    $.ajax
-      type: 'GET'
-      url: '/account/change_password'
-      statusCode:
-        200: ->
-          tbStop()
-          $('.alert.alert-success.account-change-password').show()
-        500: ->
-          tbStop()
-          $('.alert.alert-danger.account-change-password').show()
-    return
-
-  return
-
-#
-# Support (intercom).
-#
-support = ->
-  intercomId = $('.intercom').data('intercom-id')
-
-  window.intercomSettings =
-    app_id: intercomId
-    name: $('.intercom').data('name')
-    email: $('.intercom').data('email')
-    created_at: $('.intercom').data('created-at')
-
-  do ->
-    w = window
-    ic = w.Intercom
-    if typeof ic == 'function'
-      ic 'reattach_activator'
-      ic 'update', w.intercomSettings
-    else
-      d = document
-
-      i = ->
-        i.c arguments
-        return
-
-      i.q = []
-
-      i.c = (args) ->
-        i.q.push args
-        return
-
-      w.Intercom = i
-
-      l = ->
-        s = d.createElement('script')
-        s.type = 'text/javascript'
-        s.async = true
-        s.src = 'https://widget.intercom.io/widget/' + intercomId
-        x = d.getElementsByTagName('script')[0]
-        x.parentNode.insertBefore s, x
-        return
-
-      if w.attachEvent
-        w.attachEvent 'onload', l
-      else
-        w.addEventListener 'load', l, false
-
-    return
-
-#
-# Uploads.
-#
-uploads = ->
-  if $('#dropzone').length > 0
-    $('#dropzone').dropzone
+  pl = new ProfitLossOverview()
+  pl.init()
 
   return
 
@@ -1063,93 +335,16 @@ setupSubscribe = ->
   if $('input.location').data('section') != 'setup-subscribe'
     return
 
-  stripe = Stripe($('.stripe-pk').data('stripe-pk'))
-  $('button.subscribe').on 'click', ->
-    stripe.redirectToCheckout(sessionId: $(this).data('stripe-session')).then (result) ->
-      alert result.error.message
-    return
+  s = new SetupSubscribe()
+  s.init()
 
   return
 
 #
-# Datatable Pre-draw callback.
+# User.
 #
-dtPreDrawCallback = (obj, settings) ->
-  api = new ($.fn.dataTable.Api)(settings)
-  pagination = $(obj).closest('.dataTables_wrapper').find('.dataTables_paginate')
-  pagination.toggle api.page.info().pages > 1
-
-  return
-
-#
-# Datatable Cleanup.
-#
-dtCleanup = (table) ->
-  table.each ->
-    datatable = $(this)
-    length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select')
-    length_sel.removeClass 'form-control-sm'
-    return
-
-  return
-
-#
-# Datatable Reload.
-#
-dtReload = (obj, table) ->
-  $('button.loading').show()
-
-  $('.date-filter.active').removeClass 'active'
-  $(obj).addClass 'active'
-  table.DataTable().ajax.url(window.location.href + '/filter/' + $(obj).data('range')).load()
-
-  return
-
-#
-# Reset Modal.
-#
-resetModal = (text) ->
-  $('button.close-modal').removeAttr('disabled')
-  $('button.create, button.submit').html(text).removeAttr('disabled')
-
-#
-# Reset alerts.
-#
-resetAlerts = ->
-  resetSuccess()
-  resetErrors()
-  resetWarnings()
-
-#
-# Reset success.
-#
-resetSuccess = ->
-  $('.alert.alert-success').each ->
-    if $(this).is(':visible')
-      $(this).hide()
-    return
-
-  return
-
-#
-# Reset errors.
-#
-resetErrors = ->
-  $('.alert.alert-danger').each ->
-    if $(this).is(':visible')
-      $(this).hide()
-    return
-
-  return
-
-#
-# Reset warnings.
-#
-resetWarnings = ->
-  $('.alert.alert-warning').each ->
-    if $(this).is(':visible')
-      $(this).hide()
-    return
+user = ->
+  uh = new UserHelper()
 
   return
 
@@ -1157,36 +352,7 @@ resetWarnings = ->
 # Render Icons.
 #
 renderIcons = ->
-  feather.replace()
-
-#
-# Start Turbolinks progress bar.
-#
-tbStart = ->
-  Turbolinks.controller.adapter.progressBar.setValue 0
-  Turbolinks.controller.adapter.progressBar.show()
-
-  return
-
-#
-# Stop Turbolinks progress bar.
-#
-tbStop = ->
-  Turbolinks.controller.adapter.progressBar.hide()
-
-  return
-
-#
-# Clean URL
-#
-cleanUrl = ->
-  return window.location.href.split("#")[0]
-
-#
-# Init
-#
-Turbolinks.start()
-$(document).on 'ready, turbolinks:load', ->
-  initialize()
+  th = new TemplateHelper()
+  th.renderIcons()
 
   return

@@ -17,15 +17,17 @@
     <input type="hidden" class="location" data-section="account-subscription"/>
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
-            <div class="alert alert-danger text-center pt-3 w-100 account-subscription-error" style="display: none;">
-                Unable to update your subscription. Please try again. Should the problem persist, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
+            <div class="alert alert-icon-danger text-center pt-3 w-100 account-subscription-change-error" style="display: none;">
+                <i data-feather="alert-triangle"></i>
+                Unable to update your subscription. Please try again. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
-            <div class="alert alert-success text-center pt-3 w-100" style="display: none;">
-                Your subscription was updated successfully. If you have any questions regarding this, then please contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
+            <div class="alert alert-icon-success text-center pt-3 w-100 account-subscription-change-success" style="display: none;">
+                <i data-feather="check-square"></i>
+                Your subscription was updated successfully. If you have any questions regarding this, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
             </div>
         </div>
     </div>
@@ -105,8 +107,9 @@
     </div>
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
-            <div class="alert alert-danger text-center pt-3 w-100 account-error" style="display: none;">
-                Unable to load your invoice data. Please try again by refreshing the page. Should the problem persist, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
+            <div class="alert alert-icon-danger text-center pt-3 w-100 account-subscription-invoices-load-error" style="display: none;">
+                <i data-feather="alert-triangle"></i>
+                Loading your invoices has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
             </div>
         </div>
     </div>

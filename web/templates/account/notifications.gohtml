@@ -13,8 +13,9 @@
     <input type="hidden" class="location" data-section="account-notifications"/>
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
-            <div class="alert alert-danger text-center pt-3 w-100 account-error" style="display: none;">
-                Unable to load your data. Please try again by refreshing the page. Should the problem persist, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
+            <div class="alert alert-icon-danger text-center pt-3 w-100 account-notifications-load-error" style="display: none;">
+                <i data-feather="alert-triangle"></i>
+                Loading your notifications has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
             </div>
         </div>
     </div>

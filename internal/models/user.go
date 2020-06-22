@@ -13,32 +13,34 @@ type User struct {
 	StripeUserId         sql.NullString `db:"stripe_user_id"`
 	StripeSubscriptionId sql.NullString `db:"stripe_subscription_id"`
 	StripePlanId         sql.NullString `db:"stripe_plan_id"`
-	Email                string         `db:"email"`
-	SetupCompleted       bool           `db:"setup_completed"`
-	CreatedAt            time.Time      `db:"created_at"`
-	UpdatedAt            time.Time      `db:"updated_at"`
+	Nickname             string
+	Picture              string
+	Email                string    `db:"email"`
+	SetupCompleted       bool      `db:"setup_completed"`
+	CreatedAt            time.Time `db:"created_at"`
+	UpdatedAt            time.Time `db:"updated_at"`
 }
 
 func CreateUser(userId, email string, db *sqlx.DB) (*User, error) {
-	user := FindUser(userId, db)
+	user := LoadUser(userId, db)
 	if user.Id > 0 {
 		return user, nil
 	}
 
 	query := `INSERT INTO users (
-					user_id,
-					email,
-					setup_completed,
-					created_at,
-					updated_at)
-				VALUES (
-					:user_id,
-					:email,
-					:setup_completed,
-					:created_at,
-					:updated_at)`
+                   user_id,
+                   email,
+                   setup_completed,
+                   created_at,
+                   updated_at)
+                   VALUES (
+                           :user_id,
+                           :email,
+                           :setup_completed,
+                           :created_at,
+                           :updated_at)`
 
-	r, err := db.NamedExec(query,
+	_, err := db.NamedExec(query,
 		map[string]interface{}{
 			"user_id":         userId,
 			"email":           email,
@@ -47,17 +49,13 @@ func CreateUser(userId, email string, db *sqlx.DB) (*User, error) {
 			"updated_at":      time.Now(),
 		})
 	if err != nil {
-		return user, err
+		return &User{}, err
 	}
 
-	user.Id, _ = r.LastInsertId()
-	user.UserId = userId
-	user.Email = email
-
-	return user, nil
+	return LoadUser(userId, db), nil
 }
 
-func FindUser(userId string, db *sqlx.DB) *User {
+func LoadUser(userId string, db *sqlx.DB) *User {
 	var users []User
 
 	err := db.Select(&users, "SELECT * FROM users WHERE user_id = $1", userId)
@@ -73,7 +71,7 @@ func FindUser(userId string, db *sqlx.DB) *User {
 	return &User{}
 }
 
-func FindUserByEmail(email string, db *sqlx.DB) *User {
+func LoadUserByEmail(email string, db *sqlx.DB) *User {
 	var users []User
 
 	err := db.Select(&users, "SELECT * FROM users WHERE email = $1", email)
@@ -90,13 +88,13 @@ func FindUserByEmail(email string, db *sqlx.DB) *User {
 }
 
 func (u *User) Save(db *sqlx.DB) error {
-	query := `UPDATE users SET
-				email=:email,
-				stripe_user_id=:stripe_user_id,
-                stripe_subscription_id=:stripe_subscription_id,
-                stripe_plan_id=:stripe_plan_id,
-				setup_completed=:setup_completed
-				WHERE user_id=:user_id`
+	query := `UPDATE users 
+				SET    email = :email, 
+					   stripe_user_id = :stripe_user_id, 
+					   stripe_subscription_id = :stripe_subscription_id, 
+					   stripe_plan_id = :stripe_plan_id, 
+					   setup_completed = :setup_completed 
+				WHERE  user_id = :user_id`
 
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
@@ -107,6 +105,19 @@ func (u *User) Save(db *sqlx.DB) error {
 			"email":                  u.Email,
 			"setup_completed":        u.SetupCompleted,
 			"updated_at":             time.Now(),
+		})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *User) Delete(db *sqlx.DB) error {
+	query := `DELETE FROM users WHERE id=:id`
+	_, err := db.NamedExec(query,
+		map[string]interface{}{
+			"id": u.Id,
 		})
 	if err != nil {
 		return err

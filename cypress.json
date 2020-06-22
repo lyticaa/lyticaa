@@ -1,9 +1,0 @@
-{
-  "baseUrl": "http://localhost:3000",
-  "fixturesFolder": "test/fixtures/internal/core/app",
-  "integrationFolder": "test/integration/internal/core/app",
-  "pluginsFile": "test/plugins/index.js",
-  "screenshotsFolder": "test/screenshots",
-  "supportFile": "test/support/index.js",
-  "videosFolder": "test/videos"
-}

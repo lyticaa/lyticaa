@@ -23,7 +23,7 @@ func (r *Report) getCurrencyIdByName(name string, currencies []models.Currency) 
 }
 
 func (r *Report) formatSponsoredProducts(rows []map[string]string, username string) []models.SponsoredProduct {
-	user := models.FindUser(username, r.Db)
+	user := models.LoadUser(username, r.Db)
 	currencies := r.getCurrencies()
 
 	var sponsoredProducts []models.SponsoredProduct

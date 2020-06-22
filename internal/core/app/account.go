@@ -4,12 +4,13 @@ import (
 	"net/http"
 
 	"gitlab.com/getlytica/lytica-app/internal/core/app/account"
+	"gitlab.com/getlytica/lytica-app/internal/core/payments"
 
 	"github.com/urfave/negroni"
 )
 
 func (a *App) accountHandlers() {
-	acct := account.NewAccount(a.Db, a.SessionStore, a.Logger)
+	acct := account.NewAccount(a.Db, a.SessionStore, a.Logger, payments.NewStripePayments())
 
 	a.Router.Handle("/account/notifications", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),

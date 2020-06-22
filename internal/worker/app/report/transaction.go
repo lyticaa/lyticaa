@@ -65,7 +65,7 @@ func (r *Report) getTaxCollectionModelIdByName(name string, taxCollectionModels 
 }
 
 func (r *Report) formatTransactions(rows []map[string]string, username string) []models.Transaction {
-	user := models.FindUser(username, r.Db)
+	user := models.LoadUser(username, r.Db)
 	txnTypes := r.getTransactionTypes()
 	marketplaces := r.getMarketplaces()
 	fulfillments := r.getFulfillments()

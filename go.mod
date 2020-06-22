@@ -13,7 +13,6 @@ require (
 	github.com/getsentry/sentry-go v0.6.1
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/golang-migrate/migrate/v4 v4.11.0
-	github.com/gorilla/handlers v1.4.2
 	github.com/gorilla/mux v1.7.4
 	github.com/gorilla/sessions v1.2.0
 	github.com/heroku/x v0.0.24
@@ -24,7 +23,7 @@ require (
 	github.com/newrelic/go-agent v3.5.0+incompatible
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/rs/zerolog v1.18.0
-	github.com/stripe/stripe-go v70.15.0+incompatible
+	github.com/stretchr/testify v1.5.1
 	github.com/stripe/stripe-go/v71 v71.15.0
 	github.com/tealeg/xlsx v1.0.5
 	github.com/urfave/negroni v1.0.0
@@ -34,4 +33,5 @@ require (
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15
 	gopkg.in/go-playground/validator.v9 v9.31.0
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
+	syreclabs.com/go/faker v1.2.2
 )

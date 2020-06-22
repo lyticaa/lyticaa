@@ -9,7 +9,6 @@ import (
 
 	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
 	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
-	"gitlab.com/getlytica/lytica-app/internal/core/payments"
 	"gitlab.com/getlytica/lytica-app/internal/models"
 
 	"github.com/gorilla/mux"
@@ -48,35 +47,7 @@ func (a *Account) InvoicesByUser(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := session.Values["User"].(models.User)
 
-	var byUser types.Invoices
-
-	invoices := payments.InvoicesByUser(user.StripeUserId.String)
-	for _, invoice := range *invoices {
-		unit, _ := currency.ParseISO(string(invoice.Currency))
-
-		t := types.InvoiceTable{
-			Number:      invoice.Number,
-			Date:        invoice.Date.Format("2006-01-02"),
-			Amount:      fmt.Sprintf("%v %v", currency.Symbol(unit), invoice.Amount),
-			Status:      strings.ToUpper(string(invoice.Status)),
-			StatusClass: a.invoiceClass(string(invoice.Status)),
-			PDF:         invoice.PDF,
-		}
-
-		byUser.Data = append(byUser.Data, t)
-	}
-
-	if len(byUser.Data) == 0 {
-		byUser.Data = []types.InvoiceTable{}
-	}
-
-	byUser.Draw = helpers.DtDraw(r)
-
-	amount := int64(len(byUser.Data))
-	byUser.RecordsTotal = amount
-	byUser.RecordsFiltered = amount
-
-	js, err := json.Marshal(byUser)
+	js, err := json.Marshal(a.paintInvoices(user.StripeUserId.String, r))
 	if err != nil {
 		a.logger.Error().Err(err).Msg("unable to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -98,7 +69,7 @@ func (a *Account) ChangePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := payments.ChangePlan(user.StripeSubscriptionId.String, planId); err != nil {
+	if err := a.stripe.ChangePlan(user.StripeSubscriptionId.String, planId); err != nil {
 		a.logger.Error().Err(err).Msg("unable to change the plan")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -132,7 +103,7 @@ func (a *Account) CancelSubscription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := payments.CancelSubscription(user.StripeSubscriptionId.String)
+	err := a.stripe.CancelSubscription(user.StripeSubscriptionId.String)
 	if err != nil {
 		a.logger.Error().Err(err).Msg("unable to cancel subscription")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -161,7 +132,7 @@ func (a *Account) Subscribe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s, err := payments.CreateSubscription(user.StripeUserId.String, planId)
+	s, err := a.stripe.CreateSubscription(user.StripeUserId.String, planId)
 	if err != nil {
 		a.logger.Error().Err(err).Msg("unable to subscribe")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -190,6 +161,38 @@ func (a *Account) Subscribe(w http.ResponseWriter, r *http.Request) {
 	_ = session.Save(r, w)
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func (a *Account) paintInvoices(stripeUserId string, r *http.Request) types.Invoices {
+	var byUser types.Invoices
+
+	invoices := a.stripe.InvoicesByUser(stripeUserId)
+	for _, invoice := range *invoices {
+		unit, _ := currency.ParseISO(string(invoice.Currency))
+
+		t := types.InvoiceTable{
+			Number:      invoice.Number,
+			Date:        invoice.Date.Format("2006-01-02"),
+			Amount:      fmt.Sprintf("%v %v", currency.Symbol(unit), invoice.Amount),
+			Status:      strings.ToUpper(string(invoice.Status)),
+			StatusClass: a.invoiceClass(string(invoice.Status)),
+			PDF:         invoice.PDF,
+		}
+
+		byUser.Data = append(byUser.Data, t)
+	}
+
+	if len(byUser.Data) == 0 {
+		byUser.Data = []types.InvoiceTable{}
+	}
+
+	byUser.Draw = helpers.DtDraw(r)
+
+	amount := int64(len(byUser.Data))
+	byUser.RecordsTotal = amount
+	byUser.RecordsFiltered = amount
+
+	return byUser
 }
 
 func (a *Account) invoiceClass(status string) string {

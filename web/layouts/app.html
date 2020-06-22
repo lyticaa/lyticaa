@@ -21,17 +21,11 @@
             <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
             <title>lytica</title>
 
-            <script src="../static/js/template.coffee"></script>
             <script src="../static/js/app.coffee"></script>
 
             {{ template "js-extra-top" . }}
 
-            <link rel="stylesheet" href="../static/css/vendors/core/core.css">
-            <link rel="stylesheet" href="../static/css/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
-            <link rel="stylesheet" href="../static/css/vendors/feather-icons/feather-icons.css">
-
-            <link rel="stylesheet" href="../static/css/style.css">
-            <link rel="stylesheet" href="../static/css/override.css">
+            <link rel="stylesheet" href="../static/css/app.css">
         </head>
         <body>
             <div class="main-wrapper">
@@ -90,7 +84,7 @@
                         <div class="row">
                             <div class="col-12 col-xl-12 stretch-card">
                                 <div class="alert alert-danger text-center pt-3 w-100 account-change-password" style="display: none;">
-                                    Something went wrong while trying to request a password change. Please try again and should the problem persist, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>.
+                                    Something went wrong while trying to request a password change. Please try again and should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
                                 </div>
                             </div>
                         </div>
