@@ -46,3 +46,13 @@ table > thead > tr > th:hover {
 .hide {
     display:none !important;
 }
+
+.is-valid, .is-invalid {
+    background-image: none !important;
+}
+.is-valid, .is-valid:focus {
+    border-color: #bcebd1 !important;
+}
+.is-invalid, .is-invalid:focus {
+    border-color: #ffc6d4 !important;
+}

@@ -3,9 +3,11 @@
 
 {{ define "filters" }}
     <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin float-md-right">
-        <button type="button" class="btn btn-primary btn-icon-text mr-2 d-none d-md-block" data-toggle="modal" data-target="#import-modal">
-            <i class="btn-icon-prepend" data-feather="upload"></i>
-        </button>
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary btn-icon-text d-none d-md-block mr-2" data-toggle="modal" data-target="#import-modal">
+                <i class="btn-icon-prepend mr-0" data-feather="upload"></i>
+            </button>
+        </div>
         {{ template "filters-extra" . }}
         <div class="btn-group">
             <button type="button" class="btn btn-primary dropdown-toggle btn-icon-text mr-2 d-none d-md-block" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
