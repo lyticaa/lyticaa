@@ -27,7 +27,6 @@
   },
   "devDependencies": {
     "browser-sync": "^2.26.7",
-    "cypress": "^4.7.0",
     "gulp": "^4.0.0",
     "gulp-clean-css": "^4.2.0",
     "gulp-concat": "^2.6.1",
@@ -39,7 +38,6 @@
   },
   "scripts": {
     "preinstall": "rm -rf web/dist",
-    "postinstall": "./node_modules/.bin/parcel build web/layouts/* -d web/dist",
-    "cypress:open": "cypress open"
+    "postinstall": "./node_modules/.bin/parcel build web/layouts/* -d web/dist"
   }
 }
