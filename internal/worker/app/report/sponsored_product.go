@@ -8,14 +8,10 @@ import (
 	"gitlab.com/getlytica/lytica-app/internal/models"
 )
 
-func (r *Report) getCurrencies() []models.Currency {
-	return models.GetCurrencies(r.Db)
-}
-
-func (r *Report) getCurrencyIdByName(name string, currencies []models.Currency) (int64, bool) {
-	for _, currency := range currencies {
-		if currency.Name == name {
-			return currency.Id, true
+func (r *Report) exchangeRate(code string, exchangeRates []models.ExchangeRate) (int64, bool) {
+	for _, rate := range exchangeRates {
+		if rate.Code == code {
+			return rate.Id, true
 		}
 	}
 
@@ -24,15 +20,14 @@ func (r *Report) getCurrencyIdByName(name string, currencies []models.Currency) 
 
 func (r *Report) formatSponsoredProducts(rows []map[string]string, username string) []models.SponsoredProduct {
 	user := models.LoadUser(username, r.Db)
-	currencies := r.getCurrencies()
+	exchangeRates := models.LoadExchangeRates(r.Db)
 
 	var sponsoredProducts []models.SponsoredProduct
-
 	for _, row := range rows {
 		// Remove all currency/percentage characters
 		reg, _ := regexp.Compile(`[^0-9\.]+`)
 
-		currency, ok := r.getCurrencyIdByName(row["Currency"], currencies)
+		exchangeRate, ok := r.exchangeRate(row["Currency"], exchangeRates)
 		if !ok && row["Currency"] != "" {
 			r.Logger.Error().Msgf("Currency %v not found", row["Currency"])
 		}
@@ -60,7 +55,7 @@ func (r *Report) formatSponsoredProducts(rows []map[string]string, username stri
 			StartDate:          startDate,
 			EndDate:            endDate,
 			PortfolioName:      row["Portfolio name"],
-			Currency:           models.Currency{Id: currency},
+			ExchangeRate:       models.ExchangeRate{Id: exchangeRate},
 			CampaignName:       row["Campaign Name"],
 			AdGroupName:        row["Ad Group Name"],
 			SKU:                row["Advertised SKU"],

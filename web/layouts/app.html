@@ -54,11 +54,11 @@
                                     <div class="dropdown-menu" aria-labelledby="profileDropdown">
                                         <div class="dropdown-header d-flex flex-column align-items-center">
                                             <div class="figure mb-3">
-                                                <img class="profile-image" rel="{{.picture}}" src="" alt="">
+                                                <img class="profile-image" rel="{{.User.Picture}}" src="" alt="">
                                             </div>
                                             <div class="info text-center">
-                                                <p class="name font-weight-bold mb-0">{{.nickname}}</p>
-                                                <p class="email text-muted mb-3">{{.email}}</p>
+                                                <p class="name font-weight-bold mb-0">{{.User.Nickname}}</p>
+                                                <p class="email text-muted mb-3">{{.User.Email}}</p>
                                             </div>
                                         </div>
                                         {{ template "nav::account::menu" }}
@@ -100,7 +100,7 @@
                     {{ template "footer" . }}
                 </div>
             </div>
-            <div class="hide intercom" data-intercom-id="{{.Config.IntercomId}}" data-name="{{.nickname}}" data-email="{{.email}}" data-created-at="{{.User.CreatedAt}}"></div>
+            <div class="hide intercom" data-intercom-id="{{.Config.IntercomId}}" data-name="{{.User.Nickname}}" data-email="{{.User.Email}}" data-created-at="{{.User.CreatedAt}}"></div>
             {{ template "js-extra-bottom" . }}
         </body>
     </html>

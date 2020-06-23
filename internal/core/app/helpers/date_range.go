@@ -24,6 +24,18 @@ var (
 	rangeAllTime             = "all_time"
 )
 
+func DateFormat(dateRange string, date time.Time) string {
+	var layout string
+	switch dateRange {
+	case rangeAllTime:
+		layout = "Jan 2006"
+	default:
+		layout = "Jan 2, 2006 at 3:04pm (MST)"
+	}
+
+	return date.Format(layout)
+}
+
 func DateRange(r *http.Request) (string, time.Time, time.Time) {
 	params := mux.Vars(r)
 	dateRange := params["dateRange"]

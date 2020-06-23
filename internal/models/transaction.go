@@ -1,10 +1,18 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/jmoiron/sqlx"
 )
+
+type Summary struct {
+	UserId      int64     `db:"user_id"`
+	Total       float64   `db:"total"`
+	Marketplace string    `db:"marketplace"`
+	OrderDate   time.Time `db:"order_date"`
+}
 
 type Transaction struct {
 	Id                     int64
@@ -37,7 +45,25 @@ type Transaction struct {
 	UpdatedAt              time.Time `db:"updated_at"`
 }
 
-func SaveTransaction(txn Transaction, db *sqlx.DB) error {
+func LoadSummary(userId int64, view, dateRange string, db *sqlx.DB) *[]Summary {
+	var summary []Summary
+
+	query := fmt.Sprintf(`SELECT user_id, total, order_date, marketplace FROM %v_%v WHERE user_id = $1`, view, dateRange)
+	err := db.Select(
+		&summary,
+		query,
+		userId,
+	)
+
+	if err != nil {
+		logger().Error().Err(err).Msgf("failed to load the summary for the user %v", userId)
+		return &[]Summary{}
+	}
+
+	return &summary
+}
+
+func (t *Transaction) Save(db *sqlx.DB) error {
 	query := `INSERT INTO transactions (
                           user_id,
                           date_time,
@@ -110,38 +136,37 @@ func SaveTransaction(txn Transaction, db *sqlx.DB) error {
 							              other = :other,
 							              total = :total,
 							              updated_at = NOW()`
-
 	_, err := db.NamedExec(query, map[string]interface{}{
-		"user_id":                  txn.User.Id,
-		"date_time":                txn.DateTime,
-		"settlement_id":            txn.SettlementId,
-		"settlement_idx":           txn.SettlementIdx,
-		"transaction_type_id":      txn.TransactionType.Id,
-		"order_id":                 txn.OrderId,
-		"sku":                      txn.Sku,
-		"quantity":                 txn.Quantity,
-		"marketplace_id":           txn.Marketplace.Id,
-		"fulfillment_id":           txn.Fulfillment.Id,
-		"tax_collection_model_id":  txn.TaxCollectionModel.Id,
-		"product_sales":            txn.ProductSales,
-		"product_sales_tax":        txn.ProductSalesTax,
-		"shipping_credits":         txn.ShippingCredits,
-		"shipping_credits_tax":     txn.ShippingCreditsTax,
-		"giftwrap_credits":         txn.GiftwrapCredits,
-		"giftwrap_credits_tax":     txn.GiftwrapCreditsTax,
-		"promotional_rebates":      txn.PromotionalRebates,
-		"promotional_rebates_tax":  txn.PromotionalRebatesTax,
-		"marketplace_withheld_tax": txn.MarketplaceWithheldTax,
-		"selling_fees":             txn.SellingFees,
-		"fba_fees":                 txn.FBAFees,
-		"other_transaction_fees":   txn.OtherTransactionFees,
-		"other":                    txn.Other,
-		"total":                    txn.Total,
+		"user_id":                  t.User.Id,
+		"date_time":                t.DateTime,
+		"settlement_id":            t.SettlementId,
+		"settlement_idx":           t.SettlementIdx,
+		"transaction_type_id":      t.TransactionType.Id,
+		"order_id":                 t.OrderId,
+		"sku":                      t.Sku,
+		"quantity":                 t.Quantity,
+		"marketplace_id":           t.Marketplace.Id,
+		"fulfillment_id":           t.Fulfillment.Id,
+		"tax_collection_model_id":  t.TaxCollectionModel.Id,
+		"product_sales":            t.ProductSales,
+		"product_sales_tax":        t.ProductSalesTax,
+		"shipping_credits":         t.ShippingCredits,
+		"shipping_credits_tax":     t.ShippingCreditsTax,
+		"giftwrap_credits":         t.GiftwrapCredits,
+		"giftwrap_credits_tax":     t.GiftwrapCreditsTax,
+		"promotional_rebates":      t.PromotionalRebates,
+		"promotional_rebates_tax":  t.PromotionalRebatesTax,
+		"marketplace_withheld_tax": t.MarketplaceWithheldTax,
+		"selling_fees":             t.SellingFees,
+		"fba_fees":                 t.FBAFees,
+		"other_transaction_fees":   t.OtherTransactionFees,
+		"other":                    t.Other,
+		"total":                    t.Total,
 	})
 
 	if err != nil {
-		logger().Error().Err(err)
+		return err
 	}
 
-	return err
+	return nil
 }

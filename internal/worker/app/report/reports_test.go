@@ -2,6 +2,7 @@ package report
 
 import (
 	"bytes"
+	"gitlab.com/getlytica/lytica-app/internal/models"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
@@ -133,11 +134,11 @@ func (s *reportSuite) TestReport(c *C) {
 	err := s.r.processReport(customTransaction, userId, typeCSV, body)
 	c.Assert(err, IsNil)
 
-	currencyRows := sqlmock.NewRows([]string{"id", "name", "symbol", "created_at", "updated_at"}).
-		AddRow(1, currency, currencySymbol, time.Now(), time.Now())
+	exchangeRateRows := sqlmock.NewRows([]string{"id", "marketplace_id", "code", "symbol", "rate", "created_at", "updated_at"}).
+		AddRow(1, 1, currency, currencySymbol, 1.00, time.Now(), time.Now())
 
 	s.mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(user)
-	s.mock.ExpectQuery("^SELECT (.+) FROM currencies").WillReturnRows(currencyRows)
+	s.mock.ExpectQuery("^SELECT (.+) FROM exchange_rates").WillReturnRows(exchangeRateRows)
 	s.mock.ExpectExec("^INSERT INTO sponsored_products").WillReturnResult(sqlmock.NewResult(1, 1))
 
 	body = s.readFile(sponsoredProductReportFile, c)
@@ -170,11 +171,11 @@ func (s *reportSuite) TestReport(c *C) {
 
 	user = sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
 		AddRow(1, userId, "test@getlytica.com", time.Now(), time.Now())
-	currencyRows = sqlmock.NewRows([]string{"id", "name", "symbol", "created_at", "updated_at"}).
-		AddRow(1, currency, currencySymbol, time.Now(), time.Now())
+	exchangeRateRows = sqlmock.NewRows([]string{"id", "marketplace_id", "code", "symbol", "rate", "created_at", "updated_at"}).
+		AddRow(1, 1, currency, currencySymbol, 1.00, time.Now(), time.Now())
 
 	s.mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(user)
-	s.mock.ExpectQuery("^SELECT (.+) FROM currencies").WillReturnRows(currencyRows)
+	s.mock.ExpectQuery("^SELECT (.+) FROM exchange_rates").WillReturnRows(exchangeRateRows)
 	s.mock.ExpectExec("^INSERT INTO sponsored_products").WillReturnResult(sqlmock.NewResult(1, 1))
 
 	content = s.r.mapXLSX(s.readFile(sponsoredProductReportFile, c))
@@ -188,32 +189,32 @@ func (s *reportSuite) TestReport(c *C) {
 }
 
 func (s *reportSuite) TestSponsoredProduct(c *C) {
-	rows := sqlmock.NewRows([]string{"id", "name", "symbol", "created_at", "updated_at"}).
-		AddRow(1, currency, currencySymbol, time.Now(), time.Now())
-	s.mock.ExpectQuery("^SELECT (.+) FROM currencies").WillReturnRows(rows)
+	rows := sqlmock.NewRows([]string{"id", "marketplace_id", "code", "symbol", "rate", "created_at", "updated_at"}).
+		AddRow(1, 1, currency, currencySymbol, 1.0, time.Now(), time.Now())
+	s.mock.ExpectQuery("^SELECT (.+) FROM exchange_rates").WillReturnRows(rows)
 
-	currencies := s.r.getCurrencies()
-	c.Assert(len(currencies), Equals, 1)
-	c.Assert(currencies[0].Name, Equals, currency)
-	c.Assert(currencies[0].Symbol, Equals, currencySymbol)
+	exchangeRates := models.LoadExchangeRates(s.r.Db)
+	c.Assert(len(exchangeRates), Equals, 1)
+	c.Assert(exchangeRates[0].Code, Equals, currency)
+	c.Assert(exchangeRates[0].Symbol, Equals, currencySymbol)
 
-	rows = sqlmock.NewRows([]string{"id", "name", "symbol", "created_at", "updated_at"}).
-		AddRow(1, currency, currencySymbol, time.Now(), time.Now())
-	s.mock.ExpectQuery("^SELECT (.+) FROM currencies").WillReturnRows(rows)
+	rows = sqlmock.NewRows([]string{"id", "marketplace_id", "code", "symbol", "rate", "created_at", "updated_at"}).
+		AddRow(1, 1, currency, currencySymbol, 1.0, time.Now(), time.Now())
+	s.mock.ExpectQuery("^SELECT (.+) FROM exchange_rates").WillReturnRows(rows)
 
-	currencies = s.r.getCurrencies()
-	_, ok := s.r.getCurrencyIdByName(currency, currencies)
+	exchangeRates = models.LoadExchangeRates(s.r.Db)
+	_, ok := s.r.exchangeRate(currency, exchangeRates)
 	c.Assert(ok, Equals, true)
 
 	content := s.r.mapXLSX(s.readFile(sponsoredProductReportFile, c))
 
 	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
 		AddRow(1, userId, "test@getlytica.com", time.Now(), time.Now())
-	currencyRows := sqlmock.NewRows([]string{"id", "name", "symbol", "created_at", "updated_at"}).
-		AddRow(1, currency, currencySymbol, time.Now(), time.Now())
+	exchangeRateRows := sqlmock.NewRows([]string{"id", "marketplace_id", "code", "symbol", "rate", "created_at", "updated_at"}).
+		AddRow(1, 1, currency, currencySymbol, 1.0, time.Now(), time.Now())
 
 	s.mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(user)
-	s.mock.ExpectQuery("^SELECT (.+) FROM currencies").WillReturnRows(currencyRows)
+	s.mock.ExpectQuery("^SELECT (.+) FROM exchange_rates").WillReturnRows(exchangeRateRows)
 
 	formatted := s.r.formatSponsoredProducts(content, userId)
 	c.Assert(len(formatted), Equals, 1)
@@ -221,7 +222,7 @@ func (s *reportSuite) TestSponsoredProduct(c *C) {
 	c.Assert(formatted[0].StartDate.IsZero(), Equals, false)
 	c.Assert(formatted[0].EndDate.IsZero(), Equals, false)
 	c.Assert(formatted[0].PortfolioName, Equals, "Not grouped")
-	c.Assert(formatted[0].Currency.Id, Equals, int64(1))
+	c.Assert(formatted[0].ExchangeRate.Id, Equals, int64(1))
 	c.Assert(formatted[0].CampaignName, Equals, "Flag Football Auto")
 	c.Assert(formatted[0].AdGroupName, Equals, "Ad Group 1")
 	c.Assert(formatted[0].SKU, Equals, "PF-EV1C-1R5B")
@@ -246,11 +247,11 @@ func (s *reportSuite) TestSponsoredProduct(c *C) {
 
 	user = sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
 		AddRow(1, userId, "test@getlytica.com", time.Now(), time.Now())
-	currencyRows = sqlmock.NewRows([]string{"id", "name", "symbol", "created_at", "updated_at"}).
-		AddRow(1, currency, currencySymbol, time.Now(), time.Now())
+	exchangeRateRows = sqlmock.NewRows([]string{"id", "marketplace_id", "code", "symbol", "rate", "created_at", "updated_at"}).
+		AddRow(1, 1, currency, currencySymbol, 1.0, time.Now(), time.Now())
 
 	s.mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(user)
-	s.mock.ExpectQuery("^SELECT (.+) FROM currencies").WillReturnRows(currencyRows)
+	s.mock.ExpectQuery("^SELECT (.+) FROM exchange_rates").WillReturnRows(exchangeRateRows)
 	s.mock.ExpectExec("^INSERT INTO sponsored_products").WillReturnResult(sqlmock.NewResult(1, 1))
 
 	formatted = s.r.formatSponsoredProducts(content, userId)

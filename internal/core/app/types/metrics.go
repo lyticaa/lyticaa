@@ -4,16 +4,26 @@ import (
 	"time"
 )
 
+type Total struct {
+	Value int64   `json:"value"`
+	Diff  float64 `json:"diff"`
+}
+
+type Card struct {
+	Total `json:"total"`
+	Chart Chart `json:"chart"`
+}
+
 type Dashboard struct {
-	TotalSales         Card `json:"totalSales,omitempty"`
-	UnitsSold          Card `json:"unitsSold,omitempty"`
-	AmazonCosts        Card `json:"amazonCosts,omitempty"`
-	AdvertisingSpend   Card `json:"advertisingSpend,omitempty"`
-	Refunds            Card `json:"refunds,omitempty"`
-	ShippingCredits    Card `json:"shippingCredits,omitempty"`
-	PromotionalRebates Card `json:"promotionalRebates,omitempty"`
-	TotalCosts         Card `json:"totatCosts,omitempty"`
-	NetMargin          Card `json:"netMargin,omitempty"`
+	TotalSales         Chart `json:"totalSales,omitempty"`
+	UnitsSold          Card  `json:"unitsSold,omitempty"`
+	AmazonCosts        Card  `json:"amazonCosts,omitempty"`
+	AdvertisingSpend   Card  `json:"advertisingSpend,omitempty"`
+	Refunds            Card  `json:"refunds,omitempty"`
+	ShippingCredits    Card  `json:"shippingCredits,omitempty"`
+	PromotionalRebates Card  `json:"promotionalRebates,omitempty"`
+	TotalCosts         Card  `json:"totalCosts,omitempty"`
+	NetMargin          Card  `json:"netMargin,omitempty"`
 }
 
 type TotalSalesTable struct {
@@ -25,11 +35,12 @@ type TotalSalesTable struct {
 }
 
 type TotalSales struct {
-	Chart           Flot              `json:"chart"`
-	Data            []TotalSalesTable `json:"data"`
-	Draw            int64             `json:"draw"`
-	RecordsTotal    int64             `json:"recordsTotal"`
-	RecordsFiltered int64             `json:"recordsFiltered"`
+	Chart           Chart             `json:"chart"`
+	Card            Card              `json:"card,omitempty"`
+	Data            []TotalSalesTable `json:"data,omitempty"`
+	Draw            int64             `json:"draw,omitempty"`
+	RecordsTotal    int64             `json:"recordsTotal,omitempty"`
+	RecordsFiltered int64             `json:"recordsFiltered,omitempty"`
 }
 
 type UnitsSoldTable struct {
@@ -42,11 +53,12 @@ type UnitsSoldTable struct {
 }
 
 type UnitsSold struct {
-	Chart           Flot             `json:"chart"`
-	Data            []UnitsSoldTable `json:"data"`
-	Draw            int64            `json:"draw"`
-	RecordsTotal    int64            `json:"recordsTotal"`
-	RecordsFiltered int64            `json:"recordsFiltered"`
+	Chart           Chart            `json:"chart"`
+	Card            Card             `json:"card,omitempty"`
+	Data            []UnitsSoldTable `json:"data,omitempty"`
+	Draw            int64            `json:"draw,omitempty"`
+	RecordsTotal    int64            `json:"recordsTotal,omitempty"`
+	RecordsFiltered int64            `json:"recordsFiltered,omitempty"`
 }
 
 type AmazonCostsTable struct {
@@ -59,11 +71,12 @@ type AmazonCostsTable struct {
 }
 
 type AmazonCosts struct {
-	Chart           Flot               `json:"chart"`
-	Data            []AmazonCostsTable `json:"data"`
-	Draw            int64              `json:"draw"`
-	RecordsTotal    int64              `json:"recordsTotal"`
-	RecordsFiltered int64              `json:"recordsFiltered"`
+	Chart           Chart              `json:"chart"`
+	Card            Card               `json:"card,omitempty"`
+	Data            []AmazonCostsTable `json:"data,omitempty"`
+	Draw            int64              `json:"draw,omitempty"`
+	RecordsTotal    int64              `json:"recordsTotal,omitempty"`
+	RecordsFiltered int64              `json:"recordsFiltered,omitempty"`
 }
 
 type AdvertisingSpendTable struct {
@@ -76,11 +89,12 @@ type AdvertisingSpendTable struct {
 }
 
 type AdvertisingSpend struct {
-	Chart           Flot                    `json:"chart"`
-	Data            []AdvertisingSpendTable `json:"data"`
-	Draw            int64                   `json:"draw"`
-	RecordsTotal    int64                   `json:"recordsTotal"`
-	RecordsFiltered int64                   `json:"recordsFiltered"`
+	Chart           Chart                   `json:"chart"`
+	Card            Card                    `json:"card,omitempty"`
+	Data            []AdvertisingSpendTable `json:"data,omitempty"`
+	Draw            int64                   `json:"draw,omitempty"`
+	RecordsTotal    int64                   `json:"recordsTotal,omitempty"`
+	RecordsFiltered int64                   `json:"recordsFiltered,omitempty"`
 }
 
 type RefundsTable struct {
@@ -93,11 +107,12 @@ type RefundsTable struct {
 }
 
 type Refunds struct {
-	Chart           Flot           `json:"chart"`
-	Data            []RefundsTable `json:"data"`
-	Draw            int64          `json:"draw"`
-	RecordsTotal    int64          `json:"recordsTotal"`
-	RecordsFiltered int64          `json:"recordsFiltered"`
+	Chart           Chart          `json:"chart"`
+	Card            Card           `json:"card,omitempty"`
+	Data            []RefundsTable `json:"data,omitempty"`
+	Draw            int64          `json:"draw,omitempty"`
+	RecordsTotal    int64          `json:"recordsTotal,omitempty"`
+	RecordsFiltered int64          `json:"recordsFiltered,omitempty"`
 }
 
 type ShippingCreditsTable struct {
@@ -109,11 +124,12 @@ type ShippingCreditsTable struct {
 }
 
 type ShippingCredits struct {
-	Chart           Flot                   `json:"chart"`
-	Data            []ShippingCreditsTable `json:"data"`
-	Draw            int64                  `json:"draw"`
-	RecordsTotal    int64                  `json:"recordsTotal"`
-	RecordsFiltered int64                  `json:"recordsFiltered"`
+	Chart           Chart                  `json:"chart"`
+	Card            Card                   `json:"card,omitempty"`
+	Data            []ShippingCreditsTable `json:"data,omitempty"`
+	Draw            int64                  `json:"draw,omitempty"`
+	RecordsTotal    int64                  `json:"recordsTotal,omitempty"`
+	RecordsFiltered int64                  `json:"recordsFiltered,omitempty"`
 }
 
 type PromotionalRebatesTable struct {
@@ -127,11 +143,12 @@ type PromotionalRebatesTable struct {
 }
 
 type PromotionalRebates struct {
-	Chart           Flot                      `json:"chart"`
-	Data            []PromotionalRebatesTable `json:"data"`
-	Draw            int64                     `json:"draw"`
-	RecordsTotal    int64                     `json:"recordsTotal"`
-	RecordsFiltered int64                     `json:"recordsFiltered"`
+	Chart           Chart                     `json:"chart"`
+	Card            Card                      `json:"card,omitempty"`
+	Data            []PromotionalRebatesTable `json:"data,omitempty"`
+	Draw            int64                     `json:"draw,omitempty"`
+	RecordsTotal    int64                     `json:"recordsTotal,omitempty"`
+	RecordsFiltered int64                     `json:"recordsFiltered,omitempty"`
 }
 
 type TotalCostsTable struct {
@@ -148,11 +165,12 @@ type TotalCostsTable struct {
 }
 
 type TotalCosts struct {
-	Chart           Flot              `json:"chart"`
-	Data            []TotalCostsTable `json:"data"`
-	Draw            int64             `json:"draw"`
-	RecordsTotal    int64             `json:"recordsTotal"`
-	RecordsFiltered int64             `json:"recordsFiltered"`
+	Chart           Chart             `json:"chart"`
+	Card            Card              `json:"card,omitempty"`
+	Data            []TotalCostsTable `json:"data,omitempty"`
+	Draw            int64             `json:"draw,omitempty"`
+	RecordsTotal    int64             `json:"recordsTotal,omitempty"`
+	RecordsFiltered int64             `json:"recordsFiltered,omitempty"`
 }
 
 type NetMarginTable struct {
@@ -167,9 +185,10 @@ type NetMarginTable struct {
 }
 
 type NetMargin struct {
-	Chart           Flot             `json:"chart"`
-	Data            []NetMarginTable `json:"data"`
-	Draw            int64            `json:"draw"`
-	RecordsTotal    int64            `json:"recordsTotal"`
-	RecordsFiltered int64            `json:"recordsFiltered"`
+	Chart           Chart            `json:"chart"`
+	Card            Card             `json:"card,omitempty"`
+	Data            []NetMarginTable `json:"data,omitempty"`
+	Draw            int64            `json:"draw,omitempty"`
+	RecordsTotal    int64            `json:"recordsTotal,omitempty"`
+	RecordsFiltered int64            `json:"recordsFiltered,omitempty"`
 }

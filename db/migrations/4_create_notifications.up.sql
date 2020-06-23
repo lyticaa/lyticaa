@@ -1,7 +1,7 @@
 CREATE TABLE notifications
 (
     id              BIGSERIAL,
-    user_id         BIGSERIAL REFERENCES users(id),
+    user_id         BIGSERIAL REFERENCES users(id) ON DELETE CASCADE,
     notification    VARCHAR NOT NULL,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

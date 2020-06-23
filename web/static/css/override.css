@@ -56,3 +56,9 @@ table > thead > tr > th:hover {
 .is-invalid, .is-invalid:focus {
     border-color: #ffc6d4 !important;
 }
+
+#dashboard-total-sales-chart {
+    min-height: 250px;
+    border: 1px solid #f2f4f9;
+    border-radius: .25rem;
+}

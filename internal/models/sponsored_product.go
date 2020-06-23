@@ -9,31 +9,31 @@ import (
 type SponsoredProduct struct {
 	Id                 int64
 	User               `db:"user_id"`
-	StartDate          time.Time `db:"start_date"`
-	EndDate            time.Time `db:"end_date"`
-	PortfolioName      string    `db:"portfolio_name"`
-	Currency           Currency  `db:"currency_id"`
-	CampaignName       string    `db:"campaign_name"`
-	AdGroupName        string    `db:"ad_group_name"`
-	SKU                string    `db:"sku"`
-	ASIN               string    `db:"asin"`
-	Impressions        int64
-	Clicks             int64
-	CTR                float64   `db:"ctr"`
-	CPC                float64   `db:"cpc"`
-	Spend              float64   `db:"spend"`
-	TotalSales         float64   `db:"total_sales"`
-	ACoS               float64   `db:"acos"`
-	RoAS               float64   `db:"roas"`
-	TotalOrders        int64     `db:"total_orders"`
-	TotalUnits         int64     `db:"total_units"`
-	ConversionRate     float64   `db:"conversion_rate"`
-	AdvertisedSKUUnits int64     `db:"advertised_sku_units"`
-	OtherSKUUnits      int64     `db:"other_sku_units"`
-	AdvertisedSKUSales float64   `db:"advertised_sku_sales"`
-	OtherSKUSales      float64   `db:"other_sku_sales"`
-	CreatedAt          time.Time `db:"created_at"`
-	UpdatedAt          time.Time `db:"updated_at"`
+	StartDate          time.Time    `db:"start_date"`
+	EndDate            time.Time    `db:"end_date"`
+	PortfolioName      string       `db:"portfolio_name"`
+	ExchangeRate       ExchangeRate `db:"exchange_rate_id"`
+	CampaignName       string       `db:"campaign_name"`
+	AdGroupName        string       `db:"ad_group_name"`
+	SKU                string       `db:"sku"`
+	ASIN               string       `db:"asin"`
+	Impressions        int64        `db:"impressions"`
+	Clicks             int64        `db:"clicks"`
+	CTR                float64      `db:"ctr"`
+	CPC                float64      `db:"cpc"`
+	Spend              float64      `db:"spend"`
+	TotalSales         float64      `db:"total_sales"`
+	ACoS               float64      `db:"acos"`
+	RoAS               float64      `db:"roas"`
+	TotalOrders        int64        `db:"total_orders"`
+	TotalUnits         int64        `db:"total_units"`
+	ConversionRate     float64      `db:"conversion_rate"`
+	AdvertisedSKUUnits int64        `db:"advertised_sku_units"`
+	OtherSKUUnits      int64        `db:"other_sku_units"`
+	AdvertisedSKUSales float64      `db:"advertised_sku_sales"`
+	OtherSKUSales      float64      `db:"other_sku_sales"`
+	CreatedAt          time.Time    `db:"created_at"`
+	UpdatedAt          time.Time    `db:"updated_at"`
 }
 
 func SaveSponsoredProduct(sponsoredProduct SponsoredProduct, db *sqlx.DB) error {
@@ -42,7 +42,7 @@ func SaveSponsoredProduct(sponsoredProduct SponsoredProduct, db *sqlx.DB) error 
                                 start_date,
                                 end_date,
                                 portfolio_name,
-                                currency_id,
+                                exchange_rate_id,
                                 campaign_name,
                                 ad_group_name,
                                 sku,
@@ -67,7 +67,7 @@ func SaveSponsoredProduct(sponsoredProduct SponsoredProduct, db *sqlx.DB) error 
                                     :start_date,
                                     :end_date,
                                     :portfolio_name,
-                                    :currency_id,
+                                    :exchange_rate_id,
                                     :campaign_name,
                                     :ad_group_name,
                                     :sku,
@@ -110,7 +110,7 @@ func SaveSponsoredProduct(sponsoredProduct SponsoredProduct, db *sqlx.DB) error 
 		"start_date":           sponsoredProduct.StartDate,
 		"end_date":             sponsoredProduct.EndDate,
 		"portfolio_name":       sponsoredProduct.PortfolioName,
-		"currency_id":          sponsoredProduct.Currency.Id,
+		"exchange_rate_id":     sponsoredProduct.ExchangeRate.Id,
 		"campaign_name":        sponsoredProduct.CampaignName,
 		"ad_group_name":        sponsoredProduct.AdGroupName,
 		"sku":                  sponsoredProduct.SKU,

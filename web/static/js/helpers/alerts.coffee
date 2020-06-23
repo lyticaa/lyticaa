@@ -4,17 +4,17 @@
 export default class AlertsHelper
   constructor: ->
 
-#
-# Reset.
-#
+  #
+  # Reset.
+  #
   reset: ->
     this.resetSuccess()
     this.resetErrors()
     this.resetWarnings()
 
-#
-# Reset success.
-#
+  #
+  # Reset success.
+  #
   resetSuccess: ->
     $('input').each ->
       if $(this).hasClass('is-valid')
@@ -28,9 +28,9 @@ export default class AlertsHelper
 
     return
 
-#
-# Reset errors.
-#
+  #
+  # Reset errors.
+  #
   resetErrors: ->
     $('input').each ->
       if $(this).hasClass('is-invalid')
@@ -44,9 +44,9 @@ export default class AlertsHelper
 
     return
 
-#
-# Reset warnings.
-#
+  #
+  # Reset warnings.
+  #
   resetWarnings: ->
     $('.alert.alert-warning, .alert.alert-icon-warning').each ->
       if $(this).is(':visible') && $(this).not('.flash')

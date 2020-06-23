@@ -156,7 +156,7 @@ func (r *Report) formatTransactions(rows []map[string]string, username string) [
 }
 
 func (r *Report) saveTransaction(txn models.Transaction) error {
-	err := models.SaveTransaction(txn, r.Db)
+	err := txn.Save(r.Db)
 	if err != nil {
 		return err
 	}

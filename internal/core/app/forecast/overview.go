@@ -26,7 +26,7 @@ func (f *Forecast) ForecastByDate(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(f.sessionStore, f.logger, w, r)
 	_ = session.Values["User"].(models.User)
 
-	chart := types.Flot{}
+	chart := types.Chart{}
 	byDate := types.Forecast{Chart: chart}
 
 	js, err := json.Marshal(byDate)

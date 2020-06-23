@@ -6,6 +6,14 @@
     </nav>
 {{ end }}
 
+{{ define "filters-extra"}}
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary btn-icon-text d-none d-md-block mr-2 reload">
+            <i class="btn-icon-prepend mr-0" data-feather="refresh-ccw"></i>
+        </button>
+    </div>
+{{ end }}
+
 {{ define "content" }}
     <input type="hidden" class="location" data-section="dashboard"/>
     <div class="row">
@@ -28,12 +36,18 @@
         <div class="col-12 col-xl-12 grid-margin stretch-card">
             <div class="card overflow-hidden">
                 <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-xl-12 stretch-card">
+                            <div class="alert alert-icon-warning text-center pt-3 w-100 dashboard-total-sales-chart-error" style="display: none;">
+                                <i data-feather="alert-triangle"></i>
+                                No data available for that date range.
+                            </div>
+                        </div>
+                    </div>
                     <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
                         <h6 class="card-title mb-0">Total Sales</h6>
                     </div>
-                    <div class="flot-wrapper">
-                        <div id="revenue-chart" class="flot-chart"></div>
-                    </div>
+                    <div id="dashboard-total-sales-chart" class=""></div>
                 </div>
             </div>
         </div>
@@ -57,15 +71,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-8 col-md-12 col-xl-7">
-                                    <h3 class="mb-2">0</h3>
+                                    <h3 class="mb-2 dashboard-units-sold">--</h3>
                                     <div class="d-flex align-items-baseline">
                                         <p class="text-warning">
-                                            <span class="diff">+0%</span>
+                                            <span class="diff dashboard-units-sold">+0%</span>
                                         </p>
                                     </div>
                                 </div>
                                 <div class="col-4 col-md-12 col-xl-5">
-                                    <div id="dashboard-units-sold-chart" class="mt-md-3 mt-xl-0"></div>
+                                    <div id="dashboard-units-sold-sparkline" class="mt-md-3 mt-xl-0"></div>
                                 </div>
                             </div>
                         </div>
@@ -87,15 +101,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-8 col-md-12 col-xl-7">
-                                    <h3 class="mb-2">0</h3>
+                                    <h3 class="mb-2 dashboard-amazon-costs">--</h3>
                                     <div class="d-flex align-items-baseline">
                                         <p class="text-warning">
-                                            <span class="diff">+0%</span>
+                                            <span class="diff dashboard-amazon-costs">+0%</span>
                                         </p>
                                     </div>
                                 </div>
                                 <div class="col-4 col-md-12 col-xl-5">
-                                    <div id="dashboard-amazon-costs-chart" class="mt-md-3 mt-xl-0"></div>
+                                    <div id="dashboard-amazon-costs-sparkline" class="mt-md-3 mt-xl-0"></div>
                                 </div>
                             </div>
                         </div>
@@ -117,15 +131,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-8 col-md-12 col-xl-7">
-                                    <h3 class="mb-2">0</h3>
+                                    <h3 class="mb-2 dashboard-advertising-spend">--</h3>
                                     <div class="d-flex align-items-baseline">
                                         <p class="text-warning">
-                                            <span class="diff">+0%</span>
+                                            <span class="diff dashboard-advertising-spend">+0%</span>
                                         </p>
                                     </div>
                                 </div>
                                 <div class="col-4 col-md-12 col-xl-5">
-                                    <div id="dashboard-advertising-spend-chart" class="mt-md-3 mt-xl-0"></div>
+                                    <div id="dashboard-advertising-spend-sparkline" class="mt-md-3 mt-xl-0"></div>
                                 </div>
                             </div>
                         </div>
@@ -147,15 +161,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-8 col-md-12 col-xl-7">
-                                    <h3 class="mb-2">0</h3>
+                                    <h3 class="mb-2 dashboard-refunds">--</h3>
                                     <div class="d-flex align-items-baseline">
                                         <p class="text-warning">
-                                            <span class="diff">+0%</span>
+                                            <span class="diff dashboard-refunds">+0%</span>
                                         </p>
                                     </div>
                                 </div>
                                 <div class="col-4 col-md-12 col-xl-5">
-                                    <div id="dashboard-refunds-chart" class="mt-md-3 mt-xl-0"></div>
+                                    <div id="dashboard-refunds-sparkline" class="mt-md-3 mt-xl-0"></div>
                                 </div>
                             </div>
                         </div>
@@ -183,15 +197,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-8 col-md-12 col-xl-7">
-                                    <h3 class="mb-2">0</h3>
+                                    <h3 class="mb-2 dashboard-shipping-credits">--</h3>
                                     <div class="d-flex align-items-baseline">
                                         <p class="text-warning">
-                                            <span class="diff">+0%</span>
+                                            <span class="diff dashboard-shipping-credits">+0%</span>
                                         </p>
                                     </div>
                                 </div>
                                 <div class="col-4 col-md-12 col-xl-5">
-                                    <div id="dashboard-shipping-credits-chart" class="mt-md-3 mt-xl-0"></div>
+                                    <div id="dashboard-shipping-credits-sparkline" class="mt-md-3 mt-xl-0"></div>
                                 </div>
                             </div>
                         </div>
@@ -213,15 +227,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-8 col-md-12 col-xl-7">
-                                    <h3 class="mb-2">0</h3>
+                                    <h3 class="mb-2 dashboard-promotional-rebates">--</h3>
                                     <div class="d-flex align-items-baseline">
                                         <p class="text-warning">
-                                            <span class="diff">+0%</span>
+                                            <span class="diff dashboard-promotional-rebates">+0%</span>
                                         </p>
                                     </div>
                                 </div>
                                 <div class="col-4 col-md-12 col-xl-5">
-                                    <div id="dashboard-promotional-rebates-chart" class="mt-md-3 mt-xl-0"></div>
+                                    <div id="dashboard-promotional-rebates-sparkline" class="mt-md-3 mt-xl-0"></div>
                                 </div>
                             </div>
                         </div>
@@ -243,15 +257,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-8 col-md-12 col-xl-7">
-                                    <h3 class="mb-2">0</h3>
+                                    <h3 class="mb-2 dashboard-total-costs">--</h3>
                                     <div class="d-flex align-items-baseline">
                                         <p class="text-warning">
-                                            <span class="diff">+0%</span>
+                                            <span class="diff dashboard-total-costs">+0%</span>
                                         </p>
                                     </div>
                                 </div>
                                 <div class="col-4 col-md-12 col-xl-5">
-                                    <div id="dashboard-total-costs-chart" class="mt-md-3 mt-xl-0"></div>
+                                    <div id="dashboard-total-costs-sparkline" class="mt-md-3 mt-xl-0"></div>
                                 </div>
                             </div>
                         </div>
@@ -273,15 +287,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-8 col-md-12 col-xl-7">
-                                    <h3 class="mb-2">0</h3>
+                                    <h3 class="mb-2 dashboard-net-margin">--</h3>
                                     <div class="d-flex align-items-baseline">
                                         <p class="text-warning">
-                                            <span class="diff">+0%</span>
+                                            <span class="diff dashboard-net-margin">+0%</span>
                                         </p>
                                     </div>
                                 </div>
                                 <div class="col-4 col-md-12 col-xl-5">
-                                    <div id="dashboard-net-margin-chart" class="mt-md-3 mt-xl-0"></div>
+                                    <div id="dashboard-net-margin-sparkline" class="mt-md-3 mt-xl-0"></div>
                                 </div>
                             </div>
                         </div>
