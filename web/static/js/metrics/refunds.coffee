@@ -54,8 +54,6 @@ export default class MetricsRefunds
       'columns': [
         { 'data': 'date' }
         { 'data': 'sku' }
-        { 'data': 'asin' }
-        { 'data': 'productName' }
         { 'data': 'refunds' }
         { 'data': 'percentageOfSales' }
       ]

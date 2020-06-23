@@ -54,8 +54,6 @@ export default class MetricsAdvertisingSpend
       'columns': [
         { 'data': 'date' }
         { 'data': 'sku' }
-        { 'data': 'asin' }
-        { 'data': 'productName' }
         { 'data': 'advertisingSpend' }
         { 'data': 'percentageOfSales' }
       ]

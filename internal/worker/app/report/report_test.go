@@ -353,7 +353,7 @@ func (s *reportSuite) TestTransaction(c *C) {
 	c.Assert(formatted[0].SettlementId, Equals, int64(12447169531))
 	c.Assert(formatted[0].TransactionType.Id, Equals, int64(1))
 	c.Assert(formatted[0].OrderId, Equals, "113-0688349-7048213")
-	c.Assert(formatted[0].Sku, Equals, "PF-EV1C-1R5B")
+	c.Assert(formatted[0].SKU, Equals, "PF-EV1C-1R5B")
 	c.Assert(formatted[0].Quantity, Equals, int64(1))
 	c.Assert(formatted[0].Marketplace.Id, Equals, int64(1))
 	c.Assert(formatted[0].Fulfillment.Id, Equals, int64(1))

@@ -37,35 +37,30 @@ type TotalSalesTable struct {
 type TotalSales struct {
 	Chart           Chart             `json:"chart"`
 	Card            Card              `json:"card,omitempty"`
-	Data            []TotalSalesTable `json:"data,omitempty"`
-	Draw            int64             `json:"draw,omitempty"`
-	RecordsTotal    int64             `json:"recordsTotal,omitempty"`
-	RecordsFiltered int64             `json:"recordsFiltered,omitempty"`
+	Data            []TotalSalesTable `json:"data"`
+	Draw            int64             `json:"draw"`
+	RecordsTotal    int64             `json:"recordsTotal"`
+	RecordsFiltered int64             `json:"recordsFiltered"`
 }
 
 type UnitsSoldTable struct {
-	Date              time.Time `json:"date"`
-	SKU               string    `json:"sku"`
-	ASIN              string    `json:"asin"`
-	ProductName       string    `json:"productName"`
-	GrossQuantitySold int64     `json:"grossQuantitySold"`
-	NetQuantitySold   int64     `json:"netQuantitySold"`
+	Date         time.Time `json:"date"`
+	SKU          string    `json:"sku"`
+	QuantitySold int64     `json:"quantitySold"`
 }
 
 type UnitsSold struct {
 	Chart           Chart            `json:"chart"`
 	Card            Card             `json:"card,omitempty"`
-	Data            []UnitsSoldTable `json:"data,omitempty"`
-	Draw            int64            `json:"draw,omitempty"`
-	RecordsTotal    int64            `json:"recordsTotal,omitempty"`
-	RecordsFiltered int64            `json:"recordsFiltered,omitempty"`
+	Data            []UnitsSoldTable `json:"data"`
+	Draw            int64            `json:"draw"`
+	RecordsTotal    int64            `json:"recordsTotal"`
+	RecordsFiltered int64            `json:"recordsFiltered"`
 }
 
 type AmazonCostsTable struct {
 	Date        time.Time `json:"date"`
 	SKU         string    `json:"sku"`
-	ASIN        string    `json:"asin"`
-	ProductName string    `json:"productName"`
 	Type        string    `json:"type"`
 	AmazonCosts float64   `json:"amazonCosts"`
 }
@@ -73,17 +68,15 @@ type AmazonCostsTable struct {
 type AmazonCosts struct {
 	Chart           Chart              `json:"chart"`
 	Card            Card               `json:"card,omitempty"`
-	Data            []AmazonCostsTable `json:"data,omitempty"`
-	Draw            int64              `json:"draw,omitempty"`
-	RecordsTotal    int64              `json:"recordsTotal,omitempty"`
-	RecordsFiltered int64              `json:"recordsFiltered,omitempty"`
+	Data            []AmazonCostsTable `json:"data"`
+	Draw            int64              `json:"draw"`
+	RecordsTotal    int64              `json:"recordsTotal"`
+	RecordsFiltered int64              `json:"recordsFiltered"`
 }
 
 type AdvertisingSpendTable struct {
 	Date              time.Time `json:"date"`
 	SKU               string    `json:"sku"`
-	ASIN              string    `json:"asin"`
-	ProductName       string    `json:"productName"`
 	AdvertisingSpend  float64   `json:"advertisingSpend"`
 	PercentageOfSales float64   `json:"percentageOfSales"`
 }
@@ -91,17 +84,15 @@ type AdvertisingSpendTable struct {
 type AdvertisingSpend struct {
 	Chart           Chart                   `json:"chart"`
 	Card            Card                    `json:"card,omitempty"`
-	Data            []AdvertisingSpendTable `json:"data,omitempty"`
-	Draw            int64                   `json:"draw,omitempty"`
-	RecordsTotal    int64                   `json:"recordsTotal,omitempty"`
-	RecordsFiltered int64                   `json:"recordsFiltered,omitempty"`
+	Data            []AdvertisingSpendTable `json:"data"`
+	Draw            int64                   `json:"draw"`
+	RecordsTotal    int64                   `json:"recordsTotal"`
+	RecordsFiltered int64                   `json:"recordsFiltered"`
 }
 
 type RefundsTable struct {
 	Date              time.Time `json:"date"`
 	SKU               string    `json:"sku"`
-	ASIN              string    `json:"asin"`
-	ProductName       string    `json:"productName"`
 	Refunds           float64   `json:"refunds"`
 	PercentageOfSales float64   `json:"percentageOfSales"`
 }
@@ -109,34 +100,30 @@ type RefundsTable struct {
 type Refunds struct {
 	Chart           Chart          `json:"chart"`
 	Card            Card           `json:"card,omitempty"`
-	Data            []RefundsTable `json:"data,omitempty"`
-	Draw            int64          `json:"draw,omitempty"`
-	RecordsTotal    int64          `json:"recordsTotal,omitempty"`
-	RecordsFiltered int64          `json:"recordsFiltered,omitempty"`
+	Data            []RefundsTable `json:"data"`
+	Draw            int64          `json:"draw"`
+	RecordsTotal    int64          `json:"recordsTotal"`
+	RecordsFiltered int64          `json:"recordsFiltered"`
 }
 
 type ShippingCreditsTable struct {
 	Date            time.Time `json:"date"`
 	SKU             string    `json:"sku"`
-	ASIN            string    `json:"asin"`
-	ProductName     string    `json:"productName"`
 	ShippingCredits float64   `json:"shippingCredits"`
 }
 
 type ShippingCredits struct {
 	Chart           Chart                  `json:"chart"`
 	Card            Card                   `json:"card,omitempty"`
-	Data            []ShippingCreditsTable `json:"data,omitempty"`
-	Draw            int64                  `json:"draw,omitempty"`
-	RecordsTotal    int64                  `json:"recordsTotal,omitempty"`
-	RecordsFiltered int64                  `json:"recordsFiltered,omitempty"`
+	Data            []ShippingCreditsTable `json:"data"`
+	Draw            int64                  `json:"draw"`
+	RecordsTotal    int64                  `json:"recordsTotal"`
+	RecordsFiltered int64                  `json:"recordsFiltered"`
 }
 
 type PromotionalRebatesTable struct {
 	Date               time.Time `json:"date"`
 	SKU                string    `json:"sku"`
-	ASIN               string    `json:"asin"`
-	ProductName        string    `json:"productName"`
 	CostOfCoupons      float64   `json:"costOfCoupons"`
 	Quantity           int64     `json:"quantity"`
 	PromotionalRebates float64   `json:"promotionalRebates"`
@@ -145,17 +132,15 @@ type PromotionalRebatesTable struct {
 type PromotionalRebates struct {
 	Chart           Chart                     `json:"chart"`
 	Card            Card                      `json:"card,omitempty"`
-	Data            []PromotionalRebatesTable `json:"data,omitempty"`
-	Draw            int64                     `json:"draw,omitempty"`
-	RecordsTotal    int64                     `json:"recordsTotal,omitempty"`
-	RecordsFiltered int64                     `json:"recordsFiltered,omitempty"`
+	Data            []PromotionalRebatesTable `json:"data"`
+	Draw            int64                     `json:"draw"`
+	RecordsTotal    int64                     `json:"recordsTotal"`
+	RecordsFiltered int64                     `json:"recordsFiltered"`
 }
 
 type TotalCostsTable struct {
 	Date               time.Time `json:"date"`
 	SKU                string    `json:"sku"`
-	ASIN               string    `json:"asin"`
-	ProductName        string    `json:"productName"`
 	AmazonCosts        float64   `json:"amazonCosts"`
 	ProductCosts       float64   `json:"productCosts"`
 	ProductCostPerUnit float64   `json:"productCostPerUnit"`
@@ -167,17 +152,15 @@ type TotalCostsTable struct {
 type TotalCosts struct {
 	Chart           Chart             `json:"chart"`
 	Card            Card              `json:"card,omitempty"`
-	Data            []TotalCostsTable `json:"data,omitempty"`
-	Draw            int64             `json:"draw,omitempty"`
-	RecordsTotal    int64             `json:"recordsTotal,omitempty"`
-	RecordsFiltered int64             `json:"recordsFiltered,omitempty"`
+	Data            []TotalCostsTable `json:"data"`
+	Draw            int64             `json:"draw"`
+	RecordsTotal    int64             `json:"recordsTotal"`
+	RecordsFiltered int64             `json:"recordsFiltered"`
 }
 
 type NetMarginTable struct {
 	Date             time.Time `json:"date"`
 	SKU              string    `json:"sku"`
-	ASIN             string    `json:"asin"`
-	ProductName      string    `json:"productName"`
 	NetMargin        float64   `json:"netMargin"`
 	Percentage       float64   `json:"percentage"`
 	NetMarginPerUnit float64   `json:"netMarginPerUnit"`
@@ -187,8 +170,8 @@ type NetMarginTable struct {
 type NetMargin struct {
 	Chart           Chart            `json:"chart"`
 	Card            Card             `json:"card,omitempty"`
-	Data            []NetMarginTable `json:"data,omitempty"`
-	Draw            int64            `json:"draw,omitempty"`
-	RecordsTotal    int64            `json:"recordsTotal,omitempty"`
-	RecordsFiltered int64            `json:"recordsFiltered,omitempty"`
+	Data            []NetMarginTable `json:"data"`
+	Draw            int64            `json:"draw"`
+	RecordsTotal    int64            `json:"recordsTotal"`
+	RecordsFiltered int64            `json:"recordsFiltered"`
 }

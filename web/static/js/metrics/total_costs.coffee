@@ -54,8 +54,6 @@ export default class MetricsTotalCosts
       'columns': [
         { 'data': 'date' }
         { 'data': 'sku' }
-        { 'data': 'asin' }
-        { 'data': 'productName' }
         { 'data': 'amazonCosts' }
         { 'data': 'productCosts' }
         { 'data': 'productCostPerUnit' }

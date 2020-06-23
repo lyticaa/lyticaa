@@ -54,8 +54,6 @@ export default class MetricsTotalSales
       'columns': [
         { 'data': 'date' }
         { 'data': 'sku' }
-        { 'data': 'asin' }
-        { 'data': 'productName' }
         { 'data': 'sales' }
       ]
       'language': {

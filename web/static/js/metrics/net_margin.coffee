@@ -54,8 +54,6 @@ export default class MetricsNetMargin
       'columns': [
         { 'data': 'date' }
         { 'data': 'sku' }
-        { 'data': 'asin' }
-        { 'data': 'productName' }
         { 'data': 'netMargin' }
         { 'data': 'percentage' }
         { 'data': 'netMarginPerUnit' }

@@ -54,8 +54,6 @@ export default class MetricsShippingCredits
       'columns': [
         { 'data': 'date' }
         { 'data': 'sku' }
-        { 'data': 'asin' }
-        { 'data': 'productName' }
         { 'data': 'shippingCredits' }
       ]
       'language': {

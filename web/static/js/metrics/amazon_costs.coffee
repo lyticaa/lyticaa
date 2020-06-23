@@ -54,8 +54,6 @@ export default class MetricsAmazonCosts
       'columns': [
         { 'data': 'date' }
         { 'data': 'sku' }
-        { 'data': 'asin' }
-        { 'data': 'productName' }
         { 'data': 'type' }
         { 'data': 'amazonCosts' }
       ]

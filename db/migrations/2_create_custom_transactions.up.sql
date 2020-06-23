@@ -1512,3 +1512,167 @@ CREATE MATERIALIZED VIEW net_margin_all_time AS
         LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
     WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
     GROUP BY t.user_id, date_trunc('month', t.date_time), m.name;
+
+/* Metrics: Total Sales */
+CREATE MATERIALIZED VIEW metrics_total_sales_today AS
+    SELECT t.user_id, date_trunc('hour', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= date_trunc('day', NOW())
+      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
+    GROUP BY t.user_id, date_trunc('hour', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_total_sales_last_thirty_days AS
+    SELECT t.user_id, date_trunc('day', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
+      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
+    GROUP BY t.user_id, date_trunc('day', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_total_sales_this_month AS
+    SELECT t.user_id, date_trunc('day', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= date_trunc('month', NOW())
+      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
+    GROUP BY t.user_id, date_trunc('day', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_total_sales_last_month AS
+    SELECT t.user_id, date_trunc('day', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
+      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
+    GROUP BY t.user_id, date_trunc('day', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_total_sales_last_three_months AS
+    SELECT t.user_id, date_trunc('week', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= NOW() - interval '3 month'
+      AND t.date_time <= NOW()
+    GROUP BY t.user_id, date_trunc('week', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_total_sales_last_six_months AS
+    SELECT t.user_id, date_trunc('week', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= NOW() - interval '6 month'
+      AND t.date_time <= NOW()
+    GROUP BY t.user_id, date_trunc('week', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_total_sales_this_year AS
+    SELECT t.user_id, date_trunc('week', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= date_trunc('year', NOW())
+      AND t.date_time <= NOW()
+    GROUP BY t.user_id, date_trunc('week', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_total_sales_all_time AS
+    SELECT t.user_id, date_trunc('month', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
+    WHERE tt.name = 'Order'
+    GROUP BY t.user_id, date_trunc('month', t.date_time), sku;
+
+/* Metrics: Units Sold */
+CREATE MATERIALIZED VIEW metrics_units_sold_today AS
+    SELECT t.user_id, date_trunc('hour', date_time) AS order_date, sku, SUM(quantity) AS total
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= date_trunc('day', NOW())
+      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
+    GROUP BY t.user_id, date_trunc('hour', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_units_sold_last_thirty_days AS
+    SELECT t.user_id, date_trunc('day', date_time) AS order_date, sku, SUM(quantity) AS total
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
+      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
+    GROUP BY t.user_id, date_trunc('day', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_units_sold_this_month AS
+    SELECT t.user_id, date_trunc('day', date_time) AS order_date, sku, SUM(quantity) AS total
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= date_trunc('month', NOW())
+      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
+    GROUP BY t.user_id, date_trunc('day', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_units_sold_last_month AS
+    SELECT t.user_id, date_trunc('day', date_time) AS order_date, sku, SUM(quantity) AS total
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
+      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
+    GROUP BY t.user_id, date_trunc('day', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_units_sold_last_three_months AS
+    SELECT t.user_id, date_trunc('week', date_time) AS order_date, sku, SUM(quantity) AS total
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= NOW() - interval '3 month'
+      AND t.date_time <= NOW()
+    GROUP BY t.user_id, date_trunc('week', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_units_sold_last_six_months AS
+    SELECT t.user_id, date_trunc('week', date_time) AS order_date, sku, SUM(quantity) AS total
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= NOW() - interval '6 month'
+      AND t.date_time <= NOW()
+    GROUP BY t.user_id, date_trunc('week', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_units_sold_this_year AS
+    SELECT t.user_id, date_trunc('week', date_time) AS order_date, sku, SUM(quantity) AS total
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+    WHERE tt.name = 'Order'
+      AND t.date_time >= date_trunc('year', NOW())
+      AND t.date_time <= NOW()
+    GROUP BY t.user_id, date_trunc('week', t.date_time), sku;
+
+CREATE MATERIALIZED VIEW metrics_units_sold_all_time AS
+    SELECT t.user_id, date_trunc('month', date_time) AS order_date, sku, SUM(quantity) AS total
+    FROM transactions t
+        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
+        LEFT JOIN marketplaces m on t.marketplace_id = m.id
+    WHERE tt.name = 'Order'
+    GROUP BY t.user_id, date_trunc('month', t.date_time), sku;

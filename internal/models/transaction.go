@@ -18,11 +18,11 @@ type Transaction struct {
 	Id                     int64
 	User                   User `db:"user_id"`
 	DateTime               time.Time
-	SettlementId           int64
+	SettlementId           int64 `db:"settlement_id"`
 	SettlementIdx          int64
 	TransactionType        TransactionType `db:"transaction_type_id"`
 	OrderId                string
-	Sku                    string
+	SKU                    string
 	Quantity               int64
 	Marketplace            Marketplace        `db:"marketplace_id"`
 	Fulfillment            Fulfillment        `db:"fulfillment_od"`
@@ -143,7 +143,7 @@ func (t *Transaction) Save(db *sqlx.DB) error {
 		"settlement_idx":           t.SettlementIdx,
 		"transaction_type_id":      t.TransactionType.Id,
 		"order_id":                 t.OrderId,
-		"sku":                      t.Sku,
+		"sku":                      t.SKU,
 		"quantity":                 t.Quantity,
 		"marketplace_id":           t.Marketplace.Id,
 		"fulfillment_id":           t.Fulfillment.Id,

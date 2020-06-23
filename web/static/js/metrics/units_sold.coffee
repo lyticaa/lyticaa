@@ -54,10 +54,7 @@ export default class MetricsUnitsSold
       'columns': [
         { 'data': 'date' }
         { 'data': 'sku' }
-        { 'data': 'asin' }
-        { 'data': 'productName' }
-        { 'data': 'grossQuantitySold' }
-        { 'data': 'netQuantitySold' }
+        { 'data': 'quantitySold' }
       ]
       'language': {
         'infoFiltered': ''

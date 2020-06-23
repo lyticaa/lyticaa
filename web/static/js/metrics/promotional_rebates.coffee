@@ -54,8 +54,6 @@ export default class MetricsPromotionalRebates
       'columns': [
         { 'data': 'date' }
         { 'data': 'sku' }
-        { 'data': 'asin' }
-        { 'data': 'productName' }
         { 'data': 'costOfCoupons' }
         { 'data': 'quantity' }
         { 'data': 'promotionalRebates' }

@@ -128,7 +128,7 @@ func (r *Report) formatTransactions(rows []map[string]string, username string) [
 			SettlementIdx:          settlementIdx,
 			TransactionType:        models.TransactionType{Id: txnType},
 			OrderId:                row["order id"],
-			Sku:                    row["sku"],
+			SKU:                    row["sku"],
 			Quantity:               quantity,
 			Marketplace:            models.Marketplace{Id: marketplace},
 			Fulfillment:            models.Fulfillment{Id: fulfillment},
