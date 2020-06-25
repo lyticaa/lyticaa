@@ -1,12 +1,20 @@
 package metrics
 
 import (
+	"gitlab.com/getlytica/lytica-app/internal/core/app/amazon"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/chart"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
+	"gitlab.com/getlytica/lytica-app/internal/models"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"
 	"gopkg.in/boj/redistore.v1"
 )
 
 type Metrics struct {
+	amazon       *amazon.Amazon
+	chart        *chart.Chart
 	db           *sqlx.DB
 	sessionStore *redistore.RediStore
 	logger       zerolog.Logger
@@ -14,8 +22,41 @@ type Metrics struct {
 
 func NewMetrics(db *sqlx.DB, sessionStore *redistore.RediStore, log zerolog.Logger) *Metrics {
 	return &Metrics{
+		amazon:       amazon.NewAmazon(db),
+		chart:        chart.NewChart(),
 		sessionStore: sessionStore,
 		logger:       log,
 		db:           db,
 	}
+}
+
+func (m *Metrics) chartData(userId int64, dateRange, view string, current *[]models.Transaction, byDate *types.Metrics) {
+	var summary []types.Summary
+
+	switch view {
+	case helpers.TotalSalesView:
+		summary = m.amazon.TotalSales(current)
+	case helpers.UnitsSoldView:
+		summary = m.amazon.UnitsSold(current)
+	case helpers.AmazonCostsView:
+		summary = m.amazon.AmazonCosts(current)
+	case helpers.ProductCostsView:
+		summary = m.amazon.ProductCosts(current)
+	case helpers.AdvertisingSpendView:
+		summary = m.amazon.AdvertisingSpend(current)
+	case helpers.RefundsView:
+		summary = m.amazon.Refunds(current)
+	case helpers.ShippingCreditsView:
+		summary = m.amazon.ShippingCredits(current)
+	case helpers.PromotionalRebatesView:
+		summary = m.amazon.PromotionalRebates(current)
+	case helpers.TotalCostsView:
+		summary = m.amazon.TotalCosts(current)
+	case helpers.GrossMarginView:
+		summary = m.amazon.GrossMargin(current)
+	case helpers.NetMarginView:
+		summary = m.amazon.NetMargin(current)
+	}
+
+	byDate.Chart = m.chart.Line(&summary, dateRange)
 }

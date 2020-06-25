@@ -18,7 +18,9 @@ import ExpensesOther              from './expenses/other'
 import ForecastOverview           from './forecast/overview'
 import MetricsAdvertisingSpend    from './metrics/advertising_spend'
 import MetricsAmazonCosts         from './metrics/amazon_costs'
+import MetricsGrossMargin         from './metrics/gross_margin'
 import MetricsNetMargin           from './metrics/net_margin'
+import MetricsProductCosts        from './metrics/product_costs'
 import MetricsPromotionalRebates  from './metrics/promotional_rebates'
 import MetricsRefunds             from './metrics/refunds'
 import MetricsShippingCredits     from './metrics/shipping_credits'
@@ -66,7 +68,9 @@ init = ->
   # Metrics
   metricsAdvertisingSpend()
   metricsAmazonCosts()
+  metricsGrossMargin()
   metricsNetMargin()
+  metricsProductCosts()
   metricsPromotionalRebates()
   metricsRefunds()
   metricsShippingCredits()
@@ -233,6 +237,18 @@ metricsAmazonCosts = ->
   return
 
 #
+# Metrics: Gross Margin.
+#
+metricsGrossMargin = ->
+  if $('input.location').data('section') != 'metrics-gross-margin'
+    return
+
+  m = new MetricsGrossMargin()
+  m.init()
+
+  return
+
+#
 # Metrics: Net Margin.
 #
 metricsNetMargin = ->
@@ -240,6 +256,18 @@ metricsNetMargin = ->
     return
 
   m = new MetricsNetMargin()
+  m.init()
+
+  return
+
+#
+# Metrics: Product Costs.
+#
+metricsProductCosts = ->
+  if $('input.location').data('section') != 'metrics-product-costs'
+    return
+
+  m = new MetricsProductCosts()
   m.init()
 
   return

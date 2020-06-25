@@ -26,7 +26,7 @@ func (a *Account) NotificationsByDate(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := session.Values["User"].(models.User)
 
-	notifications := models.FindNotificationsByUser(user.Id, helpers.BuildFilter(r), a.db)
+	notifications := models.LoadNotificationsByUser(user.Id, helpers.BuildFilter(r), a.db)
 	var byDate types.Notifications
 
 	for _, notification := range *notifications {

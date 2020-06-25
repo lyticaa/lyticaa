@@ -7,6 +7,8 @@ import (
 	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
 	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
 	"gitlab.com/getlytica/lytica-app/internal/models"
+
+	"github.com/gorilla/mux"
 )
 
 func (m *Metrics) NetMargin(w http.ResponseWriter, r *http.Request) {
@@ -16,18 +18,30 @@ func (m *Metrics) NetMargin(w http.ResponseWriter, r *http.Request) {
 		"partials/_nav",
 		"partials/nav/_main",
 		"partials/nav/account/_main",
-		"metrics/net_margin",
 		"partials/_filters",
+		"metrics/net_margin",
 	}
 	helpers.RenderTemplate(w, t, session.Values)
 }
 
 func (m *Metrics) NetMarginByDate(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-	_ = session.Values["User"].(models.User)
+	user := session.Values["User"].(models.User)
 
-	table := []types.NetMarginTable{}
-	byDate := types.NetMargin{Data: table}
+	params := mux.Vars(r)
+	dateRange := params["dateRange"]
+
+	ok, _ := helpers.ValidateInput(helpers.ValidateDateRange{DateRange: dateRange}, &m.logger)
+	if !ok {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+
+	current := m.amazon.LoadTransactions(user.Id, dateRange)
+
+	var byDate types.NetMargin
+	m.chartData(user.Id, dateRange, helpers.NetMarginView, current, &byDate.Metrics)
+	byDate.Data = []types.NetMarginTable{}
 
 	js, err := json.Marshal(byDate)
 	if err != nil {

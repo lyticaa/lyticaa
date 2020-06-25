@@ -2,7 +2,9 @@ import $ from 'jquery'
 window.jQuery = $
 window.$ = $
 
+import Metrics        from './metrics'
 import AlertsHelper   from '../helpers/alerts'
+import ChartsHelper   from '../helpers/charts'
 import TablesHelper   from '../helpers/tables'
 import TemplateHelper from '../helpers/template'
 import URLHelper      from '../helpers/url'
@@ -11,11 +13,13 @@ require('datatables.net') window, $
 require('datatables.net-bs4') window, $
 
 #
-# Cohorts.
+# Shipping Credits.
 #
 export default class MetricsShippingCredits
   constructor: ->
+    this.metrics = new Metrics()
     this.alerts = new AlertsHelper()
+    this.charts = new ChartsHelper()
     this.tables = new TablesHelper()
     this.template = new TemplateHelper()
     this.url = new URLHelper()
@@ -25,6 +29,7 @@ export default class MetricsShippingCredits
   #
   init: ->
     this.drawTable()
+    this.metrics.reload()
 
     return
 
@@ -43,7 +48,18 @@ export default class MetricsShippingCredits
       'ajax':
         'url': m.url.clean() + '/filter/all_time'
         'dataSrc': (j) ->
-          $('button.loading').fadeOut()
+          $('button.loading').fadeOut(400, ->
+            if j.chart.line.categories[0].category.length == 0
+              $('.alert.metrics-shipping-credits-chart-error').fadeIn()
+            else
+              m.charts.line(
+                'metrics-shipping-credits-chart',
+                'AMOUNT',
+                'DATE',
+                j.chart.line.categories,
+                j.chart.line.dataSets
+              )
+          )
 
           if j.data.length > 0
             m.alerts.reset()

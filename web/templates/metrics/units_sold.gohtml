@@ -9,6 +9,14 @@
     </nav>
 {{ end }}
 
+{{ define "filters-extra"}}
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary btn-icon-text d-none d-md-block mr-2 reload">
+            <i class="btn-icon-prepend mr-0" data-feather="refresh-ccw"></i>
+        </button>
+    </div>
+{{ end }}
+
 {{ define "content" }}
     <input type="hidden" class="location" data-section="metrics-units-sold"/>
     <div class="row">
@@ -31,12 +39,14 @@
         <div class="col-12 col-xl-12 grid-margin stretch-card">
             <div class="card overflow-hidden">
                 <div class="card-body">
+                    <div class="alert alert-icon-warning text-center pt-3 w-100 metrics-units-sold-chart-error" style="display: none;">
+                        <i data-feather="alert-triangle"></i>
+                        No data available for that date range.
+                    </div>
                     <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
                         <h6 class="card-title mb-0">Units Sold</h6>
                     </div>
-                    <div class="flot-wrapper">
-                        <div id="metics-units-sold-chart" class="flot-chart"></div>
-                    </div>
+                    <div id="metrics-units-sold-chart"></div>
                 </div>
             </div>
         </div>

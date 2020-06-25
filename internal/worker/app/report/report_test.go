@@ -354,6 +354,7 @@ func (s *reportSuite) TestTransaction(c *C) {
 	c.Assert(formatted[0].TransactionType.Id, Equals, int64(1))
 	c.Assert(formatted[0].OrderId, Equals, "113-0688349-7048213")
 	c.Assert(formatted[0].SKU, Equals, "PF-EV1C-1R5B")
+	c.Assert(formatted[0].Description, Equals, "Trained Flag Football Set,10 Man Set,Premium Football Gear, Massive 46 Piece Set, Flags, Belts, Cones, More, Bonus: Stylish Carry Bag & Flag Football")
 	c.Assert(formatted[0].Quantity, Equals, int64(1))
 	c.Assert(formatted[0].Marketplace.Id, Equals, int64(1))
 	c.Assert(formatted[0].Fulfillment.Id, Equals, int64(1))

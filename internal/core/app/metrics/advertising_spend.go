@@ -7,6 +7,8 @@ import (
 	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
 	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
 	"gitlab.com/getlytica/lytica-app/internal/models"
+
+	"github.com/gorilla/mux"
 )
 
 func (m *Metrics) AdvertisingSpend(w http.ResponseWriter, r *http.Request) {
@@ -16,18 +18,30 @@ func (m *Metrics) AdvertisingSpend(w http.ResponseWriter, r *http.Request) {
 		"partials/_nav",
 		"partials/nav/_main",
 		"partials/nav/account/_main",
-		"metrics/advertising_spend",
 		"partials/_filters",
+		"metrics/advertising_spend",
 	}
 	helpers.RenderTemplate(w, t, session.Values)
 }
 
 func (m *Metrics) AdvertisingSpendByDate(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-	_ = session.Values["User"].(models.User)
+	user := session.Values["User"].(models.User)
 
-	table := []types.AdvertisingSpendTable{}
-	byDate := types.AdvertisingSpend{Data: table}
+	params := mux.Vars(r)
+	dateRange := params["dateRange"]
+
+	ok, _ := helpers.ValidateInput(helpers.ValidateDateRange{DateRange: dateRange}, &m.logger)
+	if !ok {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+
+	current := m.amazon.LoadTransactions(user.Id, dateRange)
+
+	var byDate types.AdvertisingSpend
+	m.chartData(user.Id, dateRange, helpers.AdvertisingSpendView, current, &byDate.Metrics)
+	byDate.Data = []types.AdvertisingSpendTable{}
 
 	js, err := json.Marshal(byDate)
 	if err != nil {

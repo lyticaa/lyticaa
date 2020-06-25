@@ -60,6 +60,9 @@ export default class DashboardOverview
           if j.amazonCosts.chart.sparkline.data.length > 0
             d.charts.sparkline('dashboard-amazon-costs-sparkline', [j.amazonCosts.chart.sparkline])
 
+          if j.productCosts.chart.sparkline.data.length > 0
+            d.charts.sparkline('dashboard-product-costs-sparkline', [j.productCosts.chart.sparkline])
+
           if j.advertisingSpend.chart.sparkline.data.length > 0
             d.charts.sparkline('dashboard-advertising-spend-sparkline', [j.advertisingSpend.chart.sparkline])
 
@@ -75,6 +78,9 @@ export default class DashboardOverview
           if j.totalCosts.chart.sparkline.data.length > 0
             d.charts.sparkline('dashboard-total-costs-sparkline', [j.totalCosts.chart.sparkline])
 
+          if j.grossMargin.chart.sparkline.data.length > 0
+            d.charts.sparkline('dashboard-gross-margin-sparkline', [j.grossMargin.chart.sparkline])
+
           if j.netMargin.chart.sparkline.data.length > 0
             d.charts.sparkline('dashboard-net-margin-sparkline', [j.netMargin.chart.sparkline])
 
@@ -87,6 +93,11 @@ export default class DashboardOverview
             'dashboard-amazon-costs',
             j.amazonCosts.total.value,
             j.amazonCosts.total.diff
+          )
+          d.paintMetric(
+            'dashboard-product-costs',
+            j.productCosts.total.value,
+            j.productCosts.total.diff
           )
           d.paintMetric(
             'dashboard-advertising-spend',
@@ -112,6 +123,11 @@ export default class DashboardOverview
             'dashboard-total-costs',
             j.totalCosts.total.value,
             j.totalCosts.total.diff
+          )
+          d.paintMetric(
+            'dashboard-gross-margin',
+            j.grossMargin.total.value,
+            j.grossMargin.total.diff
           )
           d.paintMetric(
             'dashboard-net-margin',

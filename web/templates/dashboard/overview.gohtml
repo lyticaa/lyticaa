@@ -36,13 +36,9 @@
         <div class="col-12 col-xl-12 grid-margin stretch-card">
             <div class="card overflow-hidden">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 col-xl-12 stretch-card">
-                            <div class="alert alert-icon-warning text-center pt-3 w-100 dashboard-total-sales-chart-error" style="display: none;">
-                                <i data-feather="alert-triangle"></i>
-                                No data available for that date range.
-                            </div>
-                        </div>
+                    <div class="alert alert-icon-warning text-center pt-3 w-100 dashboard-total-sales-chart-error" style="display: none;">
+                        <i data-feather="alert-triangle"></i>
+                        No data available for that date range.
                     </div>
                     <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
                         <h6 class="card-title mb-0">Total Sales</h6>
@@ -55,7 +51,7 @@
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
             <div class="row flex-grow">
-                <div class="col-md-3 grid-margin stretch-card">
+                <div class="col grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-baseline">
@@ -85,7 +81,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 grid-margin stretch-card">
+                <div class="col grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-baseline">
@@ -115,7 +111,37 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 grid-margin stretch-card">
+                <div class="col grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <h6 class="card-title mb-0">Product Costs</h6>
+                                <div class="dropdown mb-2">
+                                    <button class="btn p-0" type="button" id="product-costs-actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="product-costs-actions">
+                                        <a class="dropdown-item d-flex align-items-center" href="/metrics/product_costs"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-8 col-md-12 col-xl-7">
+                                    <h3 class="mb-2 dashboard-product-costs">--</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-warning">
+                                            <span class="diff dashboard-product-costs">+0%</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-4 col-md-12 col-xl-5">
+                                    <div id="dashboard-product-costs-sparkline" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-baseline">
@@ -145,7 +171,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 grid-margin stretch-card">
+                <div class="col grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-baseline">
@@ -181,7 +207,7 @@
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
             <div class="row flex-grow">
-                <div class="col-md-3 grid-margin stretch-card">
+                <div class="col grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-baseline">
@@ -211,7 +237,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 grid-margin stretch-card">
+                <div class="col grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-baseline">
@@ -241,7 +267,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 grid-margin stretch-card">
+                <div class="col grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-baseline">
@@ -271,7 +297,37 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 grid-margin stretch-card">
+                <div class="col grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline">
+                                <h6 class="card-title mb-0">Gross Margin</h6>
+                                <div class="dropdown mb-2">
+                                    <button class="btn p-0" type="button" id="gross-margin-actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="gross-margin-actions">
+                                        <a class="dropdown-item d-flex align-items-center" href="/metrics/gross_margin"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-8 col-md-12 col-xl-7">
+                                    <h3 class="mb-2 dashboard-gross-margin">--</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-warning">
+                                            <span class="diff dashboard-gross-margin">+0%</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-4 col-md-12 col-xl-5">
+                                    <div id="dashboard-gross-margin-sparkline" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-baseline">

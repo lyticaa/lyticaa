@@ -13,7 +13,7 @@ type TransactionType struct {
 	UpdatedAt time.Time `db:"updated_at"`
 }
 
-func GetTransactionTypes(db *sqlx.DB) []TransactionType {
+func LoadTransactionTypes(db *sqlx.DB) []TransactionType {
 	var txnTypes []TransactionType
 	_ = db.Select(&txnTypes, "SELECT id,name,created_at,updated_at FROM transaction_types ORDER BY id DESC")
 

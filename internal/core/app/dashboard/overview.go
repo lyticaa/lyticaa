@@ -2,9 +2,7 @@ package dashboard
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
 
 	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
 	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
@@ -12,10 +10,6 @@ import (
 
 	"github.com/gorilla/mux"
 )
-
-type ValidateDateRange struct {
-	DateRange string `validate:"required,oneof=today last_thirty_days this_month last_month last_three_months last_six_months this_year all_time"`
-}
 
 func (d *Dashboard) Overview(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(d.sessionStore, d.logger, w, r)
@@ -37,23 +31,25 @@ func (d *Dashboard) MetricsByDate(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	dateRange := params["dateRange"]
 
-	ok, _ := helpers.ValidateInput(ValidateDateRange{DateRange: dateRange}, &d.logger)
+	ok, _ := helpers.ValidateInput(helpers.ValidateDateRange{DateRange: dateRange}, &d.logger)
 	if !ok {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
 
-	var byDate types.Dashboard
-	d.chartData(user.Id, dateRange, &byDate)
+	current := d.amazon.LoadTransactions(user.Id, dateRange)
 
-	byDate.UnitsSold = d.cardData(user.Id, "units_sold", dateRange)
-	byDate.AmazonCosts = d.cardData(user.Id, "amazon_costs", dateRange)
-	byDate.AdvertisingSpend = d.cardData(user.Id, "advertising_spend", dateRange)
-	byDate.Refunds = d.cardData(user.Id, "refunds", dateRange)
-	byDate.ShippingCredits = d.cardData(user.Id, "shipping_credits", dateRange)
-	byDate.PromotionalRebates = d.cardData(user.Id, "promotional_rebates", dateRange)
-	byDate.TotalCosts = d.cardData(user.Id, "total_costs", dateRange)
-	byDate.NetMargin = d.cardData(user.Id, "net_margin", dateRange)
+	var byDate types.Dashboard
+	d.chartData(user.Id, dateRange, current, &byDate)
+
+	var previous []models.Transaction
+	if !helpers.IsDateRangeAllTime(dateRange) {
+		previous = *d.amazon.LoadTransactions(user.Id, helpers.PreviousDateRangeLabel(dateRange))
+	} else {
+		previous = *current
+	}
+
+	d.cards(user.Id, dateRange, current, &previous, &byDate)
 
 	js, err := json.Marshal(byDate)
 	if err != nil {
@@ -66,64 +62,65 @@ func (d *Dashboard) MetricsByDate(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(js)
 }
 
-func (d *Dashboard) chartData(userId int64, dateRange string, byDate *types.Dashboard) {
-	var categories []string
-	series := make(map[string][]string)
-
-	totalSales := models.LoadSummary(userId, "total_sales", dateRange, d.db)
-	for _, sales := range *totalSales {
-		categories = append(categories, fmt.Sprintf("%v", helpers.DateFormat(dateRange, sales.OrderDate)))
-		series[sales.Marketplace] = append(series[sales.Marketplace], fmt.Sprintf("%v", sales.Total))
-	}
-
-	byDate.TotalSales.Line.Categories = append(
-		byDate.TotalSales.Line.Categories,
-		types.Category{Category: strings.Join(categories, "|")},
-	)
-
-	for marketplace, data := range series {
-		dataSet := types.DataSet{
-			SeriesName: marketplace,
-			Data:       strings.Join(data, "|"),
-		}
-
-		byDate.TotalSales.Line.DataSets = append(byDate.TotalSales.Line.DataSets, dataSet)
-	}
-
-	if len(byDate.TotalSales.Line.DataSets) == 0 {
-		byDate.TotalSales.Line.DataSets = append(byDate.TotalSales.Line.DataSets, types.DataSet{})
-	}
+func (d *Dashboard) chartData(userId int64, dateRange string, current *[]models.Transaction, byDate *types.Dashboard) {
+	summary := d.amazon.TotalSales(current)
+	byDate.TotalSales = d.chart.Line(&summary, dateRange)
 }
 
-func (d *Dashboard) cardData(userId int64, view, dateRange string) types.Card {
-	card := types.Card{}
-	current := models.LoadSummary(userId, view, dateRange, d.db)
+func (d *Dashboard) cards(userId int64, dateRange string, current, previous *[]models.Transaction, byDate *types.Dashboard) {
+	byDate.UnitsSold = d.cardData(userId, helpers.UnitsSoldView, dateRange, current, previous)
+	byDate.AmazonCosts = d.cardData(userId, helpers.AmazonCostsView, dateRange, current, previous)
+	byDate.ProductCosts = d.cardData(userId, helpers.ProductCostsView, dateRange, current, previous)
+	byDate.AdvertisingSpend = d.cardData(userId, helpers.AdvertisingSpendView, dateRange, current, previous)
+	byDate.Refunds = d.cardData(userId, helpers.RefundsView, dateRange, current, previous)
+	byDate.ShippingCredits = d.cardData(userId, helpers.ShippingCreditsView, dateRange, current, previous)
+	byDate.PromotionalRebates = d.cardData(userId, helpers.PromotionalRebatesView, dateRange, current, previous)
+	byDate.TotalCosts = d.cardData(userId, helpers.TotalCostsView, dateRange, current, previous)
+	byDate.GrossMargin = d.cardData(userId, helpers.GrossMarginView, dateRange, current, previous)
+	byDate.NetMargin = d.cardData(userId, helpers.NetMarginView, dateRange, current, previous)
+}
 
-	var currentTotal int64
-	for _, item := range *current {
-		currentTotal += int64(item.Total)
-		card.Chart.Sparkline.Data = append(
-			card.Chart.Sparkline.Data, types.SparklineData{Value: item.Total},
-		)
+func (d *Dashboard) cardData(userId int64, view, dateRange string, current, previous *[]models.Transaction) types.Card {
+	var (
+		currentValues  = make([]types.Summary, 1)
+		previousValues = make([]types.Summary, 1)
+	)
+
+	switch view {
+	case helpers.UnitsSoldView:
+		currentValues = d.amazon.UnitsSold(current)
+		previousValues = d.amazon.UnitsSold(previous)
+	case helpers.AmazonCostsView:
+		currentValues = d.amazon.AmazonCosts(current)
+		previousValues = d.amazon.AmazonCosts(previous)
+	case helpers.ProductCostsView:
+		currentValues = d.amazon.ProductCosts(current)
+		previousValues = d.amazon.ProductCosts(previous)
+	case helpers.AdvertisingSpendView:
+		currentValues = d.amazon.AdvertisingSpend(current)
+		previousValues = d.amazon.AdvertisingSpend(previous)
+	case helpers.RefundsView:
+		currentValues = d.amazon.Refunds(current)
+		previousValues = d.amazon.Refunds(previous)
+	case helpers.ShippingCreditsView:
+		currentValues = d.amazon.ShippingCredits(current)
+		previousValues = d.amazon.ShippingCredits(previous)
+	case helpers.PromotionalRebatesView:
+		currentValues = d.amazon.PromotionalRebates(current)
+		previousValues = d.amazon.PromotionalRebates(previous)
+	case helpers.TotalCostsView:
+		currentValues = d.amazon.TotalCosts(current)
+		previousValues = d.amazon.TotalCosts(previous)
+	case helpers.GrossMarginView:
+		currentValues = d.amazon.GrossMargin(current)
+		previousValues = d.amazon.GrossMargin(previous)
+	case helpers.NetMarginView:
+		currentValues = d.amazon.NetMargin(current)
+		previousValues = d.amazon.NetMargin(previous)
 	}
 
-	card.Value = currentTotal
-
-	if len(card.Chart.Sparkline.Data) == 0 {
-		card.Chart.Sparkline.Data = []types.SparklineData{}
-	}
-
-	var previous *[]models.Summary
-	if !helpers.IsDateRangeAllTime(dateRange) {
-		previous = models.LoadSummary(userId, view, helpers.PreviousDateRangeLabel(dateRange), d.db)
-
-		var previousTotal int64
-		for _, item := range *previous {
-			previousTotal += int64(item.Total)
-		}
-
-		card.Diff = helpers.PercentDiff(currentTotal, previousTotal)
-	}
+	card := helpers.PaintCard(&currentValues, &previousValues)
+	card.Chart = d.chart.Sparkline(&currentValues)
 
 	return card
 }

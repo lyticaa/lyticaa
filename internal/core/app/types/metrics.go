@@ -14,15 +14,25 @@ type Card struct {
 	Chart Chart `json:"chart"`
 }
 
+type Metrics struct {
+	Chart           Chart `json:"chart"`
+	Card            Card  `json:"card,omitempty"`
+	Draw            int64 `json:"draw"`
+	RecordsTotal    int64 `json:"recordsTotal"`
+	RecordsFiltered int64 `json:"recordsFiltered"`
+}
+
 type Dashboard struct {
 	TotalSales         Chart `json:"totalSales,omitempty"`
 	UnitsSold          Card  `json:"unitsSold,omitempty"`
 	AmazonCosts        Card  `json:"amazonCosts,omitempty"`
+	ProductCosts       Card  `json:"productCosts,omitempty"`
 	AdvertisingSpend   Card  `json:"advertisingSpend,omitempty"`
 	Refunds            Card  `json:"refunds,omitempty"`
 	ShippingCredits    Card  `json:"shippingCredits,omitempty"`
 	PromotionalRebates Card  `json:"promotionalRebates,omitempty"`
 	TotalCosts         Card  `json:"totalCosts,omitempty"`
+	GrossMargin        Card  `json:"grossMargin,omitempty"`
 	NetMargin          Card  `json:"netMargin,omitempty"`
 }
 
@@ -35,12 +45,8 @@ type TotalSalesTable struct {
 }
 
 type TotalSales struct {
-	Chart           Chart             `json:"chart"`
-	Card            Card              `json:"card,omitempty"`
-	Data            []TotalSalesTable `json:"data"`
-	Draw            int64             `json:"draw"`
-	RecordsTotal    int64             `json:"recordsTotal"`
-	RecordsFiltered int64             `json:"recordsFiltered"`
+	Metrics
+	Data []TotalSalesTable `json:"data"`
 }
 
 type UnitsSoldTable struct {
@@ -50,12 +56,8 @@ type UnitsSoldTable struct {
 }
 
 type UnitsSold struct {
-	Chart           Chart            `json:"chart"`
-	Card            Card             `json:"card,omitempty"`
-	Data            []UnitsSoldTable `json:"data"`
-	Draw            int64            `json:"draw"`
-	RecordsTotal    int64            `json:"recordsTotal"`
-	RecordsFiltered int64            `json:"recordsFiltered"`
+	Metrics
+	Data []UnitsSoldTable `json:"data"`
 }
 
 type AmazonCostsTable struct {
@@ -66,12 +68,26 @@ type AmazonCostsTable struct {
 }
 
 type AmazonCosts struct {
-	Chart           Chart              `json:"chart"`
-	Card            Card               `json:"card,omitempty"`
-	Data            []AmazonCostsTable `json:"data"`
-	Draw            int64              `json:"draw"`
-	RecordsTotal    int64              `json:"recordsTotal"`
-	RecordsFiltered int64              `json:"recordsFiltered"`
+	Metrics
+	Data []AmazonCostsTable `json:"data"`
+}
+
+type ProductCostsTable struct {
+	SKU                 string  `json:"sku"`
+	Cost                float64 `json:"cost"`
+	QuantitySold        int64   `json:"quantitySold"`
+	QuantitySoldCoupons int64   `json:"quantitySoldCoupons"`
+	NetQuantitySold     int64   `json:"netQuantitySold"`
+	TotalCostSold       float64 `json:"totalCostSold"`
+	TotalCostCoupons    float64 `json:"totalCostCoupons"`
+	AdvertisingCosts    float64 `json:"advertisingCosts"`
+	Refunds             float64 `json:"refunds"`
+	TotalCost           float64 `json:"totalCost"`
+}
+
+type ProductCosts struct {
+	Metrics
+	Data []ProductCostsTable `json:"data"`
 }
 
 type AdvertisingSpendTable struct {
@@ -82,12 +98,8 @@ type AdvertisingSpendTable struct {
 }
 
 type AdvertisingSpend struct {
-	Chart           Chart                   `json:"chart"`
-	Card            Card                    `json:"card,omitempty"`
-	Data            []AdvertisingSpendTable `json:"data"`
-	Draw            int64                   `json:"draw"`
-	RecordsTotal    int64                   `json:"recordsTotal"`
-	RecordsFiltered int64                   `json:"recordsFiltered"`
+	Metrics
+	Data []AdvertisingSpendTable `json:"data"`
 }
 
 type RefundsTable struct {
@@ -98,12 +110,8 @@ type RefundsTable struct {
 }
 
 type Refunds struct {
-	Chart           Chart          `json:"chart"`
-	Card            Card           `json:"card,omitempty"`
-	Data            []RefundsTable `json:"data"`
-	Draw            int64          `json:"draw"`
-	RecordsTotal    int64          `json:"recordsTotal"`
-	RecordsFiltered int64          `json:"recordsFiltered"`
+	Metrics
+	Data []RefundsTable `json:"data"`
 }
 
 type ShippingCreditsTable struct {
@@ -113,12 +121,8 @@ type ShippingCreditsTable struct {
 }
 
 type ShippingCredits struct {
-	Chart           Chart                  `json:"chart"`
-	Card            Card                   `json:"card,omitempty"`
-	Data            []ShippingCreditsTable `json:"data"`
-	Draw            int64                  `json:"draw"`
-	RecordsTotal    int64                  `json:"recordsTotal"`
-	RecordsFiltered int64                  `json:"recordsFiltered"`
+	Metrics
+	Data []ShippingCreditsTable `json:"data"`
 }
 
 type PromotionalRebatesTable struct {
@@ -130,12 +134,8 @@ type PromotionalRebatesTable struct {
 }
 
 type PromotionalRebates struct {
-	Chart           Chart                     `json:"chart"`
-	Card            Card                      `json:"card,omitempty"`
-	Data            []PromotionalRebatesTable `json:"data"`
-	Draw            int64                     `json:"draw"`
-	RecordsTotal    int64                     `json:"recordsTotal"`
-	RecordsFiltered int64                     `json:"recordsFiltered"`
+	Metrics
+	Data []PromotionalRebatesTable `json:"data"`
 }
 
 type TotalCostsTable struct {
@@ -150,12 +150,27 @@ type TotalCostsTable struct {
 }
 
 type TotalCosts struct {
-	Chart           Chart             `json:"chart"`
-	Card            Card              `json:"card,omitempty"`
-	Data            []TotalCostsTable `json:"data"`
-	Draw            int64             `json:"draw"`
-	RecordsTotal    int64             `json:"recordsTotal"`
-	RecordsFiltered int64             `json:"recordsFiltered"`
+	Metrics
+	Data []TotalCostsTable `json:"data"`
+}
+
+type GrossMarginTable struct {
+	SKU                  string  `json:"sku"`
+	QuantitySold         int64   `json:"quantitySold"`
+	QuantitySoldCoupons  int64   `json:"quantitySoldCoupons"`
+	SalePrice            float64 `json:"salePrice"`
+	TotalRevenue         float64 `json:"totalRevenue"`
+	AmazonCosts          float64 `json:"amazonCosts"`
+	ShippingCredits      float64 `json:"shippingCredits"`
+	PromotionalRebates   float64 `json:"promotionalRebates"`
+	GrossMargin          float64 `json:"grossMargin"`
+	SalesTaxCollected    float64 `json:"salesTaxCollected"`
+	TotalAmountCollected float64 `json:"totalAmountCollected"`
+}
+
+type GrossMargin struct {
+	Metrics
+	Data []GrossMarginTable `json:"data"`
 }
 
 type NetMarginTable struct {
@@ -168,10 +183,6 @@ type NetMarginTable struct {
 }
 
 type NetMargin struct {
-	Chart           Chart            `json:"chart"`
-	Card            Card             `json:"card,omitempty"`
-	Data            []NetMarginTable `json:"data"`
-	Draw            int64            `json:"draw"`
-	RecordsTotal    int64            `json:"recordsTotal"`
-	RecordsFiltered int64            `json:"recordsFiltered"`
+	Metrics
+	Data []NetMarginTable `json:"data"`
 }

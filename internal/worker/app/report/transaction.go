@@ -9,7 +9,7 @@ import (
 )
 
 func (r *Report) getTransactionTypes() []models.TransactionType {
-	return models.GetTransactionTypes(r.Db)
+	return models.LoadTransactionTypes(r.Db)
 }
 
 func (r *Report) getTransactionTypeIdByName(name string, txnTypes []models.TransactionType) (int64, bool) {
@@ -23,7 +23,7 @@ func (r *Report) getTransactionTypeIdByName(name string, txnTypes []models.Trans
 }
 
 func (r *Report) getMarketplaces() []models.Marketplace {
-	return models.GetMarketplaces(r.Db)
+	return models.LoadMarketplaces(r.Db)
 }
 
 func (r *Report) getMarketplaceIdByName(name string, marketplaces []models.Marketplace) (int64, bool) {
@@ -37,7 +37,7 @@ func (r *Report) getMarketplaceIdByName(name string, marketplaces []models.Marke
 }
 
 func (r *Report) getFulfillments() []models.Fulfillment {
-	return models.GetFulfillments(r.Db)
+	return models.LoadFulfillments(r.Db)
 }
 
 func (r *Report) getFulfillmentIdByName(name string, fulfillments []models.Fulfillment) (int64, bool) {
@@ -51,7 +51,7 @@ func (r *Report) getFulfillmentIdByName(name string, fulfillments []models.Fulfi
 }
 
 func (r *Report) getTaxCollectionModels() []models.TaxCollectionModel {
-	return models.GetTaxCollectionModels(r.Db)
+	return models.LoadTaxCollectionModels(r.Db)
 }
 
 func (r *Report) getTaxCollectionModelIdByName(name string, taxCollectionModels []models.TaxCollectionModel) (int64, bool) {
@@ -129,6 +129,7 @@ func (r *Report) formatTransactions(rows []map[string]string, username string) [
 			TransactionType:        models.TransactionType{Id: txnType},
 			OrderId:                row["order id"],
 			SKU:                    row["sku"],
+			Description:            row["description"],
 			Quantity:               quantity,
 			Marketplace:            models.Marketplace{Id: marketplace},
 			Fulfillment:            models.Fulfillment{Id: fulfillment},

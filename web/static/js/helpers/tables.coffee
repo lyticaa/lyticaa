@@ -11,9 +11,9 @@ require('datatables.net-bs4') window, $
 export default class TablesHelper
   constructor: ->
 
-#
-# DT pre-draw.
-#
+  #
+  # DT pre-draw.
+  #
   preDraw: (obj, settings) ->
     api = new ($.fn.dataTable.Api)(settings)
     pagination = $(obj).closest('.dataTables_wrapper').find('.dataTables_paginate')
@@ -21,9 +21,9 @@ export default class TablesHelper
 
     return
 
-#
-# DT Cleanup.
-#
+  #
+  # DT Cleanup.
+  #
   cleanup: (table) ->
     table.each ->
       datatable = $(this)
@@ -33,9 +33,9 @@ export default class TablesHelper
 
     return
 
-#
-# DT Reload.
-#
+  #
+  # DT Reload.
+  #
   reload: (obj, table) ->
     $('button.loading').fadeIn()
 

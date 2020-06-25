@@ -7,60 +7,54 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type Summary struct {
-	UserId      int64     `db:"user_id"`
-	Total       float64   `db:"total"`
-	Marketplace string    `db:"marketplace"`
-	OrderDate   time.Time `db:"order_date"`
-}
-
 type Transaction struct {
-	Id                     int64
-	User                   User `db:"user_id"`
-	DateTime               time.Time
-	SettlementId           int64 `db:"settlement_id"`
-	SettlementIdx          int64
-	TransactionType        TransactionType `db:"transaction_type_id"`
-	OrderId                string
-	SKU                    string
-	Quantity               int64
+	Id                     int64              `db:"id"`
+	User                   User               `db:"user_id"`
+	DateTime               time.Time          `db:"date_time"`
+	SettlementId           int64              `db:"settlement_id"`
+	SettlementIdx          int64              `db:"settlement_idx"`
+	TransactionType        TransactionType    `db:"transaction_type_id"`
+	OrderId                string             `db:"order_id"`
+	SKU                    string             `db:"sku"`
+	Description            string             `db:"description"`
+	Quantity               int64              `db:"quantity"`
 	Marketplace            Marketplace        `db:"marketplace_id"`
 	Fulfillment            Fulfillment        `db:"fulfillment_od"`
 	TaxCollectionModel     TaxCollectionModel `dn:"tax_collection_model_id"`
-	ProductSales           float64
-	ProductSalesTax        float64
-	ShippingCredits        float64
-	ShippingCreditsTax     float64
-	GiftwrapCredits        float64
-	GiftwrapCreditsTax     float64
-	PromotionalRebates     float64
-	PromotionalRebatesTax  float64
-	MarketplaceWithheldTax float64
-	SellingFees            float64
-	FBAFees                float64
-	OtherTransactionFees   float64
-	Other                  float64
-	Total                  float64
-	CreatedAt              time.Time `db:"created_at"`
-	UpdatedAt              time.Time `db:"updated_at"`
+	ProductSales           float64            `db:"product_sales"`
+	ProductSalesTax        float64            `db:"product_sales_tax"`
+	ShippingCredits        float64            `db:"shipping_credits"`
+	ShippingCreditsTax     float64            `db:"shipping_credits_tax"`
+	GiftwrapCredits        float64            `db:"giftwrap_credits"`
+	GiftwrapCreditsTax     float64            `db:"giftwrap_credits_tax"`
+	PromotionalRebates     float64            `db:"promotional_rebates"`
+	PromotionalRebatesTax  float64            `db:"promotional_rebates_tax"`
+	MarketplaceWithheldTax float64            `db:"marketplace_withheld_tax"`
+	SellingFees            float64            `db:"selling_fees"`
+	FBAFees                float64            `db:"fba_fees"`
+	OtherTransactionFees   float64            `db:"other_transaction_fees"`
+	Other                  float64            `db:"other"`
+	Total                  float64            `db:"total"`
+	CreatedAt              time.Time          `db:"created_at"`
+	UpdatedAt              time.Time          `db:"updated_at"`
 }
 
-func LoadSummary(userId int64, view, dateRange string, db *sqlx.DB) *[]Summary {
-	var summary []Summary
+func LoadTransactionsByDateRange(userId int64, dateRange string, db *sqlx.DB) *[]Transaction {
+	var transactions []Transaction
 
-	query := fmt.Sprintf(`SELECT user_id, total, order_date, marketplace FROM %v_%v WHERE user_id = $1`, view, dateRange)
+	query := `SELECT t.* FROM transactions_%v t WHERE t.user_id = $1`
 	err := db.Select(
-		&summary,
-		query,
+		&transactions,
+		fmt.Sprintf(query, dateRange),
 		userId,
 	)
 
 	if err != nil {
-		logger().Error().Err(err).Msgf("failed to load the summary for the user %v", userId)
-		return &[]Summary{}
+		logger().Error().Err(err).Msgf("unable to load the transactions for %v, for the user %v", dateRange, userId)
+		return &[]Transaction{}
 	}
 
-	return &summary
+	return &transactions
 }
 
 func (t *Transaction) Save(db *sqlx.DB) error {

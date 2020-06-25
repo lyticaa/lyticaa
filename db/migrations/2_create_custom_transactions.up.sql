@@ -30,6 +30,21 @@ CREATE TABLE exchange_rates
     PRIMARY KEY (id)
 );
 
+CREATE TABLE cost_of_goods
+(
+    id                  BIGSERIAL NOT NULL,
+    user_id             BIGSERIAL REFERENCES users(id) ON DELETE CASCADE,
+    marketplace_id      BIGSERIAL REFERENCES marketplaces(id) ON DELETE CASCADE,
+    sku                 VARCHAR NOT NULL,
+    description         VARCHAR NOT NULL,
+    cost                REAL,
+    start_at            TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    end_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE fulfillments
 (
     id         BIGSERIAL,
@@ -60,6 +75,7 @@ CREATE TABLE transactions
     transaction_type_id      BIGSERIAL REFERENCES transaction_types(id),
     order_id                 VARCHAR NOT NULL,
     sku                      VARCHAR NOT NULL,
+    description              VARCHAR NOT NULL,
     quantity                 BIGSERIAL,
     marketplace_id           BIGSERIAL REFERENCES marketplaces(id),
     fulfillment_id           BIGSERIAL REFERENCES fulfillments(id),
@@ -136,1543 +152,386 @@ INSERT INTO fulfillments (name, created_at, updated_at) VALUES ('Amazon', NOW(),
 INSERT INTO tax_collection_models (name, created_at, updated_at) VALUES ('UNKNOWN', NOW(), NOW());
 INSERT INTO tax_collection_models (name, created_at, updated_at) VALUES ('MarketplaceFacilitator', NOW(), NOW());
 
-/* Total Sales */
-CREATE MATERIALIZED VIEW total_sales_today AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW())
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_yesterday AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '1 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_last_thirty_days AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_previous_thirty_days AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '60 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '30 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_this_month AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW())
-      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_last_month AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_month_before_last AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW()) - interval '2 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_last_three_months AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '3 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_previous_three_months AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW() - interval '3 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_last_six_months AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_previous_six_months AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '12 month'
-      AND t.date_time <= NOW() - interval '6 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_this_year AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('year', NOW())
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_last_year AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('year', NOW()) - interval '1 year'
-      AND t.date_time <= date_trunc('year', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_sales_all_time AS
-    SELECT t.user_id, SUM(product_sales*e.rate) AS total, date_trunc('month', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-    GROUP BY t.user_id, date_trunc('month', t.date_time), m.name;
-
-/* Units Sold */
-CREATE MATERIALIZED VIEW units_sold_today AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW())
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_yesterday AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '1 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_last_thirty_days AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_previous_thirty_days AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '60 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '30 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_this_month AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW())
-      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_last_month AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_month_before_last AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW()) - interval '2 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_last_three_months AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '3 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_previous_three_months AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW() - interval '3 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_last_six_months AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_previous_six_months AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '12 month'
-      AND t.date_time <= NOW() - interval '6 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_this_year AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('year', NOW())
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_last_year AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('year', NOW()) - interval '1 year'
-      AND t.date_time <= date_trunc('year', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW units_sold_all_time AS
-    SELECT t.user_id, SUM(quantity) AS total, date_trunc('month', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-    GROUP BY t.user_id, date_trunc('month', t.date_time), m.name;
-
-/* Amazon Costs */
-CREATE MATERIALIZED VIEW amazon_costs_today AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= date_trunc('day', NOW())
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_yesterday AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= date_trunc('day', NOW()) - interval '1 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_last_thirty_days AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_previous_thirty_days AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= date_trunc('day', NOW()) - interval '60 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '30 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_this_month AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= date_trunc('month', NOW())
-      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_last_month AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_month_before_last AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= date_trunc('month', NOW()) - interval '2 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_last_three_months AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= NOW() - interval '3 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_previous_three_months AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW() - interval '3 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_last_six_months AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_previous_six_months AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= NOW() - interval '12 month'
-      AND t.date_time <= NOW() - interval '6 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_this_year AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= date_trunc('year', NOW())
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_last_year AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-      AND t.date_time >= date_trunc('year', NOW()) - interval '1 year'
-      AND t.date_time <= date_trunc('year', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW amazon_costs_all_time AS
-    SELECT t.user_id, SUM((selling_fees+fba_fees+other)*e.rate) AS total, date_trunc('month', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order','Service Fee','FBA Inventory Fee')
-    GROUP BY t.user_id, date_trunc('month', t.date_time), m.name;
-
-/* Advertising Spend */
-CREATE MATERIALIZED VIEW advertising_spend_today AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= date_trunc('day', NOW())
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_yesterday AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '1 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_last_thirty_days AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_previous_thirty_days AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '60 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '30 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_this_month AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= date_trunc('month', NOW())
-      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_last_month AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_month_before_last AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= date_trunc('month', NOW()) - interval '2 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_last_three_months AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-         LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-         LEFT JOIN marketplaces m on t.marketplace_id = m.id
-         LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= NOW() - interval '3 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_previous_three_months AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW() - interval '3 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_last_six_months AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_previous_six_months AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= NOW() - interval '12 month'
-      AND t.date_time <= NOW() - interval '6 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_this_year AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= date_trunc('year', NOW())
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_last_year AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-      AND t.date_time >= date_trunc('year', NOW()) - interval '1 year'
-      AND t.date_time <= date_trunc('year', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW advertising_spend_all_time AS
-    SELECT t.user_id, SUM(other_transaction_fees*e.rate) AS total, date_trunc('month', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Service Fee'
-    GROUP BY t.user_id, date_trunc('month', t.date_time), m.name;
-
-/* Refunds */
-CREATE MATERIALIZED VIEW refunds_today AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= date_trunc('day', NOW())
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_yesterday AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '1 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_last_thirty_days AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_previous_thirty_days AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '60 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '30 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_this_month AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= date_trunc('month', NOW())
-      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_last_month AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_month_before_last AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= date_trunc('month', NOW()) - interval '2 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_last_three_months AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= NOW() - interval '3 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_previous_three_months AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW() - interval '3 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_last_six_months AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_previous_six_months AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= NOW() - interval '12 month'
-      AND t.date_time <= NOW() - interval '6 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_this_year AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= date_trunc('year', NOW())
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_last_year AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-      AND t.date_time >= date_trunc('year', NOW()) - interval '1 year'
-      AND t.date_time <= date_trunc('year', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW refunds_all_time AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('month', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Refund'
-    GROUP BY t.user_id, date_trunc('month', t.date_time), m.name;
-
-/* Refunds */
-CREATE MATERIALIZED VIEW shipping_credits_today AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW())
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_yesterday AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '1 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_last_thirty_days AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_previous_thirty_days AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '60 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '30 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_this_month AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW())
-      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_last_month AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_month_before_last AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW()) - interval '2 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_last_three_months AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '3 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_previous_three_months AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW() - interval '3 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_last_six_months AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_previous_six_months AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '12 month'
-      AND t.date_time <= NOW() - interval '6 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_this_year AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('year', NOW())
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_last_year AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('year', NOW()) - interval '1 year'
-      AND t.date_time <= date_trunc('year', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW shipping_credits_all_time AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax)*e.rate) AS total, date_trunc('month', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-    GROUP BY t.user_id, date_trunc('month', t.date_time), m.name;
-
-/* Promotional Rebates */
-CREATE MATERIALIZED VIEW promotional_rebates_today AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= date_trunc('day', NOW())
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_yesterday AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= date_trunc('day', NOW()) - interval '1 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_last_thirty_days AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_previous_thirty_days AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= date_trunc('day', NOW()) - interval '60 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '30 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_this_month AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= date_trunc('month', NOW())
-      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_last_month AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_month_before_last AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= date_trunc('month', NOW()) - interval '2 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_last_three_months AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= NOW() - interval '3 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_previous_three_months AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW() - interval '3 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_last_six_months AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_previous_six_months AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= NOW() - interval '12 month'
-      AND t.date_time <= NOW() - interval '6 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_this_year AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= date_trunc('year', NOW())
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_last_year AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-      AND t.date_time >= date_trunc('year', NOW()) - interval '1 year'
-      AND t.date_time <= date_trunc('year', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW promotional_rebates_all_time AS
-    SELECT t.user_id, SUM((promotional_rebates+promotional_rebates_tax)*e.rate) AS total, date_trunc('month', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund')
-    GROUP BY t.user_id, date_trunc('month', t.date_time), m.name;
-
-/* Total Costs */
-CREATE MATERIALIZED VIEW total_costs_today AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('day', NOW())
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_yesterday AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('day', NOW()) - interval '1 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_last_thirty_days AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_previous_thirty_days AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('day', NOW()) - interval '60 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '30 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_this_month AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('month', NOW())
-      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_last_month AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_month_before_last AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('month', NOW()) - interval '2 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_last_three_months AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= NOW() - interval '3 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_previous_three_months AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW() - interval '3 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_last_six_months AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_previous_six_months AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= NOW() - interval '12 month'
-      AND t.date_time <= NOW() - interval '6 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_this_year AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('year', NOW())
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_last_year AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('year', NOW()) - interval '1 year'
-      AND t.date_time <= date_trunc('year', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW total_costs_all_time AS
-    SELECT t.user_id, SUM((shipping_credits+shipping_credits_tax+promotional_rebates+promotional_rebates_tax+selling_fees+fba_fees+other_transaction_fees+other)*e.rate) AS total,
-           date_trunc('month', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-    GROUP BY t.user_id, date_trunc('month', t.date_time), m.name;
-
-/* Net Margin */
-CREATE MATERIALIZED VIEW net_margin_today AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('day', NOW())
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_yesterday AS
-    SELECT t.user_id, SUM(total*e.rate)  AS total, date_trunc('hour', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('day', NOW()) - interval '1 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_last_thirty_days AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_previous_thirty_days AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('day', NOW()) - interval '60 day'
-      AND t.date_time <= date_trunc('day', NOW()) - interval '30 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_this_month AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('month', NOW())
-      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_last_month AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_month_before_last AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('day', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('month', NOW()) - interval '2 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_last_three_months AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= NOW() - interval '3 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_previous_three_months AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW() - interval '3 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_last_six_months AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_previous_six_months AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= NOW() - interval '12 month'
-      AND t.date_time <= NOW() - interval '6 month'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_this_year AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('year', NOW())
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_last_year AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('week', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-      AND t.date_time >= date_trunc('year', NOW()) - interval '1 year'
-      AND t.date_time <= date_trunc('year', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('week', t.date_time), m.name;
-
-CREATE MATERIALIZED VIEW net_margin_all_time AS
-    SELECT t.user_id, SUM(total*e.rate) AS total, date_trunc('month', date_time) AS order_date, m.name AS marketplace
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name IN ('Order', 'Refund', 'Service Fee')
-    GROUP BY t.user_id, date_trunc('month', t.date_time), m.name;
-
-/* Metrics: Total Sales */
-CREATE MATERIALIZED VIEW metrics_total_sales_today AS
-    SELECT t.user_id, date_trunc('hour', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW())
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_total_sales_last_thirty_days AS
-    SELECT t.user_id, date_trunc('day', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_total_sales_this_month AS
-    SELECT t.user_id, date_trunc('day', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW())
-      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_total_sales_last_month AS
-    SELECT t.user_id, date_trunc('day', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_total_sales_last_three_months AS
-    SELECT t.user_id, date_trunc('week', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '3 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_total_sales_last_six_months AS
-    SELECT t.user_id, date_trunc('week', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_total_sales_this_year AS
-    SELECT t.user_id, date_trunc('week', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('year', NOW())
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_total_sales_all_time AS
-    SELECT t.user_id, date_trunc('month', date_time) AS order_date, sku, SUM(product_sales*e.rate) AS sales
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-        LEFT JOIN exchange_rates e ON m.id = e.marketplace_id
-    WHERE tt.name = 'Order'
-    GROUP BY t.user_id, date_trunc('month', t.date_time), sku;
-
-/* Metrics: Units Sold */
-CREATE MATERIALIZED VIEW metrics_units_sold_today AS
-    SELECT t.user_id, date_trunc('hour', date_time) AS order_date, sku, SUM(quantity) AS total
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW())
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('hour', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_units_sold_last_thirty_days AS
-    SELECT t.user_id, date_trunc('day', date_time) AS order_date, sku, SUM(quantity) AS total
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('day', NOW()) - interval '30 day'
-      AND t.date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_units_sold_this_month AS
-    SELECT t.user_id, date_trunc('day', date_time) AS order_date, sku, SUM(quantity) AS total
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW())
-      AND t.date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_units_sold_last_month AS
-    SELECT t.user_id, date_trunc('day', date_time) AS order_date, sku, SUM(quantity) AS total
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('month', NOW()) - interval '1 month'
-      AND t.date_time <= date_trunc('month', NOW()) - interval '1 second'
-    GROUP BY t.user_id, date_trunc('day', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_units_sold_last_three_months AS
-    SELECT t.user_id, date_trunc('week', date_time) AS order_date, sku, SUM(quantity) AS total
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '3 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_units_sold_last_six_months AS
-    SELECT t.user_id, date_trunc('week', date_time) AS order_date, sku, SUM(quantity) AS total
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= NOW() - interval '6 month'
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_units_sold_this_year AS
-    SELECT t.user_id, date_trunc('week', date_time) AS order_date, sku, SUM(quantity) AS total
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-      AND t.date_time >= date_trunc('year', NOW())
-      AND t.date_time <= NOW()
-    GROUP BY t.user_id, date_trunc('week', t.date_time), sku;
-
-CREATE MATERIALIZED VIEW metrics_units_sold_all_time AS
-    SELECT t.user_id, date_trunc('month', date_time) AS order_date, sku, SUM(quantity) AS total
-    FROM transactions t
-        LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id
-        LEFT JOIN marketplaces m on t.marketplace_id = m.id
-    WHERE tt.name = 'Order'
-    GROUP BY t.user_id, date_trunc('month', t.date_time), sku;
+/* Products */
+CREATE MATERIALIZED VIEW products AS
+    SELECT DISTINCT(t.sku) AS sku, t.user_id, t.description, m.name AS marketplace
+    FROM transactions t
+        LEFT JOIN marketplaces m ON t.marketplace_id = m.id
+    GROUP BY t.sku, t.user_id, t.description, m.name;
+
+/* Transactions Views */
+CREATE MATERIALIZED VIEW transactions_today AS
+    SELECT user_id,
+       date_trunc('hour', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= date_trunc('day', NOW())
+      AND date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
+    GROUP BY user_id, date_trunc('hour', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('hour', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_yesterday AS
+    SELECT user_id,
+       date_trunc('hour', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= date_trunc('day', NOW()) - interval '1 day'
+      AND date_time <= date_trunc('day', NOW()) - interval '1 second'
+    GROUP BY user_id, date_trunc('hour', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('hour', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_last_thirty_days AS
+    SELECT user_id,
+       date_trunc('day', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= date_trunc('day', NOW()) - interval '30 day'
+      AND date_time <= date_trunc('day', NOW()) + interval '1 day' - interval '1 second'
+    GROUP BY user_id, date_trunc('day', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('day', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_previous_thirty_days AS
+    SELECT user_id,
+       date_trunc('day', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= date_trunc('day', NOW()) - interval '60 day'
+      AND date_time <= date_trunc('day', NOW()) - interval '30 day' - interval '1 second'
+    GROUP BY user_id, date_trunc('day', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('day', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_this_month AS
+    SELECT user_id,
+       date_trunc('day', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= date_trunc('month', NOW())
+      AND date_time <= date_trunc('month', NOW()) + interval '1 month' - interval '1 second'
+    GROUP BY user_id, date_trunc('day', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('day', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_last_month AS
+    SELECT user_id,
+       date_trunc('day', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= date_trunc('month', NOW()) - interval '1 month'
+      AND date_time <= date_trunc('month', NOW()) - interval '1 second'
+    GROUP BY user_id, date_trunc('day', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('day', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_month_before_last AS
+    SELECT user_id,
+       date_trunc('day', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= date_trunc('month', NOW()) - interval '2 month'
+      AND date_time <= date_trunc('month', NOW()) - interval '1 month' - interval '1 second'
+    GROUP BY user_id, date_trunc('day', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('day', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_last_three_months AS
+    SELECT user_id,
+       date_trunc('week', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= NOW() - interval '3 month'
+      AND date_time <= NOW()
+    GROUP BY user_id, date_trunc('week', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('week', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_previous_three_months AS
+    SELECT user_id,
+       date_trunc('week', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= NOW() - interval '6 month'
+      AND date_time <= NOW() - interval '3 month'
+    GROUP BY user_id, date_trunc('week', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('week', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_last_six_months AS
+    SELECT user_id,
+       date_trunc('week', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= NOW() - interval '6 month'
+      AND date_time <= NOW()
+    GROUP BY user_id, date_trunc('week', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('week', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_previous_six_months AS
+    SELECT user_id,
+       date_trunc('week', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= NOW() - interval '12 month'
+      AND date_time <= NOW() - interval '6 month'
+    GROUP BY user_id, date_trunc('week', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('week', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_this_year AS
+    SELECT user_id,
+       date_trunc('week', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= date_trunc('year', NOW())
+      AND date_time <= NOW()
+    GROUP BY user_id, date_trunc('week', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('week', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_last_year AS
+    SELECT user_id,
+       date_trunc('week', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    WHERE date_time >= date_trunc('year', NOW()) - interval '1 year'
+      AND date_time <= date_trunc('year', NOW()) - interval '1 second'
+    GROUP BY user_id, date_trunc('week', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('week', date_time), marketplace_id ASC;
+
+CREATE MATERIALIZED VIEW transactions_all_time AS
+    SELECT user_id,
+       date_trunc('month', date_time) AS date_time,
+       transaction_type_id,
+       sku,
+       SUM(quantity) AS quantity,
+       marketplace_id,
+       SUM(product_sales) AS product_sales,
+       SUM(product_sales_tax) AS product_sales_tax,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(shipping_credits_tax) AS shipping_credits_tax,
+       SUM(giftwrap_credits) AS giftwrap_credits,
+       SUM(giftwrap_credits_tax) AS giftwrap_credits_tax,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(promotional_rebates_tax) AS promotional_rebates_tax,
+       SUM(marketplace_withheld_tax) AS marketplace_withheld_tax,
+       SUM(selling_fees) AS selling_fees,
+       SUM(fba_fees) AS fba_fees,
+       SUM(other_transaction_fees) AS other_transaction_fees,
+       SUM(other) AS other,
+       SUM(total) AS total
+    FROM transactions
+    GROUP BY user_id, date_trunc('month', date_time), transaction_type_id, sku, marketplace_id
+    ORDER BY date_trunc('month', date_time), marketplace_id ASC;

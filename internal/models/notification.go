@@ -49,7 +49,7 @@ func CreateNotification(userId int64, notification string, db *sqlx.DB) error {
 	return nil
 }
 
-func FindNotificationsByUser(userId int64, filter *Filter, db *sqlx.DB) *[]Notification {
+func LoadNotificationsByUser(userId int64, filter *Filter, db *sqlx.DB) *[]Notification {
 	var notifications []Notification
 
 	err := db.Select(

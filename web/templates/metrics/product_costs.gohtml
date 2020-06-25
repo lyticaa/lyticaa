@@ -1,0 +1,81 @@
+{{ define "breadcrumbs" }}
+    <nav class="page-breadcrumb">
+        <ol class="breadcrumb pt-2">
+            <li class="breadcrumb-item">
+                <a href="/">Metrics</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Product Costs</li>
+        </ol>
+    </nav>
+{{ end }}
+
+{{ define "filters-extra"}}
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary btn-icon-text d-none d-md-block mr-2 reload">
+            <i class="btn-icon-prepend mr-0" data-feather="refresh-ccw"></i>
+        </button>
+    </div>
+{{ end }}
+
+{{ define "content" }}
+    <input type="hidden" class="location" data-section="metrics-product-costs"/>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="alert alert-icon-danger text-center pt-3 w-100 metrics-product-costs-load-error" style="display: none;">
+                <i data-feather="alert-triangle"></i>
+                Loading your product costs has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <button class="btn btn-primary loading mb-3" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 grid-margin stretch-card">
+            <div class="card overflow-hidden">
+                <div class="card-body">
+                    <div class="alert alert-icon-warning text-center pt-3 w-100 metrics-product-costs-chart-error" style="display: none;">
+                        <i data-feather="alert-triangle"></i>
+                        No data available for that date range.
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
+                        <h6 class="card-title mb-0">Product Costs</h6>
+                    </div>
+                    <div id="metrics-product-costs-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive overflow-auto">
+                        <table id="metrics-product-costs-table" class="table w-100">
+                            <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Cost of Product</th>
+                                <th>Quantity Sold</th>
+                                <th>Quantity Sold (as Coupons)</th>
+                                <th>Net Quantity Sold</th>
+                                <th>Total Costs of Products Sold</th>
+                                <th>Total Costs of Coupons</th>
+                                <th>Advertising Costs</th>
+                                <th>Refunds</th>
+                                <th>Total Cost</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}
