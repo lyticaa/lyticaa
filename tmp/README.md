@@ -1,4 +1,4 @@
-# lytica
+# lytica-app
 
 ## /tmp
 
