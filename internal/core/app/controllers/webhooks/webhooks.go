@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"gitlab.com/getlytica/lytica-app/internal/core/payments"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/lib/payments"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"

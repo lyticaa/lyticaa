@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/getlytica/lytica-app/internal/core/iam"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/lib/iam"
 	"gitlab.com/getlytica/lytica-app/internal/models"
 
 	"github.com/coreos/go-oidc"

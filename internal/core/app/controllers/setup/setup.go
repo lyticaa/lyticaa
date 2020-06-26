@@ -1,9 +1,10 @@
 package setup
 
 import (
+	"gitlab.com/getlytica/lytica-app/internal/core/app/lib/payments"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"
-	"gitlab.com/getlytica/lytica-app/internal/core/payments"
 	"gopkg.in/boj/redistore.v1"
 )
 

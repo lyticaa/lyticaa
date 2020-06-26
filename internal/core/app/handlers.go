@@ -14,7 +14,7 @@ import (
 	"gitlab.com/getlytica/lytica-app/internal/core/app/controllers/profit_loss"
 	"gitlab.com/getlytica/lytica-app/internal/core/app/controllers/setup"
 	"gitlab.com/getlytica/lytica-app/internal/core/app/controllers/webhooks"
-	"gitlab.com/getlytica/lytica-app/internal/core/payments"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/lib/payments"
 
 	"github.com/urfave/negroni"
 )
