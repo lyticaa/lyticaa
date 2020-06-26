@@ -13,33 +13,22 @@ lint-verbose: lint-pre
 	@golangci-lint run -v
 
 install: go.sum
-	GO111MODULE=on go install -v ./cmd/dashd
+	GO111MODULE=on go install -v ./cmd/webd
 	GO111MODULE=on go install -v ./cmd/workerd
 
 clean:
-	rm -f ${GOBIN}/{dashd,workerd}
+	rm -f ${GOBIN}/{webd,workerd}
 
 tests:
 	@go test -v -coverprofile .testCoverage.txt ./...
-
-integration-tests: clean install build-assets
-	@dashd &
-	@make run-cypress
-	@make stop-dashboard-service
-
-run-cypress:
-	@yarn cypress:open
 
 setup-yarn:
 	yarn install
 
 build-assets: setup-yarn
 
-stop-dashboard-service:
-	@kill -SIGINT $(shell pgrep dashd)
-
-run-dashboard-service: build-assets
-	@dashd
+run-web-service: build-assets
+	@webd
 
 run-worker-service:
 	@workerd
