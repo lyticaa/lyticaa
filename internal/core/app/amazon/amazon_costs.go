@@ -11,15 +11,13 @@ func (a *Amazon) AmazonCosts(txns *[]models.Transaction) []types.Summary {
 	for _, txn := range *txns {
 		txnTypeId := txn.TransactionType.Id
 		if a.isOrder(txnTypeId) || a.isFBAInventoryFee(txnTypeId) || a.isServiceFee(txnTypeId) {
-			amazonCosts = append(amazonCosts,
-				types.Summary{
-					SKU:         txn.SKU,
-					Description: txn.Description,
-					Marketplace: *a.marketplace(txn.Marketplace.Id),
-					Total:       a.txnAmazonCosts(txn) * a.exchangeRate(txn.Marketplace.Id),
-					OrderDate:   txn.DateTime,
-				},
-			)
+			amazonCosts = append(amazonCosts, types.Summary{
+				SKU:         txn.SKU,
+				Description: txn.Description,
+				Marketplace: *a.marketplace(txn.Marketplace.Id),
+				Total:       a.txnAmazonCosts(txn) * a.exchangeRate(txn.Marketplace.Id),
+				OrderDate:   txn.DateTime,
+			})
 		}
 	}
 

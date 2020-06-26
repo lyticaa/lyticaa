@@ -16,14 +16,12 @@ func (a *Amazon) AdvertisingSpend(txns *[]models.Transaction) []types.Summary {
 
 	for _, txn := range *txns {
 		txnTypeId := txn.TransactionType.Id
-		if a.isServiceFee(txnTypeId) {
-			if advertisingSpendLineItem(txn.Description) {
-				advertisingSpend = append(advertisingSpend, types.Summary{
-					Total:       a.txnAdvertisingCosts(txn) * a.exchangeRate(txn.Marketplace.Id),
-					Marketplace: *a.marketplace(txn.Marketplace.Id),
-					OrderDate:   txn.DateTime,
-				})
-			}
+		if a.isServiceFee(txnTypeId) && advertisingSpendLineItem(txn.Description) {
+			advertisingSpend = append(advertisingSpend, types.Summary{
+				Total:       a.txnAdvertisingCosts(txn) * a.exchangeRate(txn.Marketplace.Id),
+				Marketplace: *a.marketplace(txn.Marketplace.Id),
+				OrderDate:   txn.DateTime,
+			})
 		}
 	}
 
