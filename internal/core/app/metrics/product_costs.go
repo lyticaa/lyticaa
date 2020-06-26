@@ -78,7 +78,7 @@ func (m *Metrics) paintProductCostsTable(summary *[]types.Summary, byDate *types
 			ProductCosts:      txn.ProductCosts,
 			AdvertisingCosts:  txn.AdvertisingCosts,
 			Refunds:           txn.Refunds,
-			TotalProductCosts: txn.TotalCosts,
+			TotalProductCosts: txn.Total,
 		})
 	}
 }

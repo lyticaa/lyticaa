@@ -10,7 +10,6 @@ type Summary struct {
 	ProductCosts     float64
 	AdvertisingCosts float64
 	Refunds          float64
-	TotalCosts       float64
 	Total            float64
 	OrderDate        time.Time
 }
