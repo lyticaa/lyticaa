@@ -39,4 +39,4 @@ statechaintest/
 .cache/
 pkg/
 src/
-web/dist
+tmp/dist

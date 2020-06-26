@@ -1,9 +1,9 @@
 package metrics
 
 import (
-	"gitlab.com/getlytica/lytica-app/internal/core/app/amazon"
-	"gitlab.com/getlytica/lytica-app/internal/core/app/chart"
 	"gitlab.com/getlytica/lytica-app/internal/core/app/helpers"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/lib/amazon"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/lib/chart"
 	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
 	"gitlab.com/getlytica/lytica-app/internal/models"
 

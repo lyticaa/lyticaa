@@ -1,4 +1,4 @@
-package app
+package api
 
 import (
 	"encoding/json"
@@ -7,11 +7,16 @@ import (
 	"gitlab.com/getlytica/lytica-app/internal/core/app/types"
 )
 
-func (a *App) healthCheck(w http.ResponseWriter, r *http.Request) {
+type API struct {}
+
+func NewAPI() *API {
+	return &API{}
+}
+
+func (a *API) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	response := types.Health{Status: "OK"}
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
-		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -21,7 +26,6 @@ func (a *App) healthCheck(w http.ResponseWriter, r *http.Request) {
 
 	_, err = w.Write(jsonResponse)
 	if err != nil {
-		a.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

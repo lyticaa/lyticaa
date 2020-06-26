@@ -1,8 +1,8 @@
 package dashboard
 
 import (
-	"gitlab.com/getlytica/lytica-app/internal/core/app/amazon"
-	"gitlab.com/getlytica/lytica-app/internal/core/app/chart"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/lib/amazon"
+	"gitlab.com/getlytica/lytica-app/internal/core/app/lib/chart"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"

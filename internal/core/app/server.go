@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/urfave/negroni"
 )
 
 func (a *App) Start() {
@@ -31,26 +29,19 @@ func (a *App) Start() {
 }
 
 func (a *App) initializeHandlers() {
-	a.restHandlers()
-	a.webhookHandlers()
 	a.accountHandlers()
+	a.apiHandlers()
+	a.authHandlers()
 	a.cohortsHandlers()
 	a.dashboardHandlers()
-	a.dataHandlers()
 	a.expensesHandlers()
 	a.forecastHandlers()
 	a.metricsHandlers()
 	a.profitLossHandlers()
 	a.setupHandlers()
-	a.authHandlers()
+	a.webhookHandlers()
 
-	a.Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./web/dist"))))
-}
-
-func (a *App) restHandlers() {
-	a.Router.Handle("/api/health_check", negroni.New(
-		negroni.Wrap(http.HandlerFunc(a.healthCheck)),
-	))
+	a.Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./tmp/dist"))))
 }
 
 func (a *App) Stop() {

@@ -11,9 +11,9 @@ var (
 	cwd, _    = os.Getwd()
 	baseTmpl  = "app"
 	baseFiles = []string{
-		filepath.Join(cwd, "./web/dist/"+baseTmpl+".html"),
-		filepath.Join(cwd, "./web/templates/partials/_nav.gohtml"),
-		filepath.Join(cwd, "./web/templates/partials/_footer.gohtml"),
+		filepath.Join(cwd, "./tmp/dist/"+baseTmpl+".html"),
+		filepath.Join(cwd, "./internal/core/app/views/partials/_nav.gohtml"),
+		filepath.Join(cwd, "./internal/core/app/views/partials/_footer.gohtml"),
 	}
 )
 
@@ -35,7 +35,7 @@ func templateList(fileList []string) []string {
 	container = append(container, baseFiles...)
 
 	for _, file := range fileList {
-		container = append(container, filepath.Join(cwd, "./web/templates/"+file+".gohtml"))
+		container = append(container, filepath.Join(cwd, "./internal/core/app/views/"+file+".gohtml"))
 	}
 
 	return container
