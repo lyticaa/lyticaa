@@ -1,6 +1,6 @@
 # lytica
 
-Lytica webapp (dashboard/worker).
+Lytica webapp (web/worker).
 
 ## Setup
 
@@ -76,15 +76,15 @@ To compile and install the binaries:
 make install
 ```
 
-### Run the Dashboard
+### Run the Web App
 
-The dashboard will require active Redis and Postgres instances. See below for how to start these. 
+The web app will require active Redis and Postgres instances. See below for how to start these. 
 
 ```bash
-make run-dashboard-service
+make run-web-service
 ```
 
-The dashboard will then be accessible on http://localhost:3000.
+The web app will then be accessible on http://localhost:3000.
 
 ### Run the Worker
 
