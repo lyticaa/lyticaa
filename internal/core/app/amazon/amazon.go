@@ -1,8 +1,9 @@
 package amazon
 
 import (
-	"github.com/jmoiron/sqlx"
 	"gitlab.com/getlytica/lytica-app/internal/models"
+
+	"github.com/jmoiron/sqlx"
 )
 
 const (
