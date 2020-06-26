@@ -40,7 +40,9 @@ func (m *Metrics) RefundsByDate(w http.ResponseWriter, r *http.Request) {
 	current := m.amazon.LoadTransactions(user.Id, dateRange)
 
 	var byDate types.Refunds
-	m.chartData(user.Id, dateRange, helpers.RefundsView, current, &byDate.Metrics)
+
+	summary := m.summaryData(dateRange, helpers.RefundsView, current)
+	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.RefundsTable{}
 
 	js, err := json.Marshal(byDate)

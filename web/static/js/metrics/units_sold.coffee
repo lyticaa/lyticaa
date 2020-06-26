@@ -68,9 +68,10 @@ export default class MetricsUnitsSold
         'error': (j) ->
           $('.alert.metrics-units-sold-load-error').show()
       'columns': [
-        { 'data': 'date' }
         { 'data': 'sku' }
-        { 'data': 'quantitySold' }
+        { 'data': 'description' }
+        { 'data': 'marketplace' }
+        { 'data': 'totalUnitsSold' }
       ]
       'language': {
         'infoFiltered': ''

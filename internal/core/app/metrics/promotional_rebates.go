@@ -40,7 +40,9 @@ func (m *Metrics) PromotionalRebatesByDate(w http.ResponseWriter, r *http.Reques
 	current := m.amazon.LoadTransactions(user.Id, dateRange)
 
 	var byDate types.PromotionalRebates
-	m.chartData(user.Id, dateRange, helpers.PromotionalRebatesView, current, &byDate.Metrics)
+
+	summary := m.summaryData(dateRange, helpers.PromotionalRebatesView, current)
+	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.PromotionalRebatesTable{}
 
 	js, err := json.Marshal(byDate)

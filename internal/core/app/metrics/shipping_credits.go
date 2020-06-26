@@ -40,7 +40,9 @@ func (m *Metrics) ShippingCreditsByDate(w http.ResponseWriter, r *http.Request) 
 	current := m.amazon.LoadTransactions(user.Id, dateRange)
 
 	var byDate types.ShippingCredits
-	m.chartData(user.Id, dateRange, helpers.ShippingCreditsView, current, &byDate.Metrics)
+
+	summary := m.summaryData(dateRange, helpers.ShippingCreditsView, current)
+	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.ShippingCreditsTable{}
 
 	js, err := json.Marshal(byDate)

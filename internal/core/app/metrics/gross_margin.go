@@ -40,7 +40,9 @@ func (m *Metrics) GrossMarginByDate(w http.ResponseWriter, r *http.Request) {
 	current := m.amazon.LoadTransactions(user.Id, dateRange)
 
 	var byDate types.GrossMargin
-	m.chartData(user.Id, dateRange, helpers.GrossMarginView, current, &byDate.Metrics)
+
+	summary := m.summaryData(dateRange, helpers.GrossMarginView, current)
+	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.GrossMarginTable{}
 
 	js, err := json.Marshal(byDate)

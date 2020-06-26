@@ -30,7 +30,7 @@ func NewMetrics(db *sqlx.DB, sessionStore *redistore.RediStore, log zerolog.Logg
 	}
 }
 
-func (m *Metrics) chartData(userId int64, dateRange, view string, current *[]models.Transaction, byDate *types.Metrics) {
+func (m *Metrics) summaryData(dateRange, view string, current *[]models.Transaction) *[]types.Summary {
 	var summary []types.Summary
 
 	switch view {
@@ -58,5 +58,9 @@ func (m *Metrics) chartData(userId int64, dateRange, view string, current *[]mod
 		summary = m.amazon.NetMargin(current)
 	}
 
-	byDate.Chart = m.chart.Line(&summary, dateRange)
+	return &summary
+}
+
+func (m *Metrics) chartData(dateRange string, summary *[]types.Summary, byDate *types.Metrics) {
+	byDate.Chart = m.chart.Line(summary, dateRange)
 }

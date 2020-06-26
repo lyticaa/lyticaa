@@ -68,9 +68,10 @@ export default class MetricsTotalSales
         'error': (j) ->
           $('.alert.metrics-total-sales-load-error').show()
       'columns': [
-        { 'data': 'date' }
         { 'data': 'sku' }
-        { 'data': 'sales' }
+        { 'data': 'description' }
+        { 'data': 'marketplace' }
+        { 'data': 'totalSales' }
       ]
       'language': {
         'infoFiltered': ''

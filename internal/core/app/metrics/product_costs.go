@@ -40,8 +40,15 @@ func (m *Metrics) ProductCostsByDate(w http.ResponseWriter, r *http.Request) {
 	current := m.amazon.LoadTransactions(user.Id, dateRange)
 
 	var byDate types.ProductCosts
-	m.chartData(user.Id, dateRange, helpers.ProductCostsView, current, &byDate.Metrics)
-	byDate.Data = []types.ProductCostsTable{}
+
+	summary := m.summaryData(dateRange, helpers.ProductCostsView, current)
+	m.chartData(dateRange, summary, &byDate.Metrics)
+	m.paintProductCostsTable(summary, &byDate)
+
+	transaction := models.Transaction{User: user}
+	byDate.RecordsTotal = transaction.Count(dateRange, m.db)
+	byDate.RecordsFiltered = byDate.RecordsTotal
+	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)
 	if err != nil {
@@ -52,4 +59,26 @@ func (m *Metrics) ProductCostsByDate(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(js)
+}
+
+func (m *Metrics) paintProductCostsTable(summary *[]types.Summary, byDate *types.ProductCosts) {
+	if len(*summary) == 0 {
+		byDate.Data = []types.ProductCostsTable{}
+		byDate.RecordsTotal = 0
+		byDate.RecordsFiltered = 0
+		return
+	}
+
+	for _, txn := range *summary {
+		byDate.Data = append(byDate.Data, types.ProductCostsTable{
+			SKU:               txn.SKU,
+			Description:       txn.Description,
+			Marketplace:       txn.Marketplace,
+			QuantitySold:      txn.QuantitySold,
+			ProductCosts:      txn.ProductCosts,
+			AdvertisingCosts:  txn.AdvertisingCosts,
+			Refunds:           txn.Refunds,
+			TotalProductCosts: txn.TotalCosts,
+		})
+	}
 }

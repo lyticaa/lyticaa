@@ -13,6 +13,8 @@ func (a *Amazon) AmazonCosts(txns *[]models.Transaction) []types.Summary {
 		if a.isOrder(txnTypeId) || a.isFBAInventoryFee(txnTypeId) || a.isServiceFee(txnTypeId) {
 			amazonCosts = append(amazonCosts,
 				types.Summary{
+					SKU:         txn.SKU,
+					Description: txn.Description,
 					Total:       a.txnAmazonCosts(txn) * a.exchangeRate(txn.Marketplace.Id),
 					Marketplace: *a.marketplace(txn.Marketplace.Id),
 					OrderDate:   txn.DateTime,

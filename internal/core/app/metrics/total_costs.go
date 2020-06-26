@@ -40,7 +40,9 @@ func (m *Metrics) TotalCostsByDate(w http.ResponseWriter, r *http.Request) {
 	current := m.amazon.LoadTransactions(user.Id, dateRange)
 
 	var byDate types.TotalCosts
-	m.chartData(user.Id, dateRange, helpers.TotalCostsView, current, &byDate.Metrics)
+
+	summary := m.summaryData(dateRange, helpers.TotalCostsView, current)
+	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.TotalCostsTable{}
 
 	js, err := json.Marshal(byDate)

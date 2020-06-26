@@ -40,7 +40,9 @@ func (m *Metrics) NetMarginByDate(w http.ResponseWriter, r *http.Request) {
 	current := m.amazon.LoadTransactions(user.Id, dateRange)
 
 	var byDate types.NetMargin
-	m.chartData(user.Id, dateRange, helpers.NetMarginView, current, &byDate.Metrics)
+
+	summary := m.summaryData(dateRange, helpers.NetMarginView, current)
+	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.NetMarginTable{}
 
 	js, err := json.Marshal(byDate)

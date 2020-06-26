@@ -68,10 +68,10 @@ export default class MetricsAmazonCosts
         'error': (j) ->
           $('.alert.metrics-amazon-costs-load-error').show()
       'columns': [
-        { 'data': 'date' }
         { 'data': 'sku' }
-        { 'data': 'type' }
-        { 'data': 'amazonCosts' }
+        { 'data': 'description' }
+        { 'data': 'marketplace' }
+        { 'data': 'totalAmazonCosts' }
       ]
       'language': {
         'infoFiltered': ''

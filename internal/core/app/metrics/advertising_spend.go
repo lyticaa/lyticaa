@@ -40,7 +40,9 @@ func (m *Metrics) AdvertisingSpendByDate(w http.ResponseWriter, r *http.Request)
 	current := m.amazon.LoadTransactions(user.Id, dateRange)
 
 	var byDate types.AdvertisingSpend
-	m.chartData(user.Id, dateRange, helpers.AdvertisingSpendView, current, &byDate.Metrics)
+
+	summary := m.summaryData(dateRange, helpers.AdvertisingSpendView, current)
+	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.AdvertisingSpendTable{}
 
 	js, err := json.Marshal(byDate)

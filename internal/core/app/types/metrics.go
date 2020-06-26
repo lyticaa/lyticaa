@@ -37,11 +37,10 @@ type Dashboard struct {
 }
 
 type TotalSalesTable struct {
-	Date        time.Time `json:"date"`
-	SKU         string    `json:"sku"`
-	ASIN        string    `json:"asin"`
-	ProductName string    `json:"productName"`
-	Sales       float64   `json:"sales"`
+	SKU         string  `json:"sku"`
+	Description string  `json:"description"`
+	Marketplace string  `json:"marketplace"`
+	TotalSales  float64 `json:"totalSales"`
 }
 
 type TotalSales struct {
@@ -50,9 +49,10 @@ type TotalSales struct {
 }
 
 type UnitsSoldTable struct {
-	Date         time.Time `json:"date"`
-	SKU          string    `json:"sku"`
-	QuantitySold int64     `json:"quantitySold"`
+	SKU            string `json:"sku"`
+	Description    string `json:"description"`
+	Marketplace    string `json:"marketplace"`
+	TotalUnitsSold int64  `json:"totalUnitsSold"`
 }
 
 type UnitsSold struct {
@@ -61,10 +61,10 @@ type UnitsSold struct {
 }
 
 type AmazonCostsTable struct {
-	Date        time.Time `json:"date"`
-	SKU         string    `json:"sku"`
-	Type        string    `json:"type"`
-	AmazonCosts float64   `json:"amazonCosts"`
+	SKU              string  `json:"sku"`
+	Description      string  `json:"type"`
+	Marketplace      string  `json:"marketplace"`
+	TotalAmazonCosts float64 `json:"totalAmazonCosts"`
 }
 
 type AmazonCosts struct {
@@ -73,16 +73,14 @@ type AmazonCosts struct {
 }
 
 type ProductCostsTable struct {
-	SKU                 string  `json:"sku"`
-	Cost                float64 `json:"cost"`
-	QuantitySold        int64   `json:"quantitySold"`
-	QuantitySoldCoupons int64   `json:"quantitySoldCoupons"`
-	NetQuantitySold     int64   `json:"netQuantitySold"`
-	TotalCostSold       float64 `json:"totalCostSold"`
-	TotalCostCoupons    float64 `json:"totalCostCoupons"`
-	AdvertisingCosts    float64 `json:"advertisingCosts"`
-	Refunds             float64 `json:"refunds"`
-	TotalCost           float64 `json:"totalCost"`
+	SKU               string  `json:"sku"`
+	Description       string  `json:"description"`
+	Marketplace       string  `json:"marketplace"`
+	QuantitySold      int64   `json:"quantitySold"`
+	ProductCosts      float64 `json:"productCosts"`
+	AdvertisingCosts  float64 `json:"advertisingCosts"`
+	Refunds           float64 `json:"refunds"`
+	TotalProductCosts float64 `json:"totalProductCosts"`
 }
 
 type ProductCosts struct {

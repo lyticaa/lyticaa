@@ -48,6 +48,15 @@ func (t *Transaction) Load(dateRange string, db *sqlx.DB) *[]Transaction {
 	return &transactions
 }
 
+func (t *Transaction) Count(dateRange string, db *sqlx.DB) int64 {
+	var count int64
+
+	query := `SELECT COUNT(id) FROM transactions_%v WHERE user_id = $1`
+	_ = db.QueryRow(fmt.Sprintf(query, dateRange), t.User.Id).Scan(&count)
+
+	return count
+}
+
 func (t *Transaction) Save(db *sqlx.DB) error {
 	query := `INSERT INTO transactions (
                           user_id,

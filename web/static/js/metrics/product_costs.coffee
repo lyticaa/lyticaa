@@ -69,12 +69,10 @@ export default class MetricsProductCosts
           $('.alert.metrics-product-costs-load-error').show()
       'columns': [
         { 'data': 'sku' }
-        { 'data': 'cost' }
+        { 'data': 'description' }
+        { 'data': 'marketplace' }
         { 'data': 'quantitySold' }
-        { 'data': 'quantitySoldCoupons' }
-        { 'data': 'netQuantitySold' }
-        { 'data': 'totalCostSold' }
-        { 'data': 'totalCostCoupons' }
+        { 'data': 'productCosts' }
         { 'data': 'advertisingCosts' }
         { 'data': 'refunds' }
         { 'data': 'totalCosts' }
