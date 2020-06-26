@@ -42,7 +42,8 @@ CREATE TABLE cost_of_goods
     end_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    UNIQUE (user_id, marketplace_id, sku, start_at, end_at)
 );
 
 CREATE TABLE fulfillments

@@ -13,9 +13,11 @@ type Fulfillment struct {
 	UpdatedAt time.Time `db:"updated_at"`
 }
 
-func LoadFulfillments(db *sqlx.DB) []Fulfillment {
+func (f *Fulfillment) Load(db *sqlx.DB) *[]Fulfillment {
 	var fulfillments []Fulfillment
-	_ = db.Select(&fulfillments, "SELECT id,name,created_at,updated_at FROM fulfillments ORDER BY id DESC")
 
-	return fulfillments
+	query := `SELECT id,name,created_at,updated_at FROM fulfillments ORDER BY id DESC`
+	_ = db.Select(&fulfillments, query)
+
+	return &fulfillments
 }

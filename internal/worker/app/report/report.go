@@ -31,7 +31,7 @@ func NewReport(db *sqlx.DB) *Report {
 }
 
 func (r *Report) Run(filename string) {
-	result := r.getS3Object(filename)
+	result := r.s3Object(filename)
 	validType := types.ValidMime(*result.ContentType)
 	username := r.userFromFilename(filename)
 

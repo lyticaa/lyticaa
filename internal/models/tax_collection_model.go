@@ -13,13 +13,10 @@ type TaxCollectionModel struct {
 	UpdatedAt time.Time `db:"updated_at"`
 }
 
-func LoadTaxCollectionModels(db *sqlx.DB) []TaxCollectionModel {
-	var collections []TaxCollectionModel
+func (t *TaxCollectionModel) Load(db *sqlx.DB) *[]TaxCollectionModel {
+	var collectionModels []TaxCollectionModel
 
-	err := db.Select(&collections, "SELECT id,name,created_at,updated_at FROM tax_collection_models ORDER BY id DESC")
-	if err != nil {
-		panic(err)
-	}
-
-	return collections
+	query := `SELECT id,name,created_at,updated_at FROM tax_collection_models ORDER BY id DESC`
+	_ = db.Select(&collectionModels, query)
+	return &collectionModels
 }

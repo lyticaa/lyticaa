@@ -8,11 +8,12 @@ import (
 	"gitlab.com/getlytica/lytica-app/internal/models"
 )
 
-func (r *Report) getTransactionTypes() []models.TransactionType {
-	return models.LoadTransactionTypes(r.Db)
+func (r *Report) transactionTypes() *[]models.TransactionType {
+	txnType := models.TransactionType{}
+	return txnType.Load(r.Db)
 }
 
-func (r *Report) getTransactionTypeIdByName(name string, txnTypes []models.TransactionType) (int64, bool) {
+func (r *Report) transactionTypeIdByName(name string, txnTypes []models.TransactionType) (int64, bool) {
 	for _, txnType := range txnTypes {
 		if txnType.Name == name {
 			return txnType.Id, true
@@ -22,11 +23,12 @@ func (r *Report) getTransactionTypeIdByName(name string, txnTypes []models.Trans
 	return unknown, false
 }
 
-func (r *Report) getMarketplaces() []models.Marketplace {
-	return models.LoadMarketplaces(r.Db)
+func (r *Report) marketplaces() *[]models.Marketplace {
+	marketplace := models.Marketplace{}
+	return marketplace.Load(r.Db)
 }
 
-func (r *Report) getMarketplaceIdByName(name string, marketplaces []models.Marketplace) (int64, bool) {
+func (r *Report) marketplaceIdByName(name string, marketplaces []models.Marketplace) (int64, bool) {
 	for _, marketplace := range marketplaces {
 		if marketplace.Name == name {
 			return marketplace.Id, true
@@ -36,11 +38,12 @@ func (r *Report) getMarketplaceIdByName(name string, marketplaces []models.Marke
 	return unknown, false
 }
 
-func (r *Report) getFulfillments() []models.Fulfillment {
-	return models.LoadFulfillments(r.Db)
+func (r *Report) fulfillments() *[]models.Fulfillment {
+	fulfillment := models.Fulfillment{}
+	return fulfillment.Load(r.Db)
 }
 
-func (r *Report) getFulfillmentIdByName(name string, fulfillments []models.Fulfillment) (int64, bool) {
+func (r *Report) fulfillmentIdByName(name string, fulfillments []models.Fulfillment) (int64, bool) {
 	for _, fulfillment := range fulfillments {
 		if fulfillment.Name == name {
 			return fulfillment.Id, true
@@ -50,11 +53,12 @@ func (r *Report) getFulfillmentIdByName(name string, fulfillments []models.Fulfi
 	return unknown, false
 }
 
-func (r *Report) getTaxCollectionModels() []models.TaxCollectionModel {
-	return models.LoadTaxCollectionModels(r.Db)
+func (r *Report) taxCollectionModels() *[]models.TaxCollectionModel {
+	taxCollectionModel := models.TaxCollectionModel{}
+	return taxCollectionModel.Load(r.Db)
 }
 
-func (r *Report) getTaxCollectionModelIdByName(name string, taxCollectionModels []models.TaxCollectionModel) (int64, bool) {
+func (r *Report) taxCollectionModelIdByName(name string, taxCollectionModels []models.TaxCollectionModel) (int64, bool) {
 	for _, taxCollectionModel := range taxCollectionModels {
 		if taxCollectionModel.Name == name {
 			return taxCollectionModel.Id, true
@@ -64,12 +68,14 @@ func (r *Report) getTaxCollectionModelIdByName(name string, taxCollectionModels 
 	return unknown, false
 }
 
-func (r *Report) formatTransactions(rows []map[string]string, username string) []models.Transaction {
-	user := models.LoadUser(username, r.Db)
-	txnTypes := r.getTransactionTypes()
-	marketplaces := r.getMarketplaces()
-	fulfillments := r.getFulfillments()
-	taxCollectionModels := r.getTaxCollectionModels()
+func (r *Report) formatTransactions(rows []map[string]string, userId string) []models.Transaction {
+	user := models.User{UserId: userId}
+	user.Load(r.Db)
+
+	txnTypes := r.transactionTypes()
+	marketplaces := r.marketplaces()
+	fulfillments := r.fulfillments()
+	taxCollectionModels := r.taxCollectionModels()
 
 	var txns []models.Transaction
 	settlementIdx := int64(1)
@@ -83,22 +89,22 @@ func (r *Report) formatTransactions(rows []map[string]string, username string) [
 			}
 		}
 
-		txnType, ok := r.getTransactionTypeIdByName(row["type"], txnTypes)
+		txnType, ok := r.transactionTypeIdByName(row["type"], *txnTypes)
 		if !ok && row["type"] != "" {
 			r.Logger.Error().Msgf("Transaction Type %v not found", row["type"])
 		}
 
-		marketplace, ok := r.getMarketplaceIdByName(strings.ToLower(row["marketplace"]), marketplaces)
+		marketplace, ok := r.marketplaceIdByName(strings.ToLower(row["marketplace"]), *marketplaces)
 		if !ok && row["marketplace"] != "" {
 			r.Logger.Error().Msgf("Marketplace %v not found", row["marketplace"])
 		}
 
-		fulfillment, ok := r.getFulfillmentIdByName(row["fulfillment"], fulfillments)
+		fulfillment, ok := r.fulfillmentIdByName(row["fulfillment"], *fulfillments)
 		if !ok && row["fulfillment"] != "" {
 			r.Logger.Error().Msgf("Fulfillment %v not found", row["fulfillment"])
 		}
 
-		taxCollectionModel, ok := r.getTaxCollectionModelIdByName(row["tax collection model"], taxCollectionModels)
+		taxCollectionModel, ok := r.taxCollectionModelIdByName(row["tax collection model"], *taxCollectionModels)
 		if !ok && row["tax collection model"] != "" {
 			r.Logger.Error().Msgf("Tax Collection Model %v not found", row["tax collection model"])
 		}
@@ -123,7 +129,7 @@ func (r *Report) formatTransactions(rows []map[string]string, username string) [
 
 		txn := models.Transaction{
 			DateTime:               dateTime,
-			User:                   *user,
+			User:                   user,
 			SettlementId:           settlementId,
 			SettlementIdx:          settlementIdx,
 			TransactionType:        models.TransactionType{Id: txnType},

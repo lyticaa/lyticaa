@@ -12,7 +12,7 @@ func (a *Amazon) TotalSales(txns *[]models.Transaction) []types.Summary {
 		if a.isOrder(txn.TransactionType.Id) {
 			totalSales = append(totalSales,
 				types.Summary{
-					Total:       txn.ProductSales * a.exchangeRate(txn.Marketplace.Id),
+					Total:       a.txnProductSales(txn) * a.exchangeRate(txn.Marketplace.Id),
 					Marketplace: *a.marketplace(txn.Marketplace.Id),
 					OrderDate:   txn.DateTime,
 				},

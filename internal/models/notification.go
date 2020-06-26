@@ -22,7 +22,34 @@ var (
 	}
 )
 
-func CreateNotification(userId int64, notification string, db *sqlx.DB) error {
+func (n *Notification) Load(filter *Filter, db *sqlx.DB) *[]Notification {
+	var notifications []Notification
+
+	query := `SELECT notification, created_at FROM notifications WHERE user_id = $1 AND created_at BETWEEN $2 AND $3 ORDER BY $4 LIMIT $5 OFFSET $6`
+	_ = db.Select(
+		&notifications,
+		query,
+		n.UserId,
+		filter.StartDate,
+		filter.EndDate,
+		fmt.Sprintf("%v %v", sortColumn(notificationSortMap, filter.Sort), filter.Dir),
+		filter.Length,
+		filter.Start,
+	)
+
+	return &notifications
+}
+
+func (n *Notification) Total(db *sqlx.DB) int64 {
+	var count int64
+
+	query := `SELECT COUNT(id) FROM notifications WHERE user_id = $1`
+	_ = db.QueryRow(query, n.UserId).Scan(&count)
+
+	return count
+}
+
+func (n *Notification) Save(db *sqlx.DB) error {
 	query := `INSERT INTO notifications (
 					user_id,
 					notification,
@@ -36,8 +63,8 @@ func CreateNotification(userId int64, notification string, db *sqlx.DB) error {
 
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
-			"user_id":      userId,
-			"notification": notification,
+			"user_id":      n.UserId,
+			"notification": n.Notification,
 			"created_at":   time.Now(),
 			"updated_at":   time.Now(),
 		})
@@ -47,41 +74,4 @@ func CreateNotification(userId int64, notification string, db *sqlx.DB) error {
 	}
 
 	return nil
-}
-
-func LoadNotificationsByUser(userId int64, filter *Filter, db *sqlx.DB) *[]Notification {
-	var notifications []Notification
-
-	err := db.Select(
-		&notifications,
-		`SELECT notification, created_at FROM notifications WHERE user_id = $1 AND created_at BETWEEN $2 AND $3 ORDER BY $4 LIMIT $5 OFFSET $6`,
-		userId,
-		filter.StartDate,
-		filter.EndDate,
-		fmt.Sprintf("%v %v", sortColumn(notificationSortMap, filter.Sort), filter.Dir),
-		filter.Length,
-		filter.Start,
-	)
-
-	if err != nil {
-		logger().Error().Err(err).Msgf("unable to load the notifications for the user %v", userId)
-		return &[]Notification{}
-	}
-
-	if len(notifications) == 0 {
-		return &[]Notification{}
-	}
-
-	return &notifications
-}
-
-func TotalNotificationsByUser(userId int64, db *sqlx.DB) int64 {
-	var count int64
-
-	err := db.QueryRow(`SELECT COUNT(id) FROM notifications WHERE user_id = $1`, userId).Scan(&count)
-	if err != nil {
-		logger().Error().Err(err).Msgf("unable to count the notifications for the user %v", userId)
-	}
-
-	return count
 }

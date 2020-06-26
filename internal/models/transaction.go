@@ -39,20 +39,11 @@ type Transaction struct {
 	UpdatedAt              time.Time          `db:"updated_at"`
 }
 
-func LoadTransactionsByDateRange(userId int64, dateRange string, db *sqlx.DB) *[]Transaction {
+func (t *Transaction) Load(dateRange string, db *sqlx.DB) *[]Transaction {
 	var transactions []Transaction
 
 	query := `SELECT t.* FROM transactions_%v t WHERE t.user_id = $1`
-	err := db.Select(
-		&transactions,
-		fmt.Sprintf(query, dateRange),
-		userId,
-	)
-
-	if err != nil {
-		logger().Error().Err(err).Msgf("unable to load the transactions for %v, for the user %v", dateRange, userId)
-		return &[]Transaction{}
-	}
+	_ = db.Select(&transactions, fmt.Sprintf(query, dateRange), t.User.Id)
 
 	return &transactions
 }

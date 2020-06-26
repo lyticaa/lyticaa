@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-func (r *Report) getS3Object(file string) *s3.GetObjectOutput {
+func (r *Report) s3Object(file string) *s3.GetObjectOutput {
 	cfg := &aws.Config{
 		Region: aws.String(os.Getenv("AWS_REGION")),
 	}

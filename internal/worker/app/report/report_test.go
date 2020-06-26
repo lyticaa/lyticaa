@@ -193,27 +193,30 @@ func (s *reportSuite) TestSponsoredProduct(c *C) {
 		AddRow(1, 1, currency, currencySymbol, 1.0, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM exchange_rates").WillReturnRows(rows)
 
-	exchangeRates := models.LoadExchangeRates(s.r.Db)
-	c.Assert(len(exchangeRates), Equals, 1)
-	c.Assert(exchangeRates[0].Code, Equals, currency)
-	c.Assert(exchangeRates[0].Symbol, Equals, currencySymbol)
+	exchangeRate := models.ExchangeRate{}
+	exchangeRates := exchangeRate.Load(s.r.Db)
+
+	c.Assert(len(*exchangeRates), Equals, 1)
+	c.Assert((*exchangeRates)[0].Code, Equals, currency)
+	c.Assert((*exchangeRates)[0].Symbol, Equals, currencySymbol)
 
 	rows = sqlmock.NewRows([]string{"id", "marketplace_id", "code", "symbol", "rate", "created_at", "updated_at"}).
 		AddRow(1, 1, currency, currencySymbol, 1.0, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM exchange_rates").WillReturnRows(rows)
 
-	exchangeRates = models.LoadExchangeRates(s.r.Db)
-	_, ok := s.r.exchangeRate(currency, exchangeRates)
+	exchangeRate = models.ExchangeRate{}
+	exchangeRates = exchangeRate.Load(s.r.Db)
+	_, ok := s.r.exchangeRate(currency, *exchangeRates)
 	c.Assert(ok, Equals, true)
 
 	content := s.r.mapXLSX(s.readFile(sponsoredProductReportFile, c))
 
-	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
-		AddRow(1, userId, "test@getlytica.com", time.Now(), time.Now())
+	userRows := sqlmock.NewRows([]string{"id", "user_id", "email", "stripe_user_id", "stripe_subscription_id", "stripe_plan_id", "setup_completed", "created_at", "updated_at"}).
+		AddRow(1, userId, "test@getlytica.com", "", "", "", true, time.Now(), time.Now())
 	exchangeRateRows := sqlmock.NewRows([]string{"id", "marketplace_id", "code", "symbol", "rate", "created_at", "updated_at"}).
 		AddRow(1, 1, currency, currencySymbol, 1.0, time.Now(), time.Now())
 
-	s.mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(user)
+	s.mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(userRows)
 	s.mock.ExpectQuery("^SELECT (.+) FROM exchange_rates").WillReturnRows(exchangeRateRows)
 
 	formatted := s.r.formatSponsoredProducts(content, userId)
@@ -245,12 +248,12 @@ func (s *reportSuite) TestSponsoredProduct(c *C) {
 
 	content = s.r.mapXLSX(s.readFile(sponsoredProductReportFile, c))
 
-	user = sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
+	userRows = sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
 		AddRow(1, userId, "test@getlytica.com", time.Now(), time.Now())
 	exchangeRateRows = sqlmock.NewRows([]string{"id", "marketplace_id", "code", "symbol", "rate", "created_at", "updated_at"}).
 		AddRow(1, 1, currency, currencySymbol, 1.0, time.Now(), time.Now())
 
-	s.mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(user)
+	s.mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(userRows)
 	s.mock.ExpectQuery("^SELECT (.+) FROM exchange_rates").WillReturnRows(exchangeRateRows)
 	s.mock.ExpectExec("^INSERT INTO sponsored_products").WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -266,70 +269,70 @@ func (s *reportSuite) TestTransaction(c *C) {
 		AddRow(1, transactionType, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM transaction_types").WillReturnRows(rows)
 
-	transactionTypes := s.r.getTransactionTypes()
-	c.Assert(len(transactionTypes), Equals, 1)
-	c.Assert(transactionTypes[0].Name, Equals, transactionType)
+	transactionTypes := s.r.transactionTypes()
+	c.Assert(len(*transactionTypes), Equals, 1)
+	c.Assert((*transactionTypes)[0].Name, Equals, transactionType)
 
 	rows = sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, transactionType, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM transaction_types").WillReturnRows(rows)
 
-	transactionTypes = s.r.getTransactionTypes()
-	_, ok := s.r.getTransactionTypeIdByName(transactionType, transactionTypes)
+	transactionTypes = s.r.transactionTypes()
+	_, ok := s.r.transactionTypeIdByName(transactionType, *transactionTypes)
 	c.Assert(ok, Equals, true)
 
 	rows = sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, marketplace, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM marketplaces").WillReturnRows(rows)
 
-	marketplaces := s.r.getMarketplaces()
-	c.Assert(len(marketplaces), Equals, 1)
-	c.Assert(marketplaces[0].Name, Equals, marketplace)
+	marketplaces := s.r.marketplaces()
+	c.Assert(len(*marketplaces), Equals, 1)
+	c.Assert((*marketplaces)[0].Name, Equals, marketplace)
 
 	rows = sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, marketplace, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM marketplaces").WillReturnRows(rows)
 
-	marketplaces = s.r.getMarketplaces()
-	_, ok = s.r.getMarketplaceIdByName(marketplace, marketplaces)
+	marketplaces = s.r.marketplaces()
+	_, ok = s.r.marketplaceIdByName(marketplace, *marketplaces)
 	c.Assert(ok, Equals, true)
 
 	rows = sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, fulfillment, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM fulfillments").WillReturnRows(rows)
 
-	fulfillments := s.r.getFulfillments()
-	c.Assert(len(fulfillments), Equals, 1)
-	c.Assert(marketplaces[0].Name, Equals, marketplace)
+	fulfillments := s.r.fulfillments()
+	c.Assert(len(*fulfillments), Equals, 1)
+	c.Assert((*marketplaces)[0].Name, Equals, marketplace)
 
 	rows = sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, fulfillment, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM fulfillments").WillReturnRows(rows)
 
-	fulfillments = s.r.getFulfillments()
-	_, ok = s.r.getFulfillmentIdByName(fulfillment, fulfillments)
+	fulfillments = s.r.fulfillments()
+	_, ok = s.r.fulfillmentIdByName(fulfillment, *fulfillments)
 	c.Assert(ok, Equals, true)
 
 	rows = sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, taxCollectionModel, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM tax_collection_models").WillReturnRows(rows)
 
-	taxCollectionModels := s.r.getTaxCollectionModels()
-	c.Assert(len(taxCollectionModels), Equals, 1)
-	c.Assert(taxCollectionModels[0].Name, Equals, taxCollectionModel)
+	taxCollectionModels := s.r.taxCollectionModels()
+	c.Assert(len(*taxCollectionModels), Equals, 1)
+	c.Assert((*taxCollectionModels)[0].Name, Equals, taxCollectionModel)
 
 	rows = sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, taxCollectionModel, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM tax_collection_models").WillReturnRows(rows)
 
-	taxCollectionModels = s.r.getTaxCollectionModels()
-	_, ok = s.r.getTaxCollectionModelIdByName(taxCollectionModel, taxCollectionModels)
+	taxCollectionModels = s.r.taxCollectionModels()
+	_, ok = s.r.taxCollectionModelIdByName(taxCollectionModel, *taxCollectionModels)
 	c.Assert(ok, Equals, true)
 
 	content := s.r.mapCSV(bytes.NewBuffer(s.readFile(transactionReportFile, c)))
 
-	user := sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
-		AddRow(1, userId, "test@getlytica.com", time.Now(), time.Now())
+	userRows := sqlmock.NewRows([]string{"id", "user_id", "email", "stripe_user_id", "stripe_subscription_id", "stripe_plan_id", "setup_completed", "created_at", "updated_at"}).
+		AddRow(1, userId, "test@getlytica.com", "", "", "", true, time.Now(), time.Now())
 	transactionTypeRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, transactionType, time.Now(), time.Now())
 	marketplaceRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
@@ -339,7 +342,7 @@ func (s *reportSuite) TestTransaction(c *C) {
 	taxCollectionModelRows := sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, taxCollectionModel, time.Now(), time.Now())
 
-	s.mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(user)
+	s.mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(userRows)
 	s.mock.ExpectQuery("^SELECT (.+) FROM transaction_types").WillReturnRows(transactionTypeRows)
 	s.mock.ExpectQuery("^SELECT (.+) FROM marketplaces").WillReturnRows(marketplaceRows)
 	s.mock.ExpectQuery("^SELECT (.+) FROM fulfillments").WillReturnRows(fulfillmentRows)
@@ -376,8 +379,8 @@ func (s *reportSuite) TestTransaction(c *C) {
 
 	content = s.r.mapCSV(bytes.NewBuffer(s.readFile(transactionReportFile, c)))
 
-	user = sqlmock.NewRows([]string{"id", "user_id", "email", "created_at", "updated_at"}).
-		AddRow(1, userId, "test@getlytica.com", time.Now(), time.Now())
+	userRows = sqlmock.NewRows([]string{"id", "user_id", "email", "stripe_user_id", "stripe_subscription_id", "stripe_plan_id", "setup_completed", "created_at", "updated_at"}).
+		AddRow(1, userId, "test@getlytica.com", "", "", "", true, time.Now(), time.Now())
 	transactionTypeRows = sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, transactionType, time.Now(), time.Now())
 	marketplaceRows = sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
@@ -387,7 +390,7 @@ func (s *reportSuite) TestTransaction(c *C) {
 	taxCollectionModelRows = sqlmock.NewRows([]string{"id", "name", "created_at", "updated_at"}).
 		AddRow(1, taxCollectionModel, time.Now(), time.Now())
 
-	s.mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(user)
+	s.mock.ExpectQuery("^SELECT (.+) FROM users WHERE").WillReturnRows(userRows)
 	s.mock.ExpectQuery("^SELECT (.+) FROM transaction_types").WillReturnRows(transactionTypeRows)
 	s.mock.ExpectQuery("^SELECT (.+) FROM marketplaces").WillReturnRows(marketplaceRows)
 	s.mock.ExpectQuery("^SELECT (.+) FROM fulfillments").WillReturnRows(fulfillmentRows)

@@ -13,9 +13,11 @@ type Marketplace struct {
 	UpdatedAt time.Time `db:"updated_at"`
 }
 
-func LoadMarketplaces(db *sqlx.DB) []Marketplace {
+func (m *Marketplace) Load(db *sqlx.DB) *[]Marketplace {
 	var marketplaces []Marketplace
-	_ = db.Select(&marketplaces, "SELECT id,name,created_at,updated_at FROM marketplaces ORDER BY id DESC")
 
-	return marketplaces
+	query := `SELECT id,name,created_at,updated_at FROM marketplaces ORDER BY id DESC`
+	_ = db.Select(&marketplaces, query)
+
+	return &marketplaces
 }

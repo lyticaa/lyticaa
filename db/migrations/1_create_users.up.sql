@@ -10,5 +10,5 @@ CREATE TABLE users
     created_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    UNIQUE (email, user_id)
+    UNIQUE (user_id, email)
 );

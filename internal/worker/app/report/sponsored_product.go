@@ -18,16 +18,19 @@ func (r *Report) exchangeRate(code string, exchangeRates []models.ExchangeRate) 
 	return unknown, false
 }
 
-func (r *Report) formatSponsoredProducts(rows []map[string]string, username string) []models.SponsoredProduct {
-	user := models.LoadUser(username, r.Db)
-	exchangeRates := models.LoadExchangeRates(r.Db)
+func (r *Report) formatSponsoredProducts(rows []map[string]string, userId string) []models.SponsoredProduct {
+	user := models.User{UserId: userId}
+	user.Load(r.Db)
+
+	exchangeRate := models.ExchangeRate{}
+	exchangeRates := exchangeRate.Load(r.Db)
 
 	var sponsoredProducts []models.SponsoredProduct
 	for _, row := range rows {
 		// Remove all currency/percentage characters
 		reg, _ := regexp.Compile(`[^0-9\.]+`)
 
-		exchangeRate, ok := r.exchangeRate(row["Currency"], exchangeRates)
+		exchangeRate, ok := r.exchangeRate(row["Currency"], *exchangeRates)
 		if !ok && row["Currency"] != "" {
 			r.Logger.Error().Msgf("Currency %v not found", row["Currency"])
 		}
@@ -51,7 +54,7 @@ func (r *Report) formatSponsoredProducts(rows []map[string]string, username stri
 		otherSKUSales, _ := strconv.ParseFloat(reg.ReplaceAllString(row["7 Day Other SKU Sales"], ""), 64)
 
 		sponsoredProduct := models.SponsoredProduct{
-			User:               *user,
+			User:               user,
 			StartDate:          startDate,
 			EndDate:            endDate,
 			PortfolioName:      row["Portfolio name"],
@@ -84,7 +87,7 @@ func (r *Report) formatSponsoredProducts(rows []map[string]string, username stri
 }
 
 func (r *Report) saveSponsoredProduct(sponsoredProduct models.SponsoredProduct) error {
-	err := models.SaveSponsoredProduct(sponsoredProduct, r.Db)
+	err := sponsoredProduct.Save(r.Db)
 	if err != nil {
 		return err
 	}

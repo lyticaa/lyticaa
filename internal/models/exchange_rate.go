@@ -16,9 +16,11 @@ type ExchangeRate struct {
 	UpdatedAt     time.Time `db:"updated_at"`
 }
 
-func LoadExchangeRates(db *sqlx.DB) []ExchangeRate {
+func (e *ExchangeRate) Load(db *sqlx.DB) *[]ExchangeRate {
 	var exchangeRates []ExchangeRate
-	_ = db.Select(&exchangeRates, "SELECT id,code,symbol,rate,created_at,updated_at FROM exchange_rates ORDER BY id DESC")
 
-	return exchangeRates
+	query := `SELECT id,code,symbol,rate,created_at,updated_at FROM exchange_rates ORDER BY id DESC`
+	_ = db.Select(&exchangeRates, query)
+
+	return &exchangeRates
 }

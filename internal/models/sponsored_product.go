@@ -36,7 +36,7 @@ type SponsoredProduct struct {
 	UpdatedAt          time.Time    `db:"updated_at"`
 }
 
-func SaveSponsoredProduct(sponsoredProduct SponsoredProduct, db *sqlx.DB) error {
+func (s *SponsoredProduct) Save(db *sqlx.DB) error {
 	query := `INSERT INTO sponsored_products (
                                 user_id,
                                 start_date,
@@ -106,30 +106,30 @@ func SaveSponsoredProduct(sponsoredProduct SponsoredProduct, db *sqlx.DB) error 
                                               updated_at = NOW()`
 
 	_, err := db.NamedExec(query, map[string]interface{}{
-		"user_id":              sponsoredProduct.User.Id,
-		"start_date":           sponsoredProduct.StartDate,
-		"end_date":             sponsoredProduct.EndDate,
-		"portfolio_name":       sponsoredProduct.PortfolioName,
-		"exchange_rate_id":     sponsoredProduct.ExchangeRate.Id,
-		"campaign_name":        sponsoredProduct.CampaignName,
-		"ad_group_name":        sponsoredProduct.AdGroupName,
-		"sku":                  sponsoredProduct.SKU,
-		"asin":                 sponsoredProduct.ASIN,
-		"impressions":          sponsoredProduct.Impressions,
-		"clicks":               sponsoredProduct.Clicks,
-		"ctr":                  sponsoredProduct.CTR,
-		"cpc":                  sponsoredProduct.CPC,
-		"spend":                sponsoredProduct.Spend,
-		"total_sales":          sponsoredProduct.Spend,
-		"acos":                 sponsoredProduct.ACoS,
-		"roas":                 sponsoredProduct.RoAS,
-		"total_orders":         sponsoredProduct.TotalOrders,
-		"total_units":          sponsoredProduct.TotalUnits,
-		"conversion_rate":      sponsoredProduct.ConversionRate,
-		"advertised_sku_units": sponsoredProduct.AdvertisedSKUUnits,
-		"other_sku_units":      sponsoredProduct.OtherSKUUnits,
-		"advertised_sku_sales": sponsoredProduct.AdvertisedSKUSales,
-		"other_sku_sales":      sponsoredProduct.OtherSKUSales,
+		"user_id":              s.User.Id,
+		"start_date":           s.StartDate,
+		"end_date":             s.EndDate,
+		"portfolio_name":       s.PortfolioName,
+		"exchange_rate_id":     s.ExchangeRate.Id,
+		"campaign_name":        s.CampaignName,
+		"ad_group_name":        s.AdGroupName,
+		"sku":                  s.SKU,
+		"asin":                 s.ASIN,
+		"impressions":          s.Impressions,
+		"clicks":               s.Clicks,
+		"ctr":                  s.CTR,
+		"cpc":                  s.CPC,
+		"spend":                s.Spend,
+		"total_sales":          s.Spend,
+		"acos":                 s.ACoS,
+		"roas":                 s.RoAS,
+		"total_orders":         s.TotalOrders,
+		"total_units":          s.TotalUnits,
+		"conversion_rate":      s.ConversionRate,
+		"advertised_sku_units": s.AdvertisedSKUUnits,
+		"other_sku_units":      s.OtherSKUUnits,
+		"advertised_sku_sales": s.AdvertisedSKUSales,
+		"other_sku_sales":      s.OtherSKUSales,
 	})
 
 	if err != nil {

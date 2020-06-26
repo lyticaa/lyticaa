@@ -12,7 +12,7 @@ func (a *Amazon) UnitsSold(txns *[]models.Transaction) []types.Summary {
 		if a.isOrder(txn.TransactionType.Id) {
 			unitsSold = append(unitsSold,
 				types.Summary{
-					Total:       float64(txn.Quantity),
+					Total:       a.txnUnitsSold(txn),
 					Marketplace: *a.marketplace(txn.Marketplace.Id),
 					OrderDate:   txn.DateTime,
 				},
