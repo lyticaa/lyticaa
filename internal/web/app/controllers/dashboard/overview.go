@@ -97,8 +97,8 @@ func (d *Dashboard) cardData(userId int64, view, dateRange string, current, prev
 		currentValues = d.amazon.ProductCosts(current)
 		previousValues = d.amazon.ProductCosts(previous)
 	case helpers.AdvertisingSpendView:
-		currentValues = d.amazon.AdvertisingSpend(current)
-		previousValues = d.amazon.AdvertisingSpend(previous)
+		currentValues = d.amazon.AdvertisingSpend(current, &[]models.SponsoredProduct{})
+		previousValues = d.amazon.AdvertisingSpend(previous, &[]models.SponsoredProduct{})
 	case helpers.RefundsView:
 		currentValues = d.amazon.Refunds(current)
 		previousValues = d.amazon.Refunds(previous)

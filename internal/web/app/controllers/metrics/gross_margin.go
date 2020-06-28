@@ -41,7 +41,7 @@ func (m *Metrics) GrossMarginByDate(w http.ResponseWriter, r *http.Request) {
 
 	var byDate types.GrossMargin
 
-	summary := m.summaryData(dateRange, helpers.GrossMarginView, current)
+	summary := m.summaryData(dateRange, helpers.GrossMarginView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.GrossMarginTable{}
 

@@ -18,5 +18,5 @@ func (s *apiSuite) SetUpSuite(c *C) {
 	s.a = NewAPI()
 }
 
-func (s *apiSuite) TestHealth(c *C) {}
+func (s *apiSuite) TestHealth(c *C)    {}
 func (s *apiSuite) TearDownSuite(c *C) {}

@@ -21,34 +21,70 @@ type User struct {
 	UpdatedAt            time.Time `db:"updated_at"`
 }
 
-func (u *User) Load(db *sqlx.DB) {
-	query := `SELECT * FROM users WHERE user_id = $1`
-	_ = db.QueryRow(query, u.UserId).Scan(
-		&u.Id,
-		&u.UserId,
-		&u.Email,
-		&u.StripeUserId,
-		&u.StripeSubscriptionId,
-		&u.StripePlanId,
-		&u.SetupCompleted,
-		&u.CreatedAt,
-		&u.UpdatedAt,
-	)
+func CreateUser(userId, email string, db *sqlx.DB) (*User, error) {
+	user := LoadUser(userId, db)
+	if user.Id > 0 {
+		return user, nil
+	}
+
+	query := `INSERT INTO users (
+                   user_id,
+                   email,
+                   setup_completed,
+                   created_at,
+                   updated_at)
+                   VALUES (
+                           :user_id,
+                           :email,
+                           :setup_completed,
+                           :created_at,
+                           :updated_at)`
+	_, err := db.NamedExec(query,
+		map[string]interface{}{
+			"user_id":         userId,
+			"email":           email,
+			"setup_completed": false,
+			"created_at":      time.Now(),
+			"updated_at":      time.Now(),
+		})
+	if err != nil {
+		return &User{}, err
+	}
+
+	return LoadUser(userId, db), nil
 }
 
-func (u *User) LoadByEmail(db *sqlx.DB) {
+func LoadUser(userId string, db *sqlx.DB) *User {
+	var users []User
+
+	query := `SELECT * FROM users WHERE user_id = $1`
+	err := db.Select(&users, query, userId)
+
+	if err != nil {
+		return &User{}
+	}
+
+	if len(users) > 0 {
+		return &users[0]
+	}
+
+	return &User{}
+}
+
+func LoadUserByEmail(email string, db *sqlx.DB) *User {
+	var users []User
+
 	query := `SELECT * FROM users WHERE email = $1`
-	_ = db.QueryRow(query, u.Email).Scan(
-		&u.Id,
-		&u.UserId,
-		&u.Email,
-		&u.StripeUserId,
-		&u.StripeSubscriptionId,
-		&u.StripePlanId,
-		&u.SetupCompleted,
-		&u.CreatedAt,
-		&u.UpdatedAt,
-	)
+	err := db.Select(&users, query, email)
+	if err != nil {
+		return &User{}
+	}
+
+	if len(users) > 0 {
+		return &users[0]
+	}
+
+	return &User{}
 }
 
 func (u *User) Save(db *sqlx.DB) error {

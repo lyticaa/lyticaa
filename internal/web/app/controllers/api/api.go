@@ -7,7 +7,7 @@ import (
 	"gitlab.com/getlytica/lytica-app/internal/web/app/types"
 )
 
-type API struct {}
+type API struct{}
 
 func NewAPI() *API {
 	return &API{}

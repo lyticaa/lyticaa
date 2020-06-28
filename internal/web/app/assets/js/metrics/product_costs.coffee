@@ -73,7 +73,7 @@ export default class MetricsProductCosts
         { 'data': 'marketplace' }
         { 'data': 'quantitySold' }
         { 'data': 'productCosts' }
-        { 'data': 'advertisingCosts' }
+        { 'data': 'advertisingSpend' }
         { 'data': 'refunds' }
         { 'data': 'totalCosts' }
       ]

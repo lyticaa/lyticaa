@@ -78,7 +78,7 @@ type ProductCostsTable struct {
 	Marketplace       string  `json:"marketplace"`
 	QuantitySold      int64   `json:"quantitySold"`
 	ProductCosts      float64 `json:"productCosts"`
-	AdvertisingCosts  float64 `json:"advertisingCosts"`
+	AdvertisingSpend  float64 `json:"advertisingSpend"`
 	Refunds           float64 `json:"refunds"`
 	TotalProductCosts float64 `json:"totalProductCosts"`
 }
@@ -89,10 +89,11 @@ type ProductCosts struct {
 }
 
 type AdvertisingSpendTable struct {
-	Date              time.Time `json:"date"`
-	SKU               string    `json:"sku"`
-	AdvertisingSpend  float64   `json:"advertisingSpend"`
-	PercentageOfSales float64   `json:"percentageOfSales"`
+	SKU                        string  `json:"sku"`
+	Description                string  `json:"description"`
+	Marketplace                string  `json:"marketplace"`
+	AdvertisingSpend           float64 `json:"advertisingSpend"`
+	AdvertisingSpendPercentage float64 `json:"advertisingSpendPercentage"`
 }
 
 type AdvertisingSpend struct {

@@ -37,13 +37,17 @@ func (m *Metrics) AdvertisingSpendByDate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	current := m.amazon.LoadTransactions(user.Id, dateRange)
+	current := m.amazon.LoadSponsoredProducts(user.Id, dateRange)
 
 	var byDate types.AdvertisingSpend
 
-	summary := m.summaryData(dateRange, helpers.AdvertisingSpendView, current)
+	summary := m.summaryData(dateRange, helpers.AdvertisingSpendView, &[]models.Transaction{}, current)
 	m.chartData(dateRange, summary, &byDate.Metrics)
-	byDate.Data = []types.AdvertisingSpendTable{}
+	m.paintAdvertisingSpendTable(summary, &byDate)
+
+	byDate.RecordsTotal = models.TotalSponsoredProducts(user.Id, dateRange, m.db)
+	byDate.RecordsFiltered = byDate.RecordsTotal
+	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)
 	if err != nil {
@@ -54,4 +58,23 @@ func (m *Metrics) AdvertisingSpendByDate(w http.ResponseWriter, r *http.Request)
 
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(js)
+}
+
+func (m *Metrics) paintAdvertisingSpendTable(summary *[]types.Summary, byDate *types.AdvertisingSpend) {
+	if len(*summary) == 0 {
+		byDate.Data = []types.AdvertisingSpendTable{}
+		byDate.RecordsTotal = 0
+		byDate.RecordsFiltered = 0
+		return
+	}
+
+	for _, txn := range *summary {
+		byDate.Data = append(byDate.Data, types.AdvertisingSpendTable{
+			SKU:                        txn.SKU,
+			Description:                txn.Description,
+			Marketplace:                txn.Marketplace,
+			AdvertisingSpend:           txn.AdvertisingSpend,
+			AdvertisingSpendPercentage: txn.AdvertisingSpendPercentage,
+		})
+	}
 }

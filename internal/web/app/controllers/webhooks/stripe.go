@@ -61,9 +61,7 @@ func (wh *Webhooks) parseStripeEvent(event stripe.Event, w http.ResponseWriter) 
 			wh.logger.Error().Err(err).Msg("failed to assign customer reference")
 		}
 
-		user := models.User{UserId: wh.stripe.CustomerRefId(&session)}
-		user.Load(wh.db)
-
+		user := models.LoadUser(wh.stripe.CustomerRefId(&session), wh.db)
 		user.StripeUserId = customer
 		if err := user.Save(wh.db); err != nil {
 			wh.logger.Error().Err(err).Msg("failed to save user")

@@ -26,8 +26,7 @@ func (a *Account) NotificationsByDate(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := session.Values["User"].(models.User)
 
-	notification := models.Notification{UserId: user.Id}
-	notifications := notification.Load(helpers.BuildFilter(r), a.db)
+	notifications := models.LoadNotifications(user.Id, helpers.BuildFilter(r), a.db)
 
 	var byDate types.Notifications
 
@@ -45,7 +44,7 @@ func (a *Account) NotificationsByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	byDate.Draw = helpers.DtDraw(r)
-	byDate.RecordsTotal = notification.Total(a.db)
+	byDate.RecordsTotal = models.TotalNotifications(user.Id, a.db)
 
 	js, err := json.Marshal(byDate)
 	if err != nil {

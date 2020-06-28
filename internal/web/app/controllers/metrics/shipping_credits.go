@@ -41,7 +41,7 @@ func (m *Metrics) ShippingCreditsByDate(w http.ResponseWriter, r *http.Request) 
 
 	var byDate types.ShippingCredits
 
-	summary := m.summaryData(dateRange, helpers.ShippingCreditsView, current)
+	summary := m.summaryData(dateRange, helpers.ShippingCreditsView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.ShippingCreditsTable{}
 

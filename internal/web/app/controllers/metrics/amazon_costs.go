@@ -41,12 +41,11 @@ func (m *Metrics) AmazonCostsByDate(w http.ResponseWriter, r *http.Request) {
 
 	var byDate types.AmazonCosts
 
-	summary := m.summaryData(dateRange, helpers.AmazonCostsView, current)
+	summary := m.summaryData(dateRange, helpers.AmazonCostsView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
 	m.paintAmazonCostsTable(summary, &byDate)
 
-	transaction := models.Transaction{User: user}
-	byDate.RecordsTotal = transaction.Count(dateRange, m.db)
+	byDate.RecordsTotal = models.TotalTransactions(user.Id, dateRange, m.db)
 	byDate.RecordsFiltered = byDate.RecordsTotal
 	byDate.Draw = helpers.DtDraw(r)
 

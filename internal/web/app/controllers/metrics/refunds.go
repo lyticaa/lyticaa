@@ -41,7 +41,7 @@ func (m *Metrics) RefundsByDate(w http.ResponseWriter, r *http.Request) {
 
 	var byDate types.Refunds
 
-	summary := m.summaryData(dateRange, helpers.RefundsView, current)
+	summary := m.summaryData(dateRange, helpers.RefundsView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.RefundsTable{}
 

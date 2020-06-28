@@ -41,7 +41,7 @@ func (m *Metrics) PromotionalRebatesByDate(w http.ResponseWriter, r *http.Reques
 
 	var byDate types.PromotionalRebates
 
-	summary := m.summaryData(dateRange, helpers.PromotionalRebatesView, current)
+	summary := m.summaryData(dateRange, helpers.PromotionalRebatesView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.PromotionalRebatesTable{}
 

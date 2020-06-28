@@ -19,11 +19,8 @@ func (r *Report) exchangeRate(code string, exchangeRates []models.ExchangeRate) 
 }
 
 func (r *Report) formatSponsoredProducts(rows []map[string]string, userId string) []models.SponsoredProduct {
-	user := models.User{UserId: userId}
-	user.Load(r.Db)
-
-	exchangeRate := models.ExchangeRate{}
-	exchangeRates := exchangeRate.Load(r.Db)
+	user := models.LoadUser(userId, r.Db)
+	exchangeRates := models.LoadExchangeRates(r.Db)
 
 	var sponsoredProducts []models.SponsoredProduct
 	for _, row := range rows {
@@ -32,11 +29,10 @@ func (r *Report) formatSponsoredProducts(rows []map[string]string, userId string
 
 		exchangeRate, ok := r.exchangeRate(row["Currency"], *exchangeRates)
 		if !ok && row["Currency"] != "" {
-			r.Logger.Error().Msgf("Currency %v not found", row["Currency"])
+			r.Logger.Error().Msgf("currency %v not found", row["Currency"])
 		}
 
-		startDate, _ := time.Parse("Jan 2, 2006", row["Start Date"])
-		endDate, _ := time.Parse("Jan 2, 2006", row["End Date"])
+		dateTime, _ := time.Parse("Jan 2, 2006", row["Date"])
 		impressions, _ := strconv.ParseInt(row["Impressions"], 10, 64)
 		clicks, _ := strconv.ParseInt(row["Clicks"], 10, 64)
 		ctr, _ := strconv.ParseFloat(reg.ReplaceAllString(row["Click-Thru Rate (CTR)"], ""), 64)
@@ -54,9 +50,8 @@ func (r *Report) formatSponsoredProducts(rows []map[string]string, userId string
 		otherSKUSales, _ := strconv.ParseFloat(reg.ReplaceAllString(row["7 Day Other SKU Sales"], ""), 64)
 
 		sponsoredProduct := models.SponsoredProduct{
-			User:               user,
-			StartDate:          startDate,
-			EndDate:            endDate,
+			User:               *user,
+			DateTime:           dateTime,
 			PortfolioName:      row["Portfolio name"],
 			ExchangeRate:       models.ExchangeRate{Id: exchangeRate},
 			CampaignName:       row["Campaign Name"],

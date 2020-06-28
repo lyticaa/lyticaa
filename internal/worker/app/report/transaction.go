@@ -9,8 +9,7 @@ import (
 )
 
 func (r *Report) transactionTypes() *[]models.TransactionType {
-	txnType := models.TransactionType{}
-	return txnType.Load(r.Db)
+	return models.LoadTransactionTypes(r.Db)
 }
 
 func (r *Report) transactionTypeIdByName(name string, txnTypes []models.TransactionType) (int64, bool) {
@@ -24,8 +23,7 @@ func (r *Report) transactionTypeIdByName(name string, txnTypes []models.Transact
 }
 
 func (r *Report) marketplaces() *[]models.Marketplace {
-	marketplace := models.Marketplace{}
-	return marketplace.Load(r.Db)
+	return models.LoadMarketplaces(r.Db)
 }
 
 func (r *Report) marketplaceIdByName(name string, marketplaces []models.Marketplace) (int64, bool) {
@@ -39,8 +37,7 @@ func (r *Report) marketplaceIdByName(name string, marketplaces []models.Marketpl
 }
 
 func (r *Report) fulfillments() *[]models.Fulfillment {
-	fulfillment := models.Fulfillment{}
-	return fulfillment.Load(r.Db)
+	return models.LoadFulfillments(r.Db)
 }
 
 func (r *Report) fulfillmentIdByName(name string, fulfillments []models.Fulfillment) (int64, bool) {
@@ -54,8 +51,7 @@ func (r *Report) fulfillmentIdByName(name string, fulfillments []models.Fulfillm
 }
 
 func (r *Report) taxCollectionModels() *[]models.TaxCollectionModel {
-	taxCollectionModel := models.TaxCollectionModel{}
-	return taxCollectionModel.Load(r.Db)
+	return models.LoadTaxCollectionModels(r.Db)
 }
 
 func (r *Report) taxCollectionModelIdByName(name string, taxCollectionModels []models.TaxCollectionModel) (int64, bool) {
@@ -69,8 +65,7 @@ func (r *Report) taxCollectionModelIdByName(name string, taxCollectionModels []m
 }
 
 func (r *Report) formatTransactions(rows []map[string]string, userId string) []models.Transaction {
-	user := models.User{UserId: userId}
-	user.Load(r.Db)
+	user := models.LoadUser(userId, r.Db)
 
 	txnTypes := r.transactionTypes()
 	marketplaces := r.marketplaces()
@@ -129,7 +124,7 @@ func (r *Report) formatTransactions(rows []map[string]string, userId string) []m
 
 		txn := models.Transaction{
 			DateTime:               dateTime,
-			User:                   user,
+			User:                   *user,
 			SettlementId:           settlementId,
 			SettlementIdx:          settlementIdx,
 			TransactionType:        models.TransactionType{Id: txnType},

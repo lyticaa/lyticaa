@@ -22,14 +22,14 @@ var (
 	}
 )
 
-func (n *Notification) Load(filter *Filter, db *sqlx.DB) *[]Notification {
+func LoadNotifications(userId int64, filter *Filter, db *sqlx.DB) *[]Notification {
 	var notifications []Notification
 
 	query := `SELECT notification, created_at FROM notifications WHERE user_id = $1 AND created_at BETWEEN $2 AND $3 ORDER BY $4 LIMIT $5 OFFSET $6`
 	_ = db.Select(
 		&notifications,
 		query,
-		n.UserId,
+		userId,
 		filter.StartDate,
 		filter.EndDate,
 		fmt.Sprintf("%v %v", sortColumn(notificationSortMap, filter.Sort), filter.Dir),
@@ -40,11 +40,11 @@ func (n *Notification) Load(filter *Filter, db *sqlx.DB) *[]Notification {
 	return &notifications
 }
 
-func (n *Notification) Total(db *sqlx.DB) int64 {
+func TotalNotifications(userId int64, db *sqlx.DB) int64 {
 	var count int64
 
 	query := `SELECT COUNT(id) FROM notifications WHERE user_id = $1`
-	_ = db.QueryRow(query, n.UserId).Scan(&count)
+	_ = db.QueryRow(query, userId).Scan(&count)
 
 	return count
 }

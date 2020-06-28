@@ -21,24 +21,23 @@ type Amazon struct {
 }
 
 func NewAmazon(db *sqlx.DB) *Amazon {
-	txnType := models.TransactionType{}
-	exchangeRates := models.ExchangeRate{}
-
 	return &Amazon{
 		db:               db,
-		transactionTypes: txnType.Load(db),
-		exchangeRates:    exchangeRates.Load(db),
+		transactionTypes: models.LoadTransactionTypes(db),
+		exchangeRates:    models.LoadExchangeRates(db),
 	}
 }
 
 func (a *Amazon) LoadTransactions(userId int64, dateRange string) *[]models.Transaction {
-	txn := models.Transaction{User: models.User{Id: userId}}
-	return txn.Load(dateRange, a.db)
+	return models.LoadTransaction(userId, dateRange, a.db)
+}
+
+func (a *Amazon) LoadSponsoredProducts(userId int64, dateRange string) *[]models.SponsoredProduct {
+	return models.LoadSponsoredProducts(userId, dateRange, a.db)
 }
 
 func (a *Amazon) marketplace(marketplaceId int64) *string {
-	marketplace := models.Marketplace{}
-	marketplaces := marketplace.Load(a.db)
+	marketplaces := models.LoadMarketplaces(a.db)
 	for _, m := range *marketplaces {
 		if m.Id == marketplaceId {
 			return &m.Name

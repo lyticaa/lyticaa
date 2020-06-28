@@ -41,7 +41,7 @@ func (m *Metrics) TotalCostsByDate(w http.ResponseWriter, r *http.Request) {
 
 	var byDate types.TotalCosts
 
-	summary := m.summaryData(dateRange, helpers.TotalCostsView, current)
+	summary := m.summaryData(dateRange, helpers.TotalCostsView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.TotalCostsTable{}
 

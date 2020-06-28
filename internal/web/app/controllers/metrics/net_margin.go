@@ -41,7 +41,7 @@ func (m *Metrics) NetMarginByDate(w http.ResponseWriter, r *http.Request) {
 
 	var byDate types.NetMargin
 
-	summary := m.summaryData(dateRange, helpers.NetMarginView, current)
+	summary := m.summaryData(dateRange, helpers.NetMarginView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
 	byDate.Data = []types.NetMarginTable{}
 

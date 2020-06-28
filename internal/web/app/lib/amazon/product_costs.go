@@ -25,7 +25,7 @@ func (a *Amazon) ProductCosts(txns *[]models.Transaction) []types.Summary {
 				Marketplace:      *a.marketplace(txn.Marketplace.Id),
 				QuantitySold:     txn.Quantity,
 				ProductCosts:     a.txnProductCosts(txn) * a.exchangeRate(txn.Marketplace.Id),
-				AdvertisingCosts: 0.0,
+				AdvertisingSpend: 0.0,
 				Refunds:          0.0,
 				Total:            a.txnProductCosts(txn) * a.exchangeRate(txn.Marketplace.Id),
 				OrderDate:        txn.DateTime,
@@ -38,9 +38,7 @@ func (a *Amazon) ProductCosts(txns *[]models.Transaction) []types.Summary {
 }
 
 func (a *Amazon) costOfGoods(userId int64, sku string, orderDate time.Time) float64 {
-	costOfGood := models.CostOfGood{UserId: userId, SKU: sku}
-
-	costOfGoods := costOfGood.Load(a.db)
+	costOfGoods := models.LoadCostOfGood(userId, sku, a.db)
 	for _, cost := range *costOfGoods {
 		if orderDate.After(cost.StartAt) && orderDate.Before(cost.EndAt) {
 			return cost.Cost

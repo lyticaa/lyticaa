@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -9,8 +10,7 @@ import (
 type SponsoredProduct struct {
 	Id                 int64
 	User               `db:"user_id"`
-	StartDate          time.Time    `db:"start_date"`
-	EndDate            time.Time    `db:"end_date"`
+	DateTime           time.Time    `db:"date_time"`
 	PortfolioName      string       `db:"portfolio_name"`
 	ExchangeRate       ExchangeRate `db:"exchange_rate_id"`
 	CampaignName       string       `db:"campaign_name"`
@@ -36,11 +36,28 @@ type SponsoredProduct struct {
 	UpdatedAt          time.Time    `db:"updated_at"`
 }
 
+func LoadSponsoredProducts(userId int64, dateRange string, db *sqlx.DB) *[]SponsoredProduct {
+	var sponsoredProducts []SponsoredProduct
+
+	query := `SELECT s.* FROM sponsored_products_%v s WHERE s.user_id = $1`
+	_ = db.Select(&sponsoredProducts, fmt.Sprintf(query, dateRange), userId)
+
+	return &sponsoredProducts
+}
+
+func TotalSponsoredProducts(userId int64, dateRange string, db *sqlx.DB) int64 {
+	var count int64
+
+	query := `SELECT COUNT(*) FROM sponsored_products_%v WHERE user_id = $1`
+	_ = db.QueryRow(fmt.Sprintf(query, dateRange), userId).Scan(&count)
+
+	return count
+}
+
 func (s *SponsoredProduct) Save(db *sqlx.DB) error {
 	query := `INSERT INTO sponsored_products (
                                 user_id,
-                                start_date,
-                                end_date,
+                                date_time,
                                 portfolio_name,
                                 exchange_rate_id,
                                 campaign_name,
@@ -64,8 +81,7 @@ func (s *SponsoredProduct) Save(db *sqlx.DB) error {
                                 other_sku_sales)
                             VALUES (
                                     :user_id,
-                                    :start_date,
-                                    :end_date,
+                                    :date_time,
                                     :portfolio_name,
                                     :exchange_rate_id,
                                     :campaign_name,
@@ -87,7 +103,7 @@ func (s *SponsoredProduct) Save(db *sqlx.DB) error {
                                     :other_sku_units,
                                     :advertised_sku_sales,
                                     :other_sku_sales)
-                            ON CONFLICT (user_id, start_date, end_date, portfolio_name, campaign_name, ad_group_name, sku, asin)
+                            ON CONFLICT (user_id, date_time, portfolio_name, campaign_name, ad_group_name, sku, asin)
                                 DO UPDATE SET impressions = :impressions,
                                               clicks = :clicks,
                                               ctr = :ctr,
@@ -104,11 +120,9 @@ func (s *SponsoredProduct) Save(db *sqlx.DB) error {
                                               advertised_sku_sales = :advertised_sku_sales,
                                               other_sku_sales = :other_sku_sales,
                                               updated_at = NOW()`
-
 	_, err := db.NamedExec(query, map[string]interface{}{
 		"user_id":              s.User.Id,
-		"start_date":           s.StartDate,
-		"end_date":             s.EndDate,
+		"date_time":            s.DateTime,
 		"portfolio_name":       s.PortfolioName,
 		"exchange_rate_id":     s.ExchangeRate.Id,
 		"campaign_name":        s.CampaignName,

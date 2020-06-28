@@ -30,32 +30,32 @@ func NewMetrics(db *sqlx.DB, sessionStore *redistore.RediStore, log zerolog.Logg
 	}
 }
 
-func (m *Metrics) summaryData(dateRange, view string, current *[]models.Transaction) *[]types.Summary {
+func (m *Metrics) summaryData(dateRange, view string, txns *[]models.Transaction, sps *[]models.SponsoredProduct) *[]types.Summary {
 	var summary []types.Summary
 
 	switch view {
 	case helpers.TotalSalesView:
-		summary = m.amazon.TotalSales(current)
+		summary = m.amazon.TotalSales(txns)
 	case helpers.UnitsSoldView:
-		summary = m.amazon.UnitsSold(current)
+		summary = m.amazon.UnitsSold(txns)
 	case helpers.AmazonCostsView:
-		summary = m.amazon.AmazonCosts(current)
+		summary = m.amazon.AmazonCosts(txns)
 	case helpers.ProductCostsView:
-		summary = m.amazon.ProductCosts(current)
+		summary = m.amazon.ProductCosts(txns)
 	case helpers.AdvertisingSpendView:
-		summary = m.amazon.AdvertisingSpend(current)
+		summary = m.amazon.AdvertisingSpend(txns, sps)
 	case helpers.RefundsView:
-		summary = m.amazon.Refunds(current)
+		summary = m.amazon.Refunds(txns)
 	case helpers.ShippingCreditsView:
-		summary = m.amazon.ShippingCredits(current)
+		summary = m.amazon.ShippingCredits(txns)
 	case helpers.PromotionalRebatesView:
-		summary = m.amazon.PromotionalRebates(current)
+		summary = m.amazon.PromotionalRebates(txns)
 	case helpers.TotalCostsView:
-		summary = m.amazon.TotalCosts(current)
+		summary = m.amazon.TotalCosts(txns)
 	case helpers.GrossMarginView:
-		summary = m.amazon.GrossMargin(current)
+		summary = m.amazon.GrossMargin(txns)
 	case helpers.NetMarginView:
-		summary = m.amazon.NetMargin(current)
+		summary = m.amazon.NetMargin(txns)
 	}
 
 	return &summary

@@ -140,16 +140,13 @@ func (a *Auth) Callback(w http.ResponseWriter, r *http.Request) {
 	session.Values["profile"] = profile
 
 	parts := strings.Split(profile["sub"].(string), "|")
-
-	user := models.User{UserId: parts[1], Email: profile["name"].(string)}
-	err = user.Save(a.db)
+	user, err := models.CreateUser(parts[1], profile["name"].(string), a.db)
 	if err != nil {
 		a.logger.Error().Err(err).Msg("unable to create user")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	user.Load(a.db)
 	user.Nickname = profile["nickname"].(string)
 	user.Picture = profile["picture"].(string)
 	session.Values["User"] = user

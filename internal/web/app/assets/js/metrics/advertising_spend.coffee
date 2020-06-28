@@ -69,10 +69,11 @@ export default class MetricsAdvertisingSpend
         'error': (j) ->
           $('.alert.metrics-advertising-spend-load-error').show()
       'columns': [
-        { 'data': 'date' }
         { 'data': 'sku' }
+        { 'data': 'description' }
+        { 'data': 'marketplace' }
         { 'data': 'advertisingSpend' }
-        { 'data': 'percentageOfSales' }
+        { 'data': 'advertisingSpendPercentage' }
       ]
       'language': {
         'infoFiltered': ''
@@ -87,16 +88,5 @@ export default class MetricsAdvertisingSpend
       m.tables.reload($(this), $('table'))
 
     this.tables.cleanup($('table'))
-
-    return
-
-  #
-  # Reload.
-  #
-  reload: ->
-    p = this
-    $('button.reload').on 'click', (e) ->
-      p.tables.reload($('.date-filter.active'), $('table'))
-      return
 
     return

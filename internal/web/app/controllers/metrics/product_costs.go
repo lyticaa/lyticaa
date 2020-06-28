@@ -41,12 +41,11 @@ func (m *Metrics) ProductCostsByDate(w http.ResponseWriter, r *http.Request) {
 
 	var byDate types.ProductCosts
 
-	summary := m.summaryData(dateRange, helpers.ProductCostsView, current)
+	summary := m.summaryData(dateRange, helpers.ProductCostsView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
 	m.paintProductCostsTable(summary, &byDate)
 
-	transaction := models.Transaction{User: user}
-	byDate.RecordsTotal = transaction.Count(dateRange, m.db)
+	byDate.RecordsTotal = models.TotalTransactions(user.Id, dateRange, m.db)
 	byDate.RecordsFiltered = byDate.RecordsTotal
 	byDate.Draw = helpers.DtDraw(r)
 
@@ -76,7 +75,7 @@ func (m *Metrics) paintProductCostsTable(summary *[]types.Summary, byDate *types
 			Marketplace:       txn.Marketplace,
 			QuantitySold:      txn.QuantitySold,
 			ProductCosts:      txn.ProductCosts,
-			AdvertisingCosts:  txn.AdvertisingCosts,
+			AdvertisingSpend:  txn.AdvertisingSpend,
 			Refunds:           txn.Refunds,
 			TotalProductCosts: txn.Total,
 		})

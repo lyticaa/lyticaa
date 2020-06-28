@@ -39,20 +39,20 @@ type Transaction struct {
 	UpdatedAt              time.Time          `db:"updated_at"`
 }
 
-func (t *Transaction) Load(dateRange string, db *sqlx.DB) *[]Transaction {
+func LoadTransaction(userId int64, dateRange string, db *sqlx.DB) *[]Transaction {
 	var transactions []Transaction
 
 	query := `SELECT t.* FROM transactions_%v t WHERE t.user_id = $1`
-	_ = db.Select(&transactions, fmt.Sprintf(query, dateRange), t.User.Id)
+	_ = db.Select(&transactions, fmt.Sprintf(query, dateRange), userId)
 
 	return &transactions
 }
 
-func (t *Transaction) Count(dateRange string, db *sqlx.DB) int64 {
+func TotalTransactions(userId int64, dateRange string, db *sqlx.DB) int64 {
 	var count int64
 
-	query := `SELECT COUNT(id) FROM transactions_%v WHERE user_id = $1`
-	_ = db.QueryRow(fmt.Sprintf(query, dateRange), t.User.Id).Scan(&count)
+	query := `SELECT COUNT(*) FROM transactions_%v WHERE user_id = $1`
+	_ = db.QueryRow(fmt.Sprintf(query, dateRange), userId).Scan(&count)
 
 	return count
 }
