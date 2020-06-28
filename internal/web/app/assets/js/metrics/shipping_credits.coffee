@@ -68,9 +68,11 @@ export default class MetricsShippingCredits
         'error': (j) ->
           $('.alert.metrics-shipping-credits-load-error').show()
       'columns': [
-        { 'data': 'date' }
         { 'data': 'sku' }
+        { 'data': 'description' }
+        { 'data': 'marketplace' }
         { 'data': 'shippingCredits' }
+        { 'data': 'shippingCreditsTax' }
       ]
       'language': {
         'infoFiltered': ''

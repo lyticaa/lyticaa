@@ -12,9 +12,13 @@ func (a *Amazon) Refunds(txns *[]models.Transaction) []types.Summary {
 		txnTypeId := txn.TransactionType.Id
 		if a.isRefund(txnTypeId) {
 			refunds = append(refunds, types.Summary{
-				Total:       txn.Total * a.exchangeRate(txn.Marketplace.Id),
-				Marketplace: *a.marketplace(txn.Marketplace.Id),
-				OrderDate:   txn.DateTime,
+				SKU:               txn.SKU,
+				Description:       txn.Description,
+				Marketplace:       *a.marketplace(txn.Marketplace.Id),
+				Refunds:           txn.Total * a.exchangeRate(txn.Marketplace.Id),
+				RefundsPercentage: 0.0,
+				Total:             txn.Total * a.exchangeRate(txn.Marketplace.Id),
+				Date:              txn.DateTime,
 			})
 		}
 	}

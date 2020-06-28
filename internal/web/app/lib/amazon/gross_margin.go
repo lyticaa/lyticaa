@@ -12,9 +12,19 @@ func (a *Amazon) GrossMargin(txns *[]models.Transaction) []types.Summary {
 		txnTypeId := txn.TransactionType.Id
 		if a.isOrder(txnTypeId) {
 			grossMargin = append(grossMargin, types.Summary{
-				Total:       a.txnGrossMargin(txn) * a.exchangeRate(txn.Marketplace.Id),
-				Marketplace: *a.marketplace(txn.Marketplace.Id),
-				OrderDate:   txn.DateTime,
+				SKU:                txn.SKU,
+				Description:        txn.Description,
+				Marketplace:        *a.marketplace(txn.Marketplace.Id),
+				ProductCosts:       a.txnProductCosts(txn),
+				QuantitySold:       txn.Quantity,
+				TotalRevenue:       a.txnProductSales(txn) * a.exchangeRate(txn.Marketplace.Id),
+				AmazonCosts:        a.txnAmazonCosts(txn) * a.exchangeRate(txn.Marketplace.Id),
+				ShippingCredits:    a.txnShippingCredits(txn) * a.exchangeRate(txn.Marketplace.Id),
+				PromotionalRebates: a.txnPromotionalRebates(txn) * a.exchangeRate(txn.Marketplace.Id),
+				GrossMargin:        a.txnGrossMargin(txn) * a.exchangeRate(txn.Marketplace.Id),
+				SalesTaxCollected:  a.txnSalesTaxCollected(txn) * a.exchangeRate(txn.Marketplace.Id),
+				Total:              (a.txnGrossMargin(txn) + a.txnSalesTaxCollected(txn)) * a.exchangeRate(txn.Marketplace.Id),
+				Date:               txn.DateTime,
 			})
 		}
 	}

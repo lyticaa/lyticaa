@@ -57,6 +57,15 @@ func TotalTransactions(userId int64, dateRange string, db *sqlx.DB) int64 {
 	return count
 }
 
+func TotalRefundTransactions(userId int64, dateRange string, db *sqlx.DB) int64 {
+	var count int64
+
+	query := `SELECT COUNT(t.*) FROM transactions_%v AS t LEFT JOIN transaction_types tt ON t.transaction_type_id = tt.id WHERE t.user_id = $1 AND tt.name = 'Refund'`
+	_ = db.QueryRow(fmt.Sprintf(query, dateRange), userId).Scan(&count)
+
+	return count
+}
+
 func (t *Transaction) Save(db *sqlx.DB) error {
 	query := `INSERT INTO transactions (
                           user_id,

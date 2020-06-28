@@ -43,7 +43,11 @@ func (m *Metrics) TotalCostsByDate(w http.ResponseWriter, r *http.Request) {
 
 	summary := m.summaryData(dateRange, helpers.TotalCostsView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
-	byDate.Data = []types.TotalCostsTable{}
+	m.paintTotalCostsTable(summary, &byDate)
+
+	byDate.RecordsTotal = models.TotalTransactions(user.Id, dateRange, m.db)
+	byDate.RecordsFiltered = byDate.RecordsTotal
+	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)
 	if err != nil {
@@ -54,4 +58,26 @@ func (m *Metrics) TotalCostsByDate(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(js)
+}
+
+func (m *Metrics) paintTotalCostsTable(summary *[]types.Summary, byDate *types.TotalCosts) {
+	if len(*summary) == 0 {
+		byDate.Data = []types.TotalCostsTable{}
+		byDate.RecordsTotal = 0
+		byDate.RecordsFiltered = 0
+		return
+	}
+
+	for _, txn := range *summary {
+		byDate.Data = append(byDate.Data, types.TotalCostsTable{
+			SKU:                  txn.SKU,
+			Description:          txn.Description,
+			Marketplace:          txn.Marketplace,
+			AmazonCosts:          txn.AmazonCosts,
+			ProductCosts:         txn.ProductCosts,
+			ProductCostPerUnit:   txn.ProductCostsUnit,
+			TotalCosts:           txn.Total,
+			TotalCostsPercentage: txn.TotalCostsPercentage,
+		})
+	}
 }

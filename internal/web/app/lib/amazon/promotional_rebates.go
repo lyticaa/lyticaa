@@ -10,9 +10,13 @@ func (a *Amazon) PromotionalRebates(txns *[]models.Transaction) []types.Summary 
 
 	for _, txn := range *txns {
 		promotionalRebates = append(promotionalRebates, types.Summary{
-			Total:       a.txnPromotionalRebates(txn) * a.exchangeRate(txn.Marketplace.Id),
-			Marketplace: *a.marketplace(txn.Marketplace.Id),
-			OrderDate:   txn.DateTime,
+			SKU:                   txn.SKU,
+			Description:           txn.Description,
+			Marketplace:           *a.marketplace(txn.Marketplace.Id),
+			PromotionalRebates:    txn.PromotionalRebates * a.exchangeRate(txn.Marketplace.Id),
+			PromotionalRebatesTax: txn.PromotionalRebatesTax * a.exchangeRate(txn.Marketplace.Id),
+			Total:                 a.txnPromotionalRebates(txn) * a.exchangeRate(txn.Marketplace.Id),
+			Date:                  txn.DateTime,
 		})
 	}
 

@@ -43,7 +43,11 @@ func (m *Metrics) NetMarginByDate(w http.ResponseWriter, r *http.Request) {
 
 	summary := m.summaryData(dateRange, helpers.NetMarginView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
-	byDate.Data = []types.NetMarginTable{}
+	m.paintNetMarginTable(summary, &byDate)
+
+	byDate.RecordsTotal = models.TotalTransactions(user.Id, dateRange, m.db)
+	byDate.RecordsFiltered = byDate.RecordsTotal
+	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)
 	if err != nil {
@@ -54,4 +58,27 @@ func (m *Metrics) NetMarginByDate(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(js)
+}
+
+func (m *Metrics) paintNetMarginTable(summary *[]types.Summary, byDate *types.NetMargin) {
+	if len(*summary) == 0 {
+		byDate.Data = []types.NetMarginTable{}
+		byDate.RecordsTotal = 0
+		byDate.RecordsFiltered = 0
+		return
+	}
+
+	for _, txn := range *summary {
+		byDate.Data = append(byDate.Data, types.NetMarginTable{
+			SKU:           txn.SKU,
+			Description:   txn.Description,
+			Marketplace:   txn.Marketplace,
+			GrossMargin:   txn.GrossMargin,
+			TotalCosts:    txn.TotalCosts,
+			NetMargin:     txn.NetMargin,
+			QuantitySold:  txn.QuantitySold,
+			NetMarginUnit: txn.NetMarginUnit,
+			ROI:           txn.ROI,
+		})
+	}
 }

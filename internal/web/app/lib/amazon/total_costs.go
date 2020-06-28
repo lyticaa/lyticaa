@@ -15,7 +15,7 @@ func (a *Amazon) TotalCosts(txns *[]models.Transaction) []types.Summary {
 
 		txnTypeId := txn.TransactionType.Id
 		if a.isOrder(txnTypeId) {
-			cost += a.txnTotalOrderCosts(txn)
+			cost += a.txnTotalCosts(txn)
 		}
 
 		cost += a.txnAdvertisingCosts(txn)
@@ -25,9 +25,15 @@ func (a *Amazon) TotalCosts(txns *[]models.Transaction) []types.Summary {
 		}
 
 		totalCosts = append(totalCosts, types.Summary{
-			Total:       cost * exchangeRate,
-			Marketplace: *a.marketplace(txn.Marketplace.Id),
-			OrderDate:   txn.DateTime,
+			SKU:                  txn.SKU,
+			Description:          txn.Description,
+			Marketplace:          *a.marketplace(txn.Marketplace.Id),
+			AmazonCosts:          0.0,
+			ProductCosts:         0.0,
+			ProductCostsUnit:     0.0,
+			Total:                cost * exchangeRate,
+			TotalCostsPercentage: 0.0,
+			Date:                 txn.DateTime,
 		})
 	}
 

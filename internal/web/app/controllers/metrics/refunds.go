@@ -41,9 +41,13 @@ func (m *Metrics) RefundsByDate(w http.ResponseWriter, r *http.Request) {
 
 	var byDate types.Refunds
 
-	summary := m.summaryData(dateRange, helpers.RefundsView, current, &[]models.SponsoredProduct{})
+	summary := m.summaryData(dateRange, helpers.AdvertisingSpendView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
-	byDate.Data = []types.RefundsTable{}
+	m.paintRefundsTable(summary, &byDate)
+
+	byDate.RecordsTotal = models.TotalRefundTransactions(user.Id, dateRange, m.db)
+	byDate.RecordsFiltered = byDate.RecordsTotal
+	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)
 	if err != nil {
@@ -54,4 +58,23 @@ func (m *Metrics) RefundsByDate(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(js)
+}
+
+func (m *Metrics) paintRefundsTable(summary *[]types.Summary, byDate *types.Refunds) {
+	if len(*summary) == 0 {
+		byDate.Data = []types.RefundsTable{}
+		byDate.RecordsTotal = 0
+		byDate.RecordsFiltered = 0
+		return
+	}
+
+	for _, txn := range *summary {
+		byDate.Data = append(byDate.Data, types.RefundsTable{
+			SKU:               txn.SKU,
+			Description:       txn.Description,
+			Marketplace:       txn.Marketplace,
+			Refunds:           txn.Refunds,
+			RefundsPercentage: txn.RefundsPercentage,
+		})
+	}
 }

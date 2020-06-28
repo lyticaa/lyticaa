@@ -72,7 +72,7 @@ func (c *CostOfGood) Save(db *sqlx.DB) error {
                        cost = :cost,
                        start_at = :start_at,
                        end_at = :end_at,
-                       updated_at = time.Now() WHERE user_id = :user_id`
+                       updated_at = :updated_at WHERE user_id = :user_id`
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
 			"sku":         c.SKU,
@@ -81,6 +81,7 @@ func (c *CostOfGood) Save(db *sqlx.DB) error {
 			"start_at":    c.StartAt,
 			"end_at":      c.EndAt,
 			"updated_at":  time.Now(),
+			"user_id":     c.UserId,
 		})
 	if err != nil {
 		return err

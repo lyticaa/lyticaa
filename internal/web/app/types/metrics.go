@@ -1,9 +1,5 @@
 package types
 
-import (
-	"time"
-)
-
 type Total struct {
 	Value int64   `json:"value"`
 	Diff  float64 `json:"diff"`
@@ -102,10 +98,11 @@ type AdvertisingSpend struct {
 }
 
 type RefundsTable struct {
-	Date              time.Time `json:"date"`
-	SKU               string    `json:"sku"`
-	Refunds           float64   `json:"refunds"`
-	PercentageOfSales float64   `json:"percentageOfSales"`
+	SKU               string  `json:"sku"`
+	Description       string  `json:"description"`
+	Marketplace       string  `json:"marketplace"`
+	Refunds           float64 `json:"refunds"`
+	RefundsPercentage float64 `json:"refundsPercentage"`
 }
 
 type Refunds struct {
@@ -114,9 +111,11 @@ type Refunds struct {
 }
 
 type ShippingCreditsTable struct {
-	Date            time.Time `json:"date"`
-	SKU             string    `json:"sku"`
-	ShippingCredits float64   `json:"shippingCredits"`
+	SKU                string  `json:"sku"`
+	Description        string  `json:"description"`
+	Marketplace        string  `json:"marketplace"`
+	ShippingCredits    float64 `json:"shippingCredits"`
+	ShippingCreditsTax float64 `json:"shippingCreditsTax"`
 }
 
 type ShippingCredits struct {
@@ -125,11 +124,11 @@ type ShippingCredits struct {
 }
 
 type PromotionalRebatesTable struct {
-	Date               time.Time `json:"date"`
-	SKU                string    `json:"sku"`
-	CostOfCoupons      float64   `json:"costOfCoupons"`
-	Quantity           int64     `json:"quantity"`
-	PromotionalRebates float64   `json:"promotionalRebates"`
+	SKU                   string  `json:"sku"`
+	Description           string  `json:"description"`
+	Marketplace           string  `json:"marketplace"`
+	PromotionalRebates    float64 `json:"promotionalRebates"`
+	PromotionalRebatesTax float64 `json:"promotionalRebatesTax"`
 }
 
 type PromotionalRebates struct {
@@ -138,14 +137,14 @@ type PromotionalRebates struct {
 }
 
 type TotalCostsTable struct {
-	Date               time.Time `json:"date"`
-	SKU                string    `json:"sku"`
-	AmazonCosts        float64   `json:"amazonCosts"`
-	ProductCosts       float64   `json:"productCosts"`
-	ProductCostPerUnit float64   `json:"productCostPerUnit"`
-	TotalCosts         float64   `json:"totalCosts"`
-	Percentage         float64   `json:"percentage"`
-	PercentageOfSales  float64   `json:"percentageOfSales"`
+	SKU                  string  `json:"sku"`
+	Description          string  `json:"description"`
+	Marketplace          string  `json:"marketplace"`
+	AmazonCosts          float64 `json:"amazonCosts"`
+	ProductCosts         float64 `json:"productCosts"`
+	ProductCostPerUnit   float64 `json:"productCostPerUnit"`
+	TotalCosts           float64 `json:"totalCosts"`
+	TotalCostsPercentage float64 `json:"totalCostsPercentage"`
 }
 
 type TotalCosts struct {
@@ -155,9 +154,10 @@ type TotalCosts struct {
 
 type GrossMarginTable struct {
 	SKU                  string  `json:"sku"`
+	Description          string  `json:"description"`
+	Marketplace          string  `json:"marketplace"`
+	ProductCosts         float64 `json:"productCosts"`
 	QuantitySold         int64   `json:"quantitySold"`
-	QuantitySoldCoupons  int64   `json:"quantitySoldCoupons"`
-	SalePrice            float64 `json:"salePrice"`
 	TotalRevenue         float64 `json:"totalRevenue"`
 	AmazonCosts          float64 `json:"amazonCosts"`
 	ShippingCredits      float64 `json:"shippingCredits"`
@@ -173,12 +173,15 @@ type GrossMargin struct {
 }
 
 type NetMarginTable struct {
-	Date             time.Time `json:"date"`
-	SKU              string    `json:"sku"`
-	NetMargin        float64   `json:"netMargin"`
-	Percentage       float64   `json:"percentage"`
-	NetMarginPerUnit float64   `json:"netMarginPerUnit"`
-	ROI              float64   `json:"roi"`
+	SKU           string  `json:"sku"`
+	Description   string  `json:"description"`
+	Marketplace   string  `json:"marketplace"`
+	GrossMargin   float64 `json:"grossMargin"`
+	TotalCosts    float64 `json:"totalCosts"`
+	NetMargin     float64 `json:"netMargin"`
+	QuantitySold  int64   `json:"quantitySold"`
+	NetMarginUnit float64 `json:"netMarginUnit"`
+	ROI           float64 `json:"roi"`
 }
 
 type NetMargin struct {

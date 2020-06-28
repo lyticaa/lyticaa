@@ -88,36 +88,23 @@ func LoadUserByEmail(email string, db *sqlx.DB) *User {
 }
 
 func (u *User) Save(db *sqlx.DB) error {
-	query := `INSERT INTO users (
-                   user_id,
-                   email,
-                   stripe_user_id,
-                   stripe_subscription_id,
-                   stripe_plan_id,
-                   setup_completed)
-                   VALUES (
-                           :user_id,
-                           :email,
-                           :stripe_user_id,
-                           :stripe_subscription_id,
-                           :stripe_plan_id,
-                           :setup_completed)
-                           ON CONFLICT (user_id, email)
-                               DO UPDATE SET
-                                             stripe_user_id = :stripe_user_id,
-                                             stripe_subscription_id = :stripe_subscription_id,
-                                             stripe_plan_id = :stripe_plan_id,
-                                             setup_completed = :setup_completed,
-                                             updated_at = NOW()`
+	query := `UPDATE users SET user_id = :user_id,
+                 email = :email,
+                 stripe_user_id = :stripe_user_id,
+                 stripe_subscription_id = :stripe_subscription_id,
+                 stripe_plan_id = :stripe_plan_id,
+                 setup_completed = :setup_completed,
+                 updated_at = :updated_at WHERE id = :id`
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
 			"user_id":                u.UserId,
+			"email":                  u.Email,
 			"stripe_user_id":         u.StripeUserId,
 			"stripe_subscription_id": u.StripeSubscriptionId,
 			"stripe_plan_id":         u.StripePlanId,
-			"email":                  u.Email,
 			"setup_completed":        u.SetupCompleted,
 			"updated_at":             time.Now(),
+			"id":                     u.Id,
 		})
 	if err != nil {
 		return err

@@ -68,10 +68,11 @@ export default class MetricsRefunds
         'error': (j) ->
           $('.alert.metrics-refunds-load-error').show()
       'columns': [
-        { 'data': 'date' }
         { 'data': 'sku' }
+        { 'data': 'description' }
+        { 'data': 'marketplace' }
         { 'data': 'refunds' }
-        { 'data': 'percentageOfSales' }
+        { 'data': 'refundsPercentage' }
       ]
       'language': {
         'infoFiltered': ''

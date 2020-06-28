@@ -68,11 +68,14 @@ export default class MetricsNetMargin
         'error': (j) ->
           $('.alert.metrics-net-margin-load-error').show()
       'columns': [
-        { 'data': 'date' }
         { 'data': 'sku' }
+        { 'data': 'description' }
+        { 'data': 'marketplace' }
+        { 'data': 'grossMargin' }
+        { 'data': 'totalCosts' }
         { 'data': 'netMargin' }
-        { 'data': 'percentage' }
-        { 'data': 'netMarginPerUnit' }
+        { 'data': 'quantitySold' }
+        { 'data': 'netMarginUnit' }
         { 'data': 'roi' }
       ]
       'language': {

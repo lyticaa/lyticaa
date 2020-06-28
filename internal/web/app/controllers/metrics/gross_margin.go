@@ -43,7 +43,11 @@ func (m *Metrics) GrossMarginByDate(w http.ResponseWriter, r *http.Request) {
 
 	summary := m.summaryData(dateRange, helpers.GrossMarginView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
-	byDate.Data = []types.GrossMarginTable{}
+	m.paintGrossMarginTable(summary, &byDate)
+
+	byDate.RecordsTotal = models.TotalTransactions(user.Id, dateRange, m.db)
+	byDate.RecordsFiltered = byDate.RecordsTotal
+	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)
 	if err != nil {
@@ -54,4 +58,30 @@ func (m *Metrics) GrossMarginByDate(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(js)
+}
+
+func (m *Metrics) paintGrossMarginTable(summary *[]types.Summary, byDate *types.GrossMargin) {
+	if len(*summary) == 0 {
+		byDate.Data = []types.GrossMarginTable{}
+		byDate.RecordsTotal = 0
+		byDate.RecordsFiltered = 0
+		return
+	}
+
+	for _, txn := range *summary {
+		byDate.Data = append(byDate.Data, types.GrossMarginTable{
+			SKU:                  txn.SKU,
+			Description:          txn.Description,
+			Marketplace:          txn.Marketplace,
+			ProductCosts:         txn.ProductCosts,
+			QuantitySold:         txn.QuantitySold,
+			TotalRevenue:         txn.TotalRevenue,
+			AmazonCosts:          txn.AmazonCosts,
+			ShippingCredits:      txn.ShippingCredits,
+			PromotionalRebates:   txn.PromotionalRebates,
+			GrossMargin:          txn.GrossMargin,
+			SalesTaxCollected:    txn.SalesTaxCollected,
+			TotalAmountCollected: txn.Total,
+		})
+	}
 }

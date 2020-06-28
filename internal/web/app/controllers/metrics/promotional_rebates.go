@@ -43,7 +43,11 @@ func (m *Metrics) PromotionalRebatesByDate(w http.ResponseWriter, r *http.Reques
 
 	summary := m.summaryData(dateRange, helpers.PromotionalRebatesView, current, &[]models.SponsoredProduct{})
 	m.chartData(dateRange, summary, &byDate.Metrics)
-	byDate.Data = []types.PromotionalRebatesTable{}
+	m.paintPromotionalRebatesTable(summary, &byDate)
+
+	byDate.RecordsTotal = models.TotalTransactions(user.Id, dateRange, m.db)
+	byDate.RecordsFiltered = byDate.RecordsTotal
+	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)
 	if err != nil {
@@ -54,4 +58,23 @@ func (m *Metrics) PromotionalRebatesByDate(w http.ResponseWriter, r *http.Reques
 
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(js)
+}
+
+func (m *Metrics) paintPromotionalRebatesTable(summary *[]types.Summary, byDate *types.PromotionalRebates) {
+	if len(*summary) == 0 {
+		byDate.Data = []types.PromotionalRebatesTable{}
+		byDate.RecordsTotal = 0
+		byDate.RecordsFiltered = 0
+		return
+	}
+
+	for _, txn := range *summary {
+		byDate.Data = append(byDate.Data, types.PromotionalRebatesTable{
+			SKU:                   txn.SKU,
+			Description:           txn.Description,
+			Marketplace:           txn.Marketplace,
+			PromotionalRebates:    txn.PromotionalRebates,
+			PromotionalRebatesTax: txn.PromotionalRebatesTax,
+		})
+	}
 }

@@ -10,9 +10,17 @@ func (a *Amazon) NetMargin(txns *[]models.Transaction) []types.Summary {
 
 	for _, txn := range *txns {
 		netMargin = append(netMargin, types.Summary{
-			Total:       a.txnNetMargin(txn) * a.exchangeRate(txn.Marketplace.Id),
-			Marketplace: *a.marketplace(txn.Marketplace.Id),
-			OrderDate:   txn.DateTime,
+			SKU:           txn.SKU,
+			Description:   txn.Description,
+			Marketplace:   *a.marketplace(txn.Marketplace.Id),
+			GrossMargin:   a.txnGrossMargin(txn) * a.exchangeRate(txn.Marketplace.Id),
+			TotalCosts:    a.txnTotalCosts(txn) * a.exchangeRate(txn.Marketplace.Id),
+			NetMargin:     a.txnNetMargin(txn) * a.exchangeRate(txn.Marketplace.Id),
+			QuantitySold:  txn.Quantity,
+			NetMarginUnit: (a.txnNetMargin(txn) * a.exchangeRate(txn.Marketplace.Id)) / float64(txn.Quantity),
+			ROI:           0.0,
+			Total:         a.txnNetMargin(txn) * a.exchangeRate(txn.Marketplace.Id),
+			Date:          txn.DateTime,
 		})
 	}
 

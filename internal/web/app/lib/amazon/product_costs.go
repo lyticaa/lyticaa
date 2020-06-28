@@ -28,7 +28,7 @@ func (a *Amazon) ProductCosts(txns *[]models.Transaction) []types.Summary {
 				AdvertisingSpend: 0.0,
 				Refunds:          0.0,
 				Total:            a.txnProductCosts(txn) * a.exchangeRate(txn.Marketplace.Id),
-				OrderDate:        txn.DateTime,
+				Date:             txn.DateTime,
 			})
 
 		}

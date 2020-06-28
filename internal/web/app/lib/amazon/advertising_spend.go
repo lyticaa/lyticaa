@@ -21,6 +21,8 @@ func (a *Amazon) AdvertisingSpend(txns *[]models.Transaction, sps *[]models.Spon
 			Marketplace:                "",
 			AdvertisingSpend:           0.0,
 			AdvertisingSpendPercentage: 0.0,
+			Total:                      0.0,
+			Date:                       sp.DateTime,
 		})
 	}
 

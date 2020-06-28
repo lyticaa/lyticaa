@@ -20,7 +20,7 @@ func (c *Chart) Line(data *[]types.Summary, dateRange string) types.Chart {
 func (c *Chart) categories(data *[]types.Summary, chart *types.Chart, dateRange string) {
 	var categories []string
 	for _, item := range *data {
-		categories = append(categories, fmt.Sprintf("%v", helpers.DateFormat(dateRange, item.OrderDate)))
+		categories = append(categories, fmt.Sprintf("%v", helpers.DateFormat(dateRange, item.Date)))
 	}
 
 	chart.Line.Categories = append(chart.Line.Categories, types.Category{Category: strings.Join(categories, "|")})

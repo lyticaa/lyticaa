@@ -15,8 +15,9 @@ func (a *Amazon) AmazonCosts(txns *[]models.Transaction) []types.Summary {
 				SKU:         txn.SKU,
 				Description: txn.Description,
 				Marketplace: *a.marketplace(txn.Marketplace.Id),
+				AmazonCosts: a.txnAmazonCosts(txn) * a.exchangeRate(txn.Marketplace.Id),
 				Total:       a.txnAmazonCosts(txn) * a.exchangeRate(txn.Marketplace.Id),
-				OrderDate:   txn.DateTime,
+				Date:        txn.DateTime,
 			})
 		}
 	}

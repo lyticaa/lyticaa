@@ -50,23 +50,14 @@ func TotalNotifications(userId int64, db *sqlx.DB) int64 {
 }
 
 func (n *Notification) Save(db *sqlx.DB) error {
-	query := `INSERT INTO notifications (
-					user_id,
-					notification,
-					created_at,
-					updated_at)
-				VALUES (
-					:user_id,
-					:notification,
-					:created_at,
-					:updated_at)`
-
+	query := `UPDATE notifications SET notification = :notification, updated_at = :updated_at WHERE id = :id`
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
 			"user_id":      n.UserId,
 			"notification": n.Notification,
 			"created_at":   time.Now(),
 			"updated_at":   time.Now(),
+			"id":           n.Id,
 		})
 
 	if err != nil {

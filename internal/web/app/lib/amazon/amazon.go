@@ -136,8 +136,12 @@ func (a *Amazon) txnPromotionalRebates(txn models.Transaction) float64 {
 	return txn.PromotionalRebates + txn.PromotionalRebatesTax
 }
 
-func (a *Amazon) txnTotalOrderCosts(txn models.Transaction) float64 {
+func (a *Amazon) txnTotalCosts(txn models.Transaction) float64 {
 	return a.txnAmazonCosts(txn) + a.txnProductCosts(txn) + a.txnShippingCredits(txn) + a.txnPromotionalRebates(txn)
+}
+
+func (a *Amazon) txnSalesTaxCollected(txn models.Transaction) float64 {
+	return txn.ProductSalesTax
 }
 
 func (a *Amazon) txnGrossMargin(txn models.Transaction) float64 {

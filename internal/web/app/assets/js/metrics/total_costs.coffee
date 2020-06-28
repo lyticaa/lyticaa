@@ -68,14 +68,14 @@ export default class MetricsTotalCosts
         'error': (j) ->
           $('.alert.metrics-total-costs-load-error').show()
       'columns': [
-        { 'data': 'date' }
         { 'data': 'sku' }
+        { 'data': 'description' }
+        { 'data': 'marketplace' }
         { 'data': 'amazonCosts' }
         { 'data': 'productCosts' }
         { 'data': 'productCostPerUnit' }
         { 'data': 'totalCosts' }
-        { 'data': 'percentage' }
-        { 'data': 'percentageOfSales' }
+        { 'data': 'totalCostsPercentage' }
       ]
       'language': {
         'infoFiltered': ''

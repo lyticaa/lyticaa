@@ -15,7 +15,7 @@ func (a *Amazon) UnitsSold(txns *[]models.Transaction) []types.Summary {
 				Description: txn.Description,
 				Marketplace: *a.marketplace(txn.Marketplace.Id),
 				Total:       a.txnUnitsSold(txn),
-				OrderDate:   txn.DateTime,
+				Date:        txn.DateTime,
 			})
 		}
 	}

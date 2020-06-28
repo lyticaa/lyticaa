@@ -10,9 +10,13 @@ func (a *Amazon) ShippingCredits(txns *[]models.Transaction) []types.Summary {
 
 	for _, txn := range *txns {
 		shippingCredits = append(shippingCredits, types.Summary{
-			Total:       a.txnShippingCredits(txn) * a.exchangeRate(txn.Marketplace.Id),
-			Marketplace: *a.marketplace(txn.Marketplace.Id),
-			OrderDate:   txn.DateTime,
+			SKU:                txn.SKU,
+			Description:        txn.Description,
+			Marketplace:        *a.marketplace(txn.Marketplace.Id),
+			ShippingCredits:    txn.ShippingCredits * a.exchangeRate(txn.Marketplace.Id),
+			ShippingCreditsTax: txn.ShippingCreditsTax * a.exchangeRate(txn.Marketplace.Id),
+			Total:              a.txnShippingCredits(txn) * a.exchangeRate(txn.Marketplace.Id),
+			Date:               txn.DateTime,
 		})
 	}
 
