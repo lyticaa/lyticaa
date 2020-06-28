@@ -66,7 +66,7 @@ func LoadCostOfGood(userId int64, sku string, db *sqlx.DB) *[]CostOfGood {
 }
 
 func (c *CostOfGood) Save(db *sqlx.DB) error {
-	query := `UPDATE cost_of_goods SET,
+	query := `UPDATE cost_of_goods SET
                        sku = :sku,
                        description = :description,
                        cost = :cost,
