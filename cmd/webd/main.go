@@ -4,7 +4,7 @@ import (
 	"os"
 	"os/signal"
 
-	"gitlab.com/getlytica/lytica-app/internal/web/app"
+	"gitlab.com/getlytica/lytica-app/internal/web"
 )
 
 func main() {

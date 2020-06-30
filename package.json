@@ -39,6 +39,6 @@
   },
   "scripts": {
     "preinstall": "rm -rf tmp/dist",
-    "postinstall": "./node_modules/.bin/parcel build internal/web/app/views/layouts/* -d tmp/dist"
+    "postinstall": "./node_modules/.bin/parcel build internal/web/views/layouts/* -d tmp/dist"
   }
 }

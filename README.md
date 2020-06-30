@@ -1,6 +1,6 @@
-# lytica
+# lytica-app
 
-Lytica webapp (web/worker).
+Lytica (web/worker).
 
 ## Setup
 
@@ -46,8 +46,11 @@ STRIPE_MONTHLY_PLAN_ID=
 STRIPE_ANNUAL_PLAN_ID=
 STRIPE_SUCCESS_URI=
 STRIPE_CANCEL_URI=
-INTERCOM_ID=
 SUPPORT_EMAIL=
+CLOUDAMQP_APIKEY=
+CLOUDAMQP_URL=
+CLOUDAMQP_QUEUE=
+INTERCOM_ID=
 ```
 
 If you are unsure as to what these values ought to be, then please check with a colleague.
@@ -92,6 +95,8 @@ The web app will then be accessible on http://localhost:3000.
 make run-worker-service
 ```
 
+The worker will then connect to RabbitMQ and listen for any incoming messages to process. You will need to ensure a local RabbitMQ instance is running (see below for how to start RabbitMQ).
+
 ## Sessions
 
 Session data is stored in Redis. To start a local Redis instance, run:
@@ -133,4 +138,14 @@ Add your migrations to the `db/migrations` folder. To apply the migrations:
 
 ```bash
 make migrate
+```
+
+## Messaging
+
+To communicate with other applications in the Lytica network, we use RabbitMQ.
+
+To start a local RabbitMQ instance, run:
+
+```bash
+make docker-rabbitmq
 ```
