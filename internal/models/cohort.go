@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -31,10 +30,12 @@ type Cohort struct {
 func LoadCohorts(userId, dateRange, view string, filter *Filter, db *sqlx.DB) *[]Cohort {
 	var cohorts []Cohort
 
-	query := `SELECT * FROM cohorts_%v_%v WHERE user_id = $1`
+	query := `SELECT * FROM cohorts WHERE user_id = $1 AND date_range = $2 AND view = $3 LIMIT $4 OFFSET $5`
 	_ = db.Select(&cohorts,
-		fmt.Sprintf(query, view, dateRange),
+		query,
 		userId,
+		dateRange,
+		view,
 		filter.Length,
 		filter.Start,
 	)
@@ -45,8 +46,8 @@ func LoadCohorts(userId, dateRange, view string, filter *Filter, db *sqlx.DB) *[
 func TotalCohorts(userId, dateRange, view string, db *sqlx.DB) int64 {
 	var count int64
 
-	query := `SELECT COUNT(id) FROM cohorts_%v_%v WHERE user_id = $1`
-	_ = db.QueryRow(fmt.Sprintf(query, view, dateRange), userId).Scan(&count)
+	query := `SELECT COUNT(id) FROM cohorts WHERE user_id = $1 AND date_range = $2 AND view = $3`
+	_ = db.QueryRow(query, userId, dateRange, view).Scan(&count)
 
 	return count
 }

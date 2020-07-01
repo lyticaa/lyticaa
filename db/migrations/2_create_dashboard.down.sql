@@ -1,14 +1,1 @@
-DROP TABLE dashboard_today;
-DROP TABLE dashboard_yesterday;
-DROP TABLE dashboard_last_thirty_days;
-DROP TABLE dashboard_previous_thirty_days;
-DROP TABLE dashboard_last_month;
-DROP TABLE dashboard_this_month;
-DROP TABLE dashboard_month_before_last;
-DROP TABLE dashboard_last_three_months;
-DROP TABLE dashboard_previous_three_months;
-DROP TABLE dashboard_last_six_months;
-DROP TABLE dashboard_previous_six_months;
-DROP TABLE dashboard_this_year;
-DROP TABLE dashboard_last_year;
-DROP TABLE dashboard_all_time;
+DROP TABLE dashboard;

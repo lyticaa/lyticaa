@@ -43,10 +43,11 @@ type Metric struct {
 func LoadMetrics(userId, dateRange, view string, filter *Filter, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
-	query := `SELECT * FROM metrics_%v_%v WHERE user_id = $1 LIMIT $2 OFFSET $3`
+	query := `SELECT * FROM metrics_%v WHERE user_id = $1 AND date_range = $2 LIMIT $3 OFFSET $4`
 	_ = db.Select(&metrics,
-		fmt.Sprintf(query, view, dateRange),
+		fmt.Sprintf(query, view),
 		userId,
+		dateRange,
 		filter.Length,
 		filter.Start,
 	)
@@ -57,8 +58,8 @@ func LoadMetrics(userId, dateRange, view string, filter *Filter, db *sqlx.DB) *[
 func TotalMetrics(userId, dateRange, view string, db *sqlx.DB) int64 {
 	var count int64
 
-	query := `SELECT COUNT(id) FROM metrics_%v_%v WHERE user_id = $1`
-	_ = db.QueryRow(fmt.Sprintf(query, view, dateRange), userId).Scan(&count)
+	query := `SELECT COUNT(id) FROM metrics_%v WHERE user_id = $1 AND date_range = $2`
+	_ = db.QueryRow(fmt.Sprintf(query, view), userId, dateRange).Scan(&count)
 
 	return count
 }

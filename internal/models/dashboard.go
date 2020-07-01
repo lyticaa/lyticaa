@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -30,8 +29,8 @@ type Dashboard struct {
 func LoadDashboard(userId, dateRange string, db *sqlx.DB) *[]Dashboard {
 	var dashboard []Dashboard
 
-	query := `SELECT * FROM dashboard_%v WHERE user_id = $1`
-	_ = db.Select(&dashboard, fmt.Sprintf(query, dateRange), userId)
+	query := `SELECT * FROM dashboard WHERE user_id = $1 AND date_range = $2`
+	_ = db.Select(&dashboard, query, userId, dateRange)
 
 	return &dashboard
 }
@@ -39,8 +38,12 @@ func LoadDashboard(userId, dateRange string, db *sqlx.DB) *[]Dashboard {
 func LoadDashboardTotalSales(userId, dateRange string, db *sqlx.DB) *[]Dashboard {
 	var dashboard []Dashboard
 
-	query := `SELECT date_time, marketplace, SUM(total_sales) FROM dashboard_%v WHERE user_id = $1 GROUP BY date_time, marketplace`
-	_ = db.Select(&dashboard, fmt.Sprintf(query, dateRange), userId)
+	query := `SELECT
+       date_time,
+       marketplace, 
+       SUM(total_sales) FROM dashboard WHERE user_id = $1
+                                         AND date_range = $2 GROUP BY date_time, marketplace`
+	_ = db.Select(&dashboard, query, userId, dateRange)
 
 	return &dashboard
 }
@@ -48,7 +51,7 @@ func LoadDashboardTotalSales(userId, dateRange string, db *sqlx.DB) *[]Dashboard
 func LoadDashboardTotals(userId, dateRange string, db *sqlx.DB) *Dashboard {
 	var dashboard Dashboard
 
-	query := `SELECT,
+	query := `SELECT
        SUM(units_sold),
        SUM(amazon_costs),
        SUM(product_costs),
@@ -58,10 +61,9 @@ func LoadDashboardTotals(userId, dateRange string, db *sqlx.DB) *Dashboard {
        SUM(promotional_rebates),
        SUM(total_costs),
        SUM(gross_margin),
-       SUM(net_margin)
-FROM dashboard_%v
-WHERE user_id = $1`
-	_ = db.QueryRow(fmt.Sprintf(query, dateRange), userId).Scan(
+       SUM(net_margin) FROM dashboard WHERE user_id = $1 
+                                        AND date_range = $2`
+	_ = db.QueryRow(query, userId, dateRange).Scan(
 		&dashboard.UnitsSold,
 		&dashboard.AmazonCosts,
 		&dashboard.ProductCosts,
