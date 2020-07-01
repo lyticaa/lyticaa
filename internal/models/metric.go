@@ -25,6 +25,7 @@ type Metric struct {
 	Refunds                    float64   `db:"refunds"`
 	RefundsPercentage          float64   `db:"refunds_percentage"`
 	TotalCosts                 float64   `db:"total_costs"`
+	TotalCostsPercentage       float64   `db:"total_costs_percentage"`
 	ShippingCredits            float64   `db:"shipping_credits"`
 	ShippingCreditsTax         float64   `db:"shipping_credits_tax"`
 	PromotionalRebates         float64   `db:"promotional_rebates"`
@@ -39,11 +40,25 @@ type Metric struct {
 	UpdatedAt                  time.Time `db:"updated_at"`
 }
 
-func LoadMetrics(userId, dateRange, view string, db *sqlx.DB) *[]Metric {
+func LoadMetrics(userId, dateRange, view string, filter *Filter, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
-	query := `SELECT * FROM metrics_%v_%v WHERE user_id = $1`
-	_ = db.Select(&metrics, fmt.Sprintf(query, view, dateRange), userId)
+	query := `SELECT * FROM metrics_%v_%v WHERE user_id = $1 LIMIT $2 OFFSET $3`
+	_ = db.Select(&metrics,
+		fmt.Sprintf(query, view, dateRange),
+		userId,
+		filter.Length,
+		filter.Start,
+	)
 
 	return &metrics
+}
+
+func TotalMetrics(userId, dateRange, view string, db *sqlx.DB) int64 {
+	var count int64
+
+	query := `SELECT COUNT(id) FROM metrics_%v_%v WHERE user_id = $1`
+	_ = db.QueryRow(fmt.Sprintf(query, view, dateRange), userId).Scan(&count)
+
+	return count
 }

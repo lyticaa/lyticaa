@@ -1,7 +1,7 @@
 package metrics
 
 import (
-	"gitlab.com/getlytica/lytica-app/internal/web/lib/chart"
+	"gitlab.com/getlytica/lytica-app/internal/web/lib/data"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"
@@ -9,7 +9,7 @@ import (
 )
 
 type Metrics struct {
-	chart        *chart.Chart
+	data         *data.Data
 	db           *sqlx.DB
 	sessionStore *redistore.RediStore
 	logger       zerolog.Logger
@@ -17,7 +17,7 @@ type Metrics struct {
 
 func NewMetrics(db *sqlx.DB, sessionStore *redistore.RediStore, log zerolog.Logger) *Metrics {
 	return &Metrics{
-		chart:        chart.NewChart(),
+		data:         data.NewData(db),
 		sessionStore: sessionStore,
 		logger:       log,
 		db:           db,

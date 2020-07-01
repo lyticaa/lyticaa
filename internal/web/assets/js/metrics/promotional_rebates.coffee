@@ -68,11 +68,11 @@ export default class MetricsPromotionalRebates
         'error': (j) ->
           $('.alert.metrics-promotional-rebates-load-error').show()
       'columns': [
-        { 'data': 'date' }
+        { 'data': 'marketplace' }
         { 'data': 'sku' }
-        { 'data': 'costOfCoupons' }
-        { 'data': 'quantity' }
+        { 'data': 'description' }
         { 'data': 'promotionalRebates' }
+        { 'data': 'promotionalRebatesTax' }
       ]
       'language': {
         'infoFiltered': ''

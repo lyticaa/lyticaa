@@ -68,9 +68,9 @@ export default class MetricsRefunds
         'error': (j) ->
           $('.alert.metrics-refunds-load-error').show()
       'columns': [
+        { 'data': 'marketplace' }
         { 'data': 'sku' }
         { 'data': 'description' }
-        { 'data': 'marketplace' }
         { 'data': 'refunds' }
         { 'data': 'refundsPercentage' }
       ]

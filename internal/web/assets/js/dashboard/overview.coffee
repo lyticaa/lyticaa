@@ -1,4 +1,5 @@
 import AlertsHelper   from '../helpers/alerts'
+import CardsHelper    from '../helpers/cards'
 import ChartsHelper   from '../helpers/charts'
 import TemplateHelper from '../helpers/template'
 import URLHelper      from '../helpers/url'
@@ -10,6 +11,7 @@ import FiltersHelper  from '../helpers/filters'
 export default class DashboardOverview
   constructor: ->
     this.alerts = new AlertsHelper()
+    this.cards = new CardsHelper()
     this.charts = new ChartsHelper()
     this.template = new TemplateHelper()
     this.url = new URLHelper()
@@ -104,56 +106,16 @@ export default class DashboardOverview
           else
             $('#dashboard-net-margin-sparkline').html('')
 
-          d.paintMetric(
-            'dashboard-units-sold',
-            j.unitsSold.total.value,
-            j.unitsSold.total.diff
-          )
-          d.paintMetric(
-            'dashboard-amazon-costs',
-            j.amazonCosts.total.value,
-            j.amazonCosts.total.diff
-          )
-          d.paintMetric(
-            'dashboard-product-costs',
-            j.productCosts.total.value,
-            j.productCosts.total.diff
-          )
-          d.paintMetric(
-            'dashboard-advertising-spend',
-            j.advertisingSpend.total.value,
-            j.advertisingSpend.total.diff
-          )
-          d.paintMetric(
-            'dashboard-refunds',
-            j.refunds.total.value,
-            j.refunds.total.diff
-          )
-          d.paintMetric(
-            'dashboard-shipping-credits',
-            j.shippingCredits.total.value,
-            j.shippingCredits.total.diff
-          )
-          d.paintMetric(
-            'dashboard-promotional-rebates',
-            j.promotionalRebates.total.value,
-            j.promotionalRebates.total.diff
-          )
-          d.paintMetric(
-            'dashboard-total-costs',
-            j.totalCosts.total.value,
-            j.totalCosts.total.diff
-          )
-          d.paintMetric(
-            'dashboard-gross-margin',
-            j.grossMargin.total.value,
-            j.grossMargin.total.diff
-          )
-          d.paintMetric(
-            'dashboard-net-margin',
-            j.netMargin.total.value,
-            j.netMargin.total.diff
-          )
+          d.cards.paint('dashboard-units-sold', j.unitsSold.total.value, j.unitsSold.total.diff)
+          d.cards.paint('dashboard-amazon-costs', j.amazonCosts.total.value, j.amazonCosts.total.diff)
+          d.cards.paint('dashboard-product-costs', j.productCosts.total.value, j.productCosts.total.diff)
+          d.cards.paint('dashboard-advertising-spend', j.advertisingSpend.total.value, j.advertisingSpend.total.diff)
+          d.cards.paint('dashboard-refunds', j.refunds.total.value, j.refunds.total.diff)
+          d.cards.paint('dashboard-shipping-credits', j.shippingCredits.total.value, j.shippingCredits.total.diff)
+          d.cards.paint('dashboard-promotional-rebates', j.promotionalRebates.total.value, j.promotionalRebates.total.diff)
+          d.cards.paint('dashboard-total-costs', j.totalCosts.total.value, j.totalCosts.total.diff)
+          d.cards.paint('dashboard-gross-margin', j.grossMargin.total.value, j.grossMargin.total.diff)
+          d.cards.paint('dashboard-net-margin', j.netMargin.total.value, j.netMargin.total.diff)
 
           d.template.renderIcons()
         422: ->
@@ -179,32 +141,5 @@ export default class DashboardOverview
     $('button.reload').on 'click', (e) ->
       p.load()
       return
-
-    return
-
-  #
-  # Paint metric.
-  #
-  paintMetric: (cssClass, total, diff) ->
-    $("h3.#{cssClass}").text(total)
-    $("span.diff.#{cssClass}").text("#{diff}%")
-    $("span.diff.#{cssClass}").next().remove()
-
-    if diff > 0
-      arrow = 'arrow-up'
-      $("span.diff.#{cssClass}").parent().removeClass().addClass 'text-success'
-    else if diff == 0
-      arrow = 'minus'
-      $("span.diff.#{cssClass}").parent().removeClass().addClass 'text-warning'
-    else
-      arrow = 'arrow-down'
-      $("span.diff.#{cssClass}").parent().removeClass().addClass 'text-danger'
-
-    $("span.diff.#{cssClass}").parent().append(
-      $('<i>')
-        .attr('data-feather', arrow)
-        .addClass('icon-sm')
-        .addClass('mb-1')
-    )
 
     return

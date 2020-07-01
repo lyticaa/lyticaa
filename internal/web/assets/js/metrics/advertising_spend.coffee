@@ -69,9 +69,9 @@ export default class MetricsAdvertisingSpend
         'error': (j) ->
           $('.alert.metrics-advertising-spend-load-error').show()
       'columns': [
+        { 'data': 'marketplace' }
         { 'data': 'sku' }
         { 'data': 'description' }
-        { 'data': 'marketplace' }
         { 'data': 'advertisingSpend' }
         { 'data': 'advertisingSpendPercentage' }
       ]

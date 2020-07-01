@@ -39,7 +39,7 @@ func LoadDashboard(userId, dateRange string, db *sqlx.DB) *[]Dashboard {
 func LoadDashboardTotalSales(userId, dateRange string, db *sqlx.DB) *[]Dashboard {
 	var dashboard []Dashboard
 
-	query := `SELECT date_time, marketplace, SUM(total_sales) FROM dashboard_%v WHERE user_id = $1 GROUP BY date_time, marketplace_id`
+	query := `SELECT date_time, marketplace, SUM(total_sales) FROM dashboard_%v WHERE user_id = $1 GROUP BY date_time, marketplace`
 	_ = db.Select(&dashboard, fmt.Sprintf(query, dateRange), userId)
 
 	return &dashboard

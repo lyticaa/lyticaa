@@ -28,11 +28,25 @@ type Cohort struct {
 	UpdatedAt          time.Time `db:"updated_at"`
 }
 
-func LoadCohorts(userId, dateRange, view string, db *sqlx.DB) *[]Cohort {
+func LoadCohorts(userId, dateRange, view string, filter *Filter, db *sqlx.DB) *[]Cohort {
 	var cohorts []Cohort
 
 	query := `SELECT * FROM cohorts_%v_%v WHERE user_id = $1`
-	_ = db.Select(&cohorts, fmt.Sprintf(query, view, dateRange), userId)
+	_ = db.Select(&cohorts,
+		fmt.Sprintf(query, view, dateRange),
+		userId,
+		filter.Length,
+		filter.Start,
+	)
 
 	return &cohorts
+}
+
+func TotalCohorts(userId, dateRange, view string, db *sqlx.DB) int64 {
+	var count int64
+
+	query := `SELECT COUNT(id) FROM cohorts_%v_%v WHERE user_id = $1`
+	_ = db.QueryRow(fmt.Sprintf(query, view, dateRange), userId).Scan(&count)
+
+	return count
 }

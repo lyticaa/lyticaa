@@ -7,6 +7,8 @@ import (
 	"gitlab.com/getlytica/lytica-app/internal/models"
 	"gitlab.com/getlytica/lytica-app/internal/web/helpers"
 	"gitlab.com/getlytica/lytica-app/internal/web/types"
+
+	"github.com/gorilla/mux"
 )
 
 func (c *Cohorts) HighMargin(w http.ResponseWriter, r *http.Request) {
@@ -16,6 +18,7 @@ func (c *Cohorts) HighMargin(w http.ResponseWriter, r *http.Request) {
 		"partials/_nav",
 		"partials/nav/_main",
 		"partials/nav/account/_main",
+		"partials/cohorts/_margin",
 		"cohorts/high_margin",
 		"partials/_filters",
 	}
@@ -24,11 +27,21 @@ func (c *Cohorts) HighMargin(w http.ResponseWriter, r *http.Request) {
 
 func (c *Cohorts) HighMarginByDate(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(c.sessionStore, c.logger, w, r)
-	_ = session.Values["User"].(models.User)
+	user := session.Values["User"].(models.User)
 
-	table := []types.CohortTable{}
-	byDate := types.Cohort{Data: table}
+	params := mux.Vars(r)
+	dateRange := params["dateRange"]
 
+	ok, _ := helpers.ValidateInput(helpers.ValidateDateRange{DateRange: dateRange}, &c.logger)
+	if !ok {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+
+	var byDate types.Cohort
+	byDate.Draw = helpers.DtDraw(r)
+
+	c.data.Cohorts(user.UserId, dateRange, highMargin, &byDate, helpers.BuildFilter(r))
 	js, err := json.Marshal(byDate)
 	if err != nil {
 		c.logger.Error().Err(err).Msg("unable to marshal data")

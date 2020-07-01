@@ -1,25 +1,14 @@
 package types
 
-type CohortSummary struct {
-	TotalSales       Card `json:"totalSales"`
-	AmazonCosts      Card `json:"amazonCosts"`
-	ProductCosts     Card `json:"productCosts"`
-	AdvertisingSpend Card `json:"advertisingSpend"`
-	Margin           Card `json:"margin"`
-}
-
 type CohortTable struct {
 	SKU                string  `json:"sku"`
-	ASIN               string  `json:"asin"`
-	ProductName        string  `json:"productName"`
+	Description        string  `json:"description"`
+	Marketplace        string  `json:"marketplace"`
 	TotalSales         float64 `json:"totalSales"`
-	GrossQuantitySold  int64   `json:"grossQuantitySold"`
-	NetQuantitySold    int64   `json:"netQuantitySold"`
+	Quantity           int64   `json:"quantity"`
 	AmazonCosts        float64 `json:"amazonCosts"`
 	ProductCosts       float64 `json:"productCosts"`
-	CostOfCoupons      float64 `json:"costOfCoupons"`
 	AdvertisingSpend   float64 `json:"advertisingSpend"`
-	Coupons            int64   `json:"coupons"`
 	Refunds            float64 `json:"refunds"`
 	ShippingCredits    float64 `json:"shippingCredits"`
 	PromotionalRebates float64 `json:"promotionalRebates"`
@@ -28,9 +17,13 @@ type CohortTable struct {
 }
 
 type Cohort struct {
-	CohortSummary   `json:"cohortSummary"`
-	Data            []CohortTable `json:"data"`
-	Draw            int64         `json:"draw"`
-	RecordsTotal    int64         `json:"recordsTotal"`
-	RecordsFiltered int64         `json:"recordsFiltered"`
+	TotalSales       Card          `json:"totalSales"`
+	AmazonCosts      Card          `json:"amazonCosts"`
+	ProductCosts     Card          `json:"productCosts"`
+	AdvertisingSpend Card          `json:"advertisingSpend"`
+	NetMargin        Card          `json:"netMargin"`
+	Data             []CohortTable `json:"data"`
+	Draw             int64         `json:"draw"`
+	RecordsTotal     int64         `json:"recordsTotal"`
+	RecordsFiltered  int64         `json:"recordsFiltered"`
 }

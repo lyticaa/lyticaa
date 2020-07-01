@@ -68,11 +68,12 @@ export default class MetricsGrossMargin
         'error': (j) ->
           $('.alert.metrics-gross-margin-load-error').show()
       'columns': [
+        { 'data': 'marketplace' }
         { 'data': 'sku' }
-        { 'data': 'quantitySold' }
-        { 'data': 'quantitySoldCoupons' }
-        { 'data': 'salePrice' }
-        { 'data': 'totalRevenue' }
+        { 'data': 'description' }
+        { 'data': 'productCosts' }
+        { 'data': 'quantity' }
+        { 'data': 'totalSales' }
         { 'data': 'amazonCosts' }
         { 'data': 'shippingCredits' }
         { 'data': 'promotionalRebates' }

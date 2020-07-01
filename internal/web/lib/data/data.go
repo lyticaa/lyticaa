@@ -7,6 +7,7 @@ import (
 )
 
 const (
+	totalSales         = "total_sales"
 	unitsSold          = "units_sold"
 	amazonCosts        = "amazon_costs"
 	productCosts       = "product_costs"

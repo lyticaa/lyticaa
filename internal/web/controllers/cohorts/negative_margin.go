@@ -2,6 +2,7 @@ package cohorts
 
 import (
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"net/http"
 
 	"gitlab.com/getlytica/lytica-app/internal/models"
@@ -16,6 +17,7 @@ func (c *Cohorts) NegativeMargin(w http.ResponseWriter, r *http.Request) {
 		"partials/_nav",
 		"partials/nav/_main",
 		"partials/nav/account/_main",
+		"partials/cohorts/_margin",
 		"cohorts/negative_margin",
 		"partials/_filters",
 	}
@@ -24,11 +26,21 @@ func (c *Cohorts) NegativeMargin(w http.ResponseWriter, r *http.Request) {
 
 func (c *Cohorts) NegativeMarginByDate(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(c.sessionStore, c.logger, w, r)
-	_ = session.Values["User"].(models.User)
+	user := session.Values["User"].(models.User)
 
-	table := []types.CohortTable{}
-	byDate := types.Cohort{Data: table}
+	params := mux.Vars(r)
+	dateRange := params["dateRange"]
 
+	ok, _ := helpers.ValidateInput(helpers.ValidateDateRange{DateRange: dateRange}, &c.logger)
+	if !ok {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
+	}
+
+	var byDate types.Cohort
+	byDate.Draw = helpers.DtDraw(r)
+
+	c.data.Cohorts(user.UserId, dateRange, negativeMargin, &byDate, helpers.BuildFilter(r))
 	js, err := json.Marshal(byDate)
 	if err != nil {
 		c.logger.Error().Err(err).Msg("unable to marshal data")

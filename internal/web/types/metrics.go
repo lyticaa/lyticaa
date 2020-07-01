@@ -45,10 +45,10 @@ type TotalSales struct {
 }
 
 type UnitsSoldTable struct {
-	SKU            string `json:"sku"`
-	Description    string `json:"description"`
-	Marketplace    string `json:"marketplace"`
-	TotalUnitsSold int64  `json:"totalUnitsSold"`
+	SKU         string `json:"sku"`
+	Description string `json:"description"`
+	Marketplace string `json:"marketplace"`
+	Quantity    int64  `json:"quantity"`
 }
 
 type UnitsSold struct {
@@ -57,10 +57,10 @@ type UnitsSold struct {
 }
 
 type AmazonCostsTable struct {
-	SKU              string  `json:"sku"`
-	Description      string  `json:"type"`
-	Marketplace      string  `json:"marketplace"`
-	TotalAmazonCosts float64 `json:"totalAmazonCosts"`
+	SKU         string  `json:"sku"`
+	Description string  `json:"type"`
+	Marketplace string  `json:"marketplace"`
+	AmazonCosts float64 `json:"amazonCosts"`
 }
 
 type AmazonCosts struct {
@@ -69,14 +69,14 @@ type AmazonCosts struct {
 }
 
 type ProductCostsTable struct {
-	SKU               string  `json:"sku"`
-	Description       string  `json:"description"`
-	Marketplace       string  `json:"marketplace"`
-	QuantitySold      int64   `json:"quantitySold"`
-	ProductCosts      float64 `json:"productCosts"`
-	AdvertisingSpend  float64 `json:"advertisingSpend"`
-	Refunds           float64 `json:"refunds"`
-	TotalProductCosts float64 `json:"totalProductCosts"`
+	SKU              string  `json:"sku"`
+	Description      string  `json:"description"`
+	Marketplace      string  `json:"marketplace"`
+	Quantity         int64   `json:"quantity"`
+	ProductCosts     float64 `json:"productCosts"`
+	AdvertisingSpend float64 `json:"advertisingSpend"`
+	Refunds          float64 `json:"refunds"`
+	TotalCosts       float64 `json:"totalCosts"`
 }
 
 type ProductCosts struct {
@@ -153,18 +153,18 @@ type TotalCosts struct {
 }
 
 type GrossMarginTable struct {
-	SKU                  string  `json:"sku"`
-	Description          string  `json:"description"`
-	Marketplace          string  `json:"marketplace"`
-	ProductCosts         float64 `json:"productCosts"`
-	QuantitySold         int64   `json:"quantitySold"`
-	TotalRevenue         float64 `json:"totalRevenue"`
-	AmazonCosts          float64 `json:"amazonCosts"`
-	ShippingCredits      float64 `json:"shippingCredits"`
-	PromotionalRebates   float64 `json:"promotionalRebates"`
-	GrossMargin          float64 `json:"grossMargin"`
-	SalesTaxCollected    float64 `json:"salesTaxCollected"`
-	TotalAmountCollected float64 `json:"totalAmountCollected"`
+	SKU                string  `json:"sku"`
+	Description        string  `json:"description"`
+	Marketplace        string  `json:"marketplace"`
+	ProductCosts       float64 `json:"productCosts"`
+	Quantity           int64   `json:"quantity"`
+	TotalSales         float64 `json:"totalSales"`
+	AmazonCosts        float64 `json:"amazonCosts"`
+	ShippingCredits    float64 `json:"shippingCredits"`
+	PromotionalRebates float64 `json:"promotionalRebates"`
+	GrossMargin        float64 `json:"grossMargin"`
+	SalesTaxCollected  float64 `json:"salesTaxCollected"`
+	TotalCollected     float64 `json:"totalCollected"`
 }
 
 type GrossMargin struct {
@@ -179,7 +179,7 @@ type NetMarginTable struct {
 	GrossMargin   float64 `json:"grossMargin"`
 	TotalCosts    float64 `json:"totalCosts"`
 	NetMargin     float64 `json:"netMargin"`
-	QuantitySold  int64   `json:"quantitySold"`
+	Quantity      int64   `json:"quantity"`
 	NetMarginUnit float64 `json:"netMarginUnit"`
 	ROI           float64 `json:"roi"`
 }

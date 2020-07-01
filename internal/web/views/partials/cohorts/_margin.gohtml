@@ -1,0 +1,164 @@
+{{ define "cohorts::margin" }}
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="alert alert-icon-danger text-center pt-3 w-100 cohorts-load-error" style="display: none;">
+                <i data-feather="alert-triangle"></i>
+                Loading your cohorts has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <button class="btn btn-primary loading mb-3" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="row flex-grow">
+                <div class="col grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                <h6 class="card-title mb-0">Total Sales</h6>
+                            </div>
+                            <div class="row">
+                                <div class="col-8 col-md-12 col-xl-7">
+                                    <h3 class="mb-2 cohorts-total-sales">--</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-warning">
+                                            <span class="diff cohorts-total-sales">+0%</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-4 col-md-12 col-xl-5">
+                                    <div id="cohorts-total-sales-sparkline" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                <h6 class="card-title mb-0">Amazon Costs</h6>
+                            </div>
+                            <div class="row">
+                                <div class="col-8 col-md-12 col-xl-7">
+                                    <h3 class="mb-2 cohorts-amazon-costs">--</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-warning">
+                                            <span class="diff cohorts-amazon-costs">+0%</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-4 col-md-12 col-xl-5">
+                                    <div id="cohorts-amazon-costs-sparkline" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                <h6 class="card-title mb-0">Product Costs</h6>
+                            </div>
+                            <div class="row">
+                                <div class="col-8 col-md-12 col-xl-7">
+                                    <h3 class="mb-2 cohorts-product-costs">--</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-warning">
+                                            <span class="diff cohorts-product-costs">+0%</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-4 col-md-12 col-xl-5">
+                                    <div id="cohorts-product-costs-sparkline" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                <h6 class="card-title mb-0">Advertising Spend</h6>
+                            </div>
+                            <div class="row">
+                                <div class="col-8 col-md-12 col-xl-7">
+                                    <h3 class="mb-2 cohorts-advertising-spend">--</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-warning">
+                                            <span class="diff cohorts-advertising-spend">+0%</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-4 col-md-12 col-xl-5">
+                                    <div id="cohorts-advertising-spend-sparkline" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-baseline mb-2">
+                                <h6 class="card-title mb-0">Net Margin</h6>
+                            </div>
+                            <div class="row">
+                                <div class="col-8 col-md-12 col-xl-7">
+                                    <h3 class="mb-2 cohorts-net-margin">--</h3>
+                                    <div class="d-flex align-items-baseline">
+                                        <p class="text-warning">
+                                            <span class="diff cohorts-net-margin">+0%</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-4 col-md-12 col-xl-5">
+                                    <div id="cohorts-net-margin-sparkline" class="mt-md-3 mt-xl-0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive overflow-auto">
+                        <table id="cohorts-table" class="table w-100">
+                            <thead>
+                                <tr>
+                                    <th>Marketplace</th>
+                                    <th>SKU</th>
+                                    <th>Product</th>
+                                    <th>Total Sales</th>
+                                    <th>Quantity Sold</th>
+                                    <th>Amazon Costs</th>
+                                    <th>Product Costs</th>
+                                    <th>Advertising Spend</th>
+                                    <th>Refunds</th>
+                                    <th>Shipping Credits</th>
+                                    <th>Promotional Rebates</th>
+                                    <th>Total Costs</th>
+                                    <th>Net Margin</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}

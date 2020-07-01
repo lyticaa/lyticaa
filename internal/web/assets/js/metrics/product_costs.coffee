@@ -68,10 +68,10 @@ export default class MetricsProductCosts
         'error': (j) ->
           $('.alert.metrics-product-costs-load-error').show()
       'columns': [
+        { 'data': 'marketplace' }
         { 'data': 'sku' }
         { 'data': 'description' }
-        { 'data': 'marketplace' }
-        { 'data': 'quantitySold' }
+        { 'data': 'quantity' }
         { 'data': 'productCosts' }
         { 'data': 'advertisingSpend' }
         { 'data': 'refunds' }

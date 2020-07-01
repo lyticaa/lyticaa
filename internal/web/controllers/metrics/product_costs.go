@@ -26,7 +26,7 @@ func (m *Metrics) ProductCosts(w http.ResponseWriter, r *http.Request) {
 
 func (m *Metrics) ProductCostsByDate(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-	_ = session.Values["User"].(models.User)
+	user := session.Values["User"].(models.User)
 
 	params := mux.Vars(r)
 	dateRange := params["dateRange"]
@@ -38,6 +38,9 @@ func (m *Metrics) ProductCostsByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var byDate types.ProductCosts
+	byDate.Draw = helpers.DtDraw(r)
+
+	m.data.MetricsProductCosts(user.UserId, dateRange, &byDate, helpers.BuildFilter(r))
 	js, err := json.Marshal(byDate)
 	if err != nil {
 		m.logger.Error().Err(err).Msg("unable to marshal data")

@@ -68,9 +68,9 @@ export default class MetricsTotalCosts
         'error': (j) ->
           $('.alert.metrics-total-costs-load-error').show()
       'columns': [
+        { 'data': 'marketplace' }
         { 'data': 'sku' }
         { 'data': 'description' }
-        { 'data': 'marketplace' }
         { 'data': 'amazonCosts' }
         { 'data': 'productCosts' }
         { 'data': 'productCostPerUnit' }
