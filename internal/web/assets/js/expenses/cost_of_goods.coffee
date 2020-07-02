@@ -116,9 +116,8 @@ export default class ExpensesCostOfGoods
       statusCode:
         200: (j) ->
           if j.length > 0
-            $dropdown = $('select#product')
             $.each j, ->
-              $dropdown.append $('<option/>').val(@productId).text("#{@sku} - #{@marketplace} - #{@descriptoion}")
+              $('select#product').append $('<option/>').val(@productId).text("#{@sku} - #{@marketplace} - #{@descriptoion}")
             return
           else
             $('.alert.expenses-cost-of-goods-products-empty').fadeIn(400, ->

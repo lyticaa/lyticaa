@@ -116,9 +116,8 @@ export default class ExpensesOther
       timeout: 10000
       statusCode:
         200: (j) ->
-          $dropdown = $('select#currency')
           $.each j, ->
-            $dropdown.append $('<option/>').val(@currencyId).text("#{@code} (#{@symbol})")
+            $('select#currency').append $('<option/>').val(@currencyId).text("#{@code} (#{@symbol})")
           return
     ).fail ->
       $('.alert.expenses-other-currencies-load-error').fadeIn()
