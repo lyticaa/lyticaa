@@ -5,7 +5,7 @@
   "main": "./internal/core/app/assets/js/app.js",
   "dependencies": {
     "bootstrap": "4.3.1",
-    "bootstrap-datepicker": "^1.9.0",
+    "bootstrap-datepicker": "1.7.0",
     "coffeescript": "^2.5.1",
     "datatables.net": "^1.10.20",
     "datatables.net-bs4": "^1.10.20",

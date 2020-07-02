@@ -33,11 +33,46 @@ func (e *Expenses) CostOfGoodsByDate(w http.ResponseWriter, r *http.Request) {
 	e.data.ExpensesCostOfGoods(user.UserId, &byDate, helpers.BuildFilter(r))
 	js, err := json.Marshal(byDate)
 	if err != nil {
-		e.logger.Error().Err(err).Msg("unable to marshal data")
+		e.logger.Error().Err(err).Msg("failed to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(js)
+}
+
+func (e *Expenses) Products(w http.ResponseWriter, r *http.Request) {
+	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
+	user := session.Values["User"].(models.User)
+
+	js, err := json.Marshal(e.paintProducts(user.UserId))
+	if err != nil {
+		e.logger.Error().Err(err).Msg("failed to marshal data")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	_, _ = w.Write(js)
+}
+
+func (e *Expenses) paintProducts(userId string) *[]types.Product {
+	var productList []types.Product
+
+	products := models.LoadProducts(userId, e.db)
+	for _, product := range *products {
+		productList = append(productList, types.Product{
+			ProductId:   product.ProductId,
+			SKU:         product.SKU,
+			Marketplace: product.Marketplace,
+			Description: product.Description,
+		})
+	}
+
+	if len(productList) == 0 {
+		productList = []types.Product{}
+	}
+
+	return &productList
 }

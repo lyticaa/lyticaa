@@ -18,8 +18,12 @@ func (d *Dashboard) Overview(w http.ResponseWriter, r *http.Request) {
 		"partials/_nav",
 		"partials/nav/_main",
 		"partials/nav/account/_main",
+		"partials/filters/_filters",
+		"partials/filters/_date",
+		"partials/filters/_upload",
+		"partials/filters/_upload",
+
 		"dashboard/overview",
-		"partials/_filters",
 	}
 	helpers.RenderTemplate(w, t, session.Values)
 }

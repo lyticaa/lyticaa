@@ -47,7 +47,7 @@
                                     <th>SKU</th>
                                     <th>Description</th>
                                     <th>From Date</th>
-                                    <th>Cost</th>
+                                    <th>Amount</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -67,40 +67,43 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <form id="expenses-cost-of-goods">
+                <form id="expenses-cost-of-goods">
+                    <div class="modal-body">
                         <div class="form-group">
                             <label for="product">Product</label>
-                            <select id="product" class="form-control"></select>
+                            <div class="alert alert-warning text-justify pt-3 w-100 expenses-cost-of-goods-products-empty" role="alert" style="display:none;">
+                                You currently have no products on your account. This typically occurs only while we're processing your data for the very first time. However should this persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+                            </div>
+                            <select class="form-control" id="product" name="product"></select>
                         </div>
                         <div class="form-group">
                             <label for="email">Description</label>
-                            <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="A simple description or explanation for the cost (e.g.: manufacturing)."></i>
-                            <input type="text" class="form-control" id="description" value="" placeholder="">
+                            <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="A simple description or explanation for the cost (e.g.: 'Manufacturing of..')."></i>
+                            <input type="text" class="form-control" id="description" name="description" value="" placeholder="">
                         </div>
                         <div class="form-group">
                             <label for="start-date">From Date</label>
                             <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="The date (inclusive) from when this cost should apply."></i>
-                            <div class="input-group date datepicker" id="from-date">
-                                <input type="text" class="form-control"/>
+                            <div class="input-group date datepicker">
+                                <input type="text" class="form-control" id="from-date" name="from-date"/>
                                 <span class="input-group-addon bg-transparent"><i data-feather="calendar"></i></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label for="cost">Cost</label>
+                                    <label for="cost">Amount</label>
                                     <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="The cost needs to be calculated in the same currency as the marketplace (e.g.: USD for amazon.com)"></i>
-                                    <input type="text" class="form-control"/>
+                                    <input type="text" class="form-control" id="amount" name="amount"/>
                                 </div>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

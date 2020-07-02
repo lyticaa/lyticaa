@@ -61,7 +61,7 @@ export default class ExpensesCostOfGoods
         { 'data': 'sku' }
         { 'data': 'description' }
         { 'data': 'fromDate' }
-        { 'data': 'cost' }
+        { 'data': 'amount' }
       ]
       'language': {
         'infoFiltered': ''
@@ -90,12 +90,42 @@ export default class ExpensesCostOfGoods
       ex.alerts.resetErrors()
       ex.modals.resetForm()
 
+      ex.loadProducts()
+
       ex.filters.datePicker('#expenses-cost-of-goods-modal .datepicker')
 
       $('form#expenses-cost-of-goods').on 'submit', (e) ->
         e.preventDefault()
 
         return
+
+    return
+
+  #
+  # Currencies.
+  #
+  loadProducts: ->
+    ex = this
+
+    $('select#product').removeAttr('disabled').html('')
+
+    $.ajax(
+      type: 'GET'
+      url: ex.url.clean() + '/products'
+      timeout: 10000
+      statusCode:
+        200: (j) ->
+          if j.length > 0
+            $dropdown = $('select#product')
+            $.each j, ->
+              $dropdown.append $('<option/>').val(@productId).text("#{@sku} - #{@marketplace} - #{@descriptoion}")
+            return
+          else
+            $('.alert.expenses-cost-of-goods-products-empty').fadeIn(400, ->
+              $('select#product').attr('disabled', 'disabled')
+            )
+    ).fail ->
+      $('.alert.expenses-other-currencies-load-error').fadeIn()
 
     return
 
@@ -114,6 +144,6 @@ export default class ExpensesCostOfGoods
   #
   stop: ->
     this.turbolinks.stop()
-    this.modals.reset('Submit')
+    this.modals.reset('Add')
 
     return

@@ -1,6 +1,8 @@
 package data
 
 import (
+	"fmt"
+
 	"gitlab.com/getlytica/lytica-app/internal/models"
 	"gitlab.com/getlytica/lytica-app/internal/web/types"
 )
@@ -9,11 +11,12 @@ func (d *Data) ExpensesCostOfGoods(userId string, expenses *types.Expenses, filt
 	costOfGoods := models.LoadExpensesCostOfGoods(userId, filter, d.db)
 	for _, item := range *costOfGoods {
 		expenses.Data = append(expenses.Data, types.ExpensesTable{
+			RowId:       item.ExpenseId,
 			SKU:         item.SKU,
 			Description: item.Description,
 			Marketplace: item.Marketplace,
-			Cost:        item.Cost,
 			FromDate:    item.FromDate,
+			Amount:      item.Amount,
 		})
 	}
 
@@ -24,9 +27,11 @@ func (d *Data) ExpensesOther(userId string, expenses *types.Expenses, filter *mo
 	other := models.LoadExpensesOther(userId, filter, d.db)
 	for _, item := range *other {
 		expenses.Data = append(expenses.Data, types.ExpensesTable{
+			RowId:       item.ExpenseId,
 			Description: item.Description,
-			Cost:        item.Cost,
 			DateTime:    item.DateTime,
+			Amount:      item.Amount,
+			Currency:    fmt.Sprintf("%v (%v)", item.CurrencyCode, item.CurrencySymbol),
 		})
 	}
 

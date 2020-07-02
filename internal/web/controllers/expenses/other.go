@@ -41,3 +41,30 @@ func (e *Expenses) OtherByDate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(js)
 }
+
+func (e *Expenses) Currencies(w http.ResponseWriter, r *http.Request) {
+	js, err := json.Marshal(e.paintCurrencies())
+	if err != nil {
+		e.logger.Error().Err(err).Msg("failed to marshal data")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	_, _ = w.Write(js)
+}
+
+func (e *Expenses) paintCurrencies() *[]types.Currency {
+	var currencyList []types.Currency
+
+	currencies := models.LoadCurrencies(e.db)
+	for _, currency := range *currencies {
+		currencyList = append(currencyList, types.Currency{
+			CurrencyId: currency.CurrencyId,
+			Code:       currency.Code,
+			Symbol:     currency.Symbol,
+		})
+	}
+
+	return &currencyList
+}

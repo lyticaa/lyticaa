@@ -1,14 +1,13 @@
-CREATE TABLE expenses_cost_of_goods
+CREATE TABLE products
 (
-    id          BIGSERIAL NOT NULL,
+    id          BIGSERIAL,
+    product_id  UUID DEFAULT UUID_GENERATE_V4(),
     user_id     VARCHAR NOT NULL,
-    marketplace VARCHAR NOT NULL,
     sku         VARCHAR NOT NULL,
+    marketplace VARCHAR NOT NULL,
     description VARCHAR NOT NULL,
-    cost        REAL,
-    from_date   TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    UNIQUE (user_id, marketplace, sku, from_date)
+    UNIQUE (user_id, sku, marketplace)
 );

@@ -45,7 +45,8 @@
                                 <tr>
                                     <th>Description</th>
                                     <th>Date</th>
-                                    <th>Cost</th>
+                                    <th>Amount</th>
+                                    <th>Currency</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -65,43 +66,52 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <form id="expenses-other">
+                <form id="expenses-other">
+                    <div class="modal-body">
                         <div class="form-group">
-                            <label for="email">Description</label>
-                            <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="A simple description or explanation for the cost (e.g.: manufacturing)."></i>
-                            <input type="text" class="form-control" id="description" value="" placeholder="">
+                            <div class="alert alert-danger pages-new-error" style="display: none;">
+                                It appears that something went wrong while trying to save your expense. Please try again and if the problem persists, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="A simple description or explanation for the expense (e.g.: 'Subscription to..')."></i>
+                            <input type="text" class="form-control" id="description" name="description" value="" placeholder="">
                         </div>
                         <div class="form-group">
                             <label for="start-date">Date</label>
                             <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="The date the expense was incurred."></i>
-                            <div class="input-group date datepicker" id="start-date">
-                                <input type="text" class="form-control"/>
+                            <div class="input-group date datepicker">
+                                <input type="text" class="form-control" id="date-time" name="date-time"/>
                                 <span class="input-group-addon bg-transparent"><i data-feather="calendar"></i></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="alert alert-danger text-justify pt-3 w-100 expenses-other-currencies-load-error" style="display: none;">
+                                Loading the currencies has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
                                 <div class="form-group">
-                                    <label for="cost">Cost</label>
-                                    <input type="text" class="form-control"/>
+                                    <label for="cost">Amount</label>
+                                    <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="The amount of the expense incurred (without the currency code)."></i>
+                                    <input type="text" class="form-control" id="amount" name="amount" />
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="currency">Currency</label>
-                                    <select id="currency" class="form-control">
-
-                                    </select>
+                                    <select class="form-control" id="currency" name="currency"></select>
                                 </div>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

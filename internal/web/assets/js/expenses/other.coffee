@@ -2,6 +2,8 @@ import $ from 'jquery'
 window.jQuery = $
 window.$ = $
 
+import 'bootstrap-datepicker'
+
 import AlertsHelper   from '../helpers/alerts'
 import FiltersHelper  from '../helpers/filters'
 import ModalsHelper   from '../helpers/modals'
@@ -29,6 +31,7 @@ export default class ExpensesOther
   #
   init: ->
     this.drawTable()
+    this.new()
 
     return
 
@@ -58,7 +61,8 @@ export default class ExpensesOther
       'columns': [
         { 'data': 'description' }
         { 'data': 'dateTime' }
-        { 'data': 'cost' }
+        { 'data': 'amount' }
+        { 'data': 'currency' }
       ]
       'language': {
         'infoFiltered': ''
@@ -77,7 +81,7 @@ export default class ExpensesOther
     return
 
   #
-  # New cost of good.
+  # New expense.
   #
   new: ->
     ex = this
@@ -87,12 +91,37 @@ export default class ExpensesOther
       ex.alerts.resetErrors()
       ex.modals.resetForm()
 
+      ex.loadCurrencies()
+
       ex.filters.datePicker('#expenses-other-modal .datepicker')
 
       $('form#expenses-other').on 'submit', (e) ->
         e.preventDefault()
 
         return
+
+    return
+
+  #
+  # Currencies.
+  #
+  loadCurrencies: ->
+    ex = this
+
+    $('select#currency').html('')
+
+    $.ajax(
+      type: 'GET'
+      url: ex.url.clean() + '/currencies'
+      timeout: 10000
+      statusCode:
+        200: (j) ->
+          $dropdown = $('select#currency')
+          $.each j, ->
+            $dropdown.append $('<option/>').val(@currencyId).text("#{@code} (#{@symbol})")
+          return
+    ).fail ->
+      $('.alert.expenses-other-currencies-load-error').fadeIn()
 
     return
 
@@ -111,6 +140,6 @@ export default class ExpensesOther
   #
   stop: ->
     this.turbolinks.stop()
-    this.modals.reset('Submit')
+    this.modals.reset('Add')
 
     return
