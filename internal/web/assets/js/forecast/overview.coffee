@@ -19,6 +19,7 @@ export default class ForecastOverview
   init: ->
     this.load()
     this.filters.watchDate(this)
+    this.filters.watchView(this)
 
     return
 
@@ -34,11 +35,13 @@ export default class ForecastOverview
 
     $.ajax(
       type: 'GET'
-      url: d.url.clean() + '/filter/' + $('.date-filter.active').data('range')
+      url: d.url.clean() + '/filter/' + $('.date-filter.active').data('range') + '/view/' + $('.view-filter.btn-primary').data('view')
       timeout: 10000
       statusCode:
         200: (j) ->
           $('button.loading').fadeOut(400, ->
+            if j.chart.line.categories[0].category.length == 0
+              $('.alert.forecast-chart-error').fadeIn()
           )
         422: ->
           $('button.loading').fadeOut(400, ->

@@ -18,7 +18,9 @@ func (m *Metrics) ShippingCredits(w http.ResponseWriter, r *http.Request) {
 		"partials/_nav",
 		"partials/nav/_main",
 		"partials/nav/account/_main",
-		"partials/_filters",
+		"partials/filters/_filters",
+		"partials/filters/_date",
+		"partials/filters/_upload",
 		"metrics/shipping_credits",
 	}
 	helpers.RenderTemplate(w, t, session.Values)

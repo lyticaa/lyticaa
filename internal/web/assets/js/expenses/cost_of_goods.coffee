@@ -3,6 +3,8 @@ window.jQuery = $
 window.$ = $
 
 import AlertsHelper   from '../helpers/alerts'
+import FiltersHelper  from '../helpers/filters'
+import ModalsHelper   from '../helpers/modals'
 import TablesHelper   from '../helpers/tables'
 import TemplateHelper from '../helpers/template'
 import URLHelper      from '../helpers/url'
@@ -16,6 +18,8 @@ require('datatables.net-bs4') window, $
 export default class ExpensesCostOfGoods
   constructor: ->
     this.alerts = new AlertsHelper()
+    this.filters = new FiltersHelper()
+    this.modals = new ModalsHelper()
     this.tables = new TablesHelper()
     this.template = new TemplateHelper()
     this.url = new URLHelper()
@@ -25,6 +29,7 @@ export default class ExpensesCostOfGoods
   #
   init: ->
     this.drawTable()
+    this.new()
 
     return
 
@@ -52,15 +57,11 @@ export default class ExpensesCostOfGoods
         'error': (j) ->
           $('.alert.expenses-cost-of-goods-load-error').show()
       'columns': [
+        { 'data': 'marketplace' }
         { 'data': 'sku' }
-        { 'data': 'asin' }
-        { 'data': 'productName' }
         { 'data': 'description' }
-        { 'data': 'startDate' }
-        { 'data': 'endDate' }
-        { 'data': 'type' }
+        { 'data': 'fromDate' }
         { 'data': 'cost' }
-        { 'data': 'currency' }
       ]
       'language': {
         'infoFiltered': ''
@@ -75,5 +76,44 @@ export default class ExpensesCostOfGoods
       ex.tables.reload($(this), $('table'))
 
     this.tables.cleanup($('table'))
+
+    return
+
+  #
+  # New cost of good.
+  #
+  new: ->
+    ex = this
+
+    $('#expenses-cost-of-goods-modal').on 'shown.bs.modal', ->
+      ex.alerts.resetSuccess()
+      ex.alerts.resetErrors()
+      ex.modals.resetForm()
+
+      ex.filters.datePicker('#expenses-cost-of-goods-modal .datepicker')
+
+      $('form#expenses-cost-of-goods').on 'submit', (e) ->
+        e.preventDefault()
+
+        return
+
+    return
+
+  #
+  # Start.
+  #
+  start: (text) ->
+    this.alerts.resetErrors()
+    this.turbolinks.start()
+    this.modals.disable(text)
+
+    return
+
+  #
+  # Stop.
+  #
+  stop: ->
+    this.turbolinks.stop()
+    this.modals.reset('Submit')
 
     return

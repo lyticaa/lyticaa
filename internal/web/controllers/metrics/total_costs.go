@@ -18,7 +18,9 @@ func (m *Metrics) TotalCosts(w http.ResponseWriter, r *http.Request) {
 		"partials/_nav",
 		"partials/nav/_main",
 		"partials/nav/account/_main",
-		"partials/_filters",
+		"partials/filters/_filters",
+		"partials/filters/_date",
+		"partials/filters/_upload",
 		"metrics/total_costs",
 	}
 	helpers.RenderTemplate(w, t, session.Values)

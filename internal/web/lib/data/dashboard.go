@@ -39,53 +39,53 @@ func (d *Data) Dashboard(userId, dateRange string, dashboard *types.Dashboard) {
 }
 
 func (d *Data) dashboardUnitsSold(current, previous *[]models.Dashboard, dashboard *types.Dashboard) {
-	dashboard.UnitsSold.Total = d.dashboardCard(current, previous, unitsSold)
-	dashboard.UnitsSold.Chart = d.chart.Sparkline(d.dashboardSummary(current, unitsSold))
+	dashboard.UnitsSold.Total = d.dashboardCard(current, previous, models.UnitsSold)
+	dashboard.UnitsSold.Chart = d.chart.Sparkline(d.dashboardSummary(current, models.UnitsSold))
 }
 
 func (d *Data) dashboardAmazonCosts(current, previous *[]models.Dashboard, dashboard *types.Dashboard) {
-	dashboard.AmazonCosts.Total = d.dashboardCard(current, previous, amazonCosts)
-	dashboard.AmazonCosts.Chart = d.chart.Sparkline(d.dashboardSummary(current, amazonCosts))
+	dashboard.AmazonCosts.Total = d.dashboardCard(current, previous, models.AmazonCosts)
+	dashboard.AmazonCosts.Chart = d.chart.Sparkline(d.dashboardSummary(current, models.AmazonCosts))
 }
 
 func (d *Data) dashboardProductCosts(current, previous *[]models.Dashboard, dashboard *types.Dashboard) {
-	dashboard.ProductCosts.Total = d.dashboardCard(current, previous, productCosts)
-	dashboard.ProductCosts.Chart = d.chart.Sparkline(d.dashboardSummary(current, productCosts))
+	dashboard.ProductCosts.Total = d.dashboardCard(current, previous, models.ProductCosts)
+	dashboard.ProductCosts.Chart = d.chart.Sparkline(d.dashboardSummary(current, models.ProductCosts))
 }
 
 func (d *Data) dashboardAdvertisingSpend(current, previous *[]models.Dashboard, dashboard *types.Dashboard) {
-	dashboard.AdvertisingSpend.Total = d.dashboardCard(current, previous, advertisingSpend)
-	dashboard.AdvertisingSpend.Chart = d.chart.Sparkline(d.dashboardSummary(current, advertisingSpend))
+	dashboard.AdvertisingSpend.Total = d.dashboardCard(current, previous, models.AdvertisingSpend)
+	dashboard.AdvertisingSpend.Chart = d.chart.Sparkline(d.dashboardSummary(current, models.AdvertisingSpend))
 }
 
 func (d *Data) dashboardRefunds(current, previous *[]models.Dashboard, dashboard *types.Dashboard) {
-	dashboard.Refunds.Total = d.dashboardCard(current, previous, refunds)
-	dashboard.Refunds.Chart = d.chart.Sparkline(d.dashboardSummary(current, refunds))
+	dashboard.Refunds.Total = d.dashboardCard(current, previous, models.Refunds)
+	dashboard.Refunds.Chart = d.chart.Sparkline(d.dashboardSummary(current, models.Refunds))
 }
 
 func (d *Data) dashboardShippingCredits(current, previous *[]models.Dashboard, dashboard *types.Dashboard) {
-	dashboard.ShippingCredits.Total = d.dashboardCard(current, previous, shippingCredits)
-	dashboard.ShippingCredits.Chart = d.chart.Sparkline(d.dashboardSummary(current, shippingCredits))
+	dashboard.ShippingCredits.Total = d.dashboardCard(current, previous, models.ShippingCredits)
+	dashboard.ShippingCredits.Chart = d.chart.Sparkline(d.dashboardSummary(current, models.ShippingCredits))
 }
 
 func (d *Data) dashboardPromotionalRebates(current, previous *[]models.Dashboard, dashboard *types.Dashboard) {
-	dashboard.PromotionalRebates.Total = d.dashboardCard(current, previous, promotionalRebates)
-	dashboard.PromotionalRebates.Chart = d.chart.Sparkline(d.dashboardSummary(current, promotionalRebates))
+	dashboard.PromotionalRebates.Total = d.dashboardCard(current, previous, models.PromotionalRebates)
+	dashboard.PromotionalRebates.Chart = d.chart.Sparkline(d.dashboardSummary(current, models.PromotionalRebates))
 }
 
 func (d *Data) dashboardTotalCosts(current, previous *[]models.Dashboard, dashboard *types.Dashboard) {
-	dashboard.TotalCosts.Total = d.dashboardCard(current, previous, totalCosts)
-	dashboard.TotalCosts.Chart = d.chart.Sparkline(d.dashboardSummary(current, totalCosts))
+	dashboard.TotalCosts.Total = d.dashboardCard(current, previous, models.TotalCosts)
+	dashboard.TotalCosts.Chart = d.chart.Sparkline(d.dashboardSummary(current, models.TotalCosts))
 }
 
 func (d *Data) dashboardGrossMargin(current, previous *[]models.Dashboard, dashboard *types.Dashboard) {
-	dashboard.GrossMargin.Total = d.dashboardCard(current, previous, grossMargin)
-	dashboard.GrossMargin.Chart = d.chart.Sparkline(d.dashboardSummary(current, grossMargin))
+	dashboard.GrossMargin.Total = d.dashboardCard(current, previous, models.GrossMargin)
+	dashboard.GrossMargin.Chart = d.chart.Sparkline(d.dashboardSummary(current, models.GrossMargin))
 }
 
 func (d *Data) dashboardNetMargin(current, previous *[]models.Dashboard, dashboard *types.Dashboard) {
-	dashboard.NetMargin.Total = d.dashboardCard(current, previous, netMargin)
-	dashboard.NetMargin.Chart = d.chart.Sparkline(d.dashboardSummary(current, netMargin))
+	dashboard.NetMargin.Total = d.dashboardCard(current, previous, models.NetMargin)
+	dashboard.NetMargin.Chart = d.chart.Sparkline(d.dashboardSummary(current, models.NetMargin))
 }
 
 func (d *Data) dashboardCard(current, previous *[]models.Dashboard, card string) types.Total {
@@ -117,25 +117,25 @@ func (d *Data) dashboardSummary(current *[]models.Dashboard, card string) *[]typ
 
 func (d *Data) dashboardItem(card string, item models.Dashboard) float64 {
 	switch card {
-	case unitsSold:
+	case models.UnitsSold:
 		return float64(item.UnitsSold)
-	case amazonCosts:
+	case models.AmazonCosts:
 		return item.AmazonCosts
-	case productCosts:
+	case models.ProductCosts:
 		return item.ProductCosts
-	case advertisingSpend:
+	case models.AdvertisingSpend:
 		return item.AdvertisingSpend
-	case refunds:
+	case models.Refunds:
 		return item.Refunds
-	case shippingCredits:
+	case models.ShippingCredits:
 		return item.ShippingCredits
-	case promotionalRebates:
+	case models.PromotionalRebates:
 		return item.PromotionalRebates
-	case totalCosts:
+	case models.TotalCosts:
 		return item.TotalCosts
-	case grossMargin:
+	case models.GrossMargin:
 		return item.GrossMargin
-	case netMargin:
+	case models.NetMargin:
 		return item.NetMargin
 	default:
 		return 0.0

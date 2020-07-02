@@ -43,6 +43,32 @@ func LoadCohorts(userId, dateRange, view string, filter *Filter, db *sqlx.DB) *[
 	return &cohorts
 }
 
+func LoadCohortsSummary(userId, dateRange, view string, db *sqlx.DB) *[]Cohort {
+	var cohorts []Cohort
+
+	query := `SELECT date_time, 
+       marketplace, 
+       SUM(quantity) AS quantity,
+       SUM(total_sales) AS total_sales,
+       SUM(amazon_costs) AS amazon_costs,
+       SUM(product_costs) AS product_costs,
+       SUM(advertising_spend) AS advertising_spend,
+       SUM(refunds) AS refunds,
+       SUM(shipping_credits) AS shipping_credits,
+       SUM(promotional_rebates) AS promotional_rebates,
+       SUM(total_costs) AS total_costs,
+       SUM(net_margin) FROM cohorts WHERE user_id = $1 
+                                      AND date_range = $2 AND view = $3 GROUP BY date_time, marketplace`
+	_ = db.Select(&cohorts,
+		query,
+		userId,
+		dateRange,
+		view,
+	)
+
+	return &cohorts
+}
+
 func TotalCohorts(userId, dateRange, view string, db *sqlx.DB) int64 {
 	var count int64
 

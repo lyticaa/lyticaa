@@ -4,9 +4,9 @@
 export default class ModalsHelper
   constructor: ->
 
-#
-# Disable.
-#
+  #
+  # Disable.
+  #
   disable: (text) ->
     $('.modal').each ->
       if $(this).is(':visible')
@@ -14,12 +14,21 @@ export default class ModalsHelper
         $('button[type="submit"]').html(text).attr('disabled')
     return
 
-#
-# Reset.
-#
+  #
+  # Reset.
+  #
   reset: (text) ->
     $('.modal').each ->
       if $(this).is(':visible')
         $('button.close-modal').removeAttr('disabled')
         $('button[type="submit"]').html(text).removeAttr('disabled')
+    return
+
+  #
+  # Reset form.
+  #
+  resetForm: ->
+    $('.modal').each ->
+      if $(this).is(':visible')
+        $('form').trigger 'reset'
     return

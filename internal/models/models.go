@@ -14,6 +14,20 @@ type Filter struct {
 	EndDate   time.Time
 }
 
+const (
+	TotalSales         = "total_sales"
+	UnitsSold          = "units_sold"
+	AmazonCosts        = "amazon_costs"
+	ProductCosts       = "product_costs"
+	AdvertisingSpend   = "advertising_spend"
+	Refunds            = "refunds"
+	ShippingCredits    = "shipping_credits"
+	PromotionalRebates = "promotional_rebates"
+	TotalCosts         = "total_costs"
+	GrossMargin        = "gross_margin"
+	NetMargin          = "net_margin"
+)
+
 func NewFilter() *Filter {
 	return &Filter{}
 }

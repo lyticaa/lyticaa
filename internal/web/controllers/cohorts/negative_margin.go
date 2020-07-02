@@ -18,8 +18,10 @@ func (c *Cohorts) NegativeMargin(w http.ResponseWriter, r *http.Request) {
 		"partials/nav/_main",
 		"partials/nav/account/_main",
 		"partials/cohorts/_margin",
+		"partials/filters/_filters",
+		"partials/filters/_date",
+		"partials/filters/_upload",
 		"cohorts/negative_margin",
-		"partials/_filters",
 	}
 	helpers.RenderTemplate(w, t, session.Values)
 }

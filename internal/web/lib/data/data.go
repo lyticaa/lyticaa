@@ -7,17 +7,8 @@ import (
 )
 
 const (
-	totalSales         = "total_sales"
-	unitsSold          = "units_sold"
-	amazonCosts        = "amazon_costs"
-	productCosts       = "product_costs"
-	advertisingSpend   = "advertising_spend"
-	refunds            = "refunds"
-	shippingCredits    = "shipping_credits"
-	promotionalRebates = "promotional_rebates"
-	totalCosts         = "total_costs"
-	grossMargin        = "gross_margin"
-	netMargin          = "net_margin"
+	expensesCostOfGoods = "expenses_cost_of_goods"
+	expensesOther       = "expenses_other"
 )
 
 type Data struct {

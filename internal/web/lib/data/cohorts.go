@@ -7,11 +7,11 @@ import (
 )
 
 func (d *Data) Cohorts(userId, dateRange, view string, cohort *types.Cohort, filter *models.Filter) {
-	current := models.LoadCohorts(userId, dateRange, view, filter, d.db)
+	current := models.LoadCohortsSummary(userId, dateRange, view, d.db)
 
 	var previous []models.Cohort
 	if !helpers.IsDateRangeAllTime(dateRange) {
-		previous = *models.LoadCohorts(userId, helpers.PreviousDateRangeLabel(dateRange), view, filter, d.db)
+		previous = *models.LoadCohortsSummary(userId, helpers.PreviousDateRangeLabel(dateRange), view, d.db)
 	}
 
 	d.cohortsTotalSales(current, &previous, cohort)
@@ -20,7 +20,8 @@ func (d *Data) Cohorts(userId, dateRange, view string, cohort *types.Cohort, fil
 	d.cohortsAdvertisingSpend(current, &previous, cohort)
 	d.cohortsNetMargin(current, &previous, cohort)
 
-	for _, item := range *current {
+	table := models.LoadCohorts(userId, dateRange, view, filter, d.db)
+	for _, item := range *table {
 		cohort.Data = append(cohort.Data, types.CohortTable{
 			SKU:                item.SKU,
 			Description:        item.Description,
@@ -48,28 +49,28 @@ func (d *Data) Cohorts(userId, dateRange, view string, cohort *types.Cohort, fil
 }
 
 func (d *Data) cohortsTotalSales(current, previous *[]models.Cohort, cohort *types.Cohort) {
-	cohort.TotalSales.Total = d.cohortCard(current, previous, totalSales)
-	cohort.TotalSales.Chart = d.chart.Sparkline(d.cohortSummary(current, totalSales))
+	cohort.TotalSales.Total = d.cohortCard(current, previous, models.TotalSales)
+	cohort.TotalSales.Chart = d.chart.Sparkline(d.cohortSummary(current, models.TotalSales))
 }
 
 func (d *Data) cohortsAmazonCosts(current, previous *[]models.Cohort, cohort *types.Cohort) {
-	cohort.AmazonCosts.Total = d.cohortCard(current, previous, amazonCosts)
-	cohort.AmazonCosts.Chart = d.chart.Sparkline(d.cohortSummary(current, amazonCosts))
+	cohort.AmazonCosts.Total = d.cohortCard(current, previous, models.AmazonCosts)
+	cohort.AmazonCosts.Chart = d.chart.Sparkline(d.cohortSummary(current, models.AmazonCosts))
 }
 
 func (d *Data) cohortsProductCosts(current, previous *[]models.Cohort, cohort *types.Cohort) {
-	cohort.ProductCosts.Total = d.cohortCard(current, previous, productCosts)
-	cohort.ProductCosts.Chart = d.chart.Sparkline(d.cohortSummary(current, productCosts))
+	cohort.ProductCosts.Total = d.cohortCard(current, previous, models.ProductCosts)
+	cohort.ProductCosts.Chart = d.chart.Sparkline(d.cohortSummary(current, models.ProductCosts))
 }
 
 func (d *Data) cohortsAdvertisingSpend(current, previous *[]models.Cohort, cohort *types.Cohort) {
-	cohort.AdvertisingSpend.Total = d.cohortCard(current, previous, advertisingSpend)
-	cohort.AdvertisingSpend.Chart = d.chart.Sparkline(d.cohortSummary(current, advertisingSpend))
+	cohort.AdvertisingSpend.Total = d.cohortCard(current, previous, models.AdvertisingSpend)
+	cohort.AdvertisingSpend.Chart = d.chart.Sparkline(d.cohortSummary(current, models.AdvertisingSpend))
 }
 
 func (d *Data) cohortsNetMargin(current, previous *[]models.Cohort, cohort *types.Cohort) {
-	cohort.NetMargin.Total = d.cohortCard(current, previous, netMargin)
-	cohort.NetMargin.Chart = d.chart.Sparkline(d.cohortSummary(current, netMargin))
+	cohort.NetMargin.Total = d.cohortCard(current, previous, models.NetMargin)
+	cohort.NetMargin.Chart = d.chart.Sparkline(d.cohortSummary(current, models.NetMargin))
 }
 
 func (d *Data) cohortCard(current, previous *[]models.Cohort, card string) types.Total {
@@ -101,15 +102,15 @@ func (d *Data) cohortSummary(current *[]models.Cohort, card string) *[]types.Sum
 
 func (d *Data) cohortItem(card string, item models.Cohort) float64 {
 	switch card {
-	case totalSales:
+	case models.TotalSales:
 		return item.TotalSales
-	case amazonCosts:
+	case models.AmazonCosts:
 		return item.AmazonCosts
-	case productCosts:
+	case models.ProductCosts:
 		return item.ProductCosts
-	case advertisingSpend:
+	case models.AdvertisingSpend:
 		return item.AdvertisingSpend
-	case netMargin:
+	case models.NetMargin:
 		return item.NetMargin
 	default:
 		return 0.0

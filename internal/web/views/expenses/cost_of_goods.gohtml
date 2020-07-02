@@ -9,7 +9,7 @@
     </nav>
 {{ end }}
 
-{{ define "filters-extra"}}
+{{ define "filters::extra"}}
     <div class="btn-group">
         <button type="button" class="btn btn-primary btn-icon-text d-none d-md-block mr-2" data-toggle="modal" data-target="#expenses-cost-of-goods-modal">
             <i class="btn-icon-prepend mr-0" data-feather="dollar-sign"></i>
@@ -43,15 +43,11 @@
                         <table id="expenses-cost-of-goods-table" class="table w-100">
                             <thead>
                                 <tr>
+                                    <th>Marketplace</th>
                                     <th>SKU</th>
-                                    <th>ASIN</th>
-                                    <th>Product Name</th>
                                     <th>Description</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
-                                    <th>Type</th>
+                                    <th>From Date</th>
                                     <th>Cost</th>
-                                    <th>Currency</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -72,79 +68,30 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="expenses-cost-of-goods">
                         <div class="form-group">
                             <label for="product">Product</label>
                             <select id="product" class="form-control"></select>
                         </div>
                         <div class="form-group">
-                            <div class="alert alert-info">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad corporis dolores
-                                doloribus esse et iste laboriosam maiores maxime, mollitia nisi numquam omnis praesentium provident quam quasi quia quisquam recusandae vel.
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label for="email">Description</label>
+                            <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="A simple description or explanation for the cost (e.g.: manufacturing)."></i>
                             <input type="text" class="form-control" id="description" value="" placeholder="">
                         </div>
                         <div class="form-group">
-                            <div class="form-check form-check-inline">
-                                <label class="form-check-label">
-                                    <input type="radio" class="form-check-input" name="type" id="" value="once">
-                                    One-off
-                                    <i class="input-frame"></i>
-                                </label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <label class="form-check-label">
-                                    <input type="radio" class="form-check-input" name="type" id="" value="recurring">
-                                    Recurring
-                                    <i class="input-frame"></i>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="frequency">Frequency</label>
-                            <select id="frequency" class="form-control">
-                                <option value="day">Daily</option>
-                                <option value="week">Weekly</option>
-                                <option value="month">Monthly</option>
-                                <option value="year">Annually</option>
-                            </select>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="start-date">Start Date</label>
-                                    <div class="input-group date datepicker" id="start-date">
-                                        <input type="text" class="form-control"/>
-                                        <span class="input-group-addon bg-transparent"><i data-feather="calendar"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="end-date">End Date</label>
-                                    <div class="input-group date datepicker" id="end-date">
-                                        <input type="text" class="form-control"/>
-                                        <span class="input-group-addon bg-transparent"><i data-feather="calendar"></i></span>
-                                    </div>
-                                </div>
+                            <label for="start-date">From Date</label>
+                            <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="The date (inclusive) from when this cost should apply."></i>
+                            <div class="input-group date datepicker" id="from-date">
+                                <input type="text" class="form-control"/>
+                                <span class="input-group-addon bg-transparent"><i data-feather="calendar"></i></span>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <div class="form-group">
                                     <label for="cost">Cost</label>
+                                    <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="The cost needs to be calculated in the same currency as the marketplace (e.g.: USD for amazon.com)"></i>
                                     <input type="text" class="form-control"/>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="currency">Currency</label>
-                                    <select id="currency" class="form-control">
-
-                                    </select>
                                 </div>
                             </div>
                         </div>

@@ -3,6 +3,8 @@ window.jQuery = $
 window.$ = $
 
 import AlertsHelper   from '../helpers/alerts'
+import FiltersHelper  from '../helpers/filters'
+import ModalsHelper   from '../helpers/modals'
 import TablesHelper   from '../helpers/tables'
 import TemplateHelper from '../helpers/template'
 import URLHelper      from '../helpers/url'
@@ -16,6 +18,8 @@ require('datatables.net-bs4') window, $
 export default class ExpensesOther
   constructor: ->
     this.alerts = new AlertsHelper()
+    this.filters = new FiltersHelper()
+    this.modals = new ModalsHelper()
     this.tables = new TablesHelper()
     this.template = new TemplateHelper()
     this.url = new URLHelper()
@@ -53,11 +57,8 @@ export default class ExpensesOther
           $('.alert.expenses-other-load-error').show()
       'columns': [
         { 'data': 'description' }
-        { 'data': 'startDate' }
-        { 'data': 'endDate' }
-        { 'data': 'type' }
+        { 'data': 'dateTime' }
         { 'data': 'cost' }
-        { 'data': 'currency' }
       ]
       'language': {
         'infoFiltered': ''
@@ -72,5 +73,44 @@ export default class ExpensesOther
       ex.tables.reload($(this), $('table'))
 
     this.tables.cleanup($('table'))
+
+    return
+
+  #
+  # New cost of good.
+  #
+  new: ->
+    ex = this
+
+    $('#expenses-other-modal').on 'shown.bs.modal', ->
+      ex.alerts.resetSuccess()
+      ex.alerts.resetErrors()
+      ex.modals.resetForm()
+
+      ex.filters.datePicker('#expenses-other-modal .datepicker')
+
+      $('form#expenses-other').on 'submit', (e) ->
+        e.preventDefault()
+
+        return
+
+    return
+
+  #
+  # Start.
+  #
+  start: (text) ->
+    this.alerts.resetErrors()
+    this.turbolinks.start()
+    this.modals.disable(text)
+
+    return
+
+  #
+  # Stop.
+  #
+  stop: ->
+    this.turbolinks.stop()
+    this.modals.reset('Submit')
 
     return

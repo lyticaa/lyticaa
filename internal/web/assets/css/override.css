@@ -42,6 +42,14 @@ table > thead > tr > th:hover {
     display:none !important;
 }
 
+svg[data-toggle="tooltip"] {
+    height: 17px;
+}
+
+.mt--20 {
+    margin-top: 0.2rem !important;
+}
+
 .is-valid, .is-invalid {
     background-image: none !important;
 }
@@ -64,7 +72,8 @@ table > thead > tr > th:hover {
 #metrics-promotional-rebates-chart,
 #metrics-total-costs-chart,
 #metrics-gross-margin-chart,
-#metrics-net-margin-chart {
+#metrics-net-margin-chart,
+#forecast-chart {
     min-height: 250px;
     border: 1px solid #f2f4f9;
     border-radius: .25rem;

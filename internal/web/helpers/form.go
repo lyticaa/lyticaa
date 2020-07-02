@@ -12,6 +12,10 @@ type ValidateDateRange struct {
 	DateRange string `validate:"required,oneof=today last_thirty_days this_month last_month last_three_months last_six_months this_year all_time"`
 }
 
+type ValidateView struct {
+	View string `validate:"required,oneof=total_sales units_sold"`
+}
+
 func ValidateInput(data interface{}, l *zerolog.Logger) (bool, map[string]string) {
 	validate := validator.New()
 	err := validate.Struct(data)
