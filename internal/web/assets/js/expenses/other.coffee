@@ -98,6 +98,19 @@ export default class ExpensesOther
       $('form#expenses-other').on 'submit', (e) ->
         e.preventDefault()
 
+        $.ajax(
+          type: 'POST'
+          url: p.url.clean() + '/new'
+          timeout: 10000
+          data: $('form#expenses-other').serialize()
+          statusCode:
+            200: ->
+              p.stop()
+
+              $('#expenses-other-modal button.close').trigger('click')
+              $('table').DataTable().ajax.reload()
+        )
+
         return
 
     return

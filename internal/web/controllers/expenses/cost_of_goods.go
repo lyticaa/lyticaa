@@ -42,6 +42,10 @@ func (e *Expenses) CostOfGoodsByDate(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(js)
 }
 
+func (e *Expenses) NewCostOfGood(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func (e *Expenses) Products(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
 	user := session.Values["User"].(models.User)

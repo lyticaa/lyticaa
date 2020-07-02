@@ -97,6 +97,19 @@ export default class ExpensesCostOfGoods
       $('form#expenses-cost-of-goods').on 'submit', (e) ->
         e.preventDefault()
 
+        $.ajax(
+          type: 'POST'
+          url: p.url.clean() + '/new'
+          timeout: 10000
+          data: $('form#expenses-cost-of-goods').serialize()
+          statusCode:
+            200: ->
+              p.stop()
+
+              $('#expenses-cost-of-goods button.close').trigger('click')
+              $('table').DataTable().ajax.reload()
+        )
+
         return
 
     return

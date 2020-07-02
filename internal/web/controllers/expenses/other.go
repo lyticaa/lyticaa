@@ -42,6 +42,10 @@ func (e *Expenses) OtherByDate(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(js)
 }
 
+func (e *Expenses) NewOther(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func (e *Expenses) Currencies(w http.ResponseWriter, r *http.Request) {
 	js, err := json.Marshal(e.paintCurrencies())
 	if err != nil {
