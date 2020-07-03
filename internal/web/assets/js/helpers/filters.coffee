@@ -40,7 +40,7 @@ export default class FiltersHelper
   # Datepicker.
   #
   datePicker: (container) ->
-    if $("#{container} input").length > 0
+    if $("#{container} input").val().length > 0
       date = new Date($("#{container} input").val())
     else
       date = new Date

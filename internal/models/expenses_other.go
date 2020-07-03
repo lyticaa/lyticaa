@@ -31,7 +31,7 @@ var (
 )
 
 func CreateExpensesOther(userId string, currencyId int64, description string, amount float64, dateTime time.Time, db *sqlx.DB) error {
-	query := `INSERT INTO expenses_other (
+	query := `INSERT INTO expenses_others (
                             user_id,
                             currency_id,
                             description,
@@ -65,15 +65,16 @@ func CreateExpensesOther(userId string, currencyId int64, description string, am
 	return nil
 }
 
-func LoadExpensesOther(userId string, filter *Filter, db *sqlx.DB) *[]ExpensesOther {
+func LoadExpensesOthers(userId string, filter *Filter, db *sqlx.DB) *[]ExpensesOther {
 	var other []ExpensesOther
 
 	query := `SELECT e.expense_id,
+       e.currency_id,
        c.code AS currency_code,
        c.symbol AS currency_symbol,
        e.description,
        e.amount,
-       e.date_time FROM expenses_other AS e
+       e.date_time FROM expenses_others AS e
            LEFT JOIN currencies c ON e.currency_id = c.id WHERE e.user_id = $1 ORDER BY $2 LIMIT $3 OFFSET $4`
 	_ = db.Select(
 		&other,
@@ -87,23 +88,53 @@ func LoadExpensesOther(userId string, filter *Filter, db *sqlx.DB) *[]ExpensesOt
 	return &other
 }
 
-func TotalExpensesOther(userId string, db *sqlx.DB) int64 {
+func LoadExpensesOther(expenseId string, db *sqlx.DB) *ExpensesOther {
+	var other ExpensesOther
+
+	query := `SELECT e.id,
+       e.expense_id,
+       e.user_id,
+       e.currency_id,
+       c.code AS currency_code,
+       c.symbol AS currency_symbol,
+       e.description,
+       e.amount,
+       e.date_time,
+       e.created_at,
+       e.updated_at FROM expenses_others AS e LEFT JOIN currencies c ON e.currency_id = c.id WHERE e.expense_id = $1`
+	_ = db.QueryRow(query, expenseId).Scan(
+		&other.Id,
+		&other.ExpenseId,
+		&other.UserId,
+		&other.CurrencyId,
+		&other.CurrencyCode,
+		&other.CurrencySymbol,
+		&other.Description,
+		&other.Amount,
+		&other.DateTime,
+		&other.CreatedAt,
+		&other.UpdatedAt,
+	)
+
+	return &other
+}
+
+func TotalExpensesOthers(userId string, db *sqlx.DB) int64 {
 	var count int64
 
-	query := `SELECT COUNT(id) FROM expenses_other WHERE user_id = $1`
+	query := `SELECT COUNT(id) FROM expenses_others WHERE user_id = $1`
 	_ = db.QueryRow(query, userId).Scan(&count)
 
 	return count
 }
 
 func (e *ExpensesOther) Save(db *sqlx.DB) error {
-	query := `UPDATE expenses_other SET
+	query := `UPDATE expenses_others SET
                           currency_id = :currency_id,
                           description = :description,
                           amount = :amount,
                           date_time = :date_time,
-                          updated_at = :updated_at WHERE user_id = :user_id
-                                                     AND expense_id = :expense_id`
+                          updated_at = :updated_at WHERE expense_id = :expense_id`
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
 			"currency_id": e.CurrencyId,
@@ -111,8 +142,22 @@ func (e *ExpensesOther) Save(db *sqlx.DB) error {
 			"amount":      e.Amount,
 			"date_time":   e.DateTime,
 			"updated_at":  time.Now(),
-			"user_id":     e.UserId,
 			"expense_id":  e.ExpenseId,
+		})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (e *ExpensesOther) Delete(db *sqlx.DB) error {
+	query := `DELETE FROM expenses_others WHERE id = :id
+                              AND expense_id = :expense_id`
+	_, err := db.NamedExec(query,
+		map[string]interface{}{
+			"id":         e.Id,
+			"expense_id": e.ExpenseId,
 		})
 	if err != nil {
 		return err

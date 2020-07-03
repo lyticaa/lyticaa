@@ -14,7 +14,7 @@ import (
 )
 
 type ValidateCostOfGood struct {
-	ProductId   string    `valudate:"required,uuidv4"`
+	ProductId   string    `validate:"required,uuid4"`
 	Description string    `validate:"required,min=3"`
 	FromDate    time.Time `validate:"required"`
 	Amount      float64   `validate:"required,gt=0"`
@@ -66,7 +66,7 @@ func (e *Expenses) NewCostOfGood(w http.ResponseWriter, r *http.Request) {
 	}
 
 	description := r.FormValue("description")
-	fromDate, _ := time.Parse("2006/01/02", r.FormValue("fromDate"))
+	fromDate, _ := time.Parse("2006-01-02", r.FormValue("fromDate"))
 	amount, _ := strconv.ParseFloat(r.FormValue("amount"), 64)
 
 	ok, res := e.validateCostOfGood(productId, description, fromDate, amount)
@@ -115,15 +115,21 @@ func (e *Expenses) EditCostOfGood(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	expenseId := params["expense"]
 
+	ok, _ := helpers.ValidateInput(ValidateExpense{ExpenseId: expenseId}, &e.logger)
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	expense := models.LoadExpensesCostOfGood(expenseId, e.db)
-	ok, _ := e.isProductOwner(user.UserId, expense.ProductId)
+	ok, _ = e.isProductOwner(user.UserId, expense.ProductId)
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	description := r.FormValue("description")
-	fromDate, _ := time.Parse("2006/01/02", r.FormValue("fromDate"))
+	fromDate, _ := time.Parse("2006-01-02", r.FormValue("fromDate"))
 	amount, _ := strconv.ParseFloat(r.FormValue("amount"), 64)
 
 	ok, res := e.validateCostOfGood(expense.ProductId, description, fromDate, amount)
@@ -161,8 +167,14 @@ func (e *Expenses) DeleteCostOfGood(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	expenseId := params["expense"]
 
+	ok, _ := helpers.ValidateInput(ValidateExpense{ExpenseId: expenseId}, &e.logger)
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	expense := models.LoadExpensesCostOfGood(expenseId, e.db)
-	ok, _ := e.isProductOwner(user.UserId, expense.ProductId)
+	ok, _ = e.isProductOwner(user.UserId, expense.ProductId)
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -210,6 +222,11 @@ func (e *Expenses) isProductOwner(userId, productId string) (bool, *models.Produ
 
 func (e *Expenses) validateCostOfGood(productId, description string, fromDate time.Time, amount float64) (bool, map[string]string) {
 	return helpers.ValidateInput(
-		ValidateCostOfGood{ProductId: productId, Description: description, FromDate: fromDate, Amount: amount},
+		ValidateCostOfGood{
+			ProductId:   productId,
+			Description: description,
+			FromDate:    fromDate,
+			Amount:      amount,
+		},
 		&e.logger)
 }

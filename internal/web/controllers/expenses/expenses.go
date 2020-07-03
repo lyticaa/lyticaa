@@ -8,6 +8,10 @@ import (
 	"gopkg.in/boj/redistore.v1"
 )
 
+type ValidateExpense struct {
+	ExpenseId string `validate:"required,uuid4"`
+}
+
 type Expenses struct {
 	data         *data.Data
 	db           *sqlx.DB

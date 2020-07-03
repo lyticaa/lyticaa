@@ -3,10 +3,9 @@ window.jQuery = $
 window.$ = $
 
 import 'bootstrap-datepicker'
+import Expenses from './expenses'
 
 import AlertsHelper   from '../helpers/alerts'
-import FiltersHelper  from '../helpers/filters'
-import ModalsHelper   from '../helpers/modals'
 import TablesHelper   from '../helpers/tables'
 import TemplateHelper from '../helpers/template'
 import URLHelper      from '../helpers/url'
@@ -19,12 +18,13 @@ require('datatables.net-bs4') window, $
 #
 export default class ExpensesOther
   constructor: ->
+    this.e = new Expenses()
     this.alerts = new AlertsHelper()
-    this.filters = new FiltersHelper()
-    this.modals = new ModalsHelper()
     this.tables = new TablesHelper()
     this.template = new TemplateHelper()
     this.url = new URLHelper()
+
+    this.confirmOpts = 'deleteExpense': 'Are you sure you want to delete this expense?'
 
   #
   # Initialize.
@@ -48,7 +48,7 @@ export default class ExpensesOther
       'bFilter': false
       'lengthChange': false
       'ajax':
-        'url': ex.url.clean() + '/filter/all_time'
+        'url': ex.url.clean() + '/all'
         'dataSrc': (j) ->
           $('button.loading').fadeOut()
 
@@ -57,12 +57,27 @@ export default class ExpensesOther
 
           return j.data
         'error': (j) ->
-          $('.alert.expenses-other-load-error').show()
+          $('button.loading').fadeOut(400, ->
+            $('.alert.expenses-load-error').show()
+          )
       'columns': [
         { 'data': 'description' }
         { 'data': 'dateTime' }
         { 'data': 'amount' }
         { 'data': 'currency' }
+        {
+          'data': null
+          'className': 'text-center pr-0 pl-0 w-15'
+          'fnCreatedCell': (nTd, sData, oData, iRow) ->
+            content = """
+                <a href='#' class='expenses-edit' data-toggle='modal' data-target='#expenses-edit-modal' data-expense='#{oData.DT_RowId}' data-description='#{oData.description}' data-date-time='#{oData.dateTime}' data-amount='#{oData.amount}' data-currency='#{oData.currencyId}' target='_blank'>
+                  <i class='edit' data-feather='edit' data-toggle='tooltip' data-placement='top' title='Edit the expense.'></i>
+                </a>
+                <i class='delete' data-expense='#{oData.DT_RowId}' data-idx='#{iRow}' data-feather='trash' data-toggle='tooltip' data-placement='top' title='Delete the expense.'></i>
+              """
+            $(nTd).html content
+            return
+        }
       ]
       'language': {
         'infoFiltered': ''
@@ -71,6 +86,10 @@ export default class ExpensesOther
         ex.tables.preDraw($(this), settings)
       'drawCallback': ->
         ex.template.renderIcons()
+
+        ex.e.populate()
+        ex.edit()
+        ex.delete()
 
     $('.date-filter').on 'click', (e) ->
       e.preventDefault()
@@ -81,77 +100,31 @@ export default class ExpensesOther
     return
 
   #
+  # Delete expense.
+  #
+  delete: ->
+    this.e.delete()
+
+    return
+
+  #
   # New expense.
   #
   new: ->
     ex = this
 
-    $('#expenses-other-modal').on 'shown.bs.modal', ->
-      ex.alerts.resetSuccess()
-      ex.alerts.resetErrors()
-      ex.modals.resetForm()
-
-      ex.loadCurrencies()
-
-      ex.filters.datePicker('#expenses-other-modal .datepicker')
-
-      $('form#expenses-other').on 'submit', (e) ->
-        e.preventDefault()
-
-        $.ajax(
-          type: 'POST'
-          url: p.url.clean() + '/new'
-          timeout: 10000
-          data: $('form#expenses-other').serialize()
-          statusCode:
-            200: ->
-              p.stop()
-
-              $('#expenses-other-modal button.close').trigger('click')
-              $('table').DataTable().ajax.reload()
-        )
-
-        return
+    $('#expenses-new-modal').on 'shown.bs.modal', ->
+      ex.e.new(false, true)
 
     return
 
   #
-  # Currencies.
+  # Edit expense.
   #
-  loadCurrencies: ->
+  edit: ->
     ex = this
 
-    $('select#currency').html('')
-
-    $.ajax(
-      type: 'GET'
-      url: ex.url.clean() + '/currencies'
-      timeout: 10000
-      statusCode:
-        200: (j) ->
-          $.each j, ->
-            $('select#currency').append $('<option/>').val(@currencyId).text("#{@code} (#{@symbol})")
-          return
-    ).fail ->
-      $('.alert.expenses-other-currencies-load-error').fadeIn()
-
-    return
-
-  #
-  # Start.
-  #
-  start: (text) ->
-    this.alerts.resetErrors()
-    this.turbolinks.start()
-    this.modals.disable(text)
-
-    return
-
-  #
-  # Stop.
-  #
-  stop: ->
-    this.turbolinks.stop()
-    this.modals.reset('Add')
+    $('#expenses-edit-modal').on 'shown.bs.modal', ->
+      ex.e.edit()
 
     return

@@ -1,0 +1,59 @@
+{{ define "expenses::other::form" }}
+    <form id="expenses-other">
+        <div class="modal-body">
+            <div class="form-group">
+                <div class="alert alert-danger expenses-other-error" style="display: none;">
+                    It appears that something went wrong while trying to save your expense. Please try again and if the problem persists, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="A simple description or explanation for the expense (e.g.: 'Subscription to..')."></i>
+                <div class="alert alert-danger text-justify pt-3 w-100 expenses-other-description-validation-error float-left" style="display: none;">
+                    Please enter a valid description for the expense.
+                </div>
+                <input type="text" class="form-control" id="description" name="description" value="" placeholder="">
+            </div>
+            <div class="form-group">
+                <label for="start-date">Date</label>
+                <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="The date the expense was incurred."></i>
+                <div class="alert alert-danger text-justify pt-3 w-100 expenses-other-date-time-validation-error float-left" style="display: none;">
+                    Please choose a valid date for the expense.
+                </div>
+                <div class="input-group date datepicker">
+                    <input type="text" class="form-control" id="date-time" name="dateTime"/>
+                    <span class="input-group-addon bg-transparent"><i data-feather="calendar"></i></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="alert alert-danger text-justify pt-3 w-100 expenses-other-currencies-load-error" style="display: none;">
+                    Loading the currencies has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="alert alert-danger text-justify pt-3 w-100 expenses-other-amount-validation-error float-left" style="display: none;">
+                    Please enter a valid amount for the expense.
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="cost">Amount</label>
+                        <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="The amount of the expense incurred (without the currency code)."></i>
+                        <input type="text" class="form-control" id="amount" name="amount" />
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="currency">Currency</label>
+                        <select class="form-control" id="currency" name="currency"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+{{ end }}

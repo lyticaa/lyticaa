@@ -1,4 +1,4 @@
-CREATE TABLE expenses_other
+CREATE TABLE expenses_others
 (
     id          BIGSERIAL NOT NULL,
     expense_id  UUID DEFAULT UUID_GENERATE_V4(),

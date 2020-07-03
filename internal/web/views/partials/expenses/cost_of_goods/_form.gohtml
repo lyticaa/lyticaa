@@ -1,14 +1,17 @@
 {{ define "expenses::cost-of-goods::form" }}
-    <form id="expenses-cost-of-goods">
+    <form>
         <div class="modal-body">
             <div class="form-group">
-                <div class="alert alert-danger expenses-cost-of-goods-error" style="display: none;">
+                <div class="alert alert-danger expenses-error" style="display: none;">
                     It appears that something went wrong while trying to save your cost of goods expense. Please try again and if the problem persists, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
                 </div>
             </div>
             <div class="form-group product">
                 <label for="product">Product</label>
-                <div class="alert alert-warning text-justify pt-3 w-100 expenses-cost-of-goods-products-empty" role="alert" style="display:none;">
+                <div class="alert alert-danger expenses-products-load-error" style="display: none;">
+                    Unable to load your products. Please try again and if the problem persists, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+                </div>
+                <div class="alert alert-warning text-justify pt-3 w-100 expenses-products-empty" role="alert" style="display:none;">
                     You currently have no products on your account. This typically occurs only while we're processing your data for the very first time. However should this persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
                 </div>
                 <select class="form-control" id="product" name="product" required></select>
@@ -16,7 +19,7 @@
             <div class="form-group">
                 <label for="email">Description</label>
                 <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="A simple description or explanation for the cost (e.g.: 'Manufacturing of..')."></i>
-                <div class="alert alert-danger text-justify pt-3 w-100 expenses-cost-of-goods-description-validation-error float-left" style="display: none;">
+                <div class="alert alert-danger text-justify pt-3 w-100 expenses-description-validation-error float-left" style="display: none;">
                     Please enter a valid description for the expense.
                 </div>
                 <input type="text" class="form-control" id="description" name="description" value="" placeholder="" required>
@@ -24,8 +27,8 @@
             <div class="form-group">
                 <label for="start-date">From Date</label>
                 <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="The date (inclusive) from when this cost should apply."></i>
-                <div class="alert alert-danger text-justify pt-3 w-100 expenses-cost-of-goods-from-date-validation-error float-left" style="display: none;">
-                    Please choose a valid from date from the expense.
+                <div class="alert alert-danger text-justify pt-3 w-100 expenses-from-date-validation-error float-left" style="display: none;">
+                    Please choose a valid from date for the expense.
                 </div>
                 <div class="input-group date datepicker">
                     <input type="text" class="form-control" id="from-date" name="fromDate" required/>
@@ -35,7 +38,7 @@
             <div class="form-group">
                 <label for="cost">Amount</label>
                 <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="The cost needs to be calculated in the same currency as the marketplace (e.g.: USD for amazon.com)"></i>
-                <div class="alert alert-danger text-justify pt-3 w-100 expenses-cost-of-goods-amount-validation-error float-left" style="display: none;">
+                <div class="alert alert-danger text-justify pt-3 w-100 expenses-amount-validation-error float-left" style="display: none;">
                     Please enter a valid amount for the expense.
                 </div>
                 <input type="text" class="form-control" id="amount" name="amount" required/>

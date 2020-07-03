@@ -37,6 +37,10 @@ svg[data-toggle="tooltip"] {
     height: 17px;
 }
 
+.form-control {
+    border-radius: 4px !important;
+}
+
 .mt--20 {
     margin-top: 0.2rem !important;
 }

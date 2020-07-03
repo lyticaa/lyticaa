@@ -143,13 +143,11 @@ func (e *ExpensesCostOfGood) Save(db *sqlx.DB) error {
 
 func (e *ExpensesCostOfGood) Delete(db *sqlx.DB) error {
 	query := `DELETE FROM expenses_cost_of_goods WHERE id = :id
-                                     AND expense_id = :expense_id
-                                     AND product_id = :product_id`
+                                     AND expense_id = :expense_id`
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
 			"id":         e.Id,
 			"expense_id": e.ExpenseId,
-			"product_id": e.ProductId,
 		})
 	if err != nil {
 		return err

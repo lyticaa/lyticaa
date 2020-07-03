@@ -143,16 +143,6 @@ func (a *App) expensesHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.CostOfGoodsByUser)),
 	))
-	a.Router.Handle("/expenses/cost_of_goods/{expense}", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(e.EditCostOfGood)),
-	)).Methods("PUT")
-	a.Router.Handle("/expenses/cost_of_goods/{expense}", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(e.DeleteCostOfGood)),
-	)).Methods("DELETE")
 	a.Router.Handle("/expenses/cost_of_goods/products", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
@@ -163,15 +153,25 @@ func (a *App) expensesHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.NewCostOfGood)),
 	))
+	a.Router.Handle("/expenses/cost_of_goods/{expense}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(e.EditCostOfGood)),
+	)).Methods("PUT")
+	a.Router.Handle("/expenses/cost_of_goods/{expense}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(e.DeleteCostOfGood)),
+	)).Methods("DELETE")
 	a.Router.Handle("/expenses/other", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.Other)),
 	))
-	a.Router.Handle("/expenses/other/filter/{dateRange}", negroni.New(
+	a.Router.Handle("/expenses/other/all", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
-		negroni.Wrap(http.HandlerFunc(e.OtherByDate)),
+		negroni.Wrap(http.HandlerFunc(e.OtherByUser)),
 	))
 	a.Router.Handle("/expenses/other/currencies", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
@@ -183,6 +183,16 @@ func (a *App) expensesHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.NewOther)),
 	))
+	a.Router.Handle("/expenses/other/{expense}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(e.EditOther)),
+	)).Methods("PUT")
+	a.Router.Handle("/expenses/other/{expense}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(e.DeleteOther)),
+	)).Methods("DELETE")
 }
 
 func (a *App) forecastHandlers() {

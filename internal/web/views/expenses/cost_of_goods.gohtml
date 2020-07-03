@@ -11,7 +11,7 @@
 
 {{ define "filters::extra"}}
     <div class="btn-group">
-        <button type="button" class="btn btn-primary btn-icon-text d-none d-md-block mr-2" data-toggle="modal" data-target="#expenses-cost-of-goods-modal">
+        <button type="button" class="btn btn-primary btn-icon-text d-none d-md-block mr-2" data-toggle="modal" data-target="#expenses-new-modal">
             <i class="btn-icon-prepend mr-0" data-feather="dollar-sign"></i>
         </button>
     </div>
@@ -21,7 +21,7 @@
     <input type="hidden" class="location" data-section="expenses-cost-of-goods"/>
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
-            <div class="alert alert-icon-danger text-center pt-3 w-100 expenses-cost-of-goods-load-error" style="display: none;">
+            <div class="alert alert-icon-danger text-center pt-3 w-100 expenses-load-error" style="display: none;">
                 <i data-feather="alert-triangle"></i>
                 Loading your expenses has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
             </div>
@@ -59,11 +59,11 @@
         </div>
     </div>
 
-    <div class="modal fade" id="expenses-cost-of-goods-modal" tabindex="-1" role="dialog" aria-labelledby="expenses-cost-of-goods-modal-label" aria-hidden="true">
+    <div class="modal fade" id="expenses-new-modal" tabindex="-1" role="dialog" aria-labelledby="expenses-new-modal-label" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="invite-user-label">Add Expense</h5>
+                    <h5 class="modal-title">Add Expense</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -73,12 +73,12 @@
         </div>
     </div>
 
-    <div class="modal fade" id="expenses-cost-of-goods-edit-modal" tabindex="-1" role="dialog" aria-labelledby="expenses-cost-of-goods-edit-modal-label" aria-hidden="true">
+    <div class="modal fade" id="expenses-edit-modal" tabindex="-1" role="dialog" aria-labelledby="expenses-edit-modal-label" aria-hidden="true">
         <input type="hidden" id="expense" data-expense=""/>
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="invite-user-label">Edit Expense</h5>
+                    <h5 class="modal-title">Edit Expense</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

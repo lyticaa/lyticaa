@@ -11,7 +11,7 @@
 
 {{ define "filters::extra"}}
     <div class="btn-group">
-        <button type="button" class="btn btn-primary btn-icon-text d-none d-md-block mr-2" data-toggle="modal" data-target="#expenses-other-modal">
+        <button type="button" class="btn btn-primary btn-icon-text d-none d-md-block mr-2" data-toggle="modal" data-target="#expenses-new-modal">
             <i class="btn-icon-prepend mr-0" data-feather="dollar-sign"></i>
         </button>
     </div>
@@ -21,7 +21,7 @@
     <input type="hidden" class="location" data-section="expenses-other"/>
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
-            <div class="alert alert-icon-danger text-center pt-3 w-100 expenses-other-load-error" style="display: none;">
+            <div class="alert alert-icon-danger text-center pt-3 w-100 expenses-load-error" style="display: none;">
                 <i data-feather="alert-triangle"></i>
                 Loading your expenses has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
             </div>
@@ -47,6 +47,7 @@
                                     <th>Date</th>
                                     <th>Amount</th>
                                     <th>Currency</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -57,61 +58,31 @@
         </div>
     </div>
 
-    <div class="modal fade" id="expenses-other-modal" tabindex="-1" role="dialog" aria-labelledby="expenses-other-modal-label" aria-hidden="true">
+    <div class="modal fade" id="expenses-new-modal" tabindex="-1" role="dialog" aria-labelledby="expenses-new-modal-label" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="invite-user-label">Add Expense</h5>
+                    <h5 class="modal-title">Add Expense</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="expenses-other">
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <div class="alert alert-danger pages-new-error" style="display: none;">
-                                It appears that something went wrong while trying to save your expense. Please try again and if the problem persists, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="description">Description</label>
-                            <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="A simple description or explanation for the expense (e.g.: 'Subscription to..')."></i>
-                            <input type="text" class="form-control" id="description" name="description" value="" placeholder="">
-                        </div>
-                        <div class="form-group">
-                            <label for="start-date">Date</label>
-                            <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="The date the expense was incurred."></i>
-                            <div class="input-group date datepicker">
-                                <input type="text" class="form-control" id="date-time" name="date-time"/>
-                                <span class="input-group-addon bg-transparent"><i data-feather="calendar"></i></span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="alert alert-danger text-justify pt-3 w-100 expenses-other-currencies-load-error" style="display: none;">
-                                Loading the currencies has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="cost">Amount</label>
-                                    <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="The amount of the expense incurred (without the currency code)."></i>
-                                    <input type="text" class="form-control" id="amount" name="amount" />
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="currency">Currency</label>
-                                    <select class="form-control" id="currency" name="currency"></select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add</button>
-                    </div>
-                </form>
+                {{ template "expenses::other::form" . }}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="expenses-edit-modal" tabindex="-1" role="dialog" aria-labelledby="expenses-edit-modal-label" aria-hidden="true">
+        <input type="hidden" id="expense" data-expense=""/>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Expense</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {{ template "expenses::other::form" . }}
             </div>
         </div>
     </div>
