@@ -2,12 +2,13 @@ package cohorts
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"net/http"
 
 	"gitlab.com/getlytica/lytica-app/internal/models"
 	"gitlab.com/getlytica/lytica-app/internal/web/helpers"
 	"gitlab.com/getlytica/lytica-app/internal/web/types"
+
+	"github.com/gorilla/mux"
 )
 
 func (c *Cohorts) LowMargin(w http.ResponseWriter, r *http.Request) {
