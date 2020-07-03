@@ -12,10 +12,11 @@ func (d *Data) ExpensesCostOfGoods(userId string, expenses *types.Expenses, filt
 	for _, item := range *costOfGoods {
 		expenses.Data = append(expenses.Data, types.ExpensesTable{
 			RowId:       item.ExpenseId,
+			ProductId:   item.ProductId,
 			SKU:         item.SKU,
 			Description: item.Description,
 			Marketplace: item.Marketplace,
-			FromDate:    item.FromDate,
+			FromDate:    item.FromDate.Format("2006-01-02"),
 			Amount:      item.Amount,
 		})
 	}
@@ -29,7 +30,7 @@ func (d *Data) ExpensesOther(userId string, expenses *types.Expenses, filter *mo
 		expenses.Data = append(expenses.Data, types.ExpensesTable{
 			RowId:       item.ExpenseId,
 			Description: item.Description,
-			DateTime:    item.DateTime,
+			DateTime:    item.DateTime.Format("2006-01-02"),
 			Amount:      item.Amount,
 			Currency:    fmt.Sprintf("%v (%v)", item.CurrencyCode, item.CurrencySymbol),
 		})

@@ -1,9 +1,5 @@
 package types
 
-import (
-	"time"
-)
-
 type Product struct {
 	ProductId   string `json:"productId"`
 	SKU         string `json:"sku"`
@@ -18,14 +14,15 @@ type Currency struct {
 }
 
 type ExpensesTable struct {
-	RowId       string    `json:"DT_RowId"`
-	SKU         string    `json:"sku,omitempty"`
-	Marketplace string    `json:"marketplace,omitempty"`
-	Description string    `json:"description"`
-	FromDate    time.Time `json:"fromDate,omitempty"`
-	DateTime    time.Time `json:"dateTime,omitempty"`
-	Amount      float64   `json:"amount"`
-	Currency    string    `json:"currency,omitempty"`
+	RowId       string  `json:"DT_RowId"`
+	ProductId   string  `json:"productId,omitempty"`
+	SKU         string  `json:"sku,omitempty"`
+	Marketplace string  `json:"marketplace,omitempty"`
+	Description string  `json:"description"`
+	FromDate    string  `json:"fromDate,omitempty"`
+	DateTime    string  `json:"dateTime,omitempty"`
+	Amount      float64 `json:"amount"`
+	Currency    string  `json:"currency,omitempty"`
 }
 
 type Expenses struct {

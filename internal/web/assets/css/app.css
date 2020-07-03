@@ -3,3 +3,22 @@
 @import './vendors/feather-icons/feather-icons.css';
 @import './vendors/nobleui/nobleui.css';
 @import './override.css';
+
+/* Charting */
+#dashboard-total-sales-chart,
+#metrics-total-sales-chart,
+#metrics-units-sold-chart,
+#metrics-product-costs-chart,
+#metrics-amazon-costs-chart,
+#metrics-advertising-spend-chart,
+#metrics-refunds-chart,
+#metrics-shipping-credits-chart,
+#metrics-promotional-rebates-chart,
+#metrics-total-costs-chart,
+#metrics-gross-margin-chart,
+#metrics-net-margin-chart,
+#forecast-chart {
+    min-height: 250px;
+    border: 1px solid #f2f4f9;
+    border-radius: .25rem;
+}

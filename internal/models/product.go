@@ -26,6 +26,58 @@ func LoadProducts(userId string, db *sqlx.DB) *[]Product {
 	return &products
 }
 
+func LoadProduct(userId, productId string, db *sqlx.DB) *Product {
+	var product Product
+
+	query := `SELECT id,
+       product_id,
+       user_id,
+       sku,
+       marketplace,
+       description,
+       created_at,
+       updated_at FROM products WHERE user_id = $1 
+                                  AND product_id = $2`
+	_ = db.QueryRow(query, userId, productId).Scan(
+		&product.Id,
+		&product.ProductId,
+		&product.UserId,
+		&product.SKU,
+		&product.Marketplace,
+		&product.Description,
+		&product.CreatedAt,
+		&product.UpdatedAt,
+	)
+
+	return &product
+}
+
+func LoadProductById(userId string, productId int64, db *sqlx.DB) *Product {
+	var product Product
+
+	query := `SELECT id,
+       product_id,
+       user_id,
+       sku,
+       marketplace,
+       description,
+       created_at,
+       updated_at FROM products WHERE user_id = $1 
+                                  AND id = $2`
+	_ = db.QueryRow(query, userId, productId).Scan(
+		&product.Id,
+		&product.ProductId,
+		&product.UserId,
+		&product.SKU,
+		&product.Marketplace,
+		&product.Description,
+		&product.CreatedAt,
+		&product.UpdatedAt,
+	)
+
+	return &product
+}
+
 func (p *Product) Save(db *sqlx.DB) error {
 	query := `UPDATE products SET
                     sku = :sku,

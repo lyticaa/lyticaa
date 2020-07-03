@@ -40,12 +40,16 @@ export default class FiltersHelper
   # Datepicker.
   #
   datePicker: (container) ->
-    date = new Date
-    today = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+    if $("#{container} input").length > 0
+      date = new Date($("#{container} input").val())
+    else
+      date = new Date
+
+    displayDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
     $(container).datepicker
-      format: 'mm/dd/yyyy'
+      format: 'yyyy-mm-dd'
       todayHighlight: true
       autoclose: true
-    $(container).datepicker 'setDate', today
+    $(container).datepicker 'setDate', displayDate
 
     return

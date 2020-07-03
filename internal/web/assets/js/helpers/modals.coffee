@@ -11,7 +11,7 @@ export default class ModalsHelper
     $('.modal').each ->
       if $(this).is(':visible')
         $('button.close-modal').attr('disabled')
-        $('button[type="submit"]').html(text).attr('disabled')
+        $('button[type="submit"]').html(text).attr('disabled', 'disabled')
     return
 
   #
