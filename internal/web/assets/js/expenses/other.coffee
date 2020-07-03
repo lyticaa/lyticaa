@@ -24,8 +24,6 @@ export default class ExpensesOther
     this.template = new TemplateHelper()
     this.url = new URLHelper()
 
-    this.confirmOpts = 'deleteExpense': 'Are you sure you want to delete this expense?'
-
   #
   # Initialize.
   #
