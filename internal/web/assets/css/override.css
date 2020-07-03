@@ -1,3 +1,9 @@
+.sidebar-dark .sidebar .sidebar-header {
+    background: #0c1427;
+    border-bottom: 1px solid #0c1427;
+    border-right: 1px solid #0c1427;
+}
+
 a:focus {
     outline: 0 !important;
     -webkit-box-shadow: none !important;
