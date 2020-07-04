@@ -20,7 +20,7 @@ func (m *Metrics) TotalSales(w http.ResponseWriter, r *http.Request) {
 		"partials/nav/account/_main",
 		"partials/filters/_filters",
 		"partials/filters/_date",
-		"partials/filters/_upload",
+		"partials/filters/_import",
 		"metrics/total_sales",
 	}
 	helpers.RenderTemplate(w, t, session.Values)

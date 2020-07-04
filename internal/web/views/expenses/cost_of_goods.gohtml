@@ -9,7 +9,7 @@
     </nav>
 {{ end }}
 
-{{ define "filters::extra"}}
+{{ define "filters/extra"}}
     <div class="btn-group">
         <button type="button" class="btn btn-primary btn-icon-text d-none d-md-block mr-2" data-toggle="modal" data-target="#expenses-new-modal">
             <i class="btn-icon-prepend mr-0" data-feather="dollar-sign"></i>
@@ -68,7 +68,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                {{ template "expenses::cost-of-goods::form" . }}
+                {{ template "expenses/cost_of_goods/form" . }}
             </div>
         </div>
     </div>
@@ -83,7 +83,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                {{ template "expenses::cost-of-goods::form" . }}
+                {{ template "expenses/cost_of_goods/form" . }}
             </div>
         </div>
     </div>

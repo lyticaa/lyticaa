@@ -28,7 +28,7 @@ func (e *Expenses) CostOfGoods(w http.ResponseWriter, r *http.Request) {
 		"partials/nav/_main",
 		"partials/nav/account/_main",
 		"partials/filters/_filters",
-		"partials/filters/_upload",
+		"partials/filters/_import",
 		"partials/expenses/cost_of_goods/_form",
 		"expenses/cost_of_goods",
 	}

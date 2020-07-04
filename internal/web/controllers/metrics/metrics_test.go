@@ -4,8 +4,10 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type MetricsSuite struct{}
+type metricsSuite struct{}
 
-var _ = Suite(&MetricsSuite{})
+var _ = Suite(&metricsSuite{})
 
-func (s *MetricsSuite) TestMetrics(c *C) {}
+func (s *metricsSuite) SetUpSuite(c *C)    {}
+func (s *metricsSuite) TestMetrics(c *C)   {}
+func (s *metricsSuite) TearDownSuite(c *C) {}

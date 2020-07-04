@@ -1,0 +1,71 @@
+{{ define "js-extra-top" }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"></script>
+{{ end }}
+
+{{ define "css-extra-top" }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css"/>
+{{ end }}
+
+{{ define "filters/import/button"}}
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary btn-icon-text d-none d-md-block mr-2" data-toggle="modal" data-target="#import-modal">
+            <i class="btn-icon-prepend mr-0" data-feather="upload"></i>
+        </button>
+    </div>
+{{ end }}
+
+{{ define "filters/import/modal" }}
+    <div class="modal fade" id="import-modal" tabindex="-1" role="dialog" aria-labelledby="import-modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="invite-user-label">Import</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div class="alert alert-icon-danger import-error text-justify" style="display: none;">
+                                <i data-feather="alert-triangle"></i>
+                                It appears that something went wrong while importing your file(s). Please try again and if the problem persists, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="alert alert-icon-success import-success text-justify" style="display: none;">
+                                <i data-feather="check-circle"></i>
+                                Your file(s) were imported successfully. There may be a slight delay while the data is being processed.
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="transaction">Files</label>
+                            <i class="btn-icon-prepend" data-feather="info" data-toggle="tooltip" data-placement="top" title="CSVs or XLS/XLSX files that contain the transactions or sponsored products (PPC) data you want processed."></i>
+                            <input type="file" name="file" class="dropify border" data-max-file-size="20M" data-allowed-file-extensions="csv xlsx xls" required/>
+                        </div>
+                        <div class="form-group">
+                            <input type="file" name="file" class="dropify border" data-max-file-size="20M" data-allowed-file-extensions="csv xlsx xls"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{{ end }}
+
+{{ define "js-extra-bottom" }}
+    <script type="application/javascript">
+        $('.dropify').dropify({
+            messages: {
+                'default': 'Drag and drop a file here, or click.',
+                'replace': 'Drag and drop another file, or click to replace.',
+                'remove': 'Remove',
+                'error': ''
+            }
+        });
+    </script>
+{{ end }}

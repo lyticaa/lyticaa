@@ -21,7 +21,7 @@ func (c *Cohorts) LowMargin(w http.ResponseWriter, r *http.Request) {
 		"partials/cohorts/_margin",
 		"partials/filters/_filters",
 		"partials/filters/_date",
-		"partials/filters/_upload",
+		"partials/filters/_import",
 		"cohorts/low_margin",
 	}
 	helpers.RenderTemplate(w, t, session.Values)

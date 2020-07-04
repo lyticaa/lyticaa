@@ -20,7 +20,7 @@ func (f *Forecast) Overview(w http.ResponseWriter, r *http.Request) {
 		"partials/nav/account/_main",
 		"partials/filters/_filters",
 		"partials/filters/_date",
-		"partials/filters/_upload",
+		"partials/filters/_import",
 		"forecast/overview",
 	}
 	helpers.RenderTemplate(w, t, session.Values)

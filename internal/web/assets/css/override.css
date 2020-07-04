@@ -13,7 +13,6 @@ a:focus {
 .table-responsive {
     overflow-x: unset !important;
 }
-
 table.dataTable tbody td,
 table.dataTable thead th {
     outline: none;
@@ -22,11 +21,9 @@ table.dataTable thead th {
 .modal-content {
     border: none !important;
 }
-
 .modal-header {
     border-bottom: none !important;
 }
-
 .modal-footer {
     border-top: none !important;
 }
@@ -51,6 +48,13 @@ svg[data-toggle="tooltip"] {
     margin-top: 0.2rem !important;
 }
 
+/* Alerts */
+.alert-icon-info svg,
+.alert-icon-warning svg,
+.alert-icon-success svg,
+.alert-icon-danger svg {
+    margin-right: 0rem !important;
+}
 .is-valid, .is-invalid {
     background-image: none !important;
 }
@@ -59,4 +63,19 @@ svg[data-toggle="tooltip"] {
 }
 .is-invalid, .is-invalid:focus {
     border-color: #ffc6d4 !important;
+}
+
+/* Dropify */
+.dropify-wrapper, .dropify-wrapper .dropify-clear {
+    font-family: "Overpass", sans-serif !important;
+}
+.border, .dropify-wrapper, .dropzone {
+    border: 1px solid #f2f4f9 !important;
+    border-radius: 0.25rem !important;
+}
+.dropify-wrapper .dropify-clear {
+    text-transform: none !important;
+    font-size: .875rem !important;
+    border: 1px solid #FFF !important;
+    border-radius: .1875rem !important;
 }

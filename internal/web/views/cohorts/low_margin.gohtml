@@ -9,7 +9,7 @@
     </nav>
 {{ end }}
 
-{{ define "filters::extra"}}
+{{ define "filters/extra"}}
     <div class="btn-group">
         <button type="button" class="btn btn-primary btn-icon-text d-none d-md-block mr-2 reload">
             <i class="btn-icon-prepend mr-0" data-feather="refresh-ccw"></i>
@@ -19,5 +19,5 @@
 
 {{ define "content" }}
     <input type="hidden" class="location" data-section="cohorts-low-margin"/>
-    {{ template "cohorts::margin" . }}
+    {{ template "cohorts/margin" . }}
 {{ end }}

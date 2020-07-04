@@ -12,6 +12,7 @@ import (
 	"gitlab.com/getlytica/lytica-app/internal/web/controllers/forecast"
 	"gitlab.com/getlytica/lytica-app/internal/web/controllers/metrics"
 	"gitlab.com/getlytica/lytica-app/internal/web/controllers/profit_loss"
+	"gitlab.com/getlytica/lytica-app/internal/web/controllers/reports"
 	"gitlab.com/getlytica/lytica-app/internal/web/controllers/setup"
 	"gitlab.com/getlytica/lytica-app/internal/web/controllers/webhooks"
 	"gitlab.com/getlytica/lytica-app/internal/web/lib/payments"
@@ -338,6 +339,16 @@ func (a *App) profitLossHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(p.ProfitLossByDate)),
 	))
+}
+
+func (a *App) reportsHandlers() {
+	r := reports.NewReports(a.Db, a.SessionStore, a.Logger)
+
+	a.Router.Handle("/reports/import", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.setupComplete),
+		negroni.Wrap(http.HandlerFunc(r.Import)),
+	)).Methods("PUT")
 }
 
 func (a *App) setupHandlers() {

@@ -28,6 +28,7 @@ import MetricsTotalCosts          from './metrics/total_costs'
 import MetricsUnitsSold           from './metrics/units_sold'
 import MetricsTotalSales          from './metrics/total_sales'
 import ProfitLossOverview         from './profit_loss/overview'
+import Reports                    from './reports/reports'
 import SetupSubscribe             from './setup/subscribe'
 import TemplateHelper             from './helpers/template'
 import UserHelper                 from './helpers/user'
@@ -80,6 +81,9 @@ init = ->
 
   # Profit Loss
   profitLoss()
+
+  # Reports.
+  reports()
 
   # Setup
   setupSubscribe()
@@ -353,6 +357,15 @@ profitLoss = ->
 
   pl = new ProfitLossOverview()
   pl.init()
+
+  return
+
+#
+# Reports.
+#
+reports = ->
+  r = new Reports()
+  r.init()
 
   return
 

@@ -4,8 +4,10 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type ForecastSuite struct{}
+type forecastSuite struct{}
 
-var _ = Suite(&ForecastSuite{})
+var _ = Suite(&forecastSuite{})
 
-func (s *ForecastSuite) TestForecast(c *C) {}
+func (s *forecastSuite) SetUpSuite(c *C)    {}
+func (s *forecastSuite) TestForecast(c *C)  {}
+func (s *forecastSuite) TearDownSuite(c *C) {}

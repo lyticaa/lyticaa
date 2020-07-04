@@ -1,9 +1,10 @@
-{{ define "expenses::other::form" }}
+{{ define "expenses/other/form" }}
     <form id="expenses-other">
         <div class="modal-body">
             <div class="form-group">
-                <div class="alert alert-danger expenses-other-error" style="display: none;">
-                    It appears that something went wrong while trying to save your expense. Please try again and if the problem persists, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+                <div class="alert alert-icon-danger expenses-other-error text-justify" style="display: none;">
+                    <i data-feather="alert-triangle"></i>
+                    It appears that something went wrong while trying to save the expense. Please try again and if the problem persists, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
                 </div>
             </div>
             <div class="form-group">
@@ -26,7 +27,8 @@
                 </div>
             </div>
             <div class="form-group">
-                <div class="alert alert-danger text-justify pt-3 w-100 expenses-other-currencies-load-error" style="display: none;">
+                <div class="alert alert-icon-danger text-justify pt-3 w-100 expenses-other-currencies-load-error" style="display: none;">
+                    <i data-feather="alert-triangle"></i>
                     Loading the currencies has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
                 </div>
             </div>

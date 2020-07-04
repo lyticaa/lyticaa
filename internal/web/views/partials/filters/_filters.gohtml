@@ -1,21 +1,21 @@
-{{ define "filters::upload::button" }}
+{{ define "filters/import/button" }}
 {{ end }}
 
-{{ define "filters::upload::modal" }}
+{{ define "filters/import/modal" }}
 {{ end }}
 
-{{ define "filters::date" }}
+{{ define "filters/date" }}
 {{ end }}
 
-{{ define "filters::extra"}}
+{{ define "filters/extra"}}
 {{ end }}
 
 {{ define "filters" }}
     <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin float-md-right">
-        {{ template "filters::upload::button" . }}
-        {{ template "filters::extra" . }}
-        {{ template "filters::date" . }}
+        {{ template "filters/import/button" . }}
+        {{ template "filters/extra" . }}
+        {{ template "filters/date" . }}
     </div>
 
-    {{ template "filters::upload::modal" . }}
+    {{ template "filters/import/modal" . }}
 {{ end }}

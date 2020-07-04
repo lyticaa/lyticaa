@@ -1,17 +1,20 @@
-{{ define "expenses::cost-of-goods::form" }}
+{{ define "expenses/cost_of_goods/form" }}
     <form>
         <div class="modal-body">
             <div class="form-group">
-                <div class="alert alert-danger expenses-error" style="display: none;">
-                    It appears that something went wrong while trying to save your cost of goods expense. Please try again and if the problem persists, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+                <div class="alert alert-icon-danger expenses-error text-justify" style="display: none;">
+                    <i data-feather="alert-triangle"></i>
+                    It appears that something went wrong while trying to save the expense. Please try again and if the problem persists, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
                 </div>
             </div>
             <div class="form-group product">
                 <label for="product">Product</label>
-                <div class="alert alert-danger expenses-products-load-error" style="display: none;">
+                <div class="alert alert-icon-danger expenses-products-load-error text-justify" style="display: none;">
+                    <i data-feather="alert-triangle"></i>
                     Unable to load your products. Please try again and if the problem persists, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
                 </div>
-                <div class="alert alert-warning text-justify pt-3 w-100 expenses-products-empty" role="alert" style="display:none;">
+                <div class="alert alert-icon-warning text-justify pt-3 w-100 expenses-products-empty text-justify" role="alert" style="display:none;">
+                    <i data-feather="alert-triangle"></i>
                     You currently have no products on your account. This typically occurs only while we're processing your data for the very first time. However should this persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
                 </div>
                 <select class="form-control" id="product" name="product" required></select>

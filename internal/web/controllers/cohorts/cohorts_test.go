@@ -4,8 +4,10 @@ import (
 	. "gopkg.in/check.v1"
 )
 
-type CohortsSuite struct{}
+type cohortsSuite struct{}
 
-var _ = Suite(&CohortsSuite{})
+var _ = Suite(&cohortsSuite{})
 
-func (s *CohortsSuite) TestCohorts(c *C) {}
+func (s *cohortsSuite) SetUpSuite(c *C)    {}
+func (s *cohortsSuite) TestCohorts(c *C)   {}
+func (s *cohortsSuite) TearDownSuite(c *C) {}

@@ -38,6 +38,7 @@ func (a *App) initializeHandlers() {
 	a.forecastHandlers()
 	a.metricsHandlers()
 	a.profitLossHandlers()
+	a.reportsHandlers()
 	a.setupHandlers()
 	a.webhookHandlers()
 

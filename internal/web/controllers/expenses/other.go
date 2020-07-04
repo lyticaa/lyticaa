@@ -28,7 +28,7 @@ func (e *Expenses) Other(w http.ResponseWriter, r *http.Request) {
 		"partials/nav/_main",
 		"partials/nav/account/_main",
 		"partials/filters/_filters",
-		"partials/filters/_upload",
+		"partials/filters/_import",
 		"partials/expenses/other/_form",
 		"expenses/other",
 	}
