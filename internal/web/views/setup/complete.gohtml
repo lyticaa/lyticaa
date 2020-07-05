@@ -15,6 +15,7 @@
 
 {{ define "content" }}
     <input type="hidden" class="location" data-section="setup-subscribe"/>
+    <input type="hidden" class="stripe-pk" data-stripe-pk="{{ .Config.Stripe.PK }}"/>
     <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
