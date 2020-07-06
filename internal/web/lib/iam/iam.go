@@ -12,4 +12,3 @@ type IAM struct {
 	Config   oauth2.Config
 	Ctx      context.Context
 }
-

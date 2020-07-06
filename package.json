@@ -2,7 +2,7 @@
   "name": "lytica",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "./internal/core/app/assets/js/app.js",
+  "main": "./web/static/js/app.js",
   "dependencies": {
     "bootstrap": "4.3.1",
     "bootstrap-datepicker": "1.7.0",
@@ -33,7 +33,7 @@
     "gulp-sass": "^4.0.2"
   },
   "scripts": {
-    "preinstall": "rm -rf tmp/dist",
-    "postinstall": "./node_modules/.bin/parcel build internal/web/views/layouts/* -d tmp/dist"
+    "preinstall": "rm -rf web/dist",
+    "postinstall": "./node_modules/.bin/parcel build web/templates/layouts/* -d web/dist"
   }
 }

@@ -42,7 +42,7 @@ func (a *App) initializeHandlers() {
 	a.setupHandlers()
 	a.webhookHandlers()
 
-	a.Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./tmp/dist"))))
+	a.Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./web/dist"))))
 }
 
 func (a *App) Stop() {
