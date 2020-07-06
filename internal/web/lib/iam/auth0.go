@@ -10,13 +10,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type IAM struct {
-	Provider *oidc.Provider
-	Config   oauth2.Config
-	Ctx      context.Context
-}
-
-func NewIAM() (*IAM, error) {
+func NewAuth0() (*IAM, error) {
 	ctx := context.Background()
 
 	provider, err := oidc.NewProvider(ctx, os.Getenv("AUTH0_URL"))

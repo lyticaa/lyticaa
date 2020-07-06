@@ -12,10 +12,10 @@ type Setup struct {
 	db           *sqlx.DB
 	sessionStore *redistore.RediStore
 	logger       zerolog.Logger
-	stripe       payments.Gateway
+	stripe       payments.StripeGateway
 }
 
-func NewSetup(db *sqlx.DB, sessionStore *redistore.RediStore, log zerolog.Logger, stripe payments.Gateway) *Setup {
+func NewSetup(db *sqlx.DB, sessionStore *redistore.RediStore, log zerolog.Logger, stripe payments.StripeGateway) *Setup {
 	return &Setup{
 		sessionStore: sessionStore,
 		logger:       log,

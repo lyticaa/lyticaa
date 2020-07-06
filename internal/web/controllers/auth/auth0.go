@@ -39,7 +39,7 @@ func (a *Auth) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authenticator, err := iam.NewIAM()
+	authenticator, err := iam.NewAuth0()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -98,7 +98,7 @@ func (a *Auth) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authenticator, err := iam.NewIAM()
+	authenticator, err := iam.NewAuth0()
 	if err != nil {
 		a.logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -12,10 +12,10 @@ type Account struct {
 	db           *sqlx.DB
 	sessionStore *redistore.RediStore
 	logger       zerolog.Logger
-	stripe       payments.Gateway
+	stripe       payments.StripeGateway
 }
 
-func NewAccount(db *sqlx.DB, sessionStore *redistore.RediStore, log zerolog.Logger, stripe payments.Gateway) *Account {
+func NewAccount(db *sqlx.DB, sessionStore *redistore.RediStore, log zerolog.Logger, stripe payments.StripeGateway) *Account {
 	return &Account{
 		sessionStore: sessionStore,
 		logger:       log,

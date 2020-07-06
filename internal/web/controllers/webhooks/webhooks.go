@@ -13,10 +13,10 @@ import (
 type Webhooks struct {
 	db     *sqlx.DB
 	logger zerolog.Logger
-	stripe payments.Gateway
+	stripe payments.StripeGateway
 }
 
-func NewWebhooks(db *sqlx.DB, log zerolog.Logger, stripe payments.Gateway) *Webhooks {
+func NewWebhooks(db *sqlx.DB, log zerolog.Logger, stripe payments.StripeGateway) *Webhooks {
 	return &Webhooks{
 		db:     db,
 		logger: log,
