@@ -52,7 +52,7 @@ export default class AdminOverview
           return j.data
         'error': (j) ->
           $('button.loading').fadeOut(400, ->
-            $('.alert.assets-load-error').fadeIn()
+            $('.alert.admin-load-error').fadeIn()
           )
       'columns': [
         { 'data': 'email' }
