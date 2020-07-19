@@ -26,7 +26,9 @@ func (e *Expenses) Other(w http.ResponseWriter, r *http.Request) {
 	t := []string{
 		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/account/_account",
 		"partials/nav/account/_main",
+		"partials/admin/_impersonate",
 		"partials/filters/_filters",
 		"partials/filters/_import",
 		"partials/expenses/other/_form",
@@ -36,8 +38,7 @@ func (e *Expenses) Other(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *Expenses) OtherByUser(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	var byDate types.Expenses
 	byDate.Draw = helpers.DtDraw(r)
@@ -55,8 +56,7 @@ func (e *Expenses) OtherByUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *Expenses) NewOther(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	currencyId := r.FormValue("currency")
 	description := r.FormValue("description")
@@ -94,8 +94,7 @@ func (e *Expenses) NewOther(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *Expenses) EditOther(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	params := mux.Vars(r)
 	expenseId := params["expense"]
@@ -153,8 +152,7 @@ func (e *Expenses) EditOther(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *Expenses) DeleteOther(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	params := mux.Vars(r)
 	expenseId := params["expense"]

@@ -1,0 +1,49 @@
+{{ define "breadcrumbs" }}
+    <nav class="page-breadcrumb">
+        <ol class="breadcrumb pt-2">
+            <li class="breadcrumb-item active" aria-current="page">Admin</li>
+        </ol>
+    </nav>
+{{ end }}
+
+{{ define "content" }}
+    <input type="hidden" class="location" data-section="admin"/>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <div class="alert alert-icon-danger text-center pt-3 w-100 admin-load-error" style="display: none;">
+                <i data-feather="alert-triangle"></i>
+                Loading all users has failed. Please try again by refreshing the page.
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-xl-12 stretch-card">
+            <button class="btn btn-primary loading mb-3" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">Users</h6>
+                    <div class="table-responsive overflow-auto">
+                        <table id="assets-table" class="table w-100">
+                            <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Created</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}

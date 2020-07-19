@@ -16,6 +16,9 @@
 {{ define "js-extra-bottom" }}
 {{ end }}
 
+{{ define "admin/impersonate" }}
+{{ end }}
+
 {{ define "app" }}
     <!DOCTYPE html>
     <html lang="en">
@@ -54,29 +57,10 @@
                         <a href="#" class="sidebar-toggler">
                             <i data-feather="menu"></i>
                         </a>
-                        <div class="navbar-content">
-                            <ul class="navbar-nav">
-                                <li class="nav-item dropdown nav-profile">
-                                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <img class="profile-image-thumb" src="" alt="profile">
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="profileDropdown">
-                                        <div class="dropdown-header d-flex flex-column align-items-center">
-                                            <div class="figure mb-3">
-                                                <img class="profile-image" rel="{{.User.Picture}}" src="" alt="">
-                                            </div>
-                                            <div class="info text-center">
-                                                <p class="name font-weight-bold mb-0">{{.User.Nickname}}</p>
-                                                <p class="email text-muted mb-3">{{.User.Email}}</p>
-                                            </div>
-                                        </div>
-                                        {{ template "nav/account/menu" }}
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
+                        {{ template "nav/account" . }}
                     </nav>
                     <div class="page-content">
+                        {{ template "admin/impersonate" . }}
                         <div class="row">
                             <div class="col-md-6">
                                 {{ template "breadcrumbs" . }}
@@ -109,7 +93,11 @@
                     {{ template "footer" . }}
                 </div>
             </div>
-            <div class="hide intercom" data-intercom-id="{{.Config.IntercomId}}" data-name="{{.User.Nickname}}" data-email="{{.User.Email}}" data-created-at="{{.User.CreatedAt}}"></div>
+            {{ if .User.Impersonate }}
+                <div class="hide intercom" data-intercom-id="{{.Config.IntercomId}}" data-email="{{.User.Impersonate.Email}}" data-created-at="{{.User.Impersonate.CreatedAt}}"></div>
+            {{ else }}
+                <div class="hide intercom" data-intercom-id="{{.Config.IntercomId}}" data-email="{{.User.Email}}" data-created-at="{{.User.CreatedAt}}"></div>
+            {{ end }}
             {{ template "js-extra-bottom" . }}
         </body>
     </html>

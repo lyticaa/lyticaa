@@ -26,7 +26,9 @@ func (e *Expenses) CostOfGoods(w http.ResponseWriter, r *http.Request) {
 	t := []string{
 		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/account/_account",
 		"partials/nav/account/_main",
+		"partials/admin/_impersonate",
 		"partials/filters/_filters",
 		"partials/filters/_import",
 		"partials/expenses/cost_of_goods/_form",
@@ -36,8 +38,7 @@ func (e *Expenses) CostOfGoods(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *Expenses) CostOfGoodsByUser(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	var byUser types.Expenses
 	byUser.Draw = helpers.DtDraw(r)
@@ -55,8 +56,7 @@ func (e *Expenses) CostOfGoodsByUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *Expenses) NewCostOfGood(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	productId := r.FormValue("product")
 	ok, product := e.isProductOwner(user.UserId, productId)
@@ -94,8 +94,7 @@ func (e *Expenses) NewCostOfGood(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *Expenses) Products(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	js, err := json.Marshal(e.paintProducts(user.UserId))
 	if err != nil {
@@ -109,8 +108,7 @@ func (e *Expenses) Products(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *Expenses) EditCostOfGood(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	params := mux.Vars(r)
 	expenseId := params["expense"]
@@ -161,8 +159,7 @@ func (e *Expenses) EditCostOfGood(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *Expenses) DeleteCostOfGood(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	params := mux.Vars(r)
 	expenseId := params["expense"]

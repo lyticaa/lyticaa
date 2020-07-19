@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"gitlab.com/getlytica/lytica-app/internal/models"
 	"gitlab.com/getlytica/lytica-app/internal/web/helpers"
 	"gitlab.com/getlytica/lytica-app/internal/web/types"
 
@@ -17,7 +16,9 @@ func (m *Metrics) AdvertisingSpend(w http.ResponseWriter, r *http.Request) {
 	t := []string{
 		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/account/_account",
 		"partials/nav/account/_main",
+		"partials/admin/_impersonate",
 		"partials/filters/_filters",
 		"partials/filters/_date",
 		"partials/filters/_import",
@@ -27,8 +28,7 @@ func (m *Metrics) AdvertisingSpend(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Metrics) AdvertisingSpendByDate(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(m.sessionStore, m.logger, w, r))
 
 	params := mux.Vars(r)
 	dateRange := params["dateRange"]

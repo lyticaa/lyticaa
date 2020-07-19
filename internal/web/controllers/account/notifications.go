@@ -15,7 +15,9 @@ func (a *Account) Notifications(w http.ResponseWriter, r *http.Request) {
 	t := []string{
 		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/_account",
 		"partials/nav/account/_main",
+		"partials/admin/_impersonate",
 		"partials/filters/_filters",
 		"partials/filters/_date",
 		"partials/filters/_import",
@@ -25,11 +27,21 @@ func (a *Account) Notifications(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Account) NotificationsByDate(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(a.sessionStore, a.logger, w, r))
 
-	notifications := models.LoadNotifications(user.Id, helpers.BuildFilter(r), a.db)
+	js, err := json.Marshal(a.loadNotifications(user.Id, r))
+	if err != nil {
+		a.logger.Error().Err(err).Msg("unable to marshal data")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
+	w.Header().Set("Content-Type", "application/json")
+	_, _ = w.Write(js)
+}
+
+func (a *Account) loadNotifications(userId int64, r *http.Request) types.Notifications {
+	notifications := models.LoadNotificationsByUser(userId, helpers.BuildFilter(r), a.db)
 	var byDate types.Notifications
 
 	for _, notification := range *notifications {
@@ -46,15 +58,7 @@ func (a *Account) NotificationsByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	byDate.Draw = helpers.DtDraw(r)
-	byDate.RecordsTotal = models.TotalNotifications(user.Id, a.db)
+	byDate.RecordsTotal = models.TotalNotificationsByUser(userId, a.db)
 
-	js, err := json.Marshal(byDate)
-	if err != nil {
-		a.logger.Error().Err(err).Msg("unable to marshal data")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, _ = w.Write(js)
+	return byDate
 }

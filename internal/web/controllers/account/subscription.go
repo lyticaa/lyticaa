@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strings"
 
-	"gitlab.com/getlytica/lytica-app/internal/models"
 	"gitlab.com/getlytica/lytica-app/internal/web/helpers"
 	"gitlab.com/getlytica/lytica-app/internal/web/types"
 
@@ -35,7 +34,9 @@ func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 	t := []string{
 		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/_account",
 		"partials/nav/account/_main",
+		"partials/admin/_impersonate",
 		"partials/_flash",
 		"account/subscription",
 	}
@@ -44,8 +45,7 @@ func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Account) InvoicesByUser(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(a.sessionStore, a.logger, w, r))
 
 	js, err := json.Marshal(a.paintInvoices(user.StripeUserId.String, r))
 	if err != nil {
@@ -60,7 +60,7 @@ func (a *Account) InvoicesByUser(w http.ResponseWriter, r *http.Request) {
 
 func (a *Account) ChangePlan(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(session)
 
 	planId := mux.Vars(r)["planId"]
 	if user.StripePlanId.String == planId {
@@ -84,15 +84,14 @@ func (a *Account) ChangePlan(w http.ResponseWriter, r *http.Request) {
 	user.StripePlanId = plan
 	_ = user.Save(a.db)
 
-	session.Values["User"] = user
-	_ = session.Save(r, w)
+	helpers.SetSessionUser(user, session, w, r)
 
 	w.WriteHeader(http.StatusOK)
 }
 
 func (a *Account) CancelSubscription(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(session)
 
 	cancel := r.FormValue("cancel")
 	validate := Cancellation{Data: cancel}
@@ -114,8 +113,7 @@ func (a *Account) CancelSubscription(w http.ResponseWriter, r *http.Request) {
 	user.StripePlanId = sql.NullString{}
 	_ = user.Save(a.db)
 
-	session.Values["User"] = user
-	_ = session.Save(r, w)
+	helpers.SetSessionUser(user, session, w, r)
 
 	_ = helpers.SetFlash("success", types.FlashMessages["account"]["subscription"]["cancel"], session, r, w)
 	w.WriteHeader(http.StatusOK)
@@ -123,7 +121,7 @@ func (a *Account) CancelSubscription(w http.ResponseWriter, r *http.Request) {
 
 func (a *Account) Subscribe(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(session)
 
 	planId := mux.Vars(r)["planId"]
 	if user.StripePlanId.String == planId {
@@ -157,8 +155,7 @@ func (a *Account) Subscribe(w http.ResponseWriter, r *http.Request) {
 	user.StripePlanId = plan
 	_ = user.Save(a.db)
 
-	session.Values["User"] = user
-	_ = session.Save(r, w)
+	helpers.SetSessionUser(user, session, w, r)
 
 	w.WriteHeader(http.StatusOK)
 }

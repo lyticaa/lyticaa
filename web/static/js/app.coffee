@@ -8,6 +8,7 @@ import 'bootstrap'
 import './vendors/nobleui/nobleui'
 import './vendors/intercom/intercom'
 
+import AdminOverview              from './admin/overview'
 import AccountNotifications       from './account/notifications'
 import AccountPassword            from './account/password'
 import AccountSubscription        from './account/subscription'
@@ -31,7 +32,6 @@ import ProfitLossOverview         from './profit_loss/overview'
 import Reports                    from './reports/reports'
 import SetupSubscribe             from './setup/subscribe'
 import TemplateHelper             from './helpers/template'
-import UserHelper                 from './helpers/user'
 
 #
 # Start.
@@ -46,6 +46,9 @@ $(document).on 'ready, turbolinks:load', ->
 # Initialize.
 #
 init = ->
+  # Admin.
+  admin()
+
   # Account
   accountNotifications()
   accountSubscription()
@@ -88,11 +91,20 @@ init = ->
   # Setup
   setupSubscribe()
 
-  # User.
-  user()
-
   # Icons.
   renderIcons()
+
+  return
+
+#
+# Admin.
+#
+admin = ->
+  if $('input.location').data('section') != 'admin'
+    return
+
+  a = new AdminOverview()
+  a.init()
 
   return
 
@@ -378,14 +390,6 @@ setupSubscribe = ->
 
   s = new SetupSubscribe()
   s.init()
-
-  return
-
-#
-# User.
-#
-user = ->
-  uh = new UserHelper()
 
   return
 

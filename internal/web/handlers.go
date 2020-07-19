@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"gitlab.com/getlytica/lytica-app/internal/web/controllers/account"
+	"gitlab.com/getlytica/lytica-app/internal/web/controllers/admin"
 	"gitlab.com/getlytica/lytica-app/internal/web/controllers/api"
 	"gitlab.com/getlytica/lytica-app/internal/web/controllers/auth"
 	"gitlab.com/getlytica/lytica-app/internal/web/controllers/cohorts"
@@ -62,6 +63,31 @@ func (a *App) accountHandlers() {
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.ChangePassword)),
+	))
+}
+
+func (a *App) adminHandlers() {
+	ad := admin.NewAdmin(a.Db, a.SessionStore, a.Logger)
+
+	a.Router.Handle("/admin", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.isAdmin),
+		negroni.Wrap(http.HandlerFunc(ad.Overview)),
+	))
+	a.Router.Handle("/admin/filter/{dateRange}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.isAdmin),
+		negroni.Wrap(http.HandlerFunc(ad.UsersByDate)),
+	))
+	a.Router.Handle("/admin/i/{user}", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.isAdmin),
+		negroni.Wrap(http.HandlerFunc(ad.Impersonate)),
+	))
+	a.Router.Handle("/admin/i/{user}/logout", negroni.New(
+		negroni.HandlerFunc(a.isAuthenticated),
+		negroni.HandlerFunc(a.isAdmin),
+		negroni.Wrap(http.HandlerFunc(ad.LogOut)),
 	))
 }
 

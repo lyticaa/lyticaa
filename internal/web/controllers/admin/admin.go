@@ -1,0 +1,21 @@
+package admin
+
+import (
+	"github.com/jmoiron/sqlx"
+	"github.com/rs/zerolog"
+	"gopkg.in/boj/redistore.v1"
+)
+
+type Admin struct {
+	db           *sqlx.DB
+	sessionStore *redistore.RediStore
+	logger       zerolog.Logger
+}
+
+func NewAdmin(db *sqlx.DB, sessionStore *redistore.RediStore, log zerolog.Logger) *Admin {
+	return &Admin{
+		db:           db,
+		sessionStore: sessionStore,
+		logger:       log,
+	}
+}

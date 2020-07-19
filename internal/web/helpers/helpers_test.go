@@ -4,12 +4,16 @@ import (
 	"encoding/gob"
 	"fmt"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 	"time"
 
+	"gitlab.com/getlytica/lytica-app/internal/models"
 	"gitlab.com/getlytica/lytica-app/internal/web/types"
 
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/boj/redistore.v1"
@@ -28,13 +32,35 @@ type validateTest struct {
 	Value string `validate:"required,min=10"`
 }
 
-type helpersSuite struct{}
+type helpersSuite struct {
+	db           *sqlx.DB
+	sessionStore *redistore.RediStore
+}
 
 var _ = Suite(&helpersSuite{})
 
 func Test(t *testing.T) { TestingT(t) }
 
-func (s *helpersSuite) SetUpSuite(c *C) {}
+func (s *helpersSuite) SetUpSuite(c *C) {
+	db, err := sqlx.Connect("postgres", os.Getenv("DATABASE_URL"))
+	c.Assert(err, IsNil)
+
+	s.db = db
+
+	gob.Register(types.Flash{})
+	gob.Register(models.User{})
+
+	store, err := redistore.NewRediStore(
+		10,
+		"tcp",
+		os.Getenv("REDIS_URL"),
+		os.Getenv("REDIS_PASSWORD"),
+		[]byte(os.Getenv("SESSION_KEY")))
+	c.Assert(store, NotNil)
+	c.Assert(err, IsNil)
+
+	s.sessionStore = store
+}
 
 func (s *helpersSuite) TestDataTables(c *C) {
 	url := fmt.Sprintf("/?draw=%v&start=%v&length=%v&order[0][column]=%v&order[0][dir]=%v", 1, 0, 10, 0, "asc")
@@ -205,6 +231,83 @@ func (s *helpersSuite) TestNav(c *C) {
 
 	nav = AccountNavForSession(false)
 	c.Assert(nav, Equals, setupAccountNav)
+}
+
+func (s *helpersSuite) TestSession(c *C) {
+	url := faker.Internet().Url()
+	r, err := http.NewRequest(http.MethodGet, url, nil)
+	c.Assert(r, NotNil)
+	c.Assert(err, IsNil)
+
+	session, err := s.sessionStore.Get(r, "auth-session")
+	c.Assert(session, NotNil)
+	c.Assert(err, IsNil)
+
+	setFlashSuccess(successMsg, session)
+	flash := session.Values["Flash"].(types.Flash)
+	c.Assert(flash.Success, Equals, successMsg)
+
+	resetFlash(session)
+	c.Assert(session.Values["Flash"], IsNil)
+
+	session = GetSession(s.sessionStore, log.Logger, httptest.NewRecorder(), r)
+	c.Assert(session, NotNil)
+
+	user, err := models.CreateUser(
+		faker.RandomString(10),
+		faker.Internet().Email(),
+		faker.Lorem().Word(),
+		faker.Avatar().Url("jpg", 200, 300),
+		s.db,
+	)
+	c.Assert(err, IsNil)
+
+	user.Admin = true
+	err = user.Save(s.db)
+	c.Assert(err, IsNil)
+
+	session.Values["User"] = *user
+	sessionUser := GetSessionUser(session)
+	c.Assert(sessionUser.UserId, Equals, user.UserId)
+
+	impersonate, err := models.CreateUser(
+		faker.RandomString(10),
+		faker.Internet().Email(),
+		faker.Lorem().Word(),
+		faker.Avatar().Url("jpg", 200, 300),
+		s.db,
+	)
+	c.Assert(err, IsNil)
+
+	user.Impersonate = impersonate
+	session.Values["User"] = *user
+	sessionUser = GetSessionUser(session)
+	c.Assert(sessionUser.UserId, Equals, impersonate.UserId)
+
+	SetSessionUser(*impersonate, session, httptest.NewRecorder(), r)
+	sessionUser = GetSessionUser(session)
+	c.Assert(sessionUser.UserId, Equals, impersonate.UserId)
+
+	user, err = models.CreateUser(
+		faker.RandomString(10),
+		faker.Internet().Email(),
+		faker.Lorem().Word(),
+		faker.Avatar().Url("jpg", 200, 300),
+		s.db,
+	)
+	c.Assert(err, IsNil)
+
+	session.Values["User"] = *user
+	SetSessionUser(*user, session, httptest.NewRecorder(), r)
+	sessionUser = GetSessionUser(session)
+	c.Assert(sessionUser.UserId, Equals, user.UserId)
+
+	session.Values["isSubscribed"] = true
+	err = session.Save(r, httptest.NewRecorder())
+	c.Assert(err, IsNil)
+
+	ok := IsSubscribed(s.sessionStore, log.Logger, httptest.NewRecorder(), r)
+	c.Assert(ok, Equals, true)
 }
 
 func (s *helpersSuite) TestTemplates(c *C) {

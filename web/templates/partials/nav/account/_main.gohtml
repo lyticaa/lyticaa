@@ -1,6 +1,16 @@
 {{ define "nav/account/menu" }}
     <div class="dropdown-body">
         <ul class="profile-nav p-0 pt-3">
+            {{ if not .User.Impersonate }}
+                {{ if .User.Admin }}
+                    <li class="nav-item">
+                        <a href="/admin" class="nav-link">
+                            <i data-feather="globe"></i>
+                            <span class="link-title">Admin</span>
+                        </a>
+                    </li>
+                {{ end }}
+            {{ end }}
             <li class="nav-item">
                 <a href="/account/notifications" class="nav-link">
                     <i data-feather="bell"></i>

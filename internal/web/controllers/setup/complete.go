@@ -35,6 +35,7 @@ func (s *Setup) Complete(w http.ResponseWriter, r *http.Request) {
 	t := []string{
 		"partials/_nav",
 		"partials/nav/_setup",
+		"partials/nav/account/_account",
 		"partials/nav/account/_setup",
 		"setup/complete",
 	}

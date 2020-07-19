@@ -30,6 +30,7 @@ func (a *App) Start() {
 
 func (a *App) initializeHandlers() {
 	a.accountHandlers()
+	a.adminHandlers()
 	a.apiHandlers()
 	a.authHandlers()
 	a.cohortsHandlers()

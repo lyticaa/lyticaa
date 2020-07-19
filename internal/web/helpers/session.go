@@ -3,6 +3,8 @@ package helpers
 import (
 	"net/http"
 
+	"gitlab.com/getlytica/lytica-app/internal/models"
+
 	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
 	"gopkg.in/boj/redistore.v1"
@@ -21,6 +23,29 @@ func GetSession(store *redistore.RediStore, logger zerolog.Logger, w http.Respon
 	}
 
 	return resetFlash(session)
+}
+
+func GetSessionUser(session *sessions.Session) models.User {
+	user := session.Values["User"].(models.User)
+	if user.Impersonate != nil && user.Admin {
+		return *user.Impersonate
+	}
+
+	return user
+}
+
+func SetSessionUser(user models.User, session *sessions.Session, w http.ResponseWriter, r *http.Request) {
+	var pUser models.User
+
+	pUser = session.Values["User"].(models.User)
+	if user.UserId != pUser.UserId {
+		pUser.Impersonate = &user
+	} else {
+		pUser = user
+	}
+
+	session.Values["User"] = pUser
+	_ = session.Save(r, w)
 }
 
 func IsSubscribed(sessionStore *redistore.RediStore, logger zerolog.Logger, w http.ResponseWriter, r *http.Request) bool {

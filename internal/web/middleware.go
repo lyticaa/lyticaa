@@ -34,6 +34,20 @@ func (a *App) isAuthenticated(w http.ResponseWriter, r *http.Request, next http.
 	}
 }
 
+func (a *App) isAdmin(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	session := a.getSession(w, r)
+	if session.Values["User"] == nil {
+		http.Redirect(w, r, "/", http.StatusFound)
+	}
+
+	user := session.Values["User"].(models.User)
+	if !user.Admin {
+		http.Redirect(w, r, "/", http.StatusFound)
+	} else {
+		next(w, r)
+	}
+}
+
 func (a *App) setupComplete(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	session := a.getSession(w, r)
 	if session.Values["User"] == nil {

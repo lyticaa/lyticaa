@@ -42,6 +42,7 @@ func (s *Setup) Subscribe(w http.ResponseWriter, r *http.Request) {
 	t := []string{
 		"partials/_nav",
 		"partials/nav/_setup",
+		"partials/nav/account/_account",
 		"partials/nav/account/_setup",
 		"setup/subscribe",
 	}
@@ -64,6 +65,7 @@ func (s *Setup) SubscribeSuccess(w http.ResponseWriter, r *http.Request) {
 	t := []string{
 		"partials/_nav",
 		"partials/nav/_setup",
+		"partials/nav/account/_account",
 		"partials/nav/account/_setup",
 		"partials/_flash",
 		"setup/subscribe",
@@ -84,6 +86,7 @@ func (s *Setup) SubscribeCancel(w http.ResponseWriter, r *http.Request) {
 	t := []string{
 		"partials/_nav",
 		"partials/nav/_setup",
+		"partials/nav/account/_account",
 		"partials/nav/account/_setup",
 		"partials/_flash",
 		"setup/subscribe",

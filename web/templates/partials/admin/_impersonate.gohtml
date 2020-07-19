@@ -1,0 +1,13 @@
+{{ define "admin/impersonate" }}
+    {{ if .User.Impersonate }}
+        {{ if .User.Impersonate.UserId }}
+            <div class="row">
+                <div class="col-12 col-xl-12 stretch-card">
+                    <div class="alert alert-info w-100 text-center">
+                        You are currently logged in as {{.User.Impersonate.Email}}. Click <a href="/admin/i/{{.User.Impersonate.UserId}}/logout" data-turbolinks="false">here</a> to log out.
+                    </div>
+                </div>
+            </div>
+        {{ end }}
+    {{ end }}
+{{ end }}

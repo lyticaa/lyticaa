@@ -22,11 +22,11 @@ var (
 	}
 )
 
-func LoadNotifications(userId int64, filter *Filter, db *sqlx.DB) *[]Notification {
+func LoadNotificationsByUser(userId int64, filter *Filter, db *sqlx.DB) *[]Notification {
 	var notifications []Notification
 
 	query := `SELECT notification, created_at FROM notifications WHERE user_id = $1 AND created_at BETWEEN $2 AND $3 ORDER BY $4 LIMIT $5 OFFSET $6`
-	_ = db.Select(
+	err := db.Select(
 		&notifications,
 		query,
 		userId,
@@ -37,10 +37,18 @@ func LoadNotifications(userId int64, filter *Filter, db *sqlx.DB) *[]Notificatio
 		filter.Start,
 	)
 
+	if err != nil {
+		return &[]Notification{}
+	}
+
+	if len(notifications) == 0 {
+		return &[]Notification{}
+	}
+
 	return &notifications
 }
 
-func TotalNotifications(userId int64, db *sqlx.DB) int64 {
+func TotalNotificationsByUser(userId int64, db *sqlx.DB) int64 {
 	var count int64
 
 	query := `SELECT COUNT(id) FROM notifications WHERE user_id = $1`

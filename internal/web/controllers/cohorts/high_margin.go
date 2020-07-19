@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"gitlab.com/getlytica/lytica-app/internal/models"
 	"gitlab.com/getlytica/lytica-app/internal/web/helpers"
 	"gitlab.com/getlytica/lytica-app/internal/web/types"
 
@@ -17,19 +16,20 @@ func (c *Cohorts) HighMargin(w http.ResponseWriter, r *http.Request) {
 	t := []string{
 		"partials/_nav",
 		"partials/nav/_main",
+		"partials/nav/account/_account",
 		"partials/nav/account/_main",
-		"partials/cohorts/_margin",
+		"partials/admin/_impersonate",
 		"partials/filters/_filters",
 		"partials/filters/_date",
 		"partials/filters/_import",
+		"partials/cohorts/_margin",
 		"cohorts/high_margin",
 	}
 	helpers.RenderTemplate(w, t, session.Values)
 }
 
 func (c *Cohorts) HighMarginByDate(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(c.sessionStore, c.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(c.sessionStore, c.logger, w, r))
 
 	params := mux.Vars(r)
 	dateRange := params["dateRange"]

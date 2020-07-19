@@ -7,13 +7,11 @@ import (
 	"net/http"
 	"os"
 
-	"gitlab.com/getlytica/lytica-app/internal/models"
 	"gitlab.com/getlytica/lytica-app/internal/web/helpers"
 )
 
 func (a *Account) ChangePassword(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(a.sessionStore, a.logger, w, r))
 
 	if err := a.changePasswordRequest(user.Email); err != nil {
 		a.logger.Error().Err(err).Msg("password reset request failed")
