@@ -51,15 +51,16 @@
 {{ end }}
 
 {{ define "js-extra-bottom" }}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"></script>
     <script type="application/javascript">
-        $('.dropify').dropify({
-            messages: {
-                'default': 'Drag and drop a file here, or click.',
-                'replace': 'Drag and drop another file, or click to replace.',
-                'remove': 'Remove',
-                'error': ''
-            }
+        $(document).on('ready turbolinks:load', function() {
+            $('.dropify').dropify({
+                messages: {
+                    'default': 'Drag and drop a file here, or click.',
+                    'replace': 'Drag and drop another file, or click to replace.',
+                    'remove': 'Remove',
+                    'error': ''
+                }
+            });
         });
     </script>
 {{ end }}
