@@ -8,7 +8,6 @@ import (
 	"gitlab.com/getlytica/lytica-app/internal/web/lib/amazon/aws"
 	"gitlab.com/getlytica/lytica-app/internal/web/lib/amazon/aws/storage/s3"
 
-	"gitlab.com/getlytica/lytica-app/internal/models"
 	"gitlab.com/getlytica/lytica-app/internal/web/helpers"
 )
 
@@ -17,8 +16,7 @@ var (
 )
 
 func (rp *Reports) Import(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(rp.sessionStore, rp.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(rp.sessionStore, rp.logger, w, r))
 
 	maxSize := int64(40960000)
 
