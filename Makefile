@@ -10,7 +10,7 @@ lint: lint-pre
 	@golangci-lint run
 
 lint-verbose: lint-pre
-	@golangci-lint run -v
+	@golangci-lint run -v --timeout=5m
 
 install: go.sum
 	GO111MODULE=on go install -v ./cmd/webd
