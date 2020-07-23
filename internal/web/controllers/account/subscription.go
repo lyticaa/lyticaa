@@ -34,7 +34,7 @@ func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 	t := []string{
 		"partials/_nav",
 		"partials/nav/_main",
-		"partials/nav/_account",
+		"partials/nav/account/_account",
 		"partials/nav/account/_main",
 		"partials/admin/_impersonate",
 		"partials/_flash",
