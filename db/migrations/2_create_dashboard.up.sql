@@ -19,5 +19,5 @@ CREATE TABLE dashboard
     created_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    UNIQUE (user_id)
+    UNIQUE (date_range,user_id,date_time,marketplace)
 );
