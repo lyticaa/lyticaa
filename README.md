@@ -27,7 +27,7 @@ AWS_SECRET_ACCESS_KEY=
 AWS_SQS_QUEUE=
 BASE_URL=
 CLOUDAMQP_APIKEY=
-CLOUDAMQP_QUEUE=
+CLOUDAMQP_QUEUE_DATA=
 CLOUDAMQP_URL=
 DATABASE_URL=
 ENV=
@@ -50,7 +50,6 @@ STRIPE_PK=
 STRIPE_SK=
 STRIPE_SUCCESS_URI=
 STRIPE_WHSEC=
-SUPPORT_EMAIL=
 ```
 
 If you are unsure as to what these values ought to be, then please check with a colleague.
