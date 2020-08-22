@@ -43,13 +43,13 @@ docker-memcache:
 	@docker-compose -f ./build/docker-compose.yml run --rm -p 11211:11211 --no-deps -d memcache
 
 create-user:
-	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE USER lytica WITH SUPERUSER PASSWORD 'password';"
+	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE USER lyticaa WITH SUPERUSER PASSWORD 'password';"
 
 create-database:
-	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE DATABASE lytica_development OWNER lytica;"
+	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE DATABASE lyticaa_development OWNER lyticaa;"
 
 drop-database:
-	PGPASSWORD=password psql -h localhost -U postgres -c "drop database lytica_development;"
+	PGPASSWORD=password psql -h localhost -U postgres -c "drop database lyticaa_development;"
 
 migrate:
 	@go run cmd/migrate/main.go

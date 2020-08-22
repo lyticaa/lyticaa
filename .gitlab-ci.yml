@@ -20,8 +20,8 @@ unit:
     - postgres:latest
     - rabbitmq:latest
   variables:
-    POSTGRES_DB: lytica_test
-    POSTGRES_USER: lytica
+    POSTGRES_DB: lyticaa_test
+    POSTGRES_USER: lyticaa
     POSTGRES_PASSWORD: password
     POSTGRES_HOST_AUTH_METHOD: trust
     RABBITMQ_DEFAULT_USER: $RABBITMQ_DEFAULT_USER
