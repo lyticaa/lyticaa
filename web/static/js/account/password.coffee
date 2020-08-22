@@ -31,10 +31,10 @@ export default class AccountPassword
         200: ->
           p.turbolinks.stop()
 
-          $('.alert.alert-success.account-change-password').fadeIn()
+          $('.alert.alert-icon-success.account-change-password').fadeIn()
         500: ->
           p.turbolinks.stop()
 
-          $('.alert.alert-danger.account-change-password').fadeIn()
+          $('.alert.alert-icon-danger.account-change-password').fadeIn()
 
     return
