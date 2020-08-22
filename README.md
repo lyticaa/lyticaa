@@ -1,6 +1,6 @@
-# lytica-app
+# lyticaa-app
 
-Lytica (web/worker).
+Lyticaa Dashboard (web/worker).
 
 ## Setup
 
@@ -142,7 +142,7 @@ make migrate
 
 ## Messaging
 
-To communicate with other applications in the Lytica network, we use RabbitMQ.
+To communicate with other applications in the Lyticaa network, we use RabbitMQ.
 
 To start a local RabbitMQ instance, run:
 

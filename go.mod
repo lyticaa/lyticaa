@@ -1,6 +1,6 @@
-module gitlab.com/getlytica/lytica-app
+module gitlab.com/lyticaa/lyticaa-app
 
-replace gitlab.com/getlytica/lytica-app => ../getlytica/lytica-app
+replace gitlab.com/lyticaa/lyticaa-app => ../lyticaa/lyticaa-app
 
 go 1.14
 

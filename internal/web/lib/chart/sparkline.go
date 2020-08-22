@@ -1,7 +1,7 @@
 package chart
 
 import (
-	"gitlab.com/getlytica/lytica-app/internal/web/types"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
 )
 
 func (c *Chart) Sparkline(data *[]types.Summary) types.Chart {

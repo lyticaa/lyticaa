@@ -5,9 +5,9 @@ import (
 	"regexp"
 	"sync"
 
-	"gitlab.com/getlytica/lytica-app/internal/web/helpers"
-	"gitlab.com/getlytica/lytica-app/internal/web/lib/amazon/aws"
-	"gitlab.com/getlytica/lytica-app/internal/web/lib/amazon/aws/storage/s3"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/helpers"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/lib/amazon/aws"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/lib/amazon/aws/storage/s3"
 )
 
 var (

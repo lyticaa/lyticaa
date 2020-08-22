@@ -1,7 +1,7 @@
 package forecast
 
 import (
-	"gitlab.com/getlytica/lytica-app/internal/web/lib/data"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/lib/data"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.com/getlytica/lytica-app/internal/web/helpers"
-	"gitlab.com/getlytica/lytica-app/internal/web/types"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/helpers"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
 )
 
 func (c *Chart) Line(data *[]types.Summary, dateRange string) types.Chart {

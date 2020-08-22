@@ -8,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	"gitlab.com/getlytica/lytica-app/internal/web/types"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
 
 	. "gopkg.in/check.v1"
 )

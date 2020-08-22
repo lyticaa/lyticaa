@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strings"
 
-	"gitlab.com/getlytica/lytica-app/internal/web/helpers"
-	"gitlab.com/getlytica/lytica-app/internal/web/types"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/helpers"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
 
 	"github.com/gorilla/mux"
 	"golang.org/x/text/currency"

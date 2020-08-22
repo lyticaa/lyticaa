@@ -1,7 +1,7 @@
 package data
 
 import (
-	"gitlab.com/getlytica/lytica-app/internal/web/lib/chart"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/lib/chart"
 
 	"github.com/jmoiron/sqlx"
 )

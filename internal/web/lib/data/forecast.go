@@ -1,7 +1,7 @@
 package data
 
 import (
-	"gitlab.com/getlytica/lytica-app/internal/web/types"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
 )
 
 func (d *Data) Forecast(userId, dateRange, view string, forecast *types.Forecast) {

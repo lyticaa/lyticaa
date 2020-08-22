@@ -1,7 +1,7 @@
 package account
 
 import (
-	"gitlab.com/getlytica/lytica-app/internal/web/lib/payments"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/lib/payments"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"

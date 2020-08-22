@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"gitlab.com/getlytica/lytica-app/internal/models"
+	"gitlab.com/lyticaa/lyticaa-app/internal/models"
 
 	"github.com/stripe/stripe-go/v71"
 )

@@ -3,8 +3,8 @@ package app
 import (
 	"encoding/json"
 
-	"gitlab.com/getlytica/lytica-app/internal/models"
-	"gitlab.com/getlytica/lytica-app/internal/worker/types"
+	"gitlab.com/lyticaa/lyticaa-app/internal/models"
+	"gitlab.com/lyticaa/lyticaa-app/internal/worker/types"
 
 	"github.com/streadway/amqp"
 )

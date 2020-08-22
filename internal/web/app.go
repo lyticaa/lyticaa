@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"gitlab.com/getlytica/lytica-app/internal/models"
-	"gitlab.com/getlytica/lytica-app/internal/web/types"
+	"gitlab.com/lyticaa/lyticaa-app/internal/models"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/gorilla/mux"

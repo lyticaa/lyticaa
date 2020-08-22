@@ -1,9 +1,9 @@
 package data
 
 import (
-	"gitlab.com/getlytica/lytica-app/internal/models"
-	"gitlab.com/getlytica/lytica-app/internal/web/helpers"
-	"gitlab.com/getlytica/lytica-app/internal/web/types"
+	"gitlab.com/lyticaa/lyticaa-app/internal/models"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/helpers"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
 )
 
 func (d *Data) Cohorts(userId, dateRange, view string, cohort *types.Cohort, filter *models.Filter) {
