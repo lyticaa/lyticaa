@@ -12,19 +12,7 @@ import (
 
 func (f *Forecast) Overview(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(f.sessionStore, f.logger, w, r)
-
-	t := []string{
-		"partials/_nav",
-		"partials/nav/_main",
-		"partials/nav/account/_account",
-		"partials/nav/account/_main",
-		"partials/admin/_impersonate",
-		"partials/filters/_filters",
-		"partials/filters/_date",
-		"partials/filters/_import",
-		"forecast/overview",
-	}
-	helpers.RenderTemplate(w, t, session.Values)
+	helpers.RenderTemplate(w, helpers.TemplateList(helpers.ForecastOverview), session.Values)
 }
 
 func (f *Forecast) ForecastByDate(w http.ResponseWriter, r *http.Request) {

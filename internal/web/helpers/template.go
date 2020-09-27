@@ -53,15 +53,20 @@ var (
 	DefaultWithImpersonate = append(DefaultNav, []string{
 		PartialsAdminImpersonate,
 	}...)
-	DefaultWithFilters = append(DefaultWithImpersonate, []string{
+	DefaultWithFilters = append(DefaultNav, []string{
+		PartialsAdminImpersonate,
 		PartialsFiltersFilters,
 		PartialsFiltersDate,
 		PartialsFiltersImport,
 	}...)
-	Cohorts = append(DefaultWithFilters, []string{
+	Cohorts = append(DefaultNav, []string{
+		PartialsFiltersFilters,
+		PartialsFiltersDate,
+		PartialsFiltersImport,
 		PartialsCohortsMargin,
 	}...)
-	Expenses = append(DefaultWithImpersonate, []string{
+	Expenses = append(DefaultNav, []string{
+		PartialsAdminImpersonate,
 		PartialsFiltersFilters,
 		PartialsFiltersImport,
 	}...)
@@ -120,6 +125,19 @@ func TemplateList(page string) []string {
 	default:
 		return DefaultNav
 	}
+
+
+	//t := []string{
+	//	"partials/_nav",
+	//	"partials/nav/_main",
+	//	"partials/nav/account/_account",
+	//	"partials/nav/account/_main",
+	//	"partials/admin/_impersonate",
+	//	"partials/filters/_filters",
+	//	"partials/filters/_date",
+	//	"partials/filters/_import",
+	//	"forecast/overview",
+	//}
 }
 
 func RenderTemplate(w http.ResponseWriter, templates []string, data interface{}) {
