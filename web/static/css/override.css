@@ -10,6 +10,16 @@ a:focus {
     -moz-box-shadow: none !important;
 }
 
+/* Nav */
+.navbar {
+    box-shadow: none !important;
+}
+
+/* Cards */
+.card {
+    box-shadow: none !important;
+}
+
 .table-responsive {
     overflow-x: unset !important;
 }
