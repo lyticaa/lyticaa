@@ -30,17 +30,7 @@ type Cancellation struct {
 
 func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
-
-	t := []string{
-		"partials/_nav",
-		"partials/nav/_main",
-		"partials/nav/account/_account",
-		"partials/nav/account/_main",
-		"partials/admin/_impersonate",
-		"partials/_flash",
-		"account/subscription",
-	}
-	helpers.RenderTemplate(w, t, session.Values)
+	helpers.RenderTemplate(w, helpers.TemplateList(helpers.AccountSubscription), session.Values)
 	helpers.ClearFlash(session, r, w)
 }
 

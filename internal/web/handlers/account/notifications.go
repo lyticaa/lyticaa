@@ -11,19 +11,7 @@ import (
 
 func (a *Account) Notifications(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
-
-	t := []string{
-		"partials/_nav",
-		"partials/nav/_main",
-		"partials/nav/account/_account",
-		"partials/nav/account/_main",
-		"partials/admin/_impersonate",
-		"partials/filters/_filters",
-		"partials/filters/_date",
-		"partials/filters/_import",
-		"account/notifications",
-	}
-	helpers.RenderTemplate(w, t, session.Values)
+	helpers.RenderTemplate(w, helpers.TemplateList(helpers.AccountNotifications), session.Values)
 }
 
 func (a *Account) NotificationsByDate(w http.ResponseWriter, r *http.Request) {

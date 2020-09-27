@@ -12,20 +12,7 @@ import (
 
 func (c *Cohorts) HighMargin(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(c.sessionStore, c.logger, w, r)
-
-	t := []string{
-		"partials/_nav",
-		"partials/nav/_main",
-		"partials/nav/account/_account",
-		"partials/nav/account/_main",
-		"partials/admin/_impersonate",
-		"partials/filters/_filters",
-		"partials/filters/_date",
-		"partials/filters/_import",
-		"partials/cohorts/_margin",
-		"cohorts/high_margin",
-	}
-	helpers.RenderTemplate(w, t, session.Values)
+	helpers.RenderTemplate(w, helpers.TemplateList(helpers.CohortsHighMargin), session.Values)
 }
 
 func (c *Cohorts) HighMarginByDate(w http.ResponseWriter, r *http.Request) {

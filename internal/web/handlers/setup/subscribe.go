@@ -38,15 +38,7 @@ func (s *Setup) Subscribe(w http.ResponseWriter, r *http.Request) {
 	s.stripeSessions(w, session)
 
 	session.Values["showPlans"] = true
-
-	t := []string{
-		"partials/_nav",
-		"partials/nav/_setup",
-		"partials/nav/account/_account",
-		"partials/nav/account/_setup",
-		"setup/subscribe",
-	}
-	helpers.RenderTemplate(w, t, session.Values)
+	helpers.RenderTemplate(w, helpers.TemplateList(helpers.SetupSubscribe), session.Values)
 }
 
 func (s *Setup) SubscribeSuccess(w http.ResponseWriter, r *http.Request) {
@@ -62,16 +54,7 @@ func (s *Setup) SubscribeSuccess(w http.ResponseWriter, r *http.Request) {
 		s.logger.Error().Err(err).Msg("unable to save session")
 	}
 
-	t := []string{
-		"partials/_nav",
-		"partials/nav/_setup",
-		"partials/nav/account/_account",
-		"partials/nav/account/_setup",
-		"partials/_flash",
-		"setup/subscribe",
-	}
-
-	helpers.RenderTemplate(w, t, session.Values)
+	helpers.RenderTemplate(w, helpers.TemplateList(helpers.SetupSubscribe), session.Values)
 	helpers.ClearFlash(session, r, w)
 }
 
@@ -83,14 +66,6 @@ func (s *Setup) SubscribeCancel(w http.ResponseWriter, r *http.Request) {
 		Error: types.FlashMessages["setup"]["subscribe"]["error"],
 	}
 
-	t := []string{
-		"partials/_nav",
-		"partials/nav/_setup",
-		"partials/nav/account/_account",
-		"partials/nav/account/_setup",
-		"partials/_flash",
-		"setup/subscribe",
-	}
-	helpers.RenderTemplate(w, t, session.Values)
+	helpers.RenderTemplate(w, helpers.TemplateList(helpers.SetupSubscribe), session.Values)
 	helpers.ClearFlash(session, r, w)
 }

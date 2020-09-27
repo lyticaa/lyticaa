@@ -20,15 +20,7 @@ func (a *Admin) Overview(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, os.Getenv("BASE_URL"), 302)
 	}
 
-	t := []string{
-		"partials/_nav",
-		"partials/nav/_main",
-		"partials/nav/account/_account",
-		"partials/nav/account/_main",
-		"partials/filters/_filters",
-		"admin/overview",
-	}
-	helpers.RenderTemplate(w, t, session.Values)
+	helpers.RenderTemplate(w, helpers.TemplateList(helpers.AdminOverview), session.Values)
 }
 
 func (a *Admin) UsersByDate(w http.ResponseWriter, r *http.Request) {

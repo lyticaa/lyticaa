@@ -219,20 +219,6 @@ func (s *helpersSuite) TestForm(c *C) {
 	c.Assert(ok, Equals, false)
 }
 
-func (s *helpersSuite) TestNav(c *C) {
-	nav := PrimaryNavForSession(true)
-	c.Assert(nav, Equals, mainPrimaryNav)
-
-	nav = PrimaryNavForSession(false)
-	c.Assert(nav, Equals, setupPrimaryNav)
-
-	nav = AccountNavForSession(true)
-	c.Assert(nav, Equals, mainAccountNav)
-
-	nav = AccountNavForSession(false)
-	c.Assert(nav, Equals, setupAccountNav)
-}
-
 func (s *helpersSuite) TestSession(c *C) {
 	url := faker.Internet().Url()
 	r, err := http.NewRequest(http.MethodGet, url, nil)
@@ -311,7 +297,7 @@ func (s *helpersSuite) TestSession(c *C) {
 }
 
 func (s *helpersSuite) TestTemplates(c *C) {
-	templates := templateList([]string{})
+	templates := compileList([]string{})
 	c.Assert(assert.Greater(c, len(templates), 0), Equals, true)
 }
 

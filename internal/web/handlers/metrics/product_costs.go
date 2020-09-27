@@ -12,19 +12,7 @@ import (
 
 func (m *Metrics) ProductCosts(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-
-	t := []string{
-		"partials/_nav",
-		"partials/nav/_main",
-		"partials/nav/account/_account",
-		"partials/nav/account/_main",
-		"partials/admin/_impersonate",
-		"partials/filters/_filters",
-		"partials/filters/_date",
-		"partials/filters/_import",
-		"metrics/product_costs",
-	}
-	helpers.RenderTemplate(w, t, session.Values)
+	helpers.RenderTemplate(w, helpers.TemplateList(helpers.MetricsProductCosts), session.Values)
 }
 
 func (m *Metrics) ProductCostsByDate(w http.ResponseWriter, r *http.Request) {

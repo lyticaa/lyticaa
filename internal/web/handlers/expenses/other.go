@@ -22,19 +22,7 @@ type ValidateOther struct {
 
 func (e *Expenses) Other(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
-
-	t := []string{
-		"partials/_nav",
-		"partials/nav/_main",
-		"partials/nav/account/_account",
-		"partials/nav/account/_main",
-		"partials/admin/_impersonate",
-		"partials/filters/_filters",
-		"partials/filters/_import",
-		"partials/expenses/other/_form",
-		"expenses/other",
-	}
-	helpers.RenderTemplate(w, t, session.Values)
+	helpers.RenderTemplate(w, helpers.TemplateList(helpers.ExpensesOther), session.Values)
 }
 
 func (e *Expenses) OtherByUser(w http.ResponseWriter, r *http.Request) {
