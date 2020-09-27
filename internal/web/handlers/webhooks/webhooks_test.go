@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/lib/payments/types"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/pkg/payments/types"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"

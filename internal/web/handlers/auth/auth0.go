@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"gitlab.com/lyticaa/lyticaa-app/internal/models"
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/lib/iam"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/pkg/iam"
 
 	"github.com/coreos/go-oidc"
 )

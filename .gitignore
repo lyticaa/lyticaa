@@ -37,6 +37,5 @@ statechaintest/
 */signer_db
 *.out
 .cache/
-pkg/
 src/
 web/dist
