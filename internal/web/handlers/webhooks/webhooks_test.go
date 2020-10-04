@@ -22,9 +22,9 @@ func (m *mockGateway) CheckoutSession(string, string, string) (*stripe.CheckoutS
 }
 
 func (m *mockGateway) CustomerRefId(session *stripe.CheckoutSession) string  { return "" }
-func (m *mockGateway) CustomerId(session *stripe.CheckoutSession) string     { return "" }
-func (m *mockGateway) SubscriptionId(session *stripe.CheckoutSession) string { return "" }
-func (m *mockGateway) PlanId(session *stripe.CheckoutSession) string         { return "" }
+func (m *mockGateway) CustomerId(session *stripe.CheckoutSession) *string     { return nil }
+func (m *mockGateway) SubscriptionId(session *stripe.CheckoutSession) *string { return nil }
+func (m *mockGateway) PlanId(session *stripe.CheckoutSession) *string         { return nil }
 
 func (m *mockGateway) ConstructEvent(body []byte, sig string) (stripe.Event, error) {
 	return stripe.Event{}, nil
