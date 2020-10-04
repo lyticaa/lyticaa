@@ -37,6 +37,7 @@ func (wh *Webhooks) Stripe(w http.ResponseWriter, r *http.Request) {
 
 func (wh *Webhooks) stripeEvent(body []byte, w http.ResponseWriter, r *http.Request) (stripe.Event, error) {
 	e, err := wh.stripe.ConstructEvent(body, r.Header.Get("Stripe-Signature"))
+	wh.logger.Info().Msg(r.Header.Get("Stripe-Signature"))
 	if err != nil {
 		wh.logger.Error().Err(err).Msg("bad signature")
 		w.WriteHeader(http.StatusBadRequest)
@@ -59,12 +60,14 @@ func (wh *Webhooks) parseStripeEvent(event stripe.Event, w http.ResponseWriter) 
 		var customer sql.NullString
 		if err := customer.Scan(wh.stripe.CustomerId(&session)); err != nil {
 			wh.logger.Error().Err(err).Msg("failed to assign customer reference")
+			return err
 		}
 
 		user := models.LoadUser(wh.stripe.CustomerRefId(&session), wh.db)
 		user.StripeUserId = customer
 		if err := user.Save(wh.db); err != nil {
 			wh.logger.Error().Err(err).Msg("failed to save user")
+			return err
 		}
 	}
 

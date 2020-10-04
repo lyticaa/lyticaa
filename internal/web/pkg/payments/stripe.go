@@ -42,9 +42,9 @@ var (
 type StripeGateway interface {
 	CheckoutSession(string, string, string) (*stripe.CheckoutSession, error)
 	CustomerRefId(*stripe.CheckoutSession) string
-	CustomerId(*stripe.CheckoutSession) string
-	SubscriptionId(*stripe.CheckoutSession) string
-	PlanId(*stripe.CheckoutSession) string
+	CustomerId(*stripe.CheckoutSession) *string
+	SubscriptionId(*stripe.CheckoutSession) *string
+	PlanId(*stripe.CheckoutSession) *string
 	ConstructEvent([]byte, string) (stripe.Event, error)
 	InvoicesByUser(string) *types.Invoices
 	FormatAmount(int64) float64
@@ -87,16 +87,28 @@ func (p *Payments) CustomerRefId(session *stripe.CheckoutSession) string {
 	return session.ClientReferenceID
 }
 
-func (p *Payments) CustomerId(session *stripe.CheckoutSession) string {
-	return session.Customer.ID
+func (p *Payments) CustomerId(session *stripe.CheckoutSession) *string {
+	if session.Customer != nil {
+		return &session.Customer.ID
+	}
+
+	return nil
 }
 
-func (p *Payments) SubscriptionId(session *stripe.CheckoutSession) string {
-	return session.Subscription.ID
+func (p *Payments) SubscriptionId(session *stripe.CheckoutSession) *string {
+	if session.Subscription != nil {
+		return &session.Subscription.ID
+	}
+
+	return nil
 }
 
-func (p *Payments) PlanId(session *stripe.CheckoutSession) string {
-	return session.Subscription.Plan.ID
+func (p *Payments) PlanId(session *stripe.CheckoutSession) *string {
+	if session.Subscription != nil {
+		return &session.Subscription.Plan.ID
+	}
+
+	return nil
 }
 
 func (p *Payments) ConstructEvent(body []byte, sig string) (stripe.Event, error) {
