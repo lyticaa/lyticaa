@@ -40,6 +40,7 @@ var (
 )
 
 type StripeGateway interface {
+	CheckoutSessions(string, string) (*[]string, error)
 	CheckoutSession(string, string, string) (*stripe.CheckoutSession, error)
 	CustomerRefId(*stripe.CheckoutSession) string
 	CustomerId(*stripe.CheckoutSession) *string
@@ -56,13 +57,31 @@ type StripeGateway interface {
 	EventInvoice(stripe.Event) (stripe.Invoice, error)
 }
 
-func NewStripePayments() *Payments {
+func init() {
 	stripe.Key = os.Getenv("STRIPE_SK")
-
-	return &Payments{}
 }
 
-func (p *Payments) CheckoutSession(userId, email string, plan string) (*stripe.CheckoutSession, error) {
+func NewStripePayments() *StripePayments {
+	return &StripePayments{
+		key: os.Getenv("STRIPE_SK"),
+	}
+}
+
+func (p *StripePayments) CheckoutSessions(userId, email string) (*[]string, error) {
+	monthly, err := p.CheckoutSession(userId, email, monthlyPaymentPlan)
+	if err != nil {
+		return nil, err
+	}
+
+	annual, err := p.CheckoutSession(userId, email, annualPaymentPlan)
+	if err != nil {
+		return nil, err
+	}
+
+	return &[]string{monthly.ID, annual.ID}, nil
+}
+
+func (p *StripePayments) CheckoutSession(userId, email string, plan string) (*stripe.CheckoutSession, error) {
 	params := &stripe.CheckoutSessionParams{
 		ClientReferenceID: &userId,
 		CustomerEmail:     &email,
@@ -72,8 +91,7 @@ func (p *Payments) CheckoutSession(userId, email string, plan string) (*stripe.C
 		SubscriptionData: &stripe.CheckoutSessionSubscriptionDataParams{
 			Items: []*stripe.CheckoutSessionSubscriptionDataItemsParams{{
 				Plan: stripe.String(p.getPlan(plan)),
-			},
-			},
+			}},
 			TrialFromPlan: stripe.Bool(true),
 		},
 		SuccessURL: stripe.String(fmt.Sprintf("%v%v", os.Getenv("BASE_URL"), os.Getenv("STRIPE_SUCCESS_URI"))),
@@ -83,11 +101,11 @@ func (p *Payments) CheckoutSession(userId, email string, plan string) (*stripe.C
 	return session.New(params)
 }
 
-func (p *Payments) CustomerRefId(session *stripe.CheckoutSession) string {
+func (p *StripePayments) CustomerRefId(session *stripe.CheckoutSession) string {
 	return session.ClientReferenceID
 }
 
-func (p *Payments) CustomerId(session *stripe.CheckoutSession) *string {
+func (p *StripePayments) CustomerId(session *stripe.CheckoutSession) *string {
 	if session.Customer != nil {
 		return &session.Customer.ID
 	}
@@ -95,7 +113,7 @@ func (p *Payments) CustomerId(session *stripe.CheckoutSession) *string {
 	return nil
 }
 
-func (p *Payments) SubscriptionId(session *stripe.CheckoutSession) *string {
+func (p *StripePayments) SubscriptionId(session *stripe.CheckoutSession) *string {
 	if session.Subscription != nil {
 		return &session.Subscription.ID
 	}
@@ -103,19 +121,19 @@ func (p *Payments) SubscriptionId(session *stripe.CheckoutSession) *string {
 	return nil
 }
 
-func (p *Payments) PlanId(session *stripe.CheckoutSession) *string {
-	if session.Subscription != nil {
-		return &session.Subscription.Plan.ID
+func (p *StripePayments) PlanId(session *stripe.CheckoutSession) *string {
+	if session.DisplayItems != nil && len(session.DisplayItems) == 1 {
+		return &session.DisplayItems[0].Plan.ID
 	}
 
 	return nil
 }
 
-func (p *Payments) ConstructEvent(body []byte, sig string) (stripe.Event, error) {
+func (p *StripePayments) ConstructEvent(body []byte, sig string) (stripe.Event, error) {
 	return webhook.ConstructEvent(body, sig, os.Getenv("STRIPE_WHSEC"))
 }
 
-func (p *Payments) InvoicesByUser(customer string) *types.Invoices {
+func (p *StripePayments) InvoicesByUser(customer string) *types.Invoices {
 	var invoices types.Invoices
 
 	params := &stripe.InvoiceListParams{Customer: &customer}
@@ -138,7 +156,7 @@ func (p *Payments) InvoicesByUser(customer string) *types.Invoices {
 	return &invoices
 }
 
-func (p *Payments) FormatAmount(amount int64) float64 {
+func (p *StripePayments) FormatAmount(amount int64) float64 {
 	var formattedAmount float64
 	if amount > 0 {
 		formattedAmount = float64(amount / 100)
@@ -147,7 +165,7 @@ func (p *Payments) FormatAmount(amount int64) float64 {
 	return formattedAmount
 }
 
-func (p *Payments) CreateSubscription(customerId, planId string) (*stripe.Subscription, error) {
+func (p *StripePayments) CreateSubscription(customerId, planId string) (*stripe.Subscription, error) {
 	priceId, ok := p.priceIdByPlan(planId)
 	if !ok {
 		return nil, errors.New("failed to find the price for the plan")
@@ -177,7 +195,7 @@ func (p *Payments) CreateSubscription(customerId, planId string) (*stripe.Subscr
 	return subscription, nil
 }
 
-func (p *Payments) ChangePlan(subscriptionId, planId string) error {
+func (p *StripePayments) ChangePlan(subscriptionId, planId string) error {
 	priceId, ok := p.priceIdByPlan(planId)
 	if !ok {
 		return errors.New("failed to find the price for the plan")
@@ -206,7 +224,7 @@ func (p *Payments) ChangePlan(subscriptionId, planId string) error {
 	return nil
 }
 
-func (p *Payments) CancelSubscription(subscriptionId string) error {
+func (p *StripePayments) CancelSubscription(subscriptionId string) error {
 	params := &stripe.SubscriptionParams{
 		CancelAtPeriodEnd: stripe.Bool(true),
 	}
@@ -218,7 +236,7 @@ func (p *Payments) CancelSubscription(subscriptionId string) error {
 	return nil
 }
 
-func (p *Payments) EventSession(e stripe.Event) (stripe.CheckoutSession, error) {
+func (p *StripePayments) EventSession(e stripe.Event) (stripe.CheckoutSession, error) {
 	var session stripe.CheckoutSession
 	if err := json.Unmarshal(e.Data.Raw, &session); err != nil {
 		return session, err
@@ -227,7 +245,7 @@ func (p *Payments) EventSession(e stripe.Event) (stripe.CheckoutSession, error) 
 	return session, nil
 }
 
-func (p *Payments) EventSubscription(e stripe.Event) (stripe.Subscription, error) {
+func (p *StripePayments) EventSubscription(e stripe.Event) (stripe.Subscription, error) {
 	var subscription stripe.Subscription
 	if err := json.Unmarshal(e.Data.Raw, &subscription); err != nil {
 		return subscription, err
@@ -236,7 +254,7 @@ func (p *Payments) EventSubscription(e stripe.Event) (stripe.Subscription, error
 	return subscription, nil
 }
 
-func (p *Payments) EventInvoice(e stripe.Event) (stripe.Invoice, error) {
+func (p *StripePayments) EventInvoice(e stripe.Event) (stripe.Invoice, error) {
 	var inv stripe.Invoice
 	if err := json.Unmarshal(e.Data.Raw, &inv); err != nil {
 		return inv, err
@@ -245,7 +263,7 @@ func (p *Payments) EventInvoice(e stripe.Event) (stripe.Invoice, error) {
 	return inv, nil
 }
 
-func (p *Payments) paymentMethodByCustomer(customerId string) *string {
+func (p *StripePayments) paymentMethodByCustomer(customerId string) *string {
 	params := &stripe.PaymentMethodListParams{
 		Customer: stripe.String(customerId),
 		Type:     stripe.String("card"),
@@ -259,7 +277,7 @@ func (p *Payments) paymentMethodByCustomer(customerId string) *string {
 	return nil
 }
 
-func (p *Payments) priceIdByPlan(planId string) (*string, bool) {
+func (p *StripePayments) priceIdByPlan(planId string) (*string, bool) {
 	productId := stripePlanProductMap[planId]
 	if productId == "" {
 		return nil, false
@@ -273,7 +291,7 @@ func (p *Payments) priceIdByPlan(planId string) (*string, bool) {
 	return nil, false
 }
 
-func (p *Payments) priceIdByProduct(productId string) *string {
+func (p *StripePayments) priceIdByProduct(productId string) *string {
 	params := &stripe.PriceListParams{}
 	params.Filters.AddFilter("product", "", productId)
 
@@ -285,21 +303,21 @@ func (p *Payments) priceIdByProduct(productId string) *string {
 	return nil
 }
 
-func (p *Payments) getPlan(plan string) string {
+func (p *StripePayments) getPlan(plan string) string {
 	switch plan {
-	case "monthly":
+	case monthlyPaymentPlan:
 		return p.monthlyPlan()
-	case "annual":
+	case annualPaymentPlan:
 		return p.annualPlan()
 	}
 
 	return p.monthlyPlan()
 }
 
-func (p *Payments) monthlyPlan() string {
+func (p *StripePayments) monthlyPlan() string {
 	return stripeMonthlyPlanId
 }
 
-func (p *Payments) annualPlan() string {
+func (p *StripePayments) annualPlan() string {
 	return stripeAnnualPlanId
 }

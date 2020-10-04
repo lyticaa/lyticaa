@@ -17,11 +17,13 @@ import (
 
 type mockGateway struct{}
 
+func (m *mockGateway) CheckoutSessions(string, string) (*[]string, error) { return &[]string{}, nil }
+
 func (m *mockGateway) CheckoutSession(string, string, string) (*stripe.CheckoutSession, error) {
 	return &stripe.CheckoutSession{}, nil
 }
 
-func (m *mockGateway) CustomerRefId(session *stripe.CheckoutSession) string  { return "" }
+func (m *mockGateway) CustomerRefId(session *stripe.CheckoutSession) string   { return "" }
 func (m *mockGateway) CustomerId(session *stripe.CheckoutSession) *string     { return nil }
 func (m *mockGateway) SubscriptionId(session *stripe.CheckoutSession) *string { return nil }
 func (m *mockGateway) PlanId(session *stripe.CheckoutSession) *string         { return nil }

@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"database/sql"
 	"encoding/gob"
 	"fmt"
 	"net/http"
@@ -283,16 +284,20 @@ func (s *helpersSuite) TestSession(c *C) {
 	)
 	c.Assert(err, IsNil)
 
-	session.Values["User"] = *user
 	SetSessionUser(*user, session, httptest.NewRecorder(), r)
 	sessionUser = GetSessionUser(session)
 	c.Assert(sessionUser.UserId, Equals, user.UserId)
 
-	session.Values["isSubscribed"] = true
+	var subscription sql.NullString
+	err = subscription.Scan(fmt.Sprintf("sub_%s", faker.RandomString(64)))
+	c.Assert(err, IsNil)
+
+	user.StripeSubscriptionId = subscription
+	SetSessionUser(*user, session, httptest.NewRecorder(), r)
 	err = session.Save(r, httptest.NewRecorder())
 	c.Assert(err, IsNil)
 
-	ok := IsSubscribed(s.sessionStore, log.Logger, httptest.NewRecorder(), r)
+	ok := IsSubscribed(session)
 	c.Assert(ok, Equals, true)
 }
 

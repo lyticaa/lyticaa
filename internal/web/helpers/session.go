@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"github.com/jmoiron/sqlx"
 	"net/http"
 
 	"gitlab.com/lyticaa/lyticaa-app/internal/models"
@@ -23,6 +24,10 @@ func GetSession(store *redistore.RediStore, logger zerolog.Logger, w http.Respon
 	}
 
 	return resetFlash(session)
+}
+
+func ReloadSessionUser(session *sessions.Session, w http.ResponseWriter, r *http.Request, db *sqlx.DB) {
+	SetSessionUser(*models.LoadUser(GetSessionUser(session).UserId, db), session, w, r)
 }
 
 func GetSessionUser(session *sessions.Session) models.User {
@@ -48,18 +53,13 @@ func SetSessionUser(user models.User, session *sessions.Session, w http.Response
 	_ = session.Save(r, w)
 }
 
-func IsSubscribed(sessionStore *redistore.RediStore, logger zerolog.Logger, w http.ResponseWriter, r *http.Request) bool {
-	ok := false
+func IsSubscribed(session *sessions.Session) bool {
+	subscribed := false
 
-	session := GetSession(sessionStore, logger, w, r)
-	if session.Values["isSubscribed"] == nil {
-		return ok
+	user := GetSessionUser(session)
+	if user.StripeSubscriptionId.Valid {
+		subscribed = true
 	}
 
-	subscribed := session.Values["isSubscribed"].(bool)
-	if subscribed {
-		ok = true
-	}
-
-	return ok
+	return subscribed
 }

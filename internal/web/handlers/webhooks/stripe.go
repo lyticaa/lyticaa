@@ -6,12 +6,9 @@ import (
 	"net/http"
 
 	"gitlab.com/lyticaa/lyticaa-app/internal/models"
+	"gitlab.com/lyticaa/lyticaa-app/internal/web/pkg/payments"
 
 	"github.com/stripe/stripe-go/v71"
-)
-
-const (
-	checkoutCompletedEvent = "checkout.session.completed"
 )
 
 func (wh *Webhooks) Stripe(w http.ResponseWriter, r *http.Request) {
@@ -48,26 +45,44 @@ func (wh *Webhooks) stripeEvent(body []byte, w http.ResponseWriter, r *http.Requ
 
 func (wh *Webhooks) parseStripeEvent(event stripe.Event, w http.ResponseWriter) error {
 	switch event.Type {
-	case checkoutCompletedEvent:
-		var session stripe.CheckoutSession
-		if err := json.Unmarshal(event.Data.Raw, &session); err != nil {
-			wh.logger.Error().Err(err).Msg("failed to unmarshal stripe data")
-			w.WriteHeader(http.StatusBadRequest)
+	case payments.CheckoutSessionCompleted:
+		if err := wh.checkoutSessionCompleted(event, w); err != nil {
 			return err
 		}
+	}
 
-		var customer sql.NullString
-		if err := customer.Scan(*wh.stripe.CustomerId(&session)); err != nil {
-			wh.logger.Error().Err(err).Msg("failed to assign customer reference")
-			return err
-		}
+	return nil
+}
 
-		user := models.LoadUser(wh.stripe.CustomerRefId(&session), wh.db)
-		user.StripeUserId = customer
-		if err := user.Save(wh.db); err != nil {
-			wh.logger.Error().Err(err).Msg("failed to save user")
-			return err
-		}
+func (wh *Webhooks) checkoutSessionCompleted(event stripe.Event, w http.ResponseWriter) error {
+	var session stripe.CheckoutSession
+	if err := json.Unmarshal(event.Data.Raw, &session); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return err
+	}
+
+	user := models.LoadUser(wh.stripe.CustomerRefId(&session), wh.db)
+
+	var customer sql.NullString
+	if err := customer.Scan(*wh.stripe.CustomerId(&session)); err != nil {
+		return err
+	}
+	user.StripeUserId = customer
+
+	var subscription sql.NullString
+	if err := subscription.Scan(*wh.stripe.SubscriptionId(&session)); err != nil {
+		return err
+	}
+	user.StripeSubscriptionId = subscription
+
+	var plan sql.NullString
+	if err := plan.Scan(*wh.stripe.PlanId(&session)); err != nil {
+		return err
+	}
+	user.StripePlanId = plan
+
+	if err := user.Save(wh.db); err != nil {
+		return err
 	}
 
 	return nil

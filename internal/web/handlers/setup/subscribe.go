@@ -3,41 +3,22 @@ package setup
 import (
 	"net/http"
 
-	"gitlab.com/lyticaa/lyticaa-app/internal/models"
 	"gitlab.com/lyticaa/lyticaa-app/internal/web/helpers"
 	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
 
 	"github.com/gorilla/sessions"
 )
 
-func (s *Setup) stripeSessions(w http.ResponseWriter, session *sessions.Session) {
-	user := session.Values["User"].(models.User)
-
-	monthly, err := s.stripe.CheckoutSession(user.UserId, user.Email, "monthly")
-	if err != nil {
-		s.logger.Error().Err(err).Msg("unable to generate a new stripe session")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	annual, err := s.stripe.CheckoutSession(user.UserId, user.Email, "annual")
-	if err != nil {
-		s.logger.Error().Err(err).Msg("unable to generate a new stripe session")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	session.Values["stripeMonthlyId"] = monthly.ID
-	session.Values["stripeAnnualId"] = annual.ID
-}
-
 func (s *Setup) Subscribe(w http.ResponseWriter, r *http.Request) {
-	if helpers.IsSubscribed(s.sessionStore, s.logger, w, r) {
+	session := helpers.GetSession(s.sessionStore, s.logger, w, r)
+	if helpers.IsSubscribed(session) {
 		http.Redirect(w, r, "/setup/subscribe/success", http.StatusSeeOther)
 	}
 
-	session := helpers.GetSession(s.sessionStore, s.logger, w, r)
-	s.stripeSessions(w, session)
+	if err := s.stripeSessions(w, session); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 
-	session.Values["showPlans"] = true
 	helpers.RenderTemplate(w, helpers.TemplateList(helpers.SetupSubscribe), session.Values)
 }
 
@@ -46,8 +27,8 @@ func (s *Setup) SubscribeSuccess(w http.ResponseWriter, r *http.Request) {
 	session.Values["Flash"] = types.Flash{
 		Success: types.FlashMessages["setup"]["subscribe"]["success"],
 	}
-	session.Values["allowNext"] = true
-	session.Values["isSubscribed"] = true
+
+	helpers.ReloadSessionUser(session, w, r, s.db)
 
 	err := session.Save(r, w)
 	if err != nil {
@@ -60,7 +41,9 @@ func (s *Setup) SubscribeSuccess(w http.ResponseWriter, r *http.Request) {
 
 func (s *Setup) SubscribeCancel(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(s.sessionStore, s.logger, w, r)
-	s.stripeSessions(w, session)
+	if err := s.stripeSessions(w, session); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 
 	session.Values["Flash"] = types.Flash{
 		Error: types.FlashMessages["setup"]["subscribe"]["error"],
@@ -68,4 +51,17 @@ func (s *Setup) SubscribeCancel(w http.ResponseWriter, r *http.Request) {
 
 	helpers.RenderTemplate(w, helpers.TemplateList(helpers.SetupSubscribe), session.Values)
 	helpers.ClearFlash(session, r, w)
+}
+
+func (s *Setup) stripeSessions(w http.ResponseWriter, session *sessions.Session) error {
+	user := helpers.GetSessionUser(session)
+	stripeSessions, err := s.stripe.CheckoutSessions(user.UserId, user.Email)
+	if err != nil {
+		return err
+	}
+
+	session.Values["stripeMonthlyId"] = (*stripeSessions)[0]
+	session.Values["stripeAnnualId"] = (*stripeSessions)[1]
+
+	return nil
 }
