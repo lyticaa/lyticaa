@@ -14,3 +14,63 @@ jobs:
         uses: golangci/golangci-lint-action@v2.2.1
         with:
           version: v1.31
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+      memcached:
+        image: bitnami/memcached:latest
+        ports:
+          - 11211:11211
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: lyticaa_test
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: lyticaa
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      rabbitmq:
+        image: rabbitmq:latest
+        env:
+          RABBITMQ_DEFAULT_PASS: password
+          RABBITMQ_DEFAULT_USER: admin
+        ports:
+          - 4369:4369
+          - 5671:5671
+          - 5672:5672
+          - 25672:25672
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Migrate
+        env:
+          APP_NAME: lyticaa-app
+          DATABASE_URL: postgres://lyticaa:password@localhost:${{ job.services.postgres.ports[5432] }}/lyticaa_test?sslmode=disable
+        run: make migrate
+      - name: Test
+        env:
+          APP_NAME: lyticaa-app
+          BASE_URL: http://localhost:3000
+          CLOUDAMQP_QUEUE_DATA: /Lyticaa/Data
+          CLOUDAMQP_URL: amqp://admin:password@localhost:${{ job.services.rabbitmq.ports[5672] }}
+          DATABASE_URL: postgres://lyticaa:password@localhost:${{ job.services.postgres.ports[5432] }}/lyticaa_test?sslmode=disable
+          DEFAULT_PAGE_DOMAIN_LABEL: __default__
+          ENV: test
+          MEMCACHED_PASSWORD: password
+          MEMCACHED_SERVERS: localhost:${{ job.services.memcached.ports[11211] }}
+          MEMCACHED_USERNAME: admin
+          NEW_RELIC_LICENSE_KEY: a524b3139724536f5960b56c444cd962e8feNRAL
+          PORT: 3000
+          RABBITMQ_DEFAULT_PASS: password
+          RABBITMQ_DEFAULT_USER: admin
+          REDIS_URL: localhost:${{ job.services.redis.ports[6379] }}
+          SESSION_KEY: Abmobep8MzV2BRAoBIZ4mQagALxbgkYZ
+        run: make tests
