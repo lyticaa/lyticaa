@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"gitlab.com/lyticaa/lyticaa-app/internal/models"
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/helpers"
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
+	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
+	"github.com/lyticaa/lyticaa-app/internal/web/types"
 )
 
 func (a *Account) Notifications(w http.ResponseWriter, r *http.Request) {

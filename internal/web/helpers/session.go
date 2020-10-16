@@ -4,7 +4,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"net/http"
 
-	"gitlab.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa-app/internal/models"
 
 	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"

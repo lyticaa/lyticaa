@@ -1,9 +1,9 @@
 package setup
 
 import (
-	"net/http"
+"net/http"
 
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/helpers"
+"github.com/lyticaa/lyticaa-app/internal/web/helpers"
 )
 
 func (s *Setup) Complete(w http.ResponseWriter, r *http.Request) {

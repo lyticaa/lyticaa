@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"gitlab.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa-app/internal/models"
 
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"

@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"gitlab.com/lyticaa/lyticaa-app/internal/models"
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
+	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa-app/internal/web/types"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"

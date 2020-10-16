@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"gitlab.com/lyticaa/lyticaa-app/internal/models"
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/pkg/iam"
+	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/iam"
 
 	"github.com/coreos/go-oidc"
 )

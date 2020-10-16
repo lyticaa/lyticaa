@@ -3,7 +3,7 @@ package helpers
 import (
 	"net/http"
 
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
+	"github.com/lyticaa/lyticaa-app/internal/web/types"
 
 	"github.com/gorilla/sessions"
 )

@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"gitlab.com/lyticaa/lyticaa-app/internal/models"
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/pkg/payments"
+	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/payments"
 
 	"github.com/stripe/stripe-go/v71"
 )

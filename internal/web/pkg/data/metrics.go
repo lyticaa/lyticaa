@@ -1,8 +1,8 @@
 package data
 
 import (
-	"gitlab.com/lyticaa/lyticaa-app/internal/models"
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
+	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa-app/internal/web/types"
 )
 
 func (d *Data) MetricsTotalSales(userId, dateRange string, metric *types.TotalSales, filter *models.Filter) {

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gitlab.com/lyticaa/lyticaa-app/internal/worker"
+	"github.com/lyticaa/lyticaa-app/internal/worker"
 )
 
 func main() {

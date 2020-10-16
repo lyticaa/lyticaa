@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/helpers"
+	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
 )
 
 func (a *Account) ChangePassword(w http.ResponseWriter, r *http.Request) {

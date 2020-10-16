@@ -3,8 +3,8 @@ package data
 import (
 	"fmt"
 
-	"gitlab.com/lyticaa/lyticaa-app/internal/models"
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/types"
+	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa-app/internal/web/types"
 )
 
 func (d *Data) ExpensesCostOfGoods(userId string, expenses *types.Expenses, filter *models.Filter) {

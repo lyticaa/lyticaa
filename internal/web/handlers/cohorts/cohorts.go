@@ -1,7 +1,7 @@
 package cohorts
 
 import (
-	"gitlab.com/lyticaa/lyticaa-app/internal/web/pkg/data"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/data"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"
