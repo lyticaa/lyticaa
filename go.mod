@@ -25,7 +25,7 @@ require (
 	github.com/rs/zerolog v1.19.0
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.6.1
-	github.com/stripe/stripe-go/v71 v71.28.0
+	github.com/stripe/stripe-go/v71 v71.48.0
 	github.com/urfave/negroni v1.0.0
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	golang.org/x/text v0.3.3
