@@ -47,8 +47,8 @@ github.com/armon/go-proxyproto v0.0.0-20190211145416-68259f75880e/go.mod h1:QmP9
 github.com/aws/aws-sdk-go v1.13.10/go.mod h1:ZRmQr0FajVIyZ4ZzBYKG5P3ZqPz9IHG41ZoMu1ADI3k=
 github.com/aws/aws-sdk-go v1.17.7 h1:/4+rDPe0W95KBmNGYCG+NUvdL8ssPYBMxL+aSCg6nIA=
 github.com/aws/aws-sdk-go v1.17.7/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
-github.com/aws/aws-sdk-go v1.35.8 h1:+S3BTWePYImKLh7DUJxMVm+/FQUnmHADsMzo/psHFr4=
-github.com/aws/aws-sdk-go v1.35.8/go.mod h1:tlPOdRjfxPBpNIwqDj61rmsnA85v9jc0Ps9+muhnW+k=
+github.com/aws/aws-sdk-go v1.35.9 h1:b1HiUpdkFLJyoOQ7zas36YHzjNHH0ivHx/G5lWBeg+U=
+github.com/aws/aws-sdk-go v1.35.9/go.mod h1:tlPOdRjfxPBpNIwqDj61rmsnA85v9jc0Ps9+muhnW+k=
 github.com/axiomhq/hyperloglog v0.0.0-20180317131949-fe9507de0228/go.mod h1:IOXAcuKIFq/mDyuQ4wyJuJ79XLMsmLM+5RdQ+vWrL7o=
 github.com/aymerick/raymond v2.0.3-0.20180322193309-b565731e1464+incompatible/go.mod h1:osfaiScAUVup+UC9Nfq76eWqDhXlp+4UYaA8uhTBO6g=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
