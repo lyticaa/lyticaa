@@ -1,4 +1,4 @@
-package app
+package worker
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 )
 
 type appSuite struct {
-	a *App
+	w *Worker
 }
 
 var _ = Suite(&appSuite{})
@@ -15,13 +15,13 @@ var _ = Suite(&appSuite{})
 func Test(t *testing.T) { TestingT(t) }
 
 func (s *appSuite) SetUpSuite(c *C) {
-	s.a = NewApp()
+	s.w = NewWorker()
 }
 
 func (s *appSuite) TestApp(c *C) {
-	c.Assert(s.a.Logger, NotNil)
-	c.Assert(s.a.NewRelic, NotNil)
-	c.Assert(s.a.Db, NotNil)
+	c.Assert(s.w.Logger, NotNil)
+	c.Assert(s.w.NewRelic, NotNil)
+	c.Assert(s.w.Db, NotNil)
 }
 
 func (s *appSuite) TearDownSuite(c *C) {}

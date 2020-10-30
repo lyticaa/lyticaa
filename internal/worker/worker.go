@@ -1,4 +1,4 @@
-package app
+package worker
 
 import (
 	"context"
@@ -22,7 +22,7 @@ type Signalling struct {
 	quit   chan os.Signal
 }
 
-type App struct {
+type Worker struct {
 	Logger   zerolog.Logger
 	NewRelic newrelic.Application
 	Db       *sqlx.DB
@@ -30,7 +30,7 @@ type App struct {
 	Signalling
 }
 
-func NewApp() *App {
+func NewWorker() *Worker {
 	sentryOpts := sentry.ClientOptions{
 		Dsn: os.Getenv("SENTRY_DSN"),
 	}
@@ -59,7 +59,7 @@ func NewApp() *App {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	return &App{
+	return &Worker{
 		Logger:   log.With().Str("app", os.Getenv("APP_NAME")).Str("component", "worker").Logger(),
 		NewRelic: nr,
 		Db:       db,

@@ -1,4 +1,4 @@
-package app
+package worker
 
 import (
 	"encoding/json"
@@ -9,29 +9,29 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func (a *App) parse(msg amqp.Delivery) {
+func (w *Worker) parse(msg amqp.Delivery) {
 	var cd types.Payload
 	if err := json.Unmarshal(msg.Body, &cd); err != nil {
-		a.Logger.Error().Err(err).Msg("failed to unmarshal message body")
+		w.Logger.Error().Err(err).Msg("failed to unmarshal message body")
 		return
 	}
 
-	a.Logger.Info().Msgf("processing message for %v", cd.Op)
+	w.Logger.Info().Msgf("processing message for %v", cd.Op)
 
-	a.publish(cd.Body)
+	w.publish(cd.Body)
 }
 
-func (a *App) publish(data string) {
+func (w *Worker) publish(data string) {
 	var publishData types.Data
 	if err := json.Unmarshal([]byte(data), &publishData); err != nil {
-		a.Logger.Error().Err(err).Msg("failed to unmarshal message body")
+		w.Logger.Error().Err(err).Msg("failed to unmarshal message body")
 		return
 	}
 
-	a.overview(publishData.Overview)
+	w.overview(publishData.Overview)
 }
 
-func (a *App) overview(data []types.Parsed) {
+func (w *Worker) overview(data []types.Parsed) {
 	for _, row := range data {
 		dashboard := models.LoadDashboardByMarketplace(row.UserId, row.DateRange, row.Marketplace, row.DateTime, a.Db)
 		dashboard.TotalSales = row.TotalSales
@@ -45,6 +45,6 @@ func (a *App) overview(data []types.Parsed) {
 		dashboard.TotalCosts = row.TotalCosts
 		dashboard.GrossMargin = row.GrossMargin
 		dashboard.NetMargin = row.NetMargin
-		_ = dashboard.Save(a.Db)
+		_ = dashboard.Save(w.Db)
 	}
 }
