@@ -33,7 +33,7 @@ func (w *Worker) publish(data string) {
 
 func (w *Worker) overview(data []types.Parsed) {
 	for _, row := range data {
-		dashboard := models.LoadDashboardByMarketplace(row.UserId, row.DateRange, row.Marketplace, row.DateTime, a.Db)
+		dashboard := models.LoadDashboardByMarketplace(row.UserId, row.DateRange, row.Marketplace, row.DateTime, w.Db)
 		dashboard.TotalSales = row.TotalSales
 		dashboard.UnitsSold = row.UnitsSold
 		dashboard.AmazonCosts = row.AmazonCosts

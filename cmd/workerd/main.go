@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	a := app.NewApp()
-	a.Start()
+	w := worker.NewWorker()
+	w.Start()
 }

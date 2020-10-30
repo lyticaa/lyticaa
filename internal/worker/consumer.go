@@ -7,7 +7,7 @@ import (
 )
 
 func (w *Worker) Start() {
-	w.Logger.Info().Msgf("listening for messages on %v....", a.queue())
+	w.Logger.Info().Msgf("listening for messages on %v....", w.queue())
 
 	conn, err := amqp.Dial(os.Getenv("CLOUDAMQP_URL"))
 	if err != nil {
@@ -32,7 +32,7 @@ func (w *Worker) Start() {
 	go w.run(msgs)
 	go func() {
 		<-w.Signalling.quit
-		w.Logger.Info().Msgf("stop listening on %v....", a.queue())
+		w.Logger.Info().Msgf("stop listening on %v....", w.queue())
 		w.Signalling.cancel()
 		_ = conn.Close()
 		_ = ch.Close()
