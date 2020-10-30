@@ -97,9 +97,9 @@
                 </div>
             </div>
             {{ if .User.Impersonate }}
-                <div class="hide intercom" data-intercom-id="{{.Config.IntercomId}}" data-email="{{.User.Impersonate.Email}}" data-created-at="{{.User.Impersonate.CreatedAt}}"></div>
+                <div class="hide intercom" data-intercom-id="{{.Config.IntercomID}}" data-email="{{.User.Impersonate.Email}}" data-created-at="{{.User.Impersonate.CreatedAt}}"></div>
             {{ else }}
-                <div class="hide intercom" data-intercom-id="{{.Config.IntercomId}}" data-email="{{.User.Email}}" data-created-at="{{.User.CreatedAt}}"></div>
+                <div class="hide intercom" data-intercom-id="{{.Config.IntercomID}}" data-email="{{.User.Email}}" data-created-at="{{.User.CreatedAt}}"></div>
             {{ end }}
             {{ template "js-extra-bottom" . }}
         </body>
