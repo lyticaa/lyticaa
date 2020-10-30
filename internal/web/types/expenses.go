@@ -1,22 +1,22 @@
 package types
 
 type Product struct {
-	ProductId   string `json:"productId"`
+	ProductID   string `json:"productID"`
 	SKU         string `json:"sku"`
 	Marketplace string `json:"marketplace"`
 	Description string `json:"description"`
 }
 
 type Currency struct {
-	CurrencyId string `json:"currencyId"`
+	CurrencyID string `json:"currencyID"`
 	Symbol     string `json:"symbol"`
 	Code       string `json:"code"`
 }
 
 type ExpensesTable struct {
-	RowId       string  `json:"DT_RowId"`
-	ProductId   string  `json:"productId,omitempty"`
-	CurrencyId  string  `json:"currencyId,omitempty"`
+	RowID       string  `json:"DT_RowID"`
+	ProductID   string  `json:"productID,omitempty"`
+	CurrencyID  string  `json:"currencyID,omitempty"`
 	SKU         string  `json:"sku,omitempty"`
 	Marketplace string  `json:"marketplace,omitempty"`
 	Description string  `json:"description"`

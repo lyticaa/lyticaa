@@ -8,7 +8,7 @@ import (
 
 type Cohort struct {
 	ID                 int64     `db:"id"`
-	UserId             string    `db:"user_id"`
+	UserID             string    `db:"user_id"`
 	DateTime           time.Time `db:"date_time"`
 	Marketplace        string    `db:"marketplace"`
 	SKU                string    `db:"sku"`
@@ -27,13 +27,13 @@ type Cohort struct {
 	UpdatedAt          time.Time `db:"updated_at"`
 }
 
-func LoadCohorts(userId, dateRange, view string, filter *Filter, db *sqlx.DB) *[]Cohort {
+func LoadCohorts(userID, dateRange, view string, filter *Filter, db *sqlx.DB) *[]Cohort {
 	var cohorts []Cohort
 
 	query := `SELECT * FROM cohorts WHERE user_id = $1 AND date_range = $2 AND view = $3 LIMIT $4 OFFSET $5`
 	_ = db.Select(&cohorts,
 		query,
-		userId,
+		userID,
 		dateRange,
 		view,
 		filter.Length,
@@ -43,7 +43,7 @@ func LoadCohorts(userId, dateRange, view string, filter *Filter, db *sqlx.DB) *[
 	return &cohorts
 }
 
-func LoadCohortsSummary(userId, dateRange, view string, db *sqlx.DB) *[]Cohort {
+func LoadCohortsSummary(userID, dateRange, view string, db *sqlx.DB) *[]Cohort {
 	var cohorts []Cohort
 
 	query := `SELECT date_time, 
@@ -61,7 +61,7 @@ func LoadCohortsSummary(userId, dateRange, view string, db *sqlx.DB) *[]Cohort {
                                       AND date_range = $2 AND view = $3 GROUP BY date_time, marketplace`
 	_ = db.Select(&cohorts,
 		query,
-		userId,
+		userID,
 		dateRange,
 		view,
 	)
@@ -69,11 +69,11 @@ func LoadCohortsSummary(userId, dateRange, view string, db *sqlx.DB) *[]Cohort {
 	return &cohorts
 }
 
-func TotalCohorts(userId, dateRange, view string, db *sqlx.DB) int64 {
+func TotalCohorts(userID, dateRange, view string, db *sqlx.DB) int64 {
 	var count int64
 
 	query := `SELECT COUNT(id) FROM cohorts WHERE user_id = $1 AND date_range = $2 AND view = $3`
-	_ = db.QueryRow(query, userId, dateRange, view).Scan(&count)
+	_ = db.QueryRow(query, userID, dateRange, view).Scan(&count)
 
 	return count
 }

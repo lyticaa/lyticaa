@@ -1,7 +1,7 @@
 package types
 
 type AdminTable struct {
-	RowId   string `json:"DT_RowId"`
+	RowID   string `json:"DT_RowID"`
 	Email   string `json:"email"`
 	Created string `json:"date"`
 }

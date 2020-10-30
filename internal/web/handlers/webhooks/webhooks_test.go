@@ -10,7 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"github.com/rs/zerolog/log"
-	"github.com/stripe/stripe-go/v71"
+	"github.com/stripe/stripe-go/v72"
 	. "gopkg.in/check.v1"
 	"syreclabs.com/go/faker"
 )
@@ -23,16 +23,16 @@ func (m *mockGateway) CheckoutSession(string, string, string) (*stripe.CheckoutS
 	return &stripe.CheckoutSession{}, nil
 }
 
-func (m *mockGateway) CustomerRefId(session *stripe.CheckoutSession) string   { return "" }
-func (m *mockGateway) CustomerId(session *stripe.CheckoutSession) *string     { return nil }
-func (m *mockGateway) SubscriptionId(session *stripe.CheckoutSession) *string { return nil }
-func (m *mockGateway) PlanId(session *stripe.CheckoutSession) *string         { return nil }
+func (m *mockGateway) CustomerRefID(session *stripe.CheckoutSession) string   { return "" }
+func (m *mockGateway) CustomerID(session *stripe.CheckoutSession) *string     { return nil }
+func (m *mockGateway) SubscriptionID(session *stripe.CheckoutSession) *string { return nil }
+func (m *mockGateway) PlanID(session *stripe.CheckoutSession) *string         { return nil }
 
 func (m *mockGateway) ConstructEvent(body []byte, sig string) (stripe.Event, error) {
 	return stripe.Event{}, nil
 }
 
-func (m *mockGateway) InvoicesByUser(subscriptionId string) *types.Invoices {
+func (m *mockGateway) InvoicesByUser(subscriptionID string) *types.Invoices {
 	invoices := types.Invoices{{
 		Number:   faker.RandomString(10),
 		Date:     time.Now(),
@@ -47,12 +47,12 @@ func (m *mockGateway) InvoicesByUser(subscriptionId string) *types.Invoices {
 
 func (m *mockGateway) FormatAmount(amount int64) float64 { return 0.0 }
 
-func (m *mockGateway) CreateSubscription(customerId string, planId string) (*stripe.Subscription, error) {
+func (m *mockGateway) CreateSubscription(customerID string, planID string) (*stripe.Subscription, error) {
 	return &stripe.Subscription{}, nil
 }
 
-func (m *mockGateway) ChangePlan(customerId string, planId string) error { return nil }
-func (m *mockGateway) CancelSubscription(subscriptionId string) error    { return nil }
+func (m *mockGateway) ChangePlan(customerID string, planID string) error { return nil }
+func (m *mockGateway) CancelSubscription(subscriptionID string) error    { return nil }
 
 func (m *mockGateway) EventSession(event stripe.Event) (stripe.CheckoutSession, error) {
 	return stripe.CheckoutSession{}, nil

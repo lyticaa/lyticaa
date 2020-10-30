@@ -55,13 +55,13 @@ func (s *Setup) SubscribeCancel(w http.ResponseWriter, r *http.Request) {
 
 func (s *Setup) stripeSessions(w http.ResponseWriter, session *sessions.Session) error {
 	user := helpers.GetSessionUser(session)
-	stripeSessions, err := s.stripe.CheckoutSessions(user.UserId, user.Email)
+	stripeSessions, err := s.stripe.CheckoutSessions(user.UserID, user.Email)
 	if err != nil {
 		return err
 	}
 
-	session.Values["stripeMonthlyId"] = (*stripeSessions)[0]
-	session.Values["stripeAnnualId"] = (*stripeSessions)[1]
+	session.Values["stripeMonthlyID"] = (*stripeSessions)[0]
+	session.Values["stripeAnnualID"] = (*stripeSessions)[1]
 
 	return nil
 }

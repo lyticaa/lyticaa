@@ -7,9 +7,9 @@ import (
 )
 
 type Product struct {
-	Id          int64     `db:"id"`
-	ProductId   string    `db:"product_id"`
-	UserId      string    `db:"user_id"`
+	ID          int64     `db:"id"`
+	ProductID   string    `db:"product_id"`
+	UserID      string    `db:"user_id"`
 	SKU         string    `db:"sku"`
 	Marketplace string    `db:"marketplace"`
 	Description string    `db:"description"`
@@ -17,16 +17,16 @@ type Product struct {
 	UpdatedAt   time.Time `db:"updated_at"`
 }
 
-func LoadProducts(userId string, db *sqlx.DB) *[]Product {
+func LoadProducts(userID string, db *sqlx.DB) *[]Product {
 	var products []Product
 
 	query := `SELECT product_id, sku, marketplace, description, created_at, updated_at FROM products WHERE user_id = $1`
-	_ = db.Select(&products, query, userId)
+	_ = db.Select(&products, query, userID)
 
 	return &products
 }
 
-func LoadProduct(userId, productId string, db *sqlx.DB) *Product {
+func LoadProduct(userID, productID string, db *sqlx.DB) *Product {
 	var product Product
 
 	query := `SELECT id,
@@ -38,10 +38,10 @@ func LoadProduct(userId, productId string, db *sqlx.DB) *Product {
        created_at,
        updated_at FROM products WHERE user_id = $1 
                                   AND product_id = $2`
-	_ = db.QueryRow(query, userId, productId).Scan(
-		&product.Id,
-		&product.ProductId,
-		&product.UserId,
+	_ = db.QueryRow(query, userID, productID).Scan(
+		&product.ID,
+		&product.ProductID,
+		&product.UserID,
 		&product.SKU,
 		&product.Marketplace,
 		&product.Description,
@@ -52,7 +52,7 @@ func LoadProduct(userId, productId string, db *sqlx.DB) *Product {
 	return &product
 }
 
-func LoadProductById(userId string, productId int64, db *sqlx.DB) *Product {
+func LoadProductByID(userID string, productID int64, db *sqlx.DB) *Product {
 	var product Product
 
 	query := `SELECT id,
@@ -64,10 +64,10 @@ func LoadProductById(userId string, productId int64, db *sqlx.DB) *Product {
        created_at,
        updated_at FROM products WHERE user_id = $1 
                                   AND id = $2`
-	_ = db.QueryRow(query, userId, productId).Scan(
-		&product.Id,
-		&product.ProductId,
-		&product.UserId,
+	_ = db.QueryRow(query, userID, productID).Scan(
+		&product.ID,
+		&product.ProductID,
+		&product.UserID,
 		&product.SKU,
 		&product.Marketplace,
 		&product.Description,
@@ -91,8 +91,8 @@ func (p *Product) Save(db *sqlx.DB) error {
 			"marketplace": p.Marketplace,
 			"description": p.Description,
 			"updated_at":  time.Now(),
-			"user_id":     p.UserId,
-			"product_id":  p.ProductId,
+			"user_id":     p.UserID,
+			"product_id":  p.ProductID,
 		})
 	if err != nil {
 		return err

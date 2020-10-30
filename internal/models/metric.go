@@ -9,7 +9,7 @@ import (
 
 type Metric struct {
 	ID                         int64     `db:"id"`
-	UserId                     string    `db:"user_id"`
+	UserID                     string    `db:"user_id"`
 	DateTime                   time.Time `db:"date_time"`
 	Marketplace                string    `db:"marketplace"`
 	SKU                        string    `db:"sku"`
@@ -133,13 +133,13 @@ var (
 	}
 )
 
-func LoadMetrics(userId, dateRange, view string, filter *Filter, db *sqlx.DB) *[]Metric {
+func LoadMetrics(userID, dateRange, view string, filter *Filter, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
 	query := `SELECT * FROM metrics_%v WHERE user_id = $1 AND date_range = $2 ORDER BY $3 LIMIT $4 OFFSET $5`
 	_ = db.Select(&metrics,
 		fmt.Sprintf(query, view),
-		userId,
+		userID,
 		dateRange,
 		fmt.Sprintf("%v %v", sortColumn(metricsViewFilter(view), filter.Sort), filter.Dir),
 		filter.Length,
@@ -149,7 +149,7 @@ func LoadMetrics(userId, dateRange, view string, filter *Filter, db *sqlx.DB) *[
 	return &metrics
 }
 
-func LoadMetricsTotalSalesSummary(userId, dateRange string, db *sqlx.DB) *[]Metric {
+func LoadMetricsTotalSalesSummary(userID, dateRange string, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
 	query := `SELECT date_time,
@@ -158,14 +158,14 @@ func LoadMetricsTotalSalesSummary(userId, dateRange string, db *sqlx.DB) *[]Metr
                                                                   AND date_range = $2 GROUP BY date_time, marketplace`
 	_ = db.Select(&metrics,
 		query,
-		userId,
+		userID,
 		dateRange,
 	)
 
 	return &metrics
 }
 
-func LoadMetricsUnitsSoldSummary(userId, dateRange string, db *sqlx.DB) *[]Metric {
+func LoadMetricsUnitsSoldSummary(userID, dateRange string, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
 	query := `SELECT date_time,
@@ -174,14 +174,14 @@ func LoadMetricsUnitsSoldSummary(userId, dateRange string, db *sqlx.DB) *[]Metri
                                                            AND date_range = $2 GROUP BY date_time, marketplace`
 	_ = db.Select(&metrics,
 		query,
-		userId,
+		userID,
 		dateRange,
 	)
 
 	return &metrics
 }
 
-func LoadMetricsAmazonCostsSummary(userId, dateRange string, db *sqlx.DB) *[]Metric {
+func LoadMetricsAmazonCostsSummary(userID, dateRange string, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
 	query := `SELECT date_time,
@@ -190,14 +190,14 @@ func LoadMetricsAmazonCostsSummary(userId, dateRange string, db *sqlx.DB) *[]Met
                                                                      AND date_range = $2 GROUP BY date_time, marketplace`
 	_ = db.Select(&metrics,
 		query,
-		userId,
+		userID,
 		dateRange,
 	)
 
 	return &metrics
 }
 
-func LoadMetricsProductCostsSummary(userId, dateRange string, db *sqlx.DB) *[]Metric {
+func LoadMetricsProductCostsSummary(userID, dateRange string, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
 	query := `SELECT date_time,
@@ -206,14 +206,14 @@ func LoadMetricsProductCostsSummary(userId, dateRange string, db *sqlx.DB) *[]Me
                                                                         AND date_range = $2 GROUP BY date_time, marketplace`
 	_ = db.Select(&metrics,
 		query,
-		userId,
+		userID,
 		dateRange,
 	)
 
 	return &metrics
 }
 
-func LoadMetricsAdvertisingSpendSummary(userId, dateRange string, db *sqlx.DB) *[]Metric {
+func LoadMetricsAdvertisingSpendSummary(userID, dateRange string, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
 	query := `SELECT date_time,
@@ -222,14 +222,14 @@ func LoadMetricsAdvertisingSpendSummary(userId, dateRange string, db *sqlx.DB) *
                                                                                     AND date_range = $2 GROUP BY date_time, marketplace`
 	_ = db.Select(&metrics,
 		query,
-		userId,
+		userID,
 		dateRange,
 	)
 
 	return &metrics
 }
 
-func LoadMetricsRefundsSummary(userId, dateRange string, db *sqlx.DB) *[]Metric {
+func LoadMetricsRefundsSummary(userID, dateRange string, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
 	query := `SELECT date_time,
@@ -238,14 +238,14 @@ func LoadMetricsRefundsSummary(userId, dateRange string, db *sqlx.DB) *[]Metric 
                                                       AND date_range = $2 GROUP BY date_time, marketplace`
 	_ = db.Select(&metrics,
 		query,
-		userId,
+		userID,
 		dateRange,
 	)
 
 	return &metrics
 }
 
-func LoadMetricsShippingCreditsSummary(userId, dateRange string, db *sqlx.DB) *[]Metric {
+func LoadMetricsShippingCreditsSummary(userID, dateRange string, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
 	query := `SELECT date_time,
@@ -254,14 +254,14 @@ func LoadMetricsShippingCreditsSummary(userId, dateRange string, db *sqlx.DB) *[
                                                                                  AND date_range = $2 GROUP BY date_time, marketplace`
 	_ = db.Select(&metrics,
 		query,
-		userId,
+		userID,
 		dateRange,
 	)
 
 	return &metrics
 }
 
-func LoadMetricsPromotionalRebatesSummary(userId, dateRange string, db *sqlx.DB) *[]Metric {
+func LoadMetricsPromotionalRebatesSummary(userID, dateRange string, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
 	query := `SELECT date_time,
@@ -270,14 +270,14 @@ func LoadMetricsPromotionalRebatesSummary(userId, dateRange string, db *sqlx.DB)
                                                                                           AND date_range = $2 GROUP BY date_time, marketplace`
 	_ = db.Select(&metrics,
 		query,
-		userId,
+		userID,
 		dateRange,
 	)
 
 	return &metrics
 }
 
-func LoadMetricsTotalCostsSummary(userId, dateRange string, db *sqlx.DB) *[]Metric {
+func LoadMetricsTotalCostsSummary(userID, dateRange string, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
 	query := `SELECT date_time,
@@ -286,14 +286,14 @@ func LoadMetricsTotalCostsSummary(userId, dateRange string, db *sqlx.DB) *[]Metr
                                                                   AND date_range = $2 GROUP BY date_time, marketplace`
 	_ = db.Select(&metrics,
 		query,
-		userId,
+		userID,
 		dateRange,
 	)
 
 	return &metrics
 }
 
-func LoadMetricsGrossMarginSummary(userId, dateRange string, db *sqlx.DB) *[]Metric {
+func LoadMetricsGrossMarginSummary(userID, dateRange string, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
 	query := `SELECT date_time,
@@ -302,14 +302,14 @@ func LoadMetricsGrossMarginSummary(userId, dateRange string, db *sqlx.DB) *[]Met
                                                                      AND date_range = $2 GROUP BY date_time, marketplace`
 	_ = db.Select(&metrics,
 		query,
-		userId,
+		userID,
 		dateRange,
 	)
 
 	return &metrics
 }
 
-func LoadMetricsNetMarginSummary(userId, dateRange string, db *sqlx.DB) *[]Metric {
+func LoadMetricsNetMarginSummary(userID, dateRange string, db *sqlx.DB) *[]Metric {
 	var metrics []Metric
 
 	query := `SELECT date_time,
@@ -318,18 +318,18 @@ func LoadMetricsNetMarginSummary(userId, dateRange string, db *sqlx.DB) *[]Metri
                                                                AND date_range = $2 GROUP BY date_time, marketplace`
 	_ = db.Select(&metrics,
 		query,
-		userId,
+		userID,
 		dateRange,
 	)
 
 	return &metrics
 }
 
-func TotalMetrics(userId, dateRange, view string, db *sqlx.DB) int64 {
+func TotalMetrics(userID, dateRange, view string, db *sqlx.DB) int64 {
 	var count int64
 
 	query := `SELECT COUNT(id) FROM metrics_%v WHERE user_id = $1 AND date_range = $2`
-	_ = db.QueryRow(fmt.Sprintf(query, view), userId, dateRange).Scan(&count)
+	_ = db.QueryRow(fmt.Sprintf(query, view), userID, dateRange).Scan(&count)
 
 	return count
 }

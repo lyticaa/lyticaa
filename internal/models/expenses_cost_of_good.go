@@ -8,9 +8,9 @@ import (
 )
 
 type ExpensesCostOfGood struct {
-	Id          int64     `db:"id"`
-	ExpenseId   string    `db:"expense_id"`
-	ProductId   string    `db:"product_id"`
+	ID          int64     `db:"id"`
+	ExpenseID   string    `db:"expense_id"`
+	ProductID   string    `db:"product_id"`
 	SKU         string    `db:"sku"`
 	Marketplace string    `db:"marketplace"`
 	Description string    `db:"description"`
@@ -30,7 +30,7 @@ var (
 	}
 )
 
-func CreateExpensesCostOfGood(productId int64, description string, amount float64, fromDate time.Time, db *sqlx.DB) error {
+func CreateExpensesCostOfGood(productID int64, description string, amount float64, fromDate time.Time, db *sqlx.DB) error {
 	query := `INSERT INTO expenses_cost_of_goods (
                                     product_id,
                                     description,
@@ -47,7 +47,7 @@ func CreateExpensesCostOfGood(productId int64, description string, amount float6
                                             :updated_at)`
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
-			"product_id":  productId,
+			"product_id":  productID,
 			"description": description,
 			"amount":      amount,
 			"from_date":   fromDate,
@@ -62,7 +62,7 @@ func CreateExpensesCostOfGood(productId int64, description string, amount float6
 	return nil
 }
 
-func LoadExpensesCostOfGoods(userId string, filter *Filter, db *sqlx.DB) *[]ExpensesCostOfGood {
+func LoadExpensesCostOfGoods(userID string, filter *Filter, db *sqlx.DB) *[]ExpensesCostOfGood {
 	var costOfGoods []ExpensesCostOfGood
 
 	query := `SELECT e.id, 
@@ -77,7 +77,7 @@ func LoadExpensesCostOfGoods(userId string, filter *Filter, db *sqlx.DB) *[]Expe
 	_ = db.Select(
 		&costOfGoods,
 		query,
-		userId,
+		userID,
 		fmt.Sprintf("%v %v", sortColumn(expensesCostOfGoodsSortMap, filter.Sort), filter.Dir),
 		filter.Length,
 		filter.Start,
@@ -86,7 +86,7 @@ func LoadExpensesCostOfGoods(userId string, filter *Filter, db *sqlx.DB) *[]Expe
 	return &costOfGoods
 }
 
-func LoadExpensesCostOfGood(expenseId string, db *sqlx.DB) *ExpensesCostOfGood {
+func LoadExpensesCostOfGood(expenseID string, db *sqlx.DB) *ExpensesCostOfGood {
 	var costOfGood ExpensesCostOfGood
 
 	query := `SELECT e.id,
@@ -97,10 +97,10 @@ func LoadExpensesCostOfGood(expenseId string, db *sqlx.DB) *ExpensesCostOfGood {
        e.from_date,
        e.created_at,
        e.updated_at FROM expenses_cost_of_goods AS e LEFT JOIN products p ON e.product_id = p.id WHERE expense_id = $1`
-	_ = db.QueryRow(query, expenseId).Scan(
-		&costOfGood.Id,
-		&costOfGood.ExpenseId,
-		&costOfGood.ProductId,
+	_ = db.QueryRow(query, expenseID).Scan(
+		&costOfGood.ID,
+		&costOfGood.ExpenseID,
+		&costOfGood.ProductID,
 		&costOfGood.Description,
 		&costOfGood.Amount,
 		&costOfGood.FromDate,
@@ -111,11 +111,11 @@ func LoadExpensesCostOfGood(expenseId string, db *sqlx.DB) *ExpensesCostOfGood {
 	return &costOfGood
 }
 
-func TotalExpensesCostOfGoods(userId string, db *sqlx.DB) int64 {
+func TotalExpensesCostOfGoods(userID string, db *sqlx.DB) int64 {
 	var count int64
 
 	query := `SELECT COUNT(e.id) FROM expenses_cost_of_goods AS e LEFT JOIN products p ON e.product_id = p.id WHERE p.user_id = $1`
-	_ = db.QueryRow(query, userId).Scan(&count)
+	_ = db.QueryRow(query, userID).Scan(&count)
 
 	return count
 }
@@ -132,7 +132,7 @@ func (e *ExpensesCostOfGood) Save(db *sqlx.DB) error {
 			"amount":      e.Amount,
 			"from_date":   e.FromDate,
 			"updated_at":  time.Now(),
-			"expense_id":  e.ExpenseId,
+			"expense_id":  e.ExpenseID,
 		})
 	if err != nil {
 		return err
@@ -146,8 +146,8 @@ func (e *ExpensesCostOfGood) Delete(db *sqlx.DB) error {
                                      AND expense_id = :expense_id`
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
-			"id":         e.Id,
-			"expense_id": e.ExpenseId,
+			"id":         e.ID,
+			"expense_id": e.ExpenseID,
 		})
 	if err != nil {
 		return err

@@ -5,9 +5,9 @@ import (
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 )
 
-func (d *Data) MetricsTotalSales(userId, dateRange string, metric *types.TotalSales, filter *models.Filter) {
-	metrics := d.loadMetrics(userId, dateRange, models.TotalSales, filter)
-	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userId, dateRange, models.TotalSales), models.TotalSales), dateRange)
+func (d *Data) MetricsTotalSales(userID, dateRange string, metric *types.TotalSales, filter *models.Filter) {
+	metrics := d.loadMetrics(userID, dateRange, models.TotalSales, filter)
+	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userID, dateRange, models.TotalSales), models.TotalSales), dateRange)
 
 	for _, item := range *metrics {
 		metric.Data = append(metric.Data, types.TotalSalesTable{
@@ -18,7 +18,7 @@ func (d *Data) MetricsTotalSales(userId, dateRange string, metric *types.TotalSa
 		})
 	}
 
-	total := d.totalMetrics(userId, dateRange, models.TotalSales)
+	total := d.totalMetrics(userID, dateRange, models.TotalSales)
 	metric.RecordsTotal = total
 	metric.RecordsFiltered = total
 
@@ -27,9 +27,9 @@ func (d *Data) MetricsTotalSales(userId, dateRange string, metric *types.TotalSa
 	}
 }
 
-func (d *Data) MetricsUnitsSold(userId, dateRange string, metric *types.UnitsSold, filter *models.Filter) {
-	metrics := d.loadMetrics(userId, dateRange, models.UnitsSold, filter)
-	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userId, dateRange, models.UnitsSold), models.UnitsSold), dateRange)
+func (d *Data) MetricsUnitsSold(userID, dateRange string, metric *types.UnitsSold, filter *models.Filter) {
+	metrics := d.loadMetrics(userID, dateRange, models.UnitsSold, filter)
+	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userID, dateRange, models.UnitsSold), models.UnitsSold), dateRange)
 
 	for _, item := range *metrics {
 		metric.Data = append(metric.Data, types.UnitsSoldTable{
@@ -40,7 +40,7 @@ func (d *Data) MetricsUnitsSold(userId, dateRange string, metric *types.UnitsSol
 		})
 	}
 
-	total := d.totalMetrics(userId, dateRange, models.UnitsSold)
+	total := d.totalMetrics(userID, dateRange, models.UnitsSold)
 	metric.RecordsTotal = total
 	metric.RecordsFiltered = total
 
@@ -49,9 +49,9 @@ func (d *Data) MetricsUnitsSold(userId, dateRange string, metric *types.UnitsSol
 	}
 }
 
-func (d *Data) MetricsAmazonCosts(userId, dateRange string, metric *types.AmazonCosts, filter *models.Filter) {
-	metrics := d.loadMetrics(userId, dateRange, models.AmazonCosts, filter)
-	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userId, dateRange, models.AmazonCosts), models.AmazonCosts), dateRange)
+func (d *Data) MetricsAmazonCosts(userID, dateRange string, metric *types.AmazonCosts, filter *models.Filter) {
+	metrics := d.loadMetrics(userID, dateRange, models.AmazonCosts, filter)
+	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userID, dateRange, models.AmazonCosts), models.AmazonCosts), dateRange)
 
 	for _, item := range *metrics {
 		metric.Data = append(metric.Data, types.AmazonCostsTable{
@@ -62,7 +62,7 @@ func (d *Data) MetricsAmazonCosts(userId, dateRange string, metric *types.Amazon
 		})
 	}
 
-	total := d.totalMetrics(userId, dateRange, models.AmazonCosts)
+	total := d.totalMetrics(userID, dateRange, models.AmazonCosts)
 	metric.RecordsTotal = total
 	metric.RecordsFiltered = total
 
@@ -71,9 +71,9 @@ func (d *Data) MetricsAmazonCosts(userId, dateRange string, metric *types.Amazon
 	}
 }
 
-func (d *Data) MetricsProductCosts(userId, dateRange string, metric *types.ProductCosts, filter *models.Filter) {
-	metrics := d.loadMetrics(userId, dateRange, models.ProductCosts, filter)
-	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userId, dateRange, models.ProductCosts), models.ProductCosts), dateRange)
+func (d *Data) MetricsProductCosts(userID, dateRange string, metric *types.ProductCosts, filter *models.Filter) {
+	metrics := d.loadMetrics(userID, dateRange, models.ProductCosts, filter)
+	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userID, dateRange, models.ProductCosts), models.ProductCosts), dateRange)
 
 	for _, item := range *metrics {
 		metric.Data = append(metric.Data, types.ProductCostsTable{
@@ -88,7 +88,7 @@ func (d *Data) MetricsProductCosts(userId, dateRange string, metric *types.Produ
 		})
 	}
 
-	total := d.totalMetrics(userId, dateRange, models.ProductCosts)
+	total := d.totalMetrics(userID, dateRange, models.ProductCosts)
 	metric.RecordsTotal = total
 	metric.RecordsFiltered = total
 
@@ -97,9 +97,9 @@ func (d *Data) MetricsProductCosts(userId, dateRange string, metric *types.Produ
 	}
 }
 
-func (d *Data) MetricsAdvertisingSpend(userId, dateRange string, metric *types.AdvertisingSpend, filter *models.Filter) {
-	metrics := d.loadMetrics(userId, dateRange, models.AdvertisingSpend, filter)
-	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userId, dateRange, models.AdvertisingSpend), models.AdvertisingSpend), dateRange)
+func (d *Data) MetricsAdvertisingSpend(userID, dateRange string, metric *types.AdvertisingSpend, filter *models.Filter) {
+	metrics := d.loadMetrics(userID, dateRange, models.AdvertisingSpend, filter)
+	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userID, dateRange, models.AdvertisingSpend), models.AdvertisingSpend), dateRange)
 
 	for _, item := range *metrics {
 		metric.Data = append(metric.Data, types.AdvertisingSpendTable{
@@ -111,7 +111,7 @@ func (d *Data) MetricsAdvertisingSpend(userId, dateRange string, metric *types.A
 		})
 	}
 
-	total := d.totalMetrics(userId, dateRange, models.AdvertisingSpend)
+	total := d.totalMetrics(userID, dateRange, models.AdvertisingSpend)
 	metric.RecordsTotal = total
 	metric.RecordsFiltered = total
 
@@ -120,9 +120,9 @@ func (d *Data) MetricsAdvertisingSpend(userId, dateRange string, metric *types.A
 	}
 }
 
-func (d *Data) MetricsRefunds(userId, dateRange string, metric *types.Refunds, filter *models.Filter) {
-	metrics := d.loadMetrics(userId, dateRange, models.Refunds, filter)
-	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userId, dateRange, models.Refunds), models.Refunds), dateRange)
+func (d *Data) MetricsRefunds(userID, dateRange string, metric *types.Refunds, filter *models.Filter) {
+	metrics := d.loadMetrics(userID, dateRange, models.Refunds, filter)
+	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userID, dateRange, models.Refunds), models.Refunds), dateRange)
 
 	for _, item := range *metrics {
 		metric.Data = append(metric.Data, types.RefundsTable{
@@ -134,7 +134,7 @@ func (d *Data) MetricsRefunds(userId, dateRange string, metric *types.Refunds, f
 		})
 	}
 
-	total := d.totalMetrics(userId, dateRange, models.Refunds)
+	total := d.totalMetrics(userID, dateRange, models.Refunds)
 	metric.RecordsTotal = total
 	metric.RecordsFiltered = total
 
@@ -143,9 +143,9 @@ func (d *Data) MetricsRefunds(userId, dateRange string, metric *types.Refunds, f
 	}
 }
 
-func (d *Data) MetricsShippingCredits(userId, dateRange string, metric *types.ShippingCredits, filter *models.Filter) {
-	metrics := d.loadMetrics(userId, dateRange, models.ShippingCredits, filter)
-	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userId, dateRange, models.ShippingCredits), models.ShippingCredits), dateRange)
+func (d *Data) MetricsShippingCredits(userID, dateRange string, metric *types.ShippingCredits, filter *models.Filter) {
+	metrics := d.loadMetrics(userID, dateRange, models.ShippingCredits, filter)
+	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userID, dateRange, models.ShippingCredits), models.ShippingCredits), dateRange)
 
 	for _, item := range *metrics {
 		metric.Data = append(metric.Data, types.ShippingCreditsTable{
@@ -157,7 +157,7 @@ func (d *Data) MetricsShippingCredits(userId, dateRange string, metric *types.Sh
 		})
 	}
 
-	total := d.totalMetrics(userId, dateRange, models.ShippingCredits)
+	total := d.totalMetrics(userID, dateRange, models.ShippingCredits)
 	metric.RecordsTotal = total
 	metric.RecordsFiltered = total
 
@@ -166,9 +166,9 @@ func (d *Data) MetricsShippingCredits(userId, dateRange string, metric *types.Sh
 	}
 }
 
-func (d *Data) MetricsPromotionalRebates(userId, dateRange string, metric *types.PromotionalRebates, filter *models.Filter) {
-	metrics := d.loadMetrics(userId, dateRange, models.PromotionalRebates, filter)
-	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userId, dateRange, models.PromotionalRebates), models.PromotionalRebates), dateRange)
+func (d *Data) MetricsPromotionalRebates(userID, dateRange string, metric *types.PromotionalRebates, filter *models.Filter) {
+	metrics := d.loadMetrics(userID, dateRange, models.PromotionalRebates, filter)
+	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userID, dateRange, models.PromotionalRebates), models.PromotionalRebates), dateRange)
 
 	for _, item := range *metrics {
 		metric.Data = append(metric.Data, types.PromotionalRebatesTable{
@@ -180,7 +180,7 @@ func (d *Data) MetricsPromotionalRebates(userId, dateRange string, metric *types
 		})
 	}
 
-	total := d.totalMetrics(userId, dateRange, models.PromotionalRebates)
+	total := d.totalMetrics(userID, dateRange, models.PromotionalRebates)
 	metric.RecordsTotal = total
 	metric.RecordsFiltered = total
 
@@ -189,9 +189,9 @@ func (d *Data) MetricsPromotionalRebates(userId, dateRange string, metric *types
 	}
 }
 
-func (d *Data) MetricsTotalCosts(userId, dateRange string, metric *types.TotalCosts, filter *models.Filter) {
-	metrics := d.loadMetrics(userId, dateRange, models.TotalCosts, filter)
-	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userId, dateRange, models.TotalCosts), models.TotalCosts), dateRange)
+func (d *Data) MetricsTotalCosts(userID, dateRange string, metric *types.TotalCosts, filter *models.Filter) {
+	metrics := d.loadMetrics(userID, dateRange, models.TotalCosts, filter)
+	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userID, dateRange, models.TotalCosts), models.TotalCosts), dateRange)
 
 	for _, item := range *metrics {
 		metric.Data = append(metric.Data, types.TotalCostsTable{
@@ -206,7 +206,7 @@ func (d *Data) MetricsTotalCosts(userId, dateRange string, metric *types.TotalCo
 		})
 	}
 
-	total := d.totalMetrics(userId, dateRange, models.TotalCosts)
+	total := d.totalMetrics(userID, dateRange, models.TotalCosts)
 	metric.RecordsTotal = total
 	metric.RecordsFiltered = total
 
@@ -215,9 +215,9 @@ func (d *Data) MetricsTotalCosts(userId, dateRange string, metric *types.TotalCo
 	}
 }
 
-func (d *Data) MetricsGrossMargin(userId, dateRange string, metric *types.GrossMargin, filter *models.Filter) {
-	metrics := d.loadMetrics(userId, dateRange, models.GrossMargin, filter)
-	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userId, dateRange, models.GrossMargin), models.GrossMargin), dateRange)
+func (d *Data) MetricsGrossMargin(userID, dateRange string, metric *types.GrossMargin, filter *models.Filter) {
+	metrics := d.loadMetrics(userID, dateRange, models.GrossMargin, filter)
+	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userID, dateRange, models.GrossMargin), models.GrossMargin), dateRange)
 
 	for _, item := range *metrics {
 		metric.Data = append(metric.Data, types.GrossMarginTable{
@@ -236,7 +236,7 @@ func (d *Data) MetricsGrossMargin(userId, dateRange string, metric *types.GrossM
 		})
 	}
 
-	total := d.totalMetrics(userId, dateRange, models.GrossMargin)
+	total := d.totalMetrics(userID, dateRange, models.GrossMargin)
 	metric.RecordsTotal = total
 	metric.RecordsFiltered = total
 
@@ -245,9 +245,9 @@ func (d *Data) MetricsGrossMargin(userId, dateRange string, metric *types.GrossM
 	}
 }
 
-func (d *Data) MetricsNetMargin(userId, dateRange string, metric *types.NetMargin, filter *models.Filter) {
-	metrics := d.loadMetrics(userId, dateRange, models.NetMargin, filter)
-	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userId, dateRange, models.NetMargin), models.NetMargin), dateRange)
+func (d *Data) MetricsNetMargin(userID, dateRange string, metric *types.NetMargin, filter *models.Filter) {
+	metrics := d.loadMetrics(userID, dateRange, models.NetMargin, filter)
+	metric.Chart = d.chart.Line(d.metricsSummary(d.loadMetricsSummary(userID, dateRange, models.NetMargin), models.NetMargin), dateRange)
 
 	for _, item := range *metrics {
 		metric.Data = append(metric.Data, types.NetMarginTable{
@@ -263,7 +263,7 @@ func (d *Data) MetricsNetMargin(userId, dateRange string, metric *types.NetMargi
 		})
 	}
 
-	total := d.totalMetrics(userId, dateRange, models.NetMargin)
+	total := d.totalMetrics(userID, dateRange, models.NetMargin)
 	metric.RecordsTotal = total
 	metric.RecordsFiltered = total
 
@@ -272,41 +272,41 @@ func (d *Data) MetricsNetMargin(userId, dateRange string, metric *types.NetMargi
 	}
 }
 
-func (d *Data) loadMetrics(userId, dateRange, view string, filter *models.Filter) *[]models.Metric {
-	return models.LoadMetrics(userId, dateRange, view, filter, d.db)
+func (d *Data) loadMetrics(userID, dateRange, view string, filter *models.Filter) *[]models.Metric {
+	return models.LoadMetrics(userID, dateRange, view, filter, d.db)
 }
 
-func (d *Data) loadMetricsSummary(userId, dateRange, view string) *[]models.Metric {
+func (d *Data) loadMetricsSummary(userID, dateRange, view string) *[]models.Metric {
 	switch view {
 	case models.TotalSales:
-		return models.LoadMetricsTotalSalesSummary(userId, dateRange, d.db)
+		return models.LoadMetricsTotalSalesSummary(userID, dateRange, d.db)
 	case models.UnitsSold:
-		return models.LoadMetricsUnitsSoldSummary(userId, dateRange, d.db)
+		return models.LoadMetricsUnitsSoldSummary(userID, dateRange, d.db)
 	case models.AmazonCosts:
-		return models.LoadMetricsAmazonCostsSummary(userId, dateRange, d.db)
+		return models.LoadMetricsAmazonCostsSummary(userID, dateRange, d.db)
 	case models.ProductCosts:
-		return models.LoadMetricsProductCostsSummary(userId, dateRange, d.db)
+		return models.LoadMetricsProductCostsSummary(userID, dateRange, d.db)
 	case models.AdvertisingSpend:
-		return models.LoadMetricsAdvertisingSpendSummary(userId, dateRange, d.db)
+		return models.LoadMetricsAdvertisingSpendSummary(userID, dateRange, d.db)
 	case models.Refunds:
-		return models.LoadMetricsRefundsSummary(userId, dateRange, d.db)
+		return models.LoadMetricsRefundsSummary(userID, dateRange, d.db)
 	case models.ShippingCredits:
-		return models.LoadMetricsShippingCreditsSummary(userId, dateRange, d.db)
+		return models.LoadMetricsShippingCreditsSummary(userID, dateRange, d.db)
 	case models.PromotionalRebates:
-		return models.LoadMetricsPromotionalRebatesSummary(userId, dateRange, d.db)
+		return models.LoadMetricsPromotionalRebatesSummary(userID, dateRange, d.db)
 	case models.TotalCosts:
-		return models.LoadMetricsTotalCostsSummary(userId, dateRange, d.db)
+		return models.LoadMetricsTotalCostsSummary(userID, dateRange, d.db)
 	case models.GrossMargin:
-		return models.LoadMetricsGrossMarginSummary(userId, dateRange, d.db)
+		return models.LoadMetricsGrossMarginSummary(userID, dateRange, d.db)
 	case models.NetMargin:
-		return models.LoadMetricsNetMarginSummary(userId, dateRange, d.db)
+		return models.LoadMetricsNetMarginSummary(userID, dateRange, d.db)
 	default:
 		return &[]models.Metric{}
 	}
 }
 
-func (d *Data) totalMetrics(userId, dateRange, view string) int64 {
-	return models.TotalMetrics(userId, dateRange, view, d.db)
+func (d *Data) totalMetrics(userID, dateRange, view string) int64 {
+	return models.TotalMetrics(userID, dateRange, view, d.db)
 }
 
 func (d *Data) metricsSummary(metrics *[]models.Metric, view string) *[]types.Summary {

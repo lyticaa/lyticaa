@@ -9,7 +9,7 @@ import (
 )
 
 type ValidateExpense struct {
-	ExpenseId string `validate:"required,uuid4"`
+	ExpenseID string `validate:"required,uuid4"`
 }
 
 type Expenses struct {

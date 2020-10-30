@@ -39,7 +39,7 @@ func (a *App) accountHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.Subscription)),
 	))
-	a.Router.Handle("/account/subscription/subscribe/{planId}", negroni.New(
+	a.Router.Handle("/account/subscription/subscribe/{planID}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.Subscribe)),
@@ -49,7 +49,7 @@ func (a *App) accountHandlers() {
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.CancelSubscription)),
 	))
-	a.Router.Handle("/account/subscription/change/{planId}", negroni.New(
+	a.Router.Handle("/account/subscription/change/{planID}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.ChangePlan)),

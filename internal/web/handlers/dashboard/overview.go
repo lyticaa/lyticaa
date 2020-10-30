@@ -28,7 +28,7 @@ func (d *Dashboard) MetricsByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var dashboard types.Dashboard
-	d.data.Dashboard(user.UserId, dateRange, &dashboard)
+	d.data.Dashboard(user.UserID, dateRange, &dashboard)
 
 	js, err := json.Marshal(dashboard)
 	if err != nil {

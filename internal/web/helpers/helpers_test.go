@@ -255,7 +255,7 @@ func (s *helpersSuite) TestSession(c *C) {
 
 	session.Values["User"] = *user
 	sessionUser := GetSessionUser(session)
-	c.Assert(sessionUser.UserId, Equals, user.UserId)
+	c.Assert(sessionUser.UserID, Equals, user.UserID)
 
 	impersonate, err := models.CreateUser(
 		faker.RandomString(10),
@@ -269,11 +269,11 @@ func (s *helpersSuite) TestSession(c *C) {
 	user.Impersonate = impersonate
 	session.Values["User"] = *user
 	sessionUser = GetSessionUser(session)
-	c.Assert(sessionUser.UserId, Equals, impersonate.UserId)
+	c.Assert(sessionUser.UserID, Equals, impersonate.UserID)
 
 	SetSessionUser(*impersonate, session, httptest.NewRecorder(), r)
 	sessionUser = GetSessionUser(session)
-	c.Assert(sessionUser.UserId, Equals, impersonate.UserId)
+	c.Assert(sessionUser.UserID, Equals, impersonate.UserID)
 
 	user, err = models.CreateUser(
 		faker.RandomString(10),
@@ -286,13 +286,13 @@ func (s *helpersSuite) TestSession(c *C) {
 
 	SetSessionUser(*user, session, httptest.NewRecorder(), r)
 	sessionUser = GetSessionUser(session)
-	c.Assert(sessionUser.UserId, Equals, user.UserId)
+	c.Assert(sessionUser.UserID, Equals, user.UserID)
 
 	var subscription sql.NullString
 	err = subscription.Scan(fmt.Sprintf("sub_%s", faker.RandomString(64)))
 	c.Assert(err, IsNil)
 
-	user.StripeSubscriptionId = subscription
+	user.StripeSubscriptionID = subscription
 	SetSessionUser(*user, session, httptest.NewRecorder(), r)
 	err = session.Save(r, httptest.NewRecorder())
 	c.Assert(err, IsNil)

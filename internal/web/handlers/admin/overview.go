@@ -51,7 +51,7 @@ func (a *Admin) LogOut(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := session.Values["User"].(models.User)
 
-	session.Values["User"] = models.LoadUser(user.UserId, a.db)
+	session.Values["User"] = models.LoadUser(user.UserID, a.db)
 	_ = session.Save(r, w)
 
 	http.Redirect(w, r, "/admin", http.StatusSeeOther)
@@ -64,7 +64,7 @@ func (a *Admin) paintUsers(r *http.Request) types.Admin {
 
 	for _, user := range *users {
 		t := types.AdminTable{
-			RowId:   user.UserId,
+			RowID:   user.UserID,
 			Email:   user.Email,
 			Created: user.CreatedAt.Format("2006-01-02"),
 		}
