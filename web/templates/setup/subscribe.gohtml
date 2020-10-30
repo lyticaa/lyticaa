@@ -40,10 +40,10 @@
                                     <div class="card-body">
                                         <h5 class="text-center text-uppercase mt-3 mb-4">Monthly</h5>
                                         <h3 class="text-center font-weight-light">$150</h3>
-                                        {{ if .User.StripeSubscriptionId }}
-                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-session="{{ .stripeMonthlyId }}" disabled>Subscribe</button>
+                                        {{ if .User.StripeSubscriptionID }}
+                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-session="{{ .stripeMonthlyID }}" disabled>Subscribe</button>
                                         {{ else }}
-                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-session="{{ .stripeMonthlyId }}">Subscribe</button>
+                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-session="{{ .stripeMonthlyID }}">Subscribe</button>
                                         {{ end }}
                                     </div>
                                 </div>
@@ -55,17 +55,17 @@
                                             Annual
                                         </h5>
                                         <h3 class="text-center font-weight-light">$1500</h3>
-                                        {{ if .User.StripeSubscriptionId }}
-                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-session="{{ .stripeAnnualId }}" disabled>Subscribe</button>
+                                        {{ if .User.StripeSubscriptionID }}
+                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-session="{{ .stripeAnnualID }}" disabled>Subscribe</button>
                                         {{ else }}
-                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-session="{{ .stripeAnnualId }}">Subscribe</button>
+                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-session="{{ .stripeAnnualID }}">Subscribe</button>
                                         {{ end }}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {{ if .User.StripeSubscriptionId }}
+                    {{ if .User.StripeSubscriptionID }}
                         <a class="btn btn-primary float-right" href="/setup/complete" role="button">Next</a>
                     {{ end }}
                 </div>

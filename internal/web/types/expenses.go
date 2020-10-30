@@ -14,7 +14,7 @@ type Currency struct {
 }
 
 type ExpensesTable struct {
-	RowID       string  `json:"DT_RowID"`
+	RowID       string  `json:"DT_RowId"`
 	ProductID   string  `json:"productID,omitempty"`
 	CurrencyID  string  `json:"currencyID,omitempty"`
 	SKU         string  `json:"sku,omitempty"`

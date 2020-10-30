@@ -61,18 +61,18 @@
                                     <div class="card-body">
                                         <h5 class="text-center text-uppercase mt-3 mb-4">Monthly</h5>
                                         <h3 class="text-center font-weight-light">$150</h3>
-                                        {{ if .User.StripePlanId.String }}
-                                            {{ if eq .User.StripePlanId.String .Config.Stripe.MonthlyPlanId }}
-                                                <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Downgrade</button>
-                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
+                                        {{ if .User.StripePlanID.String }}
+                                            {{ if eq .User.StripePlanID.String .Config.Stripe.MonthlyPlanID }}
+                                                <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">Downgrade</button>
+                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
                                             {{ else }}
-                                                <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Downgrade</button>
-                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel hide"data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
+                                                <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">Downgrade</button>
+                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel hide"data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
                                             {{ end }}
                                         {{ else }}
-                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Subscribe</button>
-                                            <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}">Downgrade</button>
-                                            <button class="btn btn-warning d-block mx-auto mt-4 cancel hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanId }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
+                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">Subscribe</button>
+                                            <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">Downgrade</button>
+                                            <button class="btn btn-warning d-block mx-auto mt-4 cancel hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
                                         {{ end }}
                                     </div>
                                 </div>
@@ -84,18 +84,18 @@
                                             Annual
                                         </h5>
                                         <h3 class="text-center font-weight-light">$1500</h3>
-                                        {{ if .User.StripePlanId.String }}
-                                            {{ if eq .User.StripePlanId.String .Config.Stripe.AnnualPlanId }}
-                                                <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Upgrade</button>
-                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
+                                        {{ if .User.StripePlanID.String }}
+                                            {{ if eq .User.StripePlanID.String .Config.Stripe.AnnualPlanID }}
+                                                <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">Upgrade</button>
+                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
                                             {{ else }}
-                                                <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Upgrade</button>
-                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
+                                                <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">Upgrade</button>
+                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
                                             {{ end }}
                                         {{ else }}
-                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Subscribe</button>
-                                            <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}">Upgrade</button>
-                                            <button class="btn btn-warning d-block mx-auto mt-4 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanId }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
+                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">Subscribe</button>
+                                            <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">Upgrade</button>
+                                            <button class="btn btn-warning d-block mx-auto mt-4 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
                                         {{ end }}
                                     </div>
                                 </div>
