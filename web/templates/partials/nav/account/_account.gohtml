@@ -4,7 +4,7 @@
             <li class="nav-item dropdown nav-profile">
                 <a class="nav-link dropdown-toggle" href="#" id="profile-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ if .User.Impersonate }}
-                        {{ if .User.Impersonate.UserId }}
+                        {{ if .User.Impersonate.UserID }}
                             <img class="profile-image-thumb" src="{{.User.Impersonate.Picture.String}}" alt="profile">
                         {{ else }}
                             <img class="profile-image-thumb" src="{{.User.Picture.String}}" alt="profile">
@@ -17,7 +17,7 @@
                     <div class="dropdown-header d-flex flex-column align-items-center">
                         <div class="figure mb-3">
                             {{ if .User.Impersonate }}
-                                {{ if .User.Impersonate.UserId }}
+                                {{ if .User.Impersonate.UserID }}
                                     <img class="profile-image" rel="" src="{{.User.Impersonate.Picture.String}}" alt="">
                                 {{ else }}
                                     <img class="profile-image" rel="" src="{{.User.Picture.String}}" alt="">
@@ -28,7 +28,7 @@
                         </div>
                         <div class="info text-center">
                             {{ if .User.Impersonate }}
-                                {{ if .User.Impersonate.UserId }}
+                                {{ if .User.Impersonate.UserID }}
                                     <p class="name font-weight-bold mb-0">{{.User.Impersonate.Nickname.String}}</p>
                                     <p class="email text-muted mb-3">{{.User.Impersonate.Email}}</p>
                                 {{ else }}
