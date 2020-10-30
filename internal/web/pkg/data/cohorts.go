@@ -6,12 +6,12 @@ import (
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 )
 
-func (d *Data) Cohorts(userId, dateRange, view string, cohort *types.Cohort, filter *models.Filter) {
-	current := models.LoadCohortsSummary(userId, dateRange, view, d.db)
+func (d *Data) Cohorts(userID, dateRange, view string, cohort *types.Cohort, filter *models.Filter) {
+	current := models.LoadCohortsSummary(userID, dateRange, view, d.db)
 
 	var previous []models.Cohort
 	if !helpers.IsDateRangeAllTime(dateRange) {
-		previous = *models.LoadCohortsSummary(userId, helpers.PreviousDateRangeLabel(dateRange), view, d.db)
+		previous = *models.LoadCohortsSummary(userID, helpers.PreviousDateRangeLabel(dateRange), view, d.db)
 	}
 
 	d.cohortsTotalSales(current, &previous, cohort)
@@ -20,7 +20,7 @@ func (d *Data) Cohorts(userId, dateRange, view string, cohort *types.Cohort, fil
 	d.cohortsAdvertisingSpend(current, &previous, cohort)
 	d.cohortsNetMargin(current, &previous, cohort)
 
-	table := models.LoadCohorts(userId, dateRange, view, filter, d.db)
+	table := models.LoadCohorts(userID, dateRange, view, filter, d.db)
 	for _, item := range *table {
 		cohort.Data = append(cohort.Data, types.CohortTable{
 			SKU:                item.SKU,
@@ -39,7 +39,7 @@ func (d *Data) Cohorts(userId, dateRange, view string, cohort *types.Cohort, fil
 		})
 	}
 
-	total := models.TotalCohorts(userId, dateRange, view, d.db)
+	total := models.TotalCohorts(userID, dateRange, view, d.db)
 	cohort.RecordsTotal = total
 	cohort.RecordsFiltered = total
 

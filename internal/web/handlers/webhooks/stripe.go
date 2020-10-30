@@ -2,13 +2,12 @@ package webhooks
 
 import (
 	"database/sql"
-	"encoding/json"
 	"net/http"
 
 	"github.com/lyticaa/lyticaa-app/internal/models"
 	"github.com/lyticaa/lyticaa-app/internal/web/pkg/payments"
 
-	"github.com/stripe/stripe-go/v71"
+	"github.com/stripe/stripe-go/v72"
 )
 
 func (wh *Webhooks) Stripe(w http.ResponseWriter, r *http.Request) {
@@ -55,31 +54,31 @@ func (wh *Webhooks) parseStripeEvent(event stripe.Event, w http.ResponseWriter) 
 }
 
 func (wh *Webhooks) checkoutSessionCompleted(event stripe.Event, w http.ResponseWriter) error {
-	var session stripe.CheckoutSession
-	if err := json.Unmarshal(event.Data.Raw, &session); err != nil {
+	session, err := wh.stripe.EventSession(event)
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return err
 	}
 
-	user := models.LoadUser(wh.stripe.CustomerRefId(&session), wh.db)
+	user := models.LoadUser(wh.stripe.CustomerRefID(&session), wh.db)
 
 	var customer sql.NullString
-	if err := customer.Scan(*wh.stripe.CustomerId(&session)); err != nil {
+	if err := customer.Scan(*wh.stripe.CustomerID(&session)); err != nil {
 		return err
 	}
-	user.StripeUserId = customer
+	user.StripeUserID = customer
 
 	var subscription sql.NullString
-	if err := subscription.Scan(*wh.stripe.SubscriptionId(&session)); err != nil {
+	if err := subscription.Scan(*wh.stripe.SubscriptionID(&session)); err != nil {
 		return err
 	}
-	user.StripeSubscriptionId = subscription
+	user.StripeSubscriptionID = subscription
 
 	var plan sql.NullString
-	if err := plan.Scan(*wh.stripe.PlanId(&session)); err != nil {
+	if err := plan.Scan(*wh.stripe.PlanID(&session)); err != nil {
 		return err
 	}
-	user.StripePlanId = plan
+	user.StripePlanID = plan
 
 	if err := user.Save(wh.db); err != nil {
 		return err

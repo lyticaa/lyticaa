@@ -4,7 +4,7 @@ import "time"
 
 type Parsed struct {
 	DateRange                  string    `json:"dateRange,omitempty"`
-	UserId                     string    `json:"userId,omitempty"`
+	UserID                     string    `json:"userID,omitempty"`
 	DateTime                   time.Time `json:"dateTime,omitempty"`
 	Marketplace                string    `json:"marketplace,omitempty"`
 	SKU                        string    `json:"sku,omitempty"`

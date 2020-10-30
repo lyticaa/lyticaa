@@ -30,7 +30,7 @@ func (c *Cohorts) HighMarginByDate(w http.ResponseWriter, r *http.Request) {
 	var byDate types.Cohort
 	byDate.Draw = helpers.DtDraw(r)
 
-	c.data.Cohorts(user.UserId, dateRange, highMargin, &byDate, helpers.BuildFilter(r))
+	c.data.Cohorts(user.UserID, dateRange, highMargin, &byDate, helpers.BuildFilter(r))
 	js, err := json.Marshal(byDate)
 	if err != nil {
 		c.logger.Error().Err(err).Msg("unable to marshal data")

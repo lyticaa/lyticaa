@@ -36,7 +36,7 @@ func (f *Forecast) ForecastByDate(w http.ResponseWriter, r *http.Request) {
 
 	var byDate types.Forecast
 
-	f.data.Forecast(user.UserId, dateRange, view, &byDate)
+	f.data.Forecast(user.UserID, dateRange, view, &byDate)
 	js, err := json.Marshal(byDate)
 	if err != nil {
 		f.logger.Error().Err(err).Msg("failed to marshal data")

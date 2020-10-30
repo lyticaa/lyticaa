@@ -32,10 +32,10 @@ func NewFilter() *Filter {
 	return &Filter{}
 }
 
-func sortColumn(columnMap map[int64]string, columnIdx int64) string {
-	if columnIdx > int64(len(columnMap)) {
+func sortColumn(columnMap map[int64]string, columnIDx int64) string {
+	if columnIDx > int64(len(columnMap)) {
 		return columnMap[0]
 	}
 
-	return columnMap[columnIdx]
+	return columnMap[columnIDx]
 }

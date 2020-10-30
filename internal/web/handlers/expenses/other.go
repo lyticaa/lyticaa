@@ -14,7 +14,7 @@ import (
 )
 
 type ValidateOther struct {
-	CurrencyId  string    `validate:"required,uuid4"`
+	CurrencyID  string    `validate:"required,uuid4"`
 	Description string    `validate:"required,min=3"`
 	DateTime    time.Time `validate:"required"`
 	Amount      float64   `validate:"required,gt=0"`
@@ -31,7 +31,7 @@ func (e *Expenses) OtherByUser(w http.ResponseWriter, r *http.Request) {
 	var byDate types.Expenses
 	byDate.Draw = helpers.DtDraw(r)
 
-	e.data.ExpensesOther(user.UserId, &byDate, helpers.BuildFilter(r))
+	e.data.ExpensesOther(user.UserID, &byDate, helpers.BuildFilter(r))
 	js, err := json.Marshal(byDate)
 	if err != nil {
 		e.logger.Error().Err(err).Msg("unable to marshal data")
@@ -46,12 +46,12 @@ func (e *Expenses) OtherByUser(w http.ResponseWriter, r *http.Request) {
 func (e *Expenses) NewOther(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
-	currencyId := r.FormValue("currency")
+	currencyID := r.FormValue("currency")
 	description := r.FormValue("description")
 	dateTime, _ := time.Parse("2006-01-02", r.FormValue("dateTime"))
 	amount, _ := strconv.ParseFloat(r.FormValue("amount"), 64)
 
-	ok, res := e.validateOther(currencyId, description, dateTime, amount)
+	ok, res := e.validateOther(currencyID, description, dateTime, amount)
 	if !ok {
 		js, err := json.Marshal(res)
 		if err != nil {
@@ -66,13 +66,13 @@ func (e *Expenses) NewOther(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ok, currency := e.isValidCurrency(currencyId)
+	ok, currency := e.isValidCurrency(currencyID)
 	if !ok {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
 
-	if err := models.CreateExpensesOther(user.UserId, currency.Id, description, amount, dateTime, e.db); err != nil {
+	if err := models.CreateExpensesOther(user.UserID, currency.ID, description, amount, dateTime, e.db); err != nil {
 		e.logger.Error().Err(err).Msg("failed to create the expense")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -85,26 +85,26 @@ func (e *Expenses) EditOther(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	params := mux.Vars(r)
-	expenseId := params["expense"]
+	expenseID := params["expense"]
 
-	ok, _ := helpers.ValidateInput(ValidateExpense{ExpenseId: expenseId}, &e.logger)
+	ok, _ := helpers.ValidateInput(ValidateExpense{ExpenseID: expenseID}, &e.logger)
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	expense := models.LoadExpensesOther(expenseId, e.db)
-	if expense.UserId != user.UserId {
+	expense := models.LoadExpensesOther(expenseID, e.db)
+	if expense.UserID != user.UserID {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	currencyId := r.FormValue("currency")
+	currencyID := r.FormValue("currency")
 	description := r.FormValue("description")
 	dateTime, _ := time.Parse("2006-01-02", r.FormValue("dateTime"))
 	amount, _ := strconv.ParseFloat(r.FormValue("amount"), 64)
 
-	ok, res := e.validateOther(currencyId, description, dateTime, amount)
+	ok, res := e.validateOther(currencyID, description, dateTime, amount)
 	if !ok {
 		js, err := json.Marshal(res)
 		if err != nil {
@@ -119,13 +119,13 @@ func (e *Expenses) EditOther(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ok, currency := e.isValidCurrency(currencyId)
+	ok, currency := e.isValidCurrency(currencyID)
 	if !ok {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
 
-	expense.CurrencyId = currency.Id
+	expense.CurrencyID = currency.ID
 	expense.Description = description
 	expense.DateTime = dateTime
 	expense.Amount = amount
@@ -143,22 +143,22 @@ func (e *Expenses) DeleteOther(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	params := mux.Vars(r)
-	expenseId := params["expense"]
+	expenseID := params["expense"]
 
-	ok, _ := helpers.ValidateInput(ValidateExpense{ExpenseId: expenseId}, &e.logger)
+	ok, _ := helpers.ValidateInput(ValidateExpense{ExpenseID: expenseID}, &e.logger)
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	expense := models.LoadExpensesOther(expenseId, e.db)
-	if expense.UserId != user.UserId {
+	expense := models.LoadExpensesOther(expenseID, e.db)
+	if expense.UserID != user.UserID {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	if err := expense.Delete(e.db); err != nil {
-		e.logger.Error().Err(err).Msgf("failed to delete the expense %v", expenseId)
+		e.logger.Error().Err(err).Msgf("failed to delete the expense %v", expenseID)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -184,7 +184,7 @@ func (e *Expenses) paintCurrencies() *[]types.Currency {
 	currencies := models.LoadCurrencies(e.db)
 	for _, currency := range *currencies {
 		currencyList = append(currencyList, types.Currency{
-			CurrencyId: currency.CurrencyId,
+			CurrencyID: currency.CurrencyID,
 			Code:       currency.Code,
 			Symbol:     currency.Symbol,
 		})
@@ -193,21 +193,21 @@ func (e *Expenses) paintCurrencies() *[]types.Currency {
 	return &currencyList
 }
 
-func (e *Expenses) isValidCurrency(currencyId string) (bool, *models.Currency) {
+func (e *Expenses) isValidCurrency(currencyID string) (bool, *models.Currency) {
 	isValidCurrency := false
 
-	currency := models.LoadCurrency(currencyId, e.db)
-	if currency.CurrencyId == currencyId {
+	currency := models.LoadCurrency(currencyID, e.db)
+	if currency.CurrencyID == currencyID {
 		isValidCurrency = true
 	}
 
 	return isValidCurrency, currency
 }
 
-func (e *Expenses) validateOther(currencyId, description string, dateTime time.Time, amount float64) (bool, map[string]string) {
+func (e *Expenses) validateOther(currencyID, description string, dateTime time.Time, amount float64) (bool, map[string]string) {
 	return helpers.ValidateInput(
 		ValidateOther{
-			CurrencyId:  currencyId,
+			CurrencyID:  currencyID,
 			Description: description,
 			DateTime:    dateTime,
 			Amount:      amount,

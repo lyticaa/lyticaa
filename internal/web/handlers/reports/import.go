@@ -45,7 +45,7 @@ func (rp *Reports) Import(w http.ResponseWriter, r *http.Request) {
 			wg.Add(1)
 
 			go func() {
-				err = s3.Upload(user.UserId, sess, file, files[i], &wg)
+				err = s3.Upload(user.UserID, sess, file, files[i], &wg)
 				if err != nil {
 					rp.logger.Error().Err(err).Msg("failed to upload")
 				}

@@ -8,10 +8,10 @@ import (
 )
 
 type ExpensesOther struct {
-	Id             int64     `db:"id"`
-	ExpenseId      string    `db:"expense_id"`
-	UserId         string    `db:"user_id"`
-	CurrencyId     int64     `db:"currency_id"`
+	ID             int64     `db:"id"`
+	ExpenseID      string    `db:"expense_id"`
+	UserID         string    `db:"user_id"`
+	CurrencyID     int64     `db:"currency_id"`
 	Description    string    `db:"description"`
 	Amount         float64   `db:"amount"`
 	CurrencyCode   string    `db:"currency_code"`
@@ -30,7 +30,7 @@ var (
 	}
 )
 
-func CreateExpensesOther(userId string, currencyId int64, description string, amount float64, dateTime time.Time, db *sqlx.DB) error {
+func CreateExpensesOther(userID string, currencyID int64, description string, amount float64, dateTime time.Time, db *sqlx.DB) error {
 	query := `INSERT INTO expenses_others (
                             user_id,
                             currency_id,
@@ -49,8 +49,8 @@ func CreateExpensesOther(userId string, currencyId int64, description string, am
                                     :updated_at)`
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
-			"user_id":     userId,
-			"currency_id": currencyId,
+			"user_id":     userID,
+			"currency_id": currencyID,
 			"description": description,
 			"amount":      amount,
 			"date_time":   dateTime,
@@ -65,7 +65,7 @@ func CreateExpensesOther(userId string, currencyId int64, description string, am
 	return nil
 }
 
-func LoadExpensesOthers(userId string, filter *Filter, db *sqlx.DB) *[]ExpensesOther {
+func LoadExpensesOthers(userID string, filter *Filter, db *sqlx.DB) *[]ExpensesOther {
 	var other []ExpensesOther
 
 	query := `SELECT e.expense_id,
@@ -79,7 +79,7 @@ func LoadExpensesOthers(userId string, filter *Filter, db *sqlx.DB) *[]ExpensesO
 	_ = db.Select(
 		&other,
 		query,
-		userId,
+		userID,
 		fmt.Sprintf("%v %v", sortColumn(expensesOtherSortMap, filter.Sort), filter.Dir),
 		filter.Length,
 		filter.Start,
@@ -88,7 +88,7 @@ func LoadExpensesOthers(userId string, filter *Filter, db *sqlx.DB) *[]ExpensesO
 	return &other
 }
 
-func LoadExpensesOther(expenseId string, db *sqlx.DB) *ExpensesOther {
+func LoadExpensesOther(expenseID string, db *sqlx.DB) *ExpensesOther {
 	var other ExpensesOther
 
 	query := `SELECT e.id,
@@ -102,11 +102,11 @@ func LoadExpensesOther(expenseId string, db *sqlx.DB) *ExpensesOther {
        e.date_time,
        e.created_at,
        e.updated_at FROM expenses_others AS e LEFT JOIN currencies c ON e.currency_id = c.id WHERE e.expense_id = $1`
-	_ = db.QueryRow(query, expenseId).Scan(
-		&other.Id,
-		&other.ExpenseId,
-		&other.UserId,
-		&other.CurrencyId,
+	_ = db.QueryRow(query, expenseID).Scan(
+		&other.ID,
+		&other.ExpenseID,
+		&other.UserID,
+		&other.CurrencyID,
 		&other.CurrencyCode,
 		&other.CurrencySymbol,
 		&other.Description,
@@ -119,11 +119,11 @@ func LoadExpensesOther(expenseId string, db *sqlx.DB) *ExpensesOther {
 	return &other
 }
 
-func TotalExpensesOthers(userId string, db *sqlx.DB) int64 {
+func TotalExpensesOthers(userID string, db *sqlx.DB) int64 {
 	var count int64
 
 	query := `SELECT COUNT(id) FROM expenses_others WHERE user_id = $1`
-	_ = db.QueryRow(query, userId).Scan(&count)
+	_ = db.QueryRow(query, userID).Scan(&count)
 
 	return count
 }
@@ -137,12 +137,12 @@ func (e *ExpensesOther) Save(db *sqlx.DB) error {
                           updated_at = :updated_at WHERE expense_id = :expense_id`
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
-			"currency_id": e.CurrencyId,
+			"currency_id": e.CurrencyID,
 			"description": e.Description,
 			"amount":      e.Amount,
 			"date_time":   e.DateTime,
 			"updated_at":  time.Now(),
-			"expense_id":  e.ExpenseId,
+			"expense_id":  e.ExpenseID,
 		})
 	if err != nil {
 		return err
@@ -156,8 +156,8 @@ func (e *ExpensesOther) Delete(db *sqlx.DB) error {
                               AND expense_id = :expense_id`
 	_, err := db.NamedExec(query,
 		map[string]interface{}{
-			"id":         e.Id,
-			"expense_id": e.ExpenseId,
+			"id":         e.ID,
+			"expense_id": e.ExpenseID,
 		})
 	if err != nil {
 		return err

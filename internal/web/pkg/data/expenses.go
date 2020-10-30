@@ -7,12 +7,12 @@ import (
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 )
 
-func (d *Data) ExpensesCostOfGoods(userId string, expenses *types.Expenses, filter *models.Filter) {
-	costOfGoods := models.LoadExpensesCostOfGoods(userId, filter, d.db)
+func (d *Data) ExpensesCostOfGoods(userID string, expenses *types.Expenses, filter *models.Filter) {
+	costOfGoods := models.LoadExpensesCostOfGoods(userID, filter, d.db)
 	for _, item := range *costOfGoods {
 		expenses.Data = append(expenses.Data, types.ExpensesTable{
-			RowId:       item.ExpenseId,
-			ProductId:   item.ProductId,
+			RowID:       item.ExpenseID,
+			ProductID:   item.ProductID,
 			SKU:         item.SKU,
 			Description: item.Description,
 			Marketplace: item.Marketplace,
@@ -21,17 +21,17 @@ func (d *Data) ExpensesCostOfGoods(userId string, expenses *types.Expenses, filt
 		})
 	}
 
-	d.expenseTotals(userId, expensesCostOfGoods, expenses)
+	d.expenseTotals(userID, expensesCostOfGoods, expenses)
 }
 
-func (d *Data) ExpensesOther(userId string, expenses *types.Expenses, filter *models.Filter) {
+func (d *Data) ExpensesOther(userID string, expenses *types.Expenses, filter *models.Filter) {
 	currencies := models.LoadCurrencies(d.db)
 
-	other := models.LoadExpensesOthers(userId, filter, d.db)
+	other := models.LoadExpensesOthers(userID, filter, d.db)
 	for _, item := range *other {
 		expenses.Data = append(expenses.Data, types.ExpensesTable{
-			RowId:       item.ExpenseId,
-			CurrencyId:  d.expenseCurrency(currencies, item.CurrencyId),
+			RowID:       item.ExpenseID,
+			CurrencyID:  d.expenseCurrency(currencies, item.CurrencyID),
 			Description: item.Description,
 			DateTime:    item.DateTime.Format("2006-01-02"),
 			Amount:      item.Amount,
@@ -39,26 +39,26 @@ func (d *Data) ExpensesOther(userId string, expenses *types.Expenses, filter *mo
 		})
 	}
 
-	d.expenseTotals(userId, expensesOther, expenses)
+	d.expenseTotals(userID, expensesOther, expenses)
 }
 
-func (d *Data) expenseCurrency(currencies *[]models.Currency, currencyId int64) string {
+func (d *Data) expenseCurrency(currencies *[]models.Currency, currencyID int64) string {
 	for _, currency := range *currencies {
-		if currency.Id == currencyId {
-			return currency.CurrencyId
+		if currency.ID == currencyID {
+			return currency.CurrencyID
 		}
 	}
 
-	return (*currencies)[0].CurrencyId
+	return (*currencies)[0].CurrencyID
 }
 
-func (d *Data) expenseTotals(userId, view string, expenses *types.Expenses) {
+func (d *Data) expenseTotals(userID, view string, expenses *types.Expenses) {
 	var total int64
 	switch view {
 	case expensesCostOfGoods:
-		total = models.TotalExpensesCostOfGoods(userId, d.db)
+		total = models.TotalExpensesCostOfGoods(userID, d.db)
 	case expensesOther:
-		total = models.TotalExpensesOthers(userId, d.db)
+		total = models.TotalExpensesOthers(userID, d.db)
 	}
 
 	expenses.RecordsTotal = total

@@ -14,14 +14,14 @@ import (
 	"github.com/globalsign/mgo/bson"
 )
 
-func Upload(userId string, s *session.Session, file multipart.File, fileHeader *multipart.FileHeader, wg *sync.WaitGroup) error {
+func Upload(userID string, s *session.Session, file multipart.File, fileHeader *multipart.FileHeader, wg *sync.WaitGroup) error {
 	defer wg.Done()
 
 	size := fileHeader.Size
 	buffer := make([]byte, size)
 	_, _ = file.Read(buffer)
 
-	fileName := fmt.Sprintf("%v/%v-%v", userId, bson.NewObjectId().Hex(), fileHeader.Filename)
+	fileName := fmt.Sprintf("%v/%v-%v", userID, bson.NewObjectId().Hex(), fileHeader.Filename)
 	_, err := s3.New(s).PutObject(&s3.PutObjectInput{
 		Bucket:               aws.String(os.Getenv("AWS_S3_UPLOAD_BUCKET")),
 		Key:                  aws.String(fileName),

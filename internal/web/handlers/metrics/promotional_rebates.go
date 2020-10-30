@@ -30,7 +30,7 @@ func (m *Metrics) PromotionalRebatesByDate(w http.ResponseWriter, r *http.Reques
 	var byDate types.PromotionalRebates
 	byDate.Draw = helpers.DtDraw(r)
 
-	m.data.MetricsPromotionalRebates(user.UserId, dateRange, &byDate, helpers.BuildFilter(r))
+	m.data.MetricsPromotionalRebates(user.UserID, dateRange, &byDate, helpers.BuildFilter(r))
 	js, err := json.Marshal(byDate)
 	if err != nil {
 		m.logger.Error().Err(err).Msg("unable to marshal data")

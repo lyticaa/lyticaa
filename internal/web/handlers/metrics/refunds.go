@@ -30,7 +30,7 @@ func (m *Metrics) RefundsByDate(w http.ResponseWriter, r *http.Request) {
 	var byDate types.Refunds
 	byDate.Draw = helpers.DtDraw(r)
 
-	m.data.MetricsRefunds(user.UserId, dateRange, &byDate, helpers.BuildFilter(r))
+	m.data.MetricsRefunds(user.UserID, dateRange, &byDate, helpers.BuildFilter(r))
 	js, err := json.Marshal(byDate)
 	if err != nil {
 		m.logger.Error().Err(err).Msg("unable to marshal data")

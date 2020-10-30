@@ -1,7 +1,7 @@
 package types
 
 type Message struct {
-	UserId int64  `json:"userId"`
+	UserID int64  `json:"userID"`
 	Body   string `json:"body"`
 	Op     string `json:"op"`
 }

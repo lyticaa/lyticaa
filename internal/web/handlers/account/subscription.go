@@ -37,7 +37,7 @@ func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 func (a *Account) InvoicesByUser(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(a.sessionStore, a.logger, w, r))
 
-	js, err := json.Marshal(a.paintInvoices(user.StripeUserId.String, r))
+	js, err := json.Marshal(a.paintInvoices(user.StripeUserID.String, r))
 	if err != nil {
 		a.logger.Error().Err(err).Msg("unable to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -52,26 +52,26 @@ func (a *Account) ChangePlan(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := helpers.GetSessionUser(session)
 
-	planId := mux.Vars(r)["planId"]
-	if user.StripePlanId.String == planId {
-		a.logger.Error().Msgf("user %v already on plan %v", user.UserId, user.StripePlanId)
+	planID := mux.Vars(r)["planID"]
+	if user.StripePlanID.String == planID {
+		a.logger.Error().Msgf("user %v already on plan %v", user.UserID, user.StripePlanID)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if err := a.stripe.ChangePlan(user.StripeSubscriptionId.String, planId); err != nil {
+	if err := a.stripe.ChangePlan(user.StripeSubscriptionID.String, planID); err != nil {
 		a.logger.Error().Err(err).Msg("unable to change the plan")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	var plan sql.NullString
-	if err := plan.Scan(planId); err != nil {
+	if err := plan.Scan(planID); err != nil {
 		a.logger.Error().Err(err).Msg("unable to assign stripe plan id")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	user.StripePlanId = plan
+	user.StripePlanID = plan
 	_ = user.Save(a.db)
 
 	helpers.SetSessionUser(user, session, w, r)
@@ -92,15 +92,15 @@ func (a *Account) CancelSubscription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := a.stripe.CancelSubscription(user.StripeSubscriptionId.String)
+	err := a.stripe.CancelSubscription(user.StripeSubscriptionID.String)
 	if err != nil {
 		a.logger.Error().Err(err).Msg("unable to cancel subscription")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	user.StripeSubscriptionId = sql.NullString{}
-	user.StripePlanId = sql.NullString{}
+	user.StripeSubscriptionID = sql.NullString{}
+	user.StripePlanID = sql.NullString{}
 	_ = user.Save(a.db)
 
 	helpers.SetSessionUser(user, session, w, r)
@@ -113,14 +113,14 @@ func (a *Account) Subscribe(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := helpers.GetSessionUser(session)
 
-	planId := mux.Vars(r)["planId"]
-	if user.StripePlanId.String == planId {
-		a.logger.Error().Msgf("user %v already on plan %v", user.UserId, user.StripePlanId)
+	planID := mux.Vars(r)["planID"]
+	if user.StripePlanID.String == planID {
+		a.logger.Error().Msgf("user %v already on plan %v", user.UserID, user.StripePlanID)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	s, err := a.stripe.CreateSubscription(user.StripeUserId.String, planId)
+	s, err := a.stripe.CreateSubscription(user.StripeUserID.String, planID)
 	if err != nil {
 		a.logger.Error().Err(err).Msg("unable to subscribe")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -135,14 +135,14 @@ func (a *Account) Subscribe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var plan sql.NullString
-	if err := plan.Scan(planId); err != nil {
+	if err := plan.Scan(planID); err != nil {
 		a.logger.Error().Err(err).Msg("unable to assign stripe plan id")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	user.StripeSubscriptionId = subscription
-	user.StripePlanId = plan
+	user.StripeSubscriptionID = subscription
+	user.StripePlanID = plan
 	_ = user.Save(a.db)
 
 	helpers.SetSessionUser(user, session, w, r)
@@ -150,10 +150,10 @@ func (a *Account) Subscribe(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (a *Account) paintInvoices(stripeUserId string, r *http.Request) types.Invoices {
+func (a *Account) paintInvoices(stripeUserID string, r *http.Request) types.Invoices {
 	var byUser types.Invoices
 
-	invoices := a.stripe.InvoicesByUser(stripeUserId)
+	invoices := a.stripe.InvoicesByUser(stripeUserID)
 	for _, invoice := range *invoices {
 		unit, _ := currency.ParseISO(string(invoice.Currency))
 

@@ -7,9 +7,9 @@ import (
 )
 
 type Dashboard struct {
-	Id                 int64     `db:"id"`
+	ID                 int64     `db:"id"`
 	DateRange          string    `db:"date_range"`
-	UserId             string    `db:"user_id"`
+	UserID             string    `db:"user_id"`
 	DateTime           time.Time `db:"date_time"`
 	Marketplace        string    `db:"marketplace"`
 	TotalSales         float64   `db:"total_sales"`
@@ -27,23 +27,23 @@ type Dashboard struct {
 	UpdatedAt          time.Time `db:"updated_at"`
 }
 
-func LoadDashboard(userId, dateRange string, db *sqlx.DB) *[]Dashboard {
+func LoadDashboard(userID, dateRange string, db *sqlx.DB) *[]Dashboard {
 	var dashboard []Dashboard
 
 	query := `SELECT * FROM dashboard WHERE user_id = $1 AND date_range = $2`
-	_ = db.Select(&dashboard, query, userId, dateRange)
+	_ = db.Select(&dashboard, query, userID, dateRange)
 
 	return &dashboard
 }
 
-func LoadDashboardByMarketplace(userId, dateRange, marketplace string, dateTime time.Time, db *sqlx.DB) *Dashboard {
+func LoadDashboardByMarketplace(userID, dateRange, marketplace string, dateTime time.Time, db *sqlx.DB) *Dashboard {
 	var dashboard Dashboard
 
 	query := `SELECT * FROM dashboard WHERE user_id = $1 AND date_range = $2 AND marketplace = $3 AND date_time = $4`
-	_ = db.QueryRow(query, userId, dateRange, marketplace, dateTime).Scan(
-		&dashboard.Id,
+	_ = db.QueryRow(query, userID, dateRange, marketplace, dateTime).Scan(
+		&dashboard.ID,
 		&dashboard.DateRange,
-		&dashboard.UserId,
+		&dashboard.UserID,
 		&dashboard.DateTime,
 		&dashboard.Marketplace,
 		&dashboard.UnitsSold,
@@ -61,7 +61,7 @@ func LoadDashboardByMarketplace(userId, dateRange, marketplace string, dateTime 
 	return &dashboard
 }
 
-func LoadDashboardTotalSales(userId, dateRange string, db *sqlx.DB) *[]Dashboard {
+func LoadDashboardTotalSales(userID, dateRange string, db *sqlx.DB) *[]Dashboard {
 	var dashboard []Dashboard
 
 	query := `SELECT
@@ -69,12 +69,12 @@ func LoadDashboardTotalSales(userId, dateRange string, db *sqlx.DB) *[]Dashboard
        marketplace, 
        SUM(total_sales) FROM dashboard WHERE user_id = $1
                                          AND date_range = $2 GROUP BY date_time, marketplace`
-	_ = db.Select(&dashboard, query, userId, dateRange)
+	_ = db.Select(&dashboard, query, userID, dateRange)
 
 	return &dashboard
 }
 
-func LoadDashboardTotals(userId, dateRange string, db *sqlx.DB) *Dashboard {
+func LoadDashboardTotals(userID, dateRange string, db *sqlx.DB) *Dashboard {
 	var dashboard Dashboard
 
 	query := `SELECT
@@ -89,7 +89,7 @@ func LoadDashboardTotals(userId, dateRange string, db *sqlx.DB) *Dashboard {
        SUM(gross_margin),
        SUM(net_margin) FROM dashboard WHERE user_id = $1 
                                         AND date_range = $2`
-	_ = db.QueryRow(query, userId, dateRange).Scan(
+	_ = db.QueryRow(query, userID, dateRange).Scan(
 		&dashboard.UnitsSold,
 		&dashboard.AmazonCosts,
 		&dashboard.ProductCosts,
@@ -150,7 +150,7 @@ func (d *Dashboard) Save(db *sqlx.DB) error {
                                                  updated_at = NOW()`
 	_, err := db.NamedExec(query, map[string]interface{}{
 		"date_range":          d.DateRange,
-		"user_id":             d.UserId,
+		"user_id":             d.UserID,
 		"date_time":           d.DateTime,
 		"marketplace":         d.Marketplace,
 		"units_sold":          d.UnitsSold,

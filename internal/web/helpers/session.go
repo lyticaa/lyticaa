@@ -27,7 +27,7 @@ func GetSession(store *redistore.RediStore, logger zerolog.Logger, w http.Respon
 }
 
 func ReloadSessionUser(session *sessions.Session, w http.ResponseWriter, r *http.Request, db *sqlx.DB) {
-	SetSessionUser(*models.LoadUser(GetSessionUser(session).UserId, db), session, w, r)
+	SetSessionUser(*models.LoadUser(GetSessionUser(session).UserID, db), session, w, r)
 }
 
 func GetSessionUser(session *sessions.Session) models.User {
@@ -43,7 +43,7 @@ func SetSessionUser(user models.User, session *sessions.Session, w http.Response
 	var pUser models.User
 
 	pUser = session.Values["User"].(models.User)
-	if user.UserId != pUser.UserId {
+	if user.UserID != pUser.UserID {
 		pUser.Impersonate = &user
 	} else {
 		pUser = user
@@ -57,7 +57,7 @@ func IsSubscribed(session *sessions.Session) bool {
 	subscribed := false
 
 	user := GetSessionUser(session)
-	if user.StripeSubscriptionId.Valid {
+	if user.StripeSubscriptionID.Valid {
 		subscribed = true
 	}
 

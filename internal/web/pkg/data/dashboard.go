@@ -6,10 +6,10 @@ import (
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 )
 
-func (d *Data) Dashboard(userId, dateRange string, dashboard *types.Dashboard) {
+func (d *Data) Dashboard(userID, dateRange string, dashboard *types.Dashboard) {
 	var summary []types.Summary
 
-	totalSales := models.LoadDashboardTotalSales(userId, dateRange, d.db)
+	totalSales := models.LoadDashboardTotalSales(userID, dateRange, d.db)
 	for _, sales := range *totalSales {
 		summary = append(summary, types.Summary{
 			Date:        sales.DateTime,
@@ -19,11 +19,11 @@ func (d *Data) Dashboard(userId, dateRange string, dashboard *types.Dashboard) {
 	}
 
 	dashboard.TotalSales = d.chart.Line(&summary, dateRange)
-	current := models.LoadDashboard(userId, dateRange, d.db)
+	current := models.LoadDashboard(userID, dateRange, d.db)
 
 	var previous []models.Dashboard
 	if !helpers.IsDateRangeAllTime(dateRange) {
-		previous = *models.LoadDashboard(userId, helpers.PreviousDateRangeLabel(dateRange), d.db)
+		previous = *models.LoadDashboard(userID, helpers.PreviousDateRangeLabel(dateRange), d.db)
 	}
 
 	d.dashboardUnitsSold(current, &previous, dashboard)
