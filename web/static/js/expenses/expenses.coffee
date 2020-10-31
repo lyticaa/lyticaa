@@ -83,8 +83,8 @@ export default class Expenses
       statusCode:
         200: (j) ->
           $.each j, ->
-            content = $('<option/>').val(@currencyId).text("#{@code} (#{@symbol})")
-            if selected != undefined && @currencyId == selected
+            content = $('<option/>').val(@currencyID).text("#{@code} (#{@symbol})")
+            if selected != undefined && @currencyID == selected
               content.attr('selected', 'selected')
 
             $('select#currency').append content
