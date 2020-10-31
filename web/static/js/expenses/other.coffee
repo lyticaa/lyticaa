@@ -68,7 +68,7 @@ export default class ExpensesOther
           'className': 'text-center pr-0 pl-0 w-15'
           'fnCreatedCell': (nTd, sData, oData, iRow) ->
             content = """
-                <a href='#' class='expenses-edit' data-toggle='modal' data-target='#expenses-edit-modal' data-expense='#{oData.DT_RowId}' data-description='#{oData.description}' data-date-time='#{oData.dateTime}' data-amount='#{oData.amount}' data-currency='#{oData.currencyId}' target='_blank'>
+                <a href='#' class='expenses-edit' data-toggle='modal' data-target='#expenses-edit-modal' data-expense='#{oData.DT_RowId}' data-description='#{oData.description}' data-date-time='#{oData.dateTime}' data-amount='#{oData.amount}' data-currency='#{oData.currencyID}' target='_blank'>
                   <i class='edit' data-feather='edit' data-toggle='tooltip' data-placement='top' title='Edit the expense.'></i>
                 </a>
                 <i class='delete' data-expense='#{oData.DT_RowId}' data-idx='#{iRow}' data-feather='trash' data-toggle='tooltip' data-placement='top' title='Delete the expense.'></i>
