@@ -5,7 +5,7 @@ replace github.com/lyticaa/lyticaa-app => ../lyticaa/lyticaa-app
 go 1.14
 
 require (
-	github.com/aws/aws-sdk-go v1.35.13
+	github.com/aws/aws-sdk-go v1.35.22
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/garyburd/redigo v1.6.0 // indirect
 	github.com/getsentry/sentry-go v0.7.0
@@ -25,7 +25,7 @@ require (
 	github.com/rs/zerolog v1.20.0
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.6.1
-	github.com/stripe/stripe-go/v72 v72.21.0
+	github.com/stripe/stripe-go/v72 v72.22.0
 	github.com/urfave/negroni v1.0.0
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	golang.org/x/text v0.3.4
