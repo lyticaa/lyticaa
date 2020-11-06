@@ -42,6 +42,9 @@ docker-redis:
 docker-memcache:
 	@docker-compose -f ./build/docker-compose.yml run --rm -p 11211:11211 --no-deps -d memcache
 
+docker-rabbitmq:
+	@docker-compose -f ./build/docker-compose.yml run --rm -p 4369:4369 -p 5671:5671 -p 5672:5672 -p 25672:25672 --no-deps -d rabbitmq
+
 create-user:
 	PGPASSWORD=password psql -h localhost -U postgres -c "CREATE USER lyticaa WITH SUPERUSER PASSWORD 'password';"
 

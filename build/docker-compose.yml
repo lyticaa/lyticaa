@@ -21,3 +21,13 @@ services:
       MEMCACHED_PASSWORD: ${MEMCACHED_PASSWORD}
     ports:
       - 11211:11211
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - 4369:4369
+      - 5671:5671
+      - 5672:5672
+      - 25672:25672
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password
