@@ -5,7 +5,7 @@ replace github.com/lyticaa/lyticaa-app => ../lyticaa/lyticaa-app
 go 1.14
 
 require (
-	github.com/aws/aws-sdk-go v1.35.24
+	github.com/aws/aws-sdk-go v1.35.27
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/garyburd/redigo v1.6.0 // indirect
 	github.com/getsentry/sentry-go v0.7.0
