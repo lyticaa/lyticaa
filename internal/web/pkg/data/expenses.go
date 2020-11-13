@@ -24,6 +24,12 @@ func (d *Data) ExpensesCostOfGoods(userID string, expenses *types.Expenses, filt
 	d.expenseTotals(userID, expensesCostOfGoods, expenses)
 }
 
+func (d *Data) ExpenseCostOfGoodsForSendData(productID int64, expense *models.ExpenseCostOfGoodSendData) {
+	product := models.LoadProductByID(expense.UserID, productID, d.db)
+	expense.SKU = product.SKU
+	expense.Marketplace = product.Marketplace
+}
+
 func (d *Data) ExpensesOther(userID string, expenses *types.Expenses, filter *models.Filter) {
 	currencies := models.LoadCurrencies(d.db)
 

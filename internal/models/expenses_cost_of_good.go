@@ -20,6 +20,16 @@ type ExpensesCostOfGood struct {
 	UpdatedAt   time.Time `db:"updated_at"`
 }
 
+type ExpenseCostOfGoodSendData struct {
+	ExpenseID   string    `json:"expenseID"`
+	UserID      string    `json:"userID"`
+	SKU         string    `json:"sku"`
+	Marketplace string    `json:"marketplace"`
+	Description string    `json:"description"`
+	Amount      float64   `json:"amount"`
+	DateTime    time.Time `json:"dateTime"`
+}
+
 var (
 	expensesCostOfGoodsSortMap = map[int64]string{
 		0: "p.marketplace",
@@ -30,7 +40,8 @@ var (
 	}
 )
 
-func CreateExpensesCostOfGood(productID int64, description string, amount float64, fromDate time.Time, db *sqlx.DB) error {
+func CreateExpensesCostOfGood(productID int64, description string, amount float64, fromDate time.Time, db *sqlx.DB) (string, error) {
+	var expenseID string
 	query := `INSERT INTO expenses_cost_of_goods (
                                     product_id,
                                     description,
@@ -44,8 +55,9 @@ func CreateExpensesCostOfGood(productID int64, description string, amount float6
                                             :amount,
                                             :from_date,
                                             :created_at,
-                                            :updated_at)`
-	_, err := db.NamedExec(query,
+											:updated_at)
+									RETURNING expense_id`
+	rows, err := db.NamedQuery(query,
 		map[string]interface{}{
 			"product_id":  productID,
 			"description": description,
@@ -56,10 +68,13 @@ func CreateExpensesCostOfGood(productID int64, description string, amount float6
 		})
 
 	if err != nil {
-		return err
+		return "", err
+	}
+	if rows.Next() {
+		rows.Scan(&expenseID)
 	}
 
-	return nil
+	return expenseID, nil
 }
 
 func LoadExpensesCostOfGoods(userID string, filter *Filter, db *sqlx.DB) *[]ExpensesCostOfGood {

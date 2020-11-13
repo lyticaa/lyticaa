@@ -13,6 +13,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const amazonExpenses = "/Expenses/Amazon"
+
 type ValidateCostOfGood struct {
 	ProductID   string    `validate:"required,uuid4"`
 	Description string    `validate:"required,min=3"`
@@ -72,8 +74,26 @@ func (e *Expenses) NewCostOfGood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := models.CreateExpensesCostOfGood(product.ID, description, amount, fromDate, e.db); err != nil {
+	expenseID, err := models.CreateExpensesCostOfGood(product.ID, description, amount, fromDate, e.db)
+	if err != nil {
 		e.logger.Error().Err(err).Msg("failed to create the expense")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	expense := models.ExpenseCostOfGoodSendData{UserID: user.UserID, Description: description, ExpenseID: expenseID, Amount: amount, DateTime: fromDate}
+
+	e.data.ExpenseCostOfGoodsForSendData(product.ID, &expense)
+
+	js, err := json.Marshal(expense)
+	if err != nil {
+		e.logger.Error().Err(err).Msg("unable to marshal data")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if err := sendMessage(user.UserID, amazonExpenses, string(js)); err != nil {
+		e.logger.Error().Err(err).Msgf("failed to send message into queue costOfGood for the user %v", user.UserID)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

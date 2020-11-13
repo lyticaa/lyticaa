@@ -2,7 +2,7 @@ package reports
 
 import (
 	"net/http"
-	"regexp"
+	"strings"
 	"sync"
 
 	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
@@ -10,9 +10,11 @@ import (
 	"github.com/lyticaa/lyticaa-app/internal/web/pkg/amazon/aws/storage/s3"
 )
 
-var (
-	contentType = regexp.MustCompile(`Content-Type`).MatchString
-)
+// var (
+// 	contentType = regexp.MustCompile(`Content-Type`).MatchString
+// )
+
+const contentType = "Content-Type"
 
 func (rp *Reports) Import(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(rp.sessionStore, rp.logger, w, r))
@@ -21,7 +23,7 @@ func (rp *Reports) Import(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseMultipartForm(maxSize)
 	if err != nil {
-		if contentType(err.Error()) {
+		if strings.Contains(err.Error(), contentType) {
 			rp.logger.Error().Err(err).Msg("issues with the form content-type")
 		}
 

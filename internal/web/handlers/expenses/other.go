@@ -13,6 +13,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const otherExpenses = "/Expenses/Other"
+
 type ValidateOther struct {
 	CurrencyID  string    `validate:"required,uuid4"`
 	Description string    `validate:"required,min=3"`
@@ -72,8 +74,22 @@ func (e *Expenses) NewOther(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := models.CreateExpensesOther(user.UserID, currency.ID, description, amount, dateTime, e.db); err != nil {
+	expenseID, err := models.CreateExpensesOther(user.UserID, currency.ID, description, amount, dateTime, e.db)
+	if err != nil {
 		e.logger.Error().Err(err).Msg("failed to create the expense")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	js, err := json.Marshal(models.ExpenseOtherSendData{UserID: user.UserID, CurrencyCode: currency.Code, Description: description, ExpenseID: expenseID, Amount: amount, DateTime: dateTime})
+	if err != nil {
+		e.logger.Error().Err(err).Msg("unable to marshal data")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if err := sendMessage(user.UserID, otherExpenses, string(js)); err != nil {
+		e.logger.Error().Err(err).Msgf("failed to send message into queue otherExpenses for the user %v", user.UserID)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

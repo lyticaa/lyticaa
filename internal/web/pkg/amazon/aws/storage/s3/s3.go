@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"mime/multipart"
-	"net/http"
 	"os"
 	"sync"
 
@@ -23,12 +22,13 @@ func Upload(userID string, s *session.Session, file multipart.File, fileHeader *
 
 	fileName := fmt.Sprintf("%v/%v-%v", userID, bson.NewObjectId().Hex(), fileHeader.Filename)
 	_, err := s3.New(s).PutObject(&s3.PutObjectInput{
-		Bucket:               aws.String(os.Getenv("AWS_S3_UPLOAD_BUCKET")),
-		Key:                  aws.String(fileName),
-		ACL:                  aws.String("private"),
-		Body:                 bytes.NewReader(buffer),
-		ContentLength:        aws.Int64(size),
-		ContentType:          aws.String(http.DetectContentType(buffer)),
+		Bucket:        aws.String(os.Getenv("AWS_S3_UPLOAD_BUCKET")),
+		Key:           aws.String(fileName),
+		ACL:           aws.String("private"),
+		Body:          bytes.NewReader(buffer),
+		ContentLength: aws.Int64(size),
+		// ContentType:          aws.String(http.DetectContentType(buffer)),
+		ContentType:          aws.String(fileHeader.Header.Get("Content-Type")),
 		ContentDisposition:   aws.String("attachment"),
 		ServerSideEncryption: aws.String("AES256"),
 		StorageClass:         aws.String("INTELLIGENT_TIERING"),

@@ -110,7 +110,7 @@ export default class Expenses
         200: (j) ->
           if j.length > 0
             $.each j, ->
-              $('select#product').append $('<option/>').val(@productId).text("#{@sku} - #{@marketplace} - #{@description}")
+              $('select#product').append $('<option/>').val(@productID).text("#{@sku} - #{@marketplace} - #{@description}")
             return
           else
             $('.alert.expenses-products-empty').fadeIn(400, ->

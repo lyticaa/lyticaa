@@ -21,6 +21,15 @@ type ExpensesOther struct {
 	UpdatedAt      time.Time `db:"updated_at"`
 }
 
+type ExpenseOtherSendData struct {
+	ExpenseID    string    `json:"expenseID"`
+	UserID       string    `json:"userID"`
+	CurrencyCode string    `json:"currencyCode"`
+	Description  string    `json:"description"`
+	Amount       float64   `json:"amount"`
+	DateTime     time.Time `json:"dateTime"`
+}
+
 var (
 	expensesOtherSortMap = map[int64]string{
 		0: "e.description",
@@ -30,7 +39,8 @@ var (
 	}
 )
 
-func CreateExpensesOther(userID string, currencyID int64, description string, amount float64, dateTime time.Time, db *sqlx.DB) error {
+func CreateExpensesOther(userID string, currencyID int64, description string, amount float64, dateTime time.Time, db *sqlx.DB) (string, error) {
+	var expenseID string
 	query := `INSERT INTO expenses_others (
                             user_id,
                             currency_id,
@@ -46,8 +56,9 @@ func CreateExpensesOther(userID string, currencyID int64, description string, am
                                     :amount,
                                     :date_time,
                                     :created_at,
-                                    :updated_at)`
-	_, err := db.NamedExec(query,
+									:updated_at)
+							RETURNING expense_id`
+	rows, err := db.NamedQuery(query,
 		map[string]interface{}{
 			"user_id":     userID,
 			"currency_id": currencyID,
@@ -59,10 +70,14 @@ func CreateExpensesOther(userID string, currencyID int64, description string, am
 		})
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	if rows.Next() {
+		rows.Scan(&expenseID)
+	}
+
+	return expenseID, nil
 }
 
 func LoadExpensesOthers(userID string, filter *Filter, db *sqlx.DB) *[]ExpensesOther {
