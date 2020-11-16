@@ -42,6 +42,7 @@ var (
 
 func CreateExpensesCostOfGood(productID int64, description string, amount float64, fromDate time.Time, db *sqlx.DB) (string, error) {
 	var expenseID string
+
 	query := `INSERT INTO expenses_cost_of_goods (
                                     product_id,
                                     description,
@@ -70,8 +71,16 @@ func CreateExpensesCostOfGood(productID int64, description string, amount float6
 	if err != nil {
 		return "", err
 	}
+
 	if rows.Next() {
-		rows.Scan(&expenseID)
+
+		if err := rows.Scan(&expenseID); err != nil {
+			return "", err
+		}
+	}
+
+	if err := rows.Close(); err != nil {
+		return "", err
 	}
 
 	return expenseID, nil

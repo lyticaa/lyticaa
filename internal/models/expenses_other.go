@@ -74,7 +74,14 @@ func CreateExpensesOther(userID string, currencyID int64, description string, am
 	}
 
 	if rows.Next() {
-		rows.Scan(&expenseID)
+
+		if err := rows.Scan(&expenseID); err != nil {
+			return "", err
+		}
+	}
+
+	if err := rows.Close(); err != nil {
+		return "", err
 	}
 
 	return expenseID, nil
