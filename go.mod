@@ -33,5 +33,5 @@ require (
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f
 	gopkg.in/go-playground/validator.v9 v9.31.0
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
-	syreclabs.com/go/faker v1.2.2
+	syreclabs.com/go/faker v1.2.3
 )
