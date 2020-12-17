@@ -20,12 +20,7 @@ import (
 )
 
 const (
-	CheckoutSessionCompleted    = "checkout.session.completed"
-	CustomerSubscriptionCreated = "customer.subscription.created"
-	CustomerSubscriptionDeleted = "customer.subscription.deleted"
-	InvoiceCreated              = "invoice.created"
-	InvoicePaymentFailed        = "invoice.payment_failed"
-	InvoicePaymentSucceeded     = "invoice.payment_succeeded"
+	CheckoutSessionCompleted = "checkout.session.completed"
 )
 
 var (

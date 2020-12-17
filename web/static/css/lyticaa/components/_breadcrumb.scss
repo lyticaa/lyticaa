@@ -1,0 +1,12 @@
+@import "../variables";
+
+ol {
+  &.breadcrumb {
+    font-size: $font-size-small;
+    text-transform: uppercase;
+    .breadcrumb-item {
+      font-weight: bold;
+      color: $theme-color-01;
+    }
+  }
+}

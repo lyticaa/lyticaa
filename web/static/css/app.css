@@ -2,7 +2,7 @@
 @import './vendors/core/core.css';
 @import './vendors/feather-icons/feather-icons.css';
 @import './vendors/nobleui/nobleui.css';
-@import './override.css';
+@import './lyticaa/_theme.scss';
 
 /* Charting */
 #dashboard-total-sales-chart,

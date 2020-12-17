@@ -44,7 +44,9 @@ export default class DashboardOverview
       statusCode:
         200: (j) ->
           $('button.loading').fadeOut(400, ->
-            if j.totalSales.line.categories[0].category.length == 0
+            if j.totalSales.line.categories == null
+              $('.alert.dashboard-total-sales-chart-error').fadeIn()
+            else if j.totalSales.line.categories[0].category.length == 0
               $('.alert.dashboard-total-sales-chart-error').fadeIn()
             else
               d.charts.line(

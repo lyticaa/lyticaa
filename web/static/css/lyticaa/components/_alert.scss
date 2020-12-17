@@ -1,0 +1,27 @@
+@import "../variables";
+
+.alert-icon-info,
+.alert-icon-warning,
+.alert-icon-success,
+.alert-icon-danger
+{
+  svg {
+    margin-right: 0rem !important;
+  }
+}
+
+.is-valid {
+  background-image: none !important;
+  border-color: $alert-valid !important;
+  &:focus {
+    border-color: $alert-valid !important;
+  }
+}
+
+.is-invalid {
+  background-image: none !important;
+  border-color: $alert-invalid !important;
+  &:focus {
+    border-color: $alert-invalid !important;
+  }
+}

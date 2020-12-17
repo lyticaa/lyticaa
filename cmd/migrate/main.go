@@ -19,6 +19,7 @@ func main() {
 		debug.Error().Err(err).Msg("Error")
 		return
 	}
+
 	defer m.Close()
 
 	err = m.Up()

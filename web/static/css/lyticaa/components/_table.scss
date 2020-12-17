@@ -1,0 +1,32 @@
+@import "../variables";
+
+.table-responsive {
+  overflow-x: unset !important;
+}
+
+table.dataTable {
+  tbody {
+    td {
+      outline: none;
+    }
+  }
+  thead {
+    th {
+      outline: none;
+      font-size: $font-size-small;
+      color: $theme-color-01;
+    }
+  }
+}
+
+table {
+  >thead {
+    >tr {
+      >th {
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

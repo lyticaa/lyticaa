@@ -30,7 +30,6 @@ import MetricsUnitsSold           from './metrics/units_sold'
 import MetricsTotalSales          from './metrics/total_sales'
 import ProfitLossOverview         from './profit_loss/overview'
 import Reports                    from './reports/reports'
-import SetupSubscribe             from './setup/subscribe'
 import TemplateHelper             from './helpers/template'
 
 #
@@ -87,9 +86,6 @@ init = ->
 
   # Reports.
   reports()
-
-  # Setup
-  setupSubscribe()
 
   # Icons.
   renderIcons()
@@ -378,18 +374,6 @@ profitLoss = ->
 reports = ->
   r = new Reports()
   r.init()
-
-  return
-
-#
-# Setup: Subscribe.
-#
-setupSubscribe = ->
-  if $('input.location').data('section') != 'setup-subscribe'
-    return
-
-  s = new SetupSubscribe()
-  s.init()
 
   return
 

@@ -1,0 +1,9 @@
+@import "../variables";
+
+.card {
+  .card-title {
+    font-size: $font-size-small;
+    font-weight: bold;
+    color: $theme-color-01;
+  }
+}

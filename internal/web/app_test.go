@@ -27,13 +27,13 @@ func (s *appSuite) SetUpSuite(c *C) {
 }
 
 func (s *appSuite) TestApp(c *C) {
-	c.Assert(s.a.Logger, NotNil)
-	c.Assert(s.a.NewRelic, NotNil)
-	c.Assert(s.a.Srv, NotNil)
-	c.Assert(s.a.Router, NotNil)
-	c.Assert(s.a.Client, NotNil)
-	c.Assert(s.a.SessionStore, NotNil)
-	c.Assert(s.a.Db, NotNil)
+	c.Assert(s.a.Monitoring.Logger, NotNil)
+	c.Assert(s.a.Monitoring.NewRelic, NotNil)
+	c.Assert(s.a.HTTP.Server, NotNil)
+	c.Assert(s.a.HTTP.Router, NotNil)
+	c.Assert(s.a.HTTP.Client, NotNil)
+	c.Assert(s.a.Data.SessionStore, NotNil)
+	c.Assert(s.a.Data.Db, NotNil)
 }
 
 func (s *appSuite) TestHealth(c *C) {
@@ -41,7 +41,7 @@ func (s *appSuite) TestHealth(c *C) {
 	req, err := http.NewRequest("GET", url, nil)
 	c.Assert(err, IsNil)
 
-	resp, err := s.a.Client.Do(req)
+	resp, err := s.a.HTTP.Client.Do(req)
 	c.Assert(err, IsNil)
 
 	defer resp.Body.Close()

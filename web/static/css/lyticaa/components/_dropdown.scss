@@ -1,0 +1,6 @@
+@import "../variables";
+
+.dropdown-item.active, .dropdown-item:active {
+  color: #fff;
+  background-color: $theme-color-02;
+}

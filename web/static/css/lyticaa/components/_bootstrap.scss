@@ -1,0 +1,41 @@
+@import "../variables";
+
+a {
+  color: $theme-color-01;
+  &:hover {
+    color: unset !important;
+  }
+  &:focus {
+    outline: 0 !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+  }
+}
+
+.edit, .delete  {
+  cursor: pointer;
+}
+
+.hide {
+  display: none !important;
+}
+
+svg[data-toggle="tooltip"] {
+  height: 17px;
+}
+
+.mt--20 {
+  margin-top: 0.2rem !important;
+}
+
+.border {
+  border: 1px solid $border-color-01 !important;
+  border-radius: 0.25rem !important;
+}
+
+footer {
+  p {
+    font-size: $font-size-extra-small;
+    font-weight: bold;
+  }
+}

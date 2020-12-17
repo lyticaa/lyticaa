@@ -1,0 +1,19 @@
+@import "../variables";
+
+.dropify-wrapper {
+  border: 1px solid $border-color-01 !important;
+  border-radius: 0.25rem !important;
+
+  .dropify-clear {
+    font-family: "Overpass", sans-serif !important;
+    text-transform: none !important;
+    font-size: .875rem !important;
+    border: 1px solid #FFF !important;
+    border-radius: .1875rem !important;
+  }
+}
+
+.dropzone {
+  border: 1px solid $border-color-01 !important;
+  border-radius: 0.25rem !important;
+}

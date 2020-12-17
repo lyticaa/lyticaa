@@ -11,7 +11,7 @@ func main() {
 	a := app.NewApp()
 	a.Start()
 
-	defer a.Cache.Quit()
+	defer a.Data.Cache.Quit()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)

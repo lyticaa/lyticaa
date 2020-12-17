@@ -1,0 +1,19 @@
+@import "../variables";
+
+.modal-content {
+  border: none !important;
+}
+
+.modal-header {
+  border-bottom: none !important;
+  .modal-title {
+    font-size: $font-size-medium;
+    font-weight: bold;
+    text-transform: uppercase;
+    line-height: 2 !important;
+  }
+}
+
+.modal-footer {
+  border-top: none !important;
+}

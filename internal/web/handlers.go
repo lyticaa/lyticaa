@@ -14,7 +14,6 @@ import (
 	"github.com/lyticaa/lyticaa-app/internal/web/handlers/metrics"
 	"github.com/lyticaa/lyticaa-app/internal/web/handlers/profit_loss"
 	"github.com/lyticaa/lyticaa-app/internal/web/handlers/reports"
-	"github.com/lyticaa/lyticaa-app/internal/web/handlers/setup"
 	"github.com/lyticaa/lyticaa-app/internal/web/handlers/webhooks"
 	"github.com/lyticaa/lyticaa-app/internal/web/pkg/payments"
 
@@ -22,69 +21,61 @@ import (
 )
 
 func (a *App) accountHandlers() {
-	acct := account.NewAccount(a.Db, a.SessionStore, a.Logger, payments.NewStripePayments())
+	acct := account.NewAccount(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger, payments.NewStripePayments())
 
-	a.Router.Handle("/account/notifications", negroni.New(
+	a.HTTP.Router.Handle("/account/notifications", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.Notifications)),
 	))
-	a.Router.Handle("/account/notifications/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/account/notifications/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.NotificationsByDate)),
 	))
-	a.Router.Handle("/account/subscription", negroni.New(
+	a.HTTP.Router.Handle("/account/subscription", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.Subscription)),
 	))
-	a.Router.Handle("/account/subscription/subscribe/{planID}", negroni.New(
+	a.HTTP.Router.Handle("/account/subscription/subscribe/{planID}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.Subscribe)),
 	))
-	a.Router.Handle("/account/subscription/cancel", negroni.New(
+	a.HTTP.Router.Handle("/account/subscription/cancel", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.CancelSubscription)),
 	))
-	a.Router.Handle("/account/subscription/change/{planID}", negroni.New(
+	a.HTTP.Router.Handle("/account/subscription/change/{planID}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.ChangePlan)),
 	))
-	a.Router.Handle("/account/subscription/invoices", negroni.New(
+	a.HTTP.Router.Handle("/account/subscription/invoices", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.InvoicesByUser)),
 	))
-	a.Router.Handle("/account/change_password", negroni.New(
+	a.HTTP.Router.Handle("/account/change_password", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(acct.ChangePassword)),
 	))
 }
 
 func (a *App) adminHandlers() {
-	ad := admin.NewAdmin(a.Db, a.SessionStore, a.Logger)
+	ad := admin.NewAdmin(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
 
-	a.Router.Handle("/admin", negroni.New(
+	a.HTTP.Router.Handle("/admin", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.isAdmin),
 		negroni.Wrap(http.HandlerFunc(ad.Overview)),
 	))
-	a.Router.Handle("/admin/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/admin/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.isAdmin),
 		negroni.Wrap(http.HandlerFunc(ad.UsersByDate)),
 	))
-	a.Router.Handle("/admin/i/{user}", negroni.New(
+	a.HTTP.Router.Handle("/admin/i/{user}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.isAdmin),
 		negroni.Wrap(http.HandlerFunc(ad.Impersonate)),
 	))
-	a.Router.Handle("/admin/i/{user}/logout", negroni.New(
+	a.HTTP.Router.Handle("/admin/i/{user}/logout", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
 		negroni.HandlerFunc(a.isAdmin),
 		negroni.Wrap(http.HandlerFunc(ad.LogOut)),
@@ -94,318 +85,246 @@ func (a *App) adminHandlers() {
 func (a *App) apiHandlers() {
 	ap := api.NewAPI()
 
-	a.Router.Handle("/api/health_check", negroni.New(
+	a.HTTP.Router.Handle("/api/health_check", negroni.New(
 		negroni.Wrap(http.HandlerFunc(ap.HealthCheck)),
 	))
 }
 
 func (a *App) authHandlers() {
-	au := auth.NewAuth(a.Db, a.SessionStore, a.Logger)
+	au := auth.NewAuth(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
 
-	a.Router.HandleFunc("/auth/login", au.Login)
-	a.Router.HandleFunc("/auth/logout", au.Logout)
-	a.Router.HandleFunc("/auth/callback", au.Callback)
+	a.HTTP.Router.HandleFunc("/auth/login", au.Login)
+	a.HTTP.Router.HandleFunc("/auth/logout", au.Logout)
+	a.HTTP.Router.HandleFunc("/auth/callback", au.Callback)
 }
 
 func (a *App) cohortsHandlers() {
-	c := cohorts.NewCohorts(a.Db, a.SessionStore, a.Logger)
+	c := cohorts.NewCohorts(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
 
-	a.Router.Handle("/cohorts/high_margin", negroni.New(
+	a.HTTP.Router.Handle("/cohorts/high_margin", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(c.HighMargin)),
 	))
-	a.Router.Handle("/cohorts/high_margin/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/cohorts/high_margin/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(c.HighMarginByDate)),
 	))
-	a.Router.Handle("/cohorts/low_margin", negroni.New(
+	a.HTTP.Router.Handle("/cohorts/low_margin", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(c.LowMargin)),
 	))
-	a.Router.Handle("/cohorts/low_margin/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/cohorts/low_margin/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(c.LowMarginByDate)),
 	))
-	a.Router.Handle("/cohorts/negative_margin", negroni.New(
+	a.HTTP.Router.Handle("/cohorts/negative_margin", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(c.NegativeMargin)),
 	))
-	a.Router.Handle("/cohorts/negative_margin/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/cohorts/negative_margin/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(c.NegativeMarginByDate)),
 	))
 }
 
 func (a *App) dashboardHandlers() {
-	dashboard := dashboard.NewDashboard(a.Db, a.SessionStore, a.Logger)
+	dashboard := dashboard.NewDashboard(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
 
-	a.Router.Handle("/", negroni.New(
+	a.HTTP.Router.Handle("/", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(dashboard.Overview)),
 	))
-	a.Router.Handle("/dashboard/metrics/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/dashboard/metrics/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(dashboard.MetricsByDate)),
 	))
 }
 
 func (a *App) expensesHandlers() {
-	e := expenses.NewExpenses(a.Db, a.SessionStore, a.Logger)
+	e := expenses.NewExpenses(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
 
-	a.Router.Handle("/expenses/cost_of_goods", negroni.New(
+	a.HTTP.Router.Handle("/expenses/cost_of_goods", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.CostOfGoods)),
 	))
-	a.Router.Handle("/expenses/cost_of_goods/all", negroni.New(
+	a.HTTP.Router.Handle("/expenses/cost_of_goods/all", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.CostOfGoodsByUser)),
 	))
-	a.Router.Handle("/expenses/cost_of_goods/products", negroni.New(
+	a.HTTP.Router.Handle("/expenses/cost_of_goods/products", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.Products)),
 	))
-	a.Router.Handle("/expenses/cost_of_goods/new", negroni.New(
+	a.HTTP.Router.Handle("/expenses/cost_of_goods/new", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.NewCostOfGood)),
 	))
-	a.Router.Handle("/expenses/cost_of_goods/{expense}", negroni.New(
+	a.HTTP.Router.Handle("/expenses/cost_of_goods/{expense}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.EditCostOfGood)),
 	)).Methods("PUT")
-	a.Router.Handle("/expenses/cost_of_goods/{expense}", negroni.New(
+	a.HTTP.Router.Handle("/expenses/cost_of_goods/{expense}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.DeleteCostOfGood)),
 	)).Methods("DELETE")
-	a.Router.Handle("/expenses/other", negroni.New(
+	a.HTTP.Router.Handle("/expenses/other", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.Other)),
 	))
-	a.Router.Handle("/expenses/other/all", negroni.New(
+	a.HTTP.Router.Handle("/expenses/other/all", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.OtherByUser)),
 	))
-	a.Router.Handle("/expenses/other/currencies", negroni.New(
+	a.HTTP.Router.Handle("/expenses/other/currencies", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.Currencies)),
 	))
-	a.Router.Handle("/expenses/other/new", negroni.New(
+	a.HTTP.Router.Handle("/expenses/other/new", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.NewOther)),
 	))
-	a.Router.Handle("/expenses/other/{expense}", negroni.New(
+	a.HTTP.Router.Handle("/expenses/other/{expense}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.EditOther)),
 	)).Methods("PUT")
-	a.Router.Handle("/expenses/other/{expense}", negroni.New(
+	a.HTTP.Router.Handle("/expenses/other/{expense}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(e.DeleteOther)),
 	)).Methods("DELETE")
 }
 
 func (a *App) forecastHandlers() {
-	f := forecast.NewForecast(a.Db, a.SessionStore, a.Logger)
+	f := forecast.NewForecast(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
 
-	a.Router.Handle("/forecast", negroni.New(
+	a.HTTP.Router.Handle("/forecast", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(f.Overview)),
 	))
-	a.Router.Handle("/forecast/filter/{dateRange}/view/{view}", negroni.New(
+	a.HTTP.Router.Handle("/forecast/filter/{dateRange}/view/{view}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(f.ForecastByDate)),
 	))
 }
 
 func (a *App) metricsHandlers() {
-	m := metrics.NewMetrics(a.Db, a.SessionStore, a.Logger)
+	m := metrics.NewMetrics(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
 
-	a.Router.Handle("/metrics/total_sales", negroni.New(
+	a.HTTP.Router.Handle("/metrics/total_sales", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.TotalSales)),
 	))
-	a.Router.Handle("/metrics/total_sales/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/metrics/total_sales/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.TotalSalesByDate)),
 	))
-	a.Router.Handle("/metrics/units_sold", negroni.New(
+	a.HTTP.Router.Handle("/metrics/units_sold", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.UnitsSold)),
 	))
-	a.Router.Handle("/metrics/units_sold/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/metrics/units_sold/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.UnitsSoldByDate)),
 	))
-	a.Router.Handle("/metrics/amazon_costs", negroni.New(
+	a.HTTP.Router.Handle("/metrics/amazon_costs", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.AmazonCosts)),
 	))
-	a.Router.Handle("/metrics/amazon_costs/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/metrics/amazon_costs/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.AmazonCostsByDate)),
 	))
-	a.Router.Handle("/metrics/product_costs", negroni.New(
+	a.HTTP.Router.Handle("/metrics/product_costs", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.ProductCosts)),
 	))
-	a.Router.Handle("/metrics/product_costs/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/metrics/product_costs/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.ProductCostsByDate)),
 	))
-	a.Router.Handle("/metrics/advertising_spend", negroni.New(
+	a.HTTP.Router.Handle("/metrics/advertising_spend", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.AdvertisingSpend)),
 	))
-	a.Router.Handle("/metrics/advertising_spend/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/metrics/advertising_spend/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.AdvertisingSpendByDate)),
 	))
-	a.Router.Handle("/metrics/refunds", negroni.New(
+	a.HTTP.Router.Handle("/metrics/refunds", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.Refunds)),
 	))
-	a.Router.Handle("/metrics/refunds/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/metrics/refunds/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.RefundsByDate)),
 	))
-	a.Router.Handle("/metrics/shipping_credits", negroni.New(
+	a.HTTP.Router.Handle("/metrics/shipping_credits", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.ShippingCredits)),
 	))
-	a.Router.Handle("/metrics/shipping_credits/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/metrics/shipping_credits/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.ShippingCreditsByDate)),
 	))
-	a.Router.Handle("/metrics/promotional_rebates", negroni.New(
+	a.HTTP.Router.Handle("/metrics/promotional_rebates", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.PromotionalRebates)),
 	))
-	a.Router.Handle("/metrics/promotional_rebates/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/metrics/promotional_rebates/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.PromotionalRebatesByDate)),
 	))
-	a.Router.Handle("/metrics/total_costs", negroni.New(
+	a.HTTP.Router.Handle("/metrics/total_costs", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.TotalCosts)),
 	))
-	a.Router.Handle("/metrics/total_costs/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/metrics/total_costs/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.TotalCostsByDate)),
 	))
-	a.Router.Handle("/metrics/gross_margin", negroni.New(
+	a.HTTP.Router.Handle("/metrics/gross_margin", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.GrossMargin)),
 	))
-	a.Router.Handle("/metrics/gross_margin/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/metrics/gross_margin/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.GrossMarginByDate)),
 	))
-	a.Router.Handle("/metrics/net_margin", negroni.New(
+	a.HTTP.Router.Handle("/metrics/net_margin", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.NetMargin)),
 	))
-	a.Router.Handle("/metrics/net_margin/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/metrics/net_margin/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(m.NetMarginByDate)),
 	))
 }
 
 func (a *App) profitLossHandlers() {
-	p := profit_loss.NewProfitLoss(a.Db, a.SessionStore, a.Logger)
+	p := profit_loss.NewProfitLoss(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
 
-	a.Router.Handle("/profit_loss", negroni.New(
+	a.HTTP.Router.Handle("/profit_loss", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(p.Overview)),
 	))
-	a.Router.Handle("/profit_loss/filter/{dateRange}", negroni.New(
+	a.HTTP.Router.Handle("/profit_loss/filter/{dateRange}", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(p.ProfitLossByDate)),
 	))
 }
 
 func (a *App) reportsHandlers() {
-	r := reports.NewReports(a.Db, a.SessionStore, a.Logger)
+	r := reports.NewReports(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
 
-	a.Router.Handle("/reports/import", negroni.New(
+	a.HTTP.Router.Handle("/reports/import", negroni.New(
 		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.HandlerFunc(a.setupComplete),
 		negroni.Wrap(http.HandlerFunc(r.Import)),
 	)).Methods("PUT")
 }
 
-func (a *App) setupHandlers() {
-	s := setup.NewSetup(a.Db, a.SessionStore, a.Logger, payments.NewStripePayments())
-
-	a.Router.Handle("/setup", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(s.Subscribe)),
-	))
-	a.Router.Handle("/setup/subscribe", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(s.Subscribe)),
-	))
-	a.Router.Handle("/setup/subscribe/success", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(s.SubscribeSuccess)),
-	))
-	a.Router.Handle("/setup/subscribe/cancel", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(s.SubscribeCancel)),
-	))
-	a.Router.Handle("/setup/complete", negroni.New(
-		negroni.HandlerFunc(a.isAuthenticated),
-		negroni.Wrap(http.HandlerFunc(s.Complete)),
-	))
-}
-
 func (a *App) webhookHandlers() {
-	wh := webhooks.NewWebhooks(a.Db, a.Logger, payments.NewStripePayments())
+	wh := webhooks.NewWebhooks(a.Data.Db, a.Monitoring.Logger, payments.NewStripePayments())
 
-	a.Router.Handle("/webhooks/stripe", negroni.New(
+	a.HTTP.Router.Handle("/webhooks/stripe", negroni.New(
 		negroni.Wrap(http.HandlerFunc(wh.Stripe)),
 	))
 }

@@ -1,0 +1,16 @@
+@import "../variables";
+
+.btn-primary {
+  &:hover {
+    background-color: $theme-color-01 !important;
+    border-color: $theme-color-01 !important;
+  }
+}
+
+.btn-primary,
+.show>.btn-primary.dropdown-toggle {
+  outline: none !important;
+  color: #fff;
+  background-color: $theme-color-02 !important;
+  border-color: $theme-color-02 !important;
+}

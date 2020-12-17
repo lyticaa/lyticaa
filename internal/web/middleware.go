@@ -48,31 +48,15 @@ func (a *App) isAdmin(w http.ResponseWriter, r *http.Request, next http.HandlerF
 	}
 }
 
-func (a *App) setupComplete(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	session := a.getSession(w, r)
-	if session.Values["User"] == nil {
-		http.Redirect(w, r, "/setup/subscribe", http.StatusSeeOther)
-		return
-	}
-
-	user := session.Values["User"].(models.User)
-	if !user.SetupCompleted {
-		http.Redirect(w, r, "/setup/subscribe", http.StatusSeeOther)
-		return
-	} else {
-		next(w, r)
-	}
-}
-
 func (a *App) setConfig(w http.ResponseWriter, r *http.Request) {
 	session := a.getSession(w, r)
 	session.Values["Config"] = types.NewConfig()
 }
 
 func (a *App) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
-	session, err := a.SessionStore.Get(r, "auth-session")
+	session, err := a.Data.SessionStore.Get(r, "auth-session")
 	if err != nil {
-		a.Logger.Error().Err(err)
+		a.Monitoring.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 

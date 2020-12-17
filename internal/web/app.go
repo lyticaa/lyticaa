@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/gob"
+	"github.com/rs/zerolog"
 	"net/http"
 	"os"
 	"time"
@@ -16,20 +17,31 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/memcachier/mc"
 	"github.com/newrelic/go-agent"
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/boj/redistore.v1"
 )
 
-type App struct {
-	Logger       zerolog.Logger
-	NewRelic     newrelic.Application
-	Srv          *http.Server
-	Router       *mux.Router
-	Client       *http.Client
+type HTTP struct {
+	Router *mux.Router
+	Server *http.Server
+	Client *http.Client
+}
+
+type Data struct {
 	SessionStore *redistore.RediStore
 	Cache        *mc.Client
 	Db           *sqlx.DB
+}
+
+type Monitoring struct {
+	Logger   zerolog.Logger
+	NewRelic newrelic.Application
+}
+
+type App struct {
+	HTTP       HTTP
+	Data       Data
+	Monitoring Monitoring
 }
 
 func NewApp() *App {
@@ -50,17 +62,24 @@ func NewApp() *App {
 		os.Getenv("APP_NAME"),
 		os.Getenv("NEW_RELIC_LICENSE_KEY"),
 	)
-	nr, _ := newrelic.NewApplication(config)
+	newRelic, _ := newrelic.NewApplication(config)
 
-	sessionStore, err := redistore.NewRediStore(10, "tcp", os.Getenv("REDIS_URL"),
-		os.Getenv("REDIS_PASSWORD"), []byte(os.Getenv("SESSION_KEY")))
+	sessionStore, err := redistore.NewRediStore(
+		10,
+		"tcp",
+		os.Getenv("REDIS_URL"),
+		os.Getenv("REDIS_PASSWORD"),
+		[]byte(os.Getenv("SESSION_KEY")),
+	)
 	if err != nil {
 		panic(err)
 	}
 
-	cache := mc.NewMC(os.Getenv("MEMCACHED_SERVERS"),
+	cache := mc.NewMC(
+		os.Getenv("MEMCACHED_SERVERS"),
 		os.Getenv("MEMCACHED_USERNAME"),
-		os.Getenv("MEMCACHED_PASSWORD"))
+		os.Getenv("MEMCACHED_PASSWORD"),
+	)
 
 	db, err := sqlx.Connect("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
@@ -68,12 +87,18 @@ func NewApp() *App {
 	}
 
 	return &App{
-		Logger:       log.With().Str("module", os.Getenv("APP_NAME")).Logger(),
-		NewRelic:     nr,
-		Router:       mux.NewRouter(),
-		Client:       &http.Client{Timeout: 5 * time.Second},
-		SessionStore: sessionStore,
-		Cache:        cache,
-		Db:           db,
+		HTTP: HTTP{
+			Router: mux.NewRouter(),
+			Client: &http.Client{Timeout: 5 * time.Second},
+		},
+		Data: Data{
+			SessionStore: sessionStore,
+			Cache:        cache,
+			Db:           db,
+		},
+		Monitoring: Monitoring{
+			Logger:   log.With().Str("module", os.Getenv("APP_NAME")).Logger(),
+			NewRelic: newRelic,
+		},
 	}
 }
