@@ -19,6 +19,9 @@
           .link-icon {
             color: $background-color-01 !important;
           }
+          //&:before {
+          //  background: $background-color-01 !important;
+          //}
         }
         .nav-link[role="button"] {
           &:before {
