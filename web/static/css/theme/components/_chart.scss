@@ -1,10 +1,5 @@
-@import './vendors/bootstrap-datepicker/bootstrap-datepicker.min.css';
-@import './vendors/core/core.css';
-@import './vendors/feather-icons/feather-icons.css';
-@import './vendors/nobleui/nobleui.css';
-@import './lyticaa/_theme.scss';
+@import "../variables";
 
-/* Charting */
 #dashboard-total-sales-chart,
 #metrics-total-sales-chart,
 #metrics-units-sold-chart,
@@ -18,7 +13,7 @@
 #metrics-gross-margin-chart,
 #metrics-net-margin-chart,
 #forecast-chart {
-    min-height: 250px;
-    border: 1px solid #f2f4f9;
-    border-radius: .25rem;
+  min-height: 250px;
+  border: 1px solid $border-color-01;
+  border-radius: .25rem;
 }
