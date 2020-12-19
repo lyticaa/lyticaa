@@ -1,7 +1,8 @@
 @import "../variables";
 
 .navbar {
-  background-image: linear-gradient(147deg, $theme-color-01 24%, $theme-color-02 100%) !important;
+  background-image: linear-gradient(147deg, $background-color-01 24%, $background-color-02 100%) !important;
+
   .sidebar-toggler {
     border-right: unset !important;
   }

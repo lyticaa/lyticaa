@@ -1,5 +1,21 @@
 @import "../variables";
 
+body {
+  font-family: $font-family-opensans !important;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-montserrat;
+}
+
+/* Images */
+.img-lg {
+  height: 125px !important;
+  width: 125px !important;
+}
+
+/* Anchors */
 a {
   &:hover {
     color: unset !important;
@@ -23,10 +39,7 @@ svg[data-toggle="tooltip"] {
   height: 17px;
 }
 
-.mt--20 {
-  margin-top: 0.2rem !important;
-}
-
+/* Borders */
 .border {
   border: 1px solid $border-color-01 !important;
   border-radius: 0.25rem !important;
@@ -35,6 +48,7 @@ svg[data-toggle="tooltip"] {
 footer {
   p {
     font-size: $font-size-extra-small;
+    font-family: $font-family-montserrat;
     font-weight: bold;
   }
 }

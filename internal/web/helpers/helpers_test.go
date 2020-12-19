@@ -1,11 +1,9 @@
 package helpers
 
 import (
-	"database/sql"
 	"encoding/gob"
 	"fmt"
 	"net/http"
-	"net/http/httptest"
 	"os"
 	"testing"
 	"time"
@@ -220,86 +218,7 @@ func (s *helpersSuite) TestForm(c *C) {
 	c.Assert(ok, Equals, false)
 }
 
-func (s *helpersSuite) TestSession(c *C) {
-	url := faker.Internet().Url()
-	r, err := http.NewRequest(http.MethodGet, url, nil)
-	c.Assert(r, NotNil)
-	c.Assert(err, IsNil)
-
-	session, err := s.sessionStore.Get(r, "auth-session")
-	c.Assert(session, NotNil)
-	c.Assert(err, IsNil)
-
-	setFlashSuccess(successMsg, session)
-	flash := session.Values["Flash"].(types.Flash)
-	c.Assert(flash.Success, Equals, successMsg)
-
-	resetFlash(session)
-	c.Assert(session.Values["Flash"], IsNil)
-
-	session = GetSession(s.sessionStore, log.Logger, httptest.NewRecorder(), r)
-	c.Assert(session, NotNil)
-
-	user, err := models.CreateUser(
-		faker.RandomString(10),
-		faker.Internet().Email(),
-		faker.Lorem().Word(),
-		faker.Avatar().Url("jpg", 200, 300),
-		s.db,
-	)
-	c.Assert(err, IsNil)
-
-	user.Admin = true
-	err = user.Save(s.db)
-	c.Assert(err, IsNil)
-
-	session.Values["User"] = *user
-	sessionUser := GetSessionUser(session)
-	c.Assert(sessionUser.UserID, Equals, user.UserID)
-
-	impersonate, err := models.CreateUser(
-		faker.RandomString(10),
-		faker.Internet().Email(),
-		faker.Lorem().Word(),
-		faker.Avatar().Url("jpg", 200, 300),
-		s.db,
-	)
-	c.Assert(err, IsNil)
-
-	user.Impersonate = impersonate
-	session.Values["User"] = *user
-	sessionUser = GetSessionUser(session)
-	c.Assert(sessionUser.UserID, Equals, impersonate.UserID)
-
-	SetSessionUser(*impersonate, session, httptest.NewRecorder(), r)
-	sessionUser = GetSessionUser(session)
-	c.Assert(sessionUser.UserID, Equals, impersonate.UserID)
-
-	user, err = models.CreateUser(
-		faker.RandomString(10),
-		faker.Internet().Email(),
-		faker.Lorem().Word(),
-		faker.Avatar().Url("jpg", 200, 300),
-		s.db,
-	)
-	c.Assert(err, IsNil)
-
-	SetSessionUser(*user, session, httptest.NewRecorder(), r)
-	sessionUser = GetSessionUser(session)
-	c.Assert(sessionUser.UserID, Equals, user.UserID)
-
-	var subscription sql.NullString
-	err = subscription.Scan(fmt.Sprintf("sub_%s", faker.RandomString(64)))
-	c.Assert(err, IsNil)
-
-	user.StripeSubscriptionID = subscription
-	SetSessionUser(*user, session, httptest.NewRecorder(), r)
-	err = session.Save(r, httptest.NewRecorder())
-	c.Assert(err, IsNil)
-
-	ok := Subscribed(session)
-	c.Assert(ok, Equals, true)
-}
+func (s *helpersSuite) TestSession(c *C) {}
 
 func (s *helpersSuite) TestTemplates(c *C) {
 	templates := compileList(appLayouts, []string{})

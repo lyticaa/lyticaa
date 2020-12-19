@@ -1,7 +1,8 @@
 @import "../variables";
 
 .sidebar {
-  background: $theme-color-01 !important;
+  background: $background-color-01 !important;
+
   .sidebar-body {
     .nav {
       .nav-item {
@@ -9,46 +10,51 @@
           .nav-link {
             color: $font-color-01 !important;
             .link-icon {
-              color: $background-color-01 !important;
+              color: $font-color-02 !important;
             }
           }
         }
       }
+
       .nav-item.active {
         .nav-link {
           .link-icon {
-            color: $background-color-01 !important;
+            color: $font-color-02 !important;
           }
         }
+
         .nav-link[role="button"] {
           &:before {
-            background: $background-color-01 !important;
+            background: $background-color-04 !important;
           }
         }
       }
     }
+
     .nav.sub-menu {
       .nav-item {
         &.active {
           .nav-link {
             &:before {
-              border: 1px solid $background-color-02 !important;
-              background: $background-color-02 !important;
+              border: 1px solid $background-color-05 !important;
+              background: $background-color-05 !important;
             }
           }
         }
+
         .nav-link.active {
           color: $font-color-01 !important;
           &:before {
-            border: 1px solid $background-color-01 !important;
-            background: $background-color-01 !important;
+            border: 1px solid $border-color-02 !important;
+            background: $background-color-04 !important;
           }
         }
+
         &:hover {
           .nav-link {
             &:before {
-              border: 1px solid $background-color-01 !important;
-              background: $background-color-01 !important;
+              border: 1px solid $border-color-02 !important;
+              background: $background-color-04 !important;
             }
           }
         }
@@ -64,7 +70,7 @@
 }
 
 .sidebar-body {
-  background-image: linear-gradient(147deg, $theme-color-01 24%, $theme-color-02 100%) !important;
+  background-image: linear-gradient(147deg, $background-color-01 24%, $background-color-02 100%) !important;
 }
 
 .sidebar-dark {
@@ -72,24 +78,28 @@
     .sidebar-body {
       .nav {
         .nav-item.nav-category {
-          color: $background-color-01 !important;
+          color: $font-color-02 !important;
+          font-family: $font-family-montserrat;
         }
+
         .nav-item {
           .nav-link[aria-expanded=true] {
-            color: $background-color-02 !important;
+            color: $font-color-01 !important;
           }
+
           &:hover {
             .nav-link {
               .link-title {
-                color: $background-color-01 !important;
+                color: $font-color-02 !important;
               }
             }
           }
         }
+
         .nav-item.active {
           .nav-link {
             .link-title {
-              color: $background-color-01 !important;
+              color: $font-color-02 !important;
             }
           }
         }

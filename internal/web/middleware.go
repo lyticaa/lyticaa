@@ -46,6 +46,18 @@ func (a *App) Admin(w http.ResponseWriter, r *http.Request, next http.HandlerFun
 	}
 }
 
+func (a *App) SetupComplete(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	session := a.getSession(w, r)
+
+	user := helpers.GetSessionUser(session)
+	if !user.SetupCompleted {
+		http.Redirect(w, r, helpers.WelcomeRoute(), http.StatusSeeOther)
+		return
+	} else {
+		next(w, r)
+	}
+}
+
 func (a *App) setConfig(w http.ResponseWriter, r *http.Request) {
 	session := a.getSession(w, r)
 	session.Values["Config"] = types.NewConfig()

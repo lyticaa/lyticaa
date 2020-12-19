@@ -1,6 +1,10 @@
 @import "../variables";
 
 .card {
+  .card-header {
+    border-bottom: none !important;
+  }
+
   .card-title {
     font-size: $font-size-small;
     font-weight: bold;

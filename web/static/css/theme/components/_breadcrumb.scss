@@ -3,7 +3,9 @@
 ol {
   &.breadcrumb {
     font-size: $font-size-small;
+    font-family: $font-family-montserrat;
     text-transform: uppercase;
+
     .breadcrumb-item {
       a {
         color: $theme-color-01 !important;

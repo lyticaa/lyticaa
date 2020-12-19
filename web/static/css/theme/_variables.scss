@@ -3,16 +3,28 @@ $theme-color-01:            #36133d;
 $theme-color-02:            #942972;
 $theme-color-03:            #dde3e8;
 $theme-color-04:            #9eb3bf;
+$theme-color-05:            #bfc3ce;
+$theme-color-06:            #f2f4f9;
+$theme-color-07:            #fdb913;
 
 /* Background Colors */
-$background-color-01:       #fdb913;
-$background-color-02:       #bfc3ce;
+$background-color-01:       $theme-color-01;
+$background-color-02:       $theme-color-02;
+$background-color-03:       $theme-color-05;
+$background-color-04:       $theme-color-07;
+$background-color-05:       #f9fafb;
 
 /* Font Colors */
-$font-color-01:             #bfc3ce;
+$font-color-01:             $theme-color-04;
+$font-color-02:             $theme-color-07;
+$font-color-03:             $theme-color-01;
 
 /* Border Colors */
-$border-color-01:           #f2f4f9;
+$border-color-01:           $theme-color-06;
+$border-color-02:           $theme-color-07;
+$border-color-03:           $theme-color-02;
+$border-color-04:           $theme-color-01;
+$border-color-05:           $theme-color-04;
 
 /* Alerts */
 $alert-valid:               #bcebd1;
@@ -23,7 +35,11 @@ $font-size-extra-small:     11px;
 $font-size-small:           12px;
 $font-size-medium:          14px;
 $font-size-large:           16px;
+$font-size-extra-large:     20px;
 
 /* Fonts */
-$font-family-base:          -apple-system, BlinkMacSystemFont, "Inter UI", Roboto, sans-serif;
+$font-family-system:        -apple-system, BlinkMacSystemFont, "Inter UI", Roboto, sans-serif;
+$font-family-base:          $font-family-system;
 $font-family-montserrat:    "Montserrat", sans-serif;
+$font-family-raleway:       "Raleway", sans-serif;
+$font-family-opensans:      "Open Sans", sans-serif;

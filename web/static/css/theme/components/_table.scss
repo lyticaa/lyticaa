@@ -10,11 +10,13 @@ table.dataTable {
       outline: none;
     }
   }
+
   thead {
     th {
       outline: none;
       font-size: $font-size-small;
-      color: $theme-color-01;
+      font-family: $font-family-montserrat;
+      color: $font-color-03;
     }
   }
 }

@@ -1,3 +1,6 @@
+{{ define "css/top" }}
+{{ end }}
+
 {{ define "bare" }}
     <!DOCTYPE html>
     <html lang="en">
@@ -7,9 +10,9 @@
         <title>lyticaa</title>
 
         <link rel="stylesheet" href="../../static/css/app.scss">
-
-        <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+        {{ template "css/top" . }}
 
         <link rel="icon" href="../../static/images/favicon.ico" sizes="16x16" type="image/x-icon">
     </head>

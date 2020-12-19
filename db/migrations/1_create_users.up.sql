@@ -9,6 +9,7 @@ CREATE TABLE users
     nickname                VARCHAR NULL,
     picture                 VARCHAR NULL,
     setup_completed         BOOLEAN NOT NULL,
+    mailing_list            BOOLEAN NOT NULL,
     admin                   BOOLEAN NOT NULL DEFAULT false,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

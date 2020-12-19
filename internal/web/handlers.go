@@ -133,6 +133,7 @@ func (a *App) dashboardHandlers() {
 
 	a.HTTP.Router.Handle("/dashboard", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
+		negroni.HandlerFunc(a.SetupComplete),
 		negroni.Wrap(http.HandlerFunc(dashboard.Overview)),
 	))
 	a.HTTP.Router.Handle("/dashboard/metrics/filter/{dateRange}", negroni.New(
@@ -220,6 +221,10 @@ func (a *App) homeHandlers() {
 
 	a.HTTP.Router.Handle("/", negroni.New(
 		negroni.Wrap(http.HandlerFunc(h.Login)),
+	))
+	a.HTTP.Router.Handle("/welcome", negroni.New(
+		negroni.HandlerFunc(a.Authenticated),
+		negroni.Wrap(http.HandlerFunc(h.Welcome)),
 	))
 }
 
