@@ -17,8 +17,8 @@ services:
   memcache:
     image: bitnami/memcached:latest
     environment:
-      MEMCACHED_USERNAME: ${MEMCACHED_USERNAME}
-      MEMCACHED_PASSWORD: ${MEMCACHED_PASSWORD}
+      MEMCACHED_USERNAME: ${MEMCACHIER_USERNAME}
+      MEMCACHED_PASSWORD: ${MEMCACHIER_PASSWORD}
     ports:
       - 11211:11211
   rabbitmq:

@@ -76,9 +76,9 @@ func NewApp() *App {
 	}
 
 	cache := mc.NewMC(
-		os.Getenv("MEMCACHED_SERVERS"),
-		os.Getenv("MEMCACHED_USERNAME"),
-		os.Getenv("MEMCACHED_PASSWORD"),
+		os.Getenv("MEMCACHIER_SERVERS"),
+		os.Getenv("MEMCACHIER_USERNAME"),
+		os.Getenv("MEMCACHIER_PASSWORD"),
 	)
 
 	db, err := sqlx.Connect("postgres", os.Getenv("DATABASE_URL"))
