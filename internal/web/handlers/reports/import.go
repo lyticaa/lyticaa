@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
-	"github.com/lyticaa/lyticaa-app/internal/web/pkg/amazon/aws"
-	"github.com/lyticaa/lyticaa-app/internal/web/pkg/amazon/aws/storage/s3"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/storage/aws"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/storage/aws/s3"
 )
 
 var (

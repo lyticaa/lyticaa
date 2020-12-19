@@ -13,7 +13,7 @@ import (
 
 func (a *App) ForceSsl(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if helpers.Production() == true && r.Header.Get("x-forwarded-proto") != "https" {
+		if helpers.Production() && r.Header.Get("x-forwarded-proto") != "https" {
 			http.Redirect(w, r, fmt.Sprintf("https://%s%s", r.Host, r.RequestURI), http.StatusTemporaryRedirect)
 			return
 		}

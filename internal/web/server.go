@@ -30,6 +30,17 @@ func (a *App) Start() {
 	}()
 }
 
+func (a *App) Stop() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := a.HTTP.Server.Shutdown(ctx); err != nil {
+		a.Monitoring.Logger.Fatal().Err(err).Msg("server shutdown")
+	}
+
+	a.Monitoring.Logger.Info().Msg("server exiting....")
+}
+
 func (a *App) initializeHandlers() {
 	a.accountHandlers()
 	a.adminHandlers()
@@ -46,15 +57,4 @@ func (a *App) initializeHandlers() {
 	a.webhookHandlers()
 
 	a.HTTP.Router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./web/dist"))))
-}
-
-func (a *App) Stop() {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := a.HTTP.Server.Shutdown(ctx); err != nil {
-		a.Monitoring.Logger.Fatal().Err(err).Msg("server shutdown")
-	}
-
-	a.Monitoring.Logger.Info().Msg("server exiting....")
 }

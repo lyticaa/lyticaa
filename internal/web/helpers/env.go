@@ -9,9 +9,5 @@ const (
 )
 
 func Production() bool {
-	if os.Getenv("ENV") == production {
-		return true
-	}
-
-	return false
+	return os.Getenv("ENV") == production
 }

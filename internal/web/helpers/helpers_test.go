@@ -302,7 +302,7 @@ func (s *helpersSuite) TestSession(c *C) {
 }
 
 func (s *helpersSuite) TestTemplates(c *C) {
-	templates := compileList([]string{})
+	templates := compileList(appLayouts, []string{})
 	c.Assert(assert.Greater(c, len(templates), 0), Equals, true)
 }
 
