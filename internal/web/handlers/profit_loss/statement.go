@@ -9,17 +9,17 @@ import (
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 )
 
-func (p *ProfitLoss) Overview(w http.ResponseWriter, r *http.Request) {
+func (p *ProfitLoss) Statement(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(p.sessionStore, p.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.ProfitLossOverview), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.ProfitLossStatement), session.Values)
 }
 
-func (p *ProfitLoss) ProfitLossByDate(w http.ResponseWriter, r *http.Request) {
+func (p *ProfitLoss) StatementByDate(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(p.sessionStore, p.logger, w, r)
 	_ = session.Values["User"].(models.User)
 
-	table := []types.ProfitLossTable{}
-	byDate := types.ProfitLoss{Data: table}
+	var table []types.StatementTable
+	byDate := types.Statement{Data: table}
 
 	js, err := json.Marshal(byDate)
 	if err != nil {

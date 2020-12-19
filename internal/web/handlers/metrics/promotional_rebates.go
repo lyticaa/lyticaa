@@ -12,7 +12,7 @@ import (
 
 func (m *Metrics) PromotionalRebates(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.MetricsPromotionalRebates), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.MetricsPromotionalRebates), session.Values)
 }
 
 func (m *Metrics) PromotionalRebatesByDate(w http.ResponseWriter, r *http.Request) {

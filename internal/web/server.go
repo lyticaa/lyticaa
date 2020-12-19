@@ -5,17 +5,19 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/gorilla/csrf"
 )
 
 func (a *App) Start() {
 	a.Monitoring.Logger.Info().Msgf("starting on %v....", ":"+os.Getenv("PORT"))
-	a.HTTP.Router.Use(a.forceSsl)
+	a.HTTP.Router.Use(a.ForceSsl)
 
 	a.initializeHandlers()
 
 	a.HTTP.Server = &http.Server{
 		Addr:         ":" + os.Getenv("PORT"),
-		Handler:      a.HTTP.Router,
+		Handler:      csrf.Protect([]byte(os.Getenv("CSRF_TOKEN")))(a.HTTP.Router),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  15 * time.Second,
@@ -37,6 +39,7 @@ func (a *App) initializeHandlers() {
 	a.dashboardHandlers()
 	a.expensesHandlers()
 	a.forecastHandlers()
+	a.homeHandlers()
 	a.metricsHandlers()
 	a.profitLossHandlers()
 	a.reportsHandlers()

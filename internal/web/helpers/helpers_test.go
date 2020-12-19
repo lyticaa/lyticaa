@@ -297,7 +297,7 @@ func (s *helpersSuite) TestSession(c *C) {
 	err = session.Save(r, httptest.NewRecorder())
 	c.Assert(err, IsNil)
 
-	ok := IsSubscribed(session)
+	ok := Subscribed(session)
 	c.Assert(ok, Equals, true)
 }
 

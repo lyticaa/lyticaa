@@ -22,7 +22,7 @@ type ValidateCostOfGood struct {
 
 func (e *Expenses) CostOfGoods(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.ExpensesCostOfGoods), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.ExpensesCostOfGoods), session.Values)
 }
 
 func (e *Expenses) CostOfGoodsByUser(w http.ResponseWriter, r *http.Request) {

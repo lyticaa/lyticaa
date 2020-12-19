@@ -5,6 +5,9 @@ ol {
     font-size: $font-size-small;
     text-transform: uppercase;
     .breadcrumb-item {
+      a {
+        color: $theme-color-01 !important;
+      }
       font-weight: bold;
       color: $theme-color-01;
     }

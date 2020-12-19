@@ -12,7 +12,7 @@ import (
 
 func (m *Metrics) UnitsSold(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.MetricsUnitsSold), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.MetricsUnitsSold), session.Values)
 }
 
 func (m *Metrics) UnitsSoldByDate(w http.ResponseWriter, r *http.Request) {

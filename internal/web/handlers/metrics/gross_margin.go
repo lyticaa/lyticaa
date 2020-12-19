@@ -12,7 +12,7 @@ import (
 
 func (m *Metrics) GrossMargin(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.MetricsGrossMargin), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.MetricsGrossMargin), session.Values)
 }
 
 func (m *Metrics) GrossMarginByDate(w http.ResponseWriter, r *http.Request) {

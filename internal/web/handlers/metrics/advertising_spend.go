@@ -12,7 +12,7 @@ import (
 
 func (m *Metrics) AdvertisingSpend(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.MetricsAdvertisingSpend), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.MetricsAdvertisingSpend), session.Values)
 }
 
 func (m *Metrics) AdvertisingSpendByDate(w http.ResponseWriter, r *http.Request) {

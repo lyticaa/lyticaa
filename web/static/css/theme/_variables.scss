@@ -1,6 +1,8 @@
 /* Theme Colors */
 $theme-color-01:            #36133d;
 $theme-color-02:            #942972;
+$theme-color-03:            #dde3e8;
+$theme-color-04:            #9eb3bf;
 
 /* Background Colors */
 $background-color-01:       #fdb913;
@@ -20,3 +22,8 @@ $alert-invalid:             #ffc6d4;
 $font-size-extra-small:     11px;
 $font-size-small:           12px;
 $font-size-medium:          14px;
+$font-size-large:           16px;
+
+/* Fonts */
+$font-family-base:          -apple-system, BlinkMacSystemFont, "Inter UI", Roboto, sans-serif;
+$font-family-montserrat:    "Montserrat", sans-serif;

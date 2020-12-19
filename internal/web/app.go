@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/gob"
-	"github.com/rs/zerolog"
 	"net/http"
 	"os"
 	"time"
@@ -17,6 +16,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/memcachier/mc"
 	"github.com/newrelic/go-agent"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/boj/redistore.v1"
 )

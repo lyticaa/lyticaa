@@ -12,7 +12,7 @@ import (
 
 func (m *Metrics) NetMargin(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.MetricsNetMargin), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.MetricsNetMargin), session.Values)
 }
 
 func (m *Metrics) NetMarginByDate(w http.ResponseWriter, r *http.Request) {

@@ -1,5 +1,6 @@
 {{ define "expenses/other/form" }}
-    <form id="expenses-other">
+    <form>
+        {{ .csrfField }}
         <div class="modal-body">
             <div class="form-group">
                 <div class="alert alert-icon-danger expenses-other-error text-justify" style="display: none;">

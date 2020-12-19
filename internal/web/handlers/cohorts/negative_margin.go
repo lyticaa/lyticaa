@@ -12,7 +12,7 @@ import (
 
 func (c *Cohorts) NegativeMargin(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(c.sessionStore, c.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.CohortsNegativeMargin), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.CohortsNegativeMargin), session.Values)
 }
 
 func (c *Cohorts) NegativeMarginByDate(w http.ResponseWriter, r *http.Request) {

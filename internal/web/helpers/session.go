@@ -1,20 +1,15 @@
 package helpers
 
 import (
-	"github.com/jmoiron/sqlx"
 	"net/http"
 
 	"github.com/lyticaa/lyticaa-app/internal/models"
 
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
 	"gopkg.in/boj/redistore.v1"
 )
-
-func resetFlash(session *sessions.Session) *sessions.Session {
-	session.Values["Flash"] = nil
-	return session
-}
 
 func GetSession(store *redistore.RediStore, logger zerolog.Logger, w http.ResponseWriter, r *http.Request) *sessions.Session {
 	session, err := store.Get(r, "auth-session")
@@ -23,11 +18,10 @@ func GetSession(store *redistore.RediStore, logger zerolog.Logger, w http.Respon
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	return resetFlash(session)
-}
+	resetFlash(session)
+	setCSRF(session, r)
 
-func ReloadSessionUser(session *sessions.Session, w http.ResponseWriter, r *http.Request, db *sqlx.DB) {
-	SetSessionUser(*models.LoadUser(GetSessionUser(session).UserID, db), session, w, r)
+	return session
 }
 
 func GetSessionUser(session *sessions.Session) models.User {
@@ -53,7 +47,7 @@ func SetSessionUser(user models.User, session *sessions.Session, w http.Response
 	_ = session.Save(r, w)
 }
 
-func IsSubscribed(session *sessions.Session) bool {
+func Subscribed(session *sessions.Session) bool {
 	subscribed := false
 
 	user := GetSessionUser(session)
@@ -62,4 +56,12 @@ func IsSubscribed(session *sessions.Session) bool {
 	}
 
 	return subscribed
+}
+
+func resetFlash(session *sessions.Session) {
+	session.Values["Flash"] = nil
+}
+
+func setCSRF(session *sessions.Session, r *http.Request) {
+	session.Values[csrf.TemplateTag] = csrf.TemplateField(r)
 }

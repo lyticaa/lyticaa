@@ -1,13 +1,16 @@
 {{ define "breadcrumbs" }}
     <nav class="page-breadcrumb">
         <ol class="breadcrumb pt-2">
-            <li class="breadcrumb-item active" aria-current="page">Forecast</li>
+            <li class="breadcrumb-item">
+                <a href="/">Forecast</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Units Solds</li>
         </ol>
     </nav>
 {{ end }}
 
 {{ define "content" }}
-    <input type="hidden" class="location" data-section="forecast"/>
+    <input type="hidden" class="location" data-section="forecast-units-sold"/>
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
             <div class="alert alert-icon-danger text-center pt-3 w-100 forecast-load-error" style="display: none;">
@@ -34,12 +37,6 @@
                     </div>
                     <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
                         <h6 class="card-title mb-0">Forecast</h6>
-                    </div>
-                    <div class="col-md-5 d-flex float-right justify-content-md-end">
-                        <div class="btn-group mb-3 mt-3 ml-1 mb-md-0" role="group" aria-label="">
-                            <button type="button" class="btn btn-primary view-filter" data-view="total_sales">Total Sales</button>
-                            <button type="button" class="btn btn-outline-primary view-filter" data-view="units_sold">Units Sold</button>
-                        </div>
                     </div>
                     <div id="forecast-chart"></div>
                 </div>

@@ -13,7 +13,7 @@ require('datatables.net-bs4') window, $
 #
 # Profit/Loss: Overview.
 #
-export default class ProfitLossOverview
+export default class ProfitLossStatement
   constructor: ->
     this.alerts = new AlertsHelper()
     this.tables = new TablesHelper()

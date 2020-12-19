@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
 	"github.com/lyticaa/lyticaa-app/internal/web/pkg/iam"
 
 	"github.com/coreos/go-oidc"
@@ -31,6 +32,7 @@ func (a *Auth) Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	session.Values["state"] = state
 	err = session.Save(r, w)
 	if err != nil {
@@ -66,12 +68,13 @@ func (a *Auth) Logout(w http.ResponseWriter, r *http.Request) {
 	logoutUrl.Path += "v2/logout"
 	parameters := url.Values{}
 
-	returnTo, err := url.Parse("https://" + r.Host)
+	returnTo, err := url.Parse(os.Getenv("BASE_URL"))
 	if err != nil {
 		a.logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	parameters.Add("returnTo", returnTo.String())
 	parameters.Add("client_id", os.Getenv("AUTH0_CLIENT_ID"))
 	logoutUrl.RawQuery = parameters.Encode()
@@ -156,5 +159,5 @@ func (a *Auth) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, helpers.DashboardRoute(), http.StatusSeeOther)
 }

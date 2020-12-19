@@ -1,23 +1,21 @@
 package app
 
 import (
+	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 
 	"github.com/gorilla/sessions"
 )
 
-func (a *App) forceSsl(next http.Handler) http.Handler {
+func (a *App) ForceSsl(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if os.Getenv("ENV") != "development" && os.Getenv("ENV") != "test" {
-			if r.Header.Get("x-forwarded-proto") != "https" {
-				sslUrl := "https://" + r.Host + r.RequestURI
-				http.Redirect(w, r, sslUrl, http.StatusTemporaryRedirect)
-				return
-			}
+		if helpers.Production() == true && r.Header.Get("x-forwarded-proto") != "https" {
+			http.Redirect(w, r, fmt.Sprintf("https://%s%s", r.Host, r.RequestURI), http.StatusTemporaryRedirect)
+			return
 		}
 
 		a.setConfig(w, r)
@@ -25,24 +23,24 @@ func (a *App) forceSsl(next http.Handler) http.Handler {
 	})
 }
 
-func (a *App) isAuthenticated(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+func (a *App) Authenticated(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	session := a.getSession(w, r)
 	if _, ok := session.Values["profile"]; !ok {
-		http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+		http.Redirect(w, r, helpers.RootRoute(), http.StatusSeeOther)
 	} else {
 		next(w, r)
 	}
 }
 
-func (a *App) isAdmin(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+func (a *App) Admin(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	session := a.getSession(w, r)
 	if session.Values["User"] == nil {
-		http.Redirect(w, r, "/", http.StatusFound)
+		http.Redirect(w, r, helpers.RootRoute(), http.StatusFound)
 	}
 
 	user := session.Values["User"].(models.User)
 	if !user.Admin {
-		http.Redirect(w, r, "/", http.StatusFound)
+		http.Redirect(w, r, helpers.DashboardRoute(), http.StatusFound)
 	} else {
 		next(w, r)
 	}

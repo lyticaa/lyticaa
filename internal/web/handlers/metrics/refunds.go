@@ -12,7 +12,7 @@ import (
 
 func (m *Metrics) Refunds(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.MetricsRefunds), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.MetricsRefunds), session.Values)
 }
 
 func (m *Metrics) RefundsByDate(w http.ResponseWriter, r *http.Request) {

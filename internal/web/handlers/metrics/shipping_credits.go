@@ -12,7 +12,7 @@ import (
 
 func (m *Metrics) ShippingCredits(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.MetricsShippingCredits), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.MetricsShippingCredits), session.Values)
 }
 
 func (m *Metrics) ShippingCreditsByDate(w http.ResponseWriter, r *http.Request) {

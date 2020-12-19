@@ -16,7 +16,8 @@ import Cohorts                    from './cohorts/cohorts'
 import DashboardOverview          from './dashboard/overview'
 import ExpensesCostOfGoods        from './expenses/cost_of_goods'
 import ExpensesOther              from './expenses/other'
-import ForecastOverview           from './forecast/overview'
+import ForecastTotalSales         from './forecast/total_sales'
+import ForecastUnitsSold          from './forecast/units_sold'
 import MetricsAdvertisingSpend    from './metrics/advertising_spend'
 import MetricsAmazonCosts         from './metrics/amazon_costs'
 import MetricsGrossMargin         from './metrics/gross_margin'
@@ -28,7 +29,7 @@ import MetricsShippingCredits     from './metrics/shipping_credits'
 import MetricsTotalCosts          from './metrics/total_costs'
 import MetricsUnitsSold           from './metrics/units_sold'
 import MetricsTotalSales          from './metrics/total_sales'
-import ProfitLossOverview         from './profit_loss/overview'
+import ProfitLossStatement        from './profit_loss/statement'
 import Reports                    from './reports/reports'
 import TemplateHelper             from './helpers/template'
 
@@ -66,7 +67,8 @@ init = ->
   expensesOther()
 
   # Forecast
-  forecast()
+  forecastTotalSales()
+  forecastUnitsSold()
 
   # Metrics
   metricsAdvertisingSpend()
@@ -82,7 +84,7 @@ init = ->
   metricsUnitsSold()
 
   # Profit Loss
-  profitLoss()
+  profitLossStatement()
 
   # Reports.
   reports()
@@ -213,13 +215,25 @@ expensesOther = ->
   return
 
 #
-# Forecast.
+# Forecast: Total Sales.
 #
-forecast = ->
-  if $('input.location').data('section') != 'forecast'
+forecastTotalSales = ->
+  if $('input.location').data('section') != 'forecast-total-sales'
     return
 
-  f = new ForecastOverview()
+  f = new ForecastTotalSales()
+  f.init()
+
+  return
+
+#
+# Forecast: Units Sold.
+#
+forecastUnitsSold = ->
+  if $('input.location').data('section') != 'forecast-units-sold'
+    return
+
+  f = new ForecastUnitsSold()
   f.init()
 
   return
@@ -359,11 +373,11 @@ metricsUnitsSold = ->
 #
 # Profit & Loss.
 #
-profitLoss = ->
-  if $('input.location').data('section') != 'profit-loss'
+profitLossStatement = ->
+  if $('input.location').data('section') != 'profit-loss-statement'
     return
 
-  pl = new ProfitLossOverview()
+  pl = new ProfitLossStatement()
   pl.init()
 
   return

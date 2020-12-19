@@ -39,7 +39,7 @@ export default class DashboardOverview
 
     $.ajax(
       type: 'GET'
-      url: d.url.clean() + 'dashboard/metrics/filter/' + $('.date-filter.active').data('range')
+      url: d.url.clean() + '/metrics/filter/' + $('.date-filter.active').data('range')
       timeout: 10000
       statusCode:
         200: (j) ->

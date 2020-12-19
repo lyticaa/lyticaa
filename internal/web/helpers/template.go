@@ -8,12 +8,16 @@ import (
 )
 
 var (
-	cwd, _    = os.Getwd()
-	baseTmpl  = "app"
-	baseFiles = []string{
-		filepath.Join(cwd, "./web/dist/"+baseTmpl+".html"),
+	cwd, _     = os.Getwd()
+	appTpl     = "app"
+	appLayouts = []string{
+		filepath.Join(cwd, "./web/dist/"+appTpl+".html"),
 		filepath.Join(cwd, "./web/templates/partials/_nav.gohtml"),
 		filepath.Join(cwd, "./web/templates/partials/_footer.gohtml"),
+	}
+	bareTpl     = "bare"
+	bareLayouts = []string{
+		filepath.Join(cwd, "./web/dist/"+bareTpl+".html"),
 	}
 
 	PartialsFlash                   = "partials/_flash"
@@ -34,7 +38,9 @@ var (
 	DashboardOverview         = "dashboard/overview"
 	ExpensesCostOfGoods       = "expenses/cost_of_goods"
 	ExpensesOther             = "expenses/other"
-	ForecastOverview          = "forecast/overview"
+	ForecastTotalSales        = "forecast/total_sales"
+	ForecastUnitsSold         = "forecast/units_sold"
+	HomeLogin                 = "home/login"
 	MetricsAdvertisingSpend   = "metrics/advertising_spend"
 	MetricsAmazonCosts        = "metrics/amazon_costs"
 	MetricsGrossMargin        = "metrics/gross_margin"
@@ -46,7 +52,7 @@ var (
 	MetricsTotalCosts         = "metrics/total_costs"
 	MetricsTotalSales         = "metrics/total_sales"
 	MetricsUnitsSold          = "metrics/units_sold"
-	ProfitLossOverview        = "profit_loss/overview"
+	ProfitLossStatement       = "profit_loss/statement"
 	SetupComplete             = "setup/complete"
 	SetupSubscribe            = "setup/subscribe"
 
@@ -72,6 +78,11 @@ var (
 	}...)
 )
 
+const (
+	AppLayout  = "app"
+	BareLayout = "bare"
+)
+
 func TemplateList(page string) []string {
 	switch page {
 	case AccountNotifications:
@@ -92,8 +103,12 @@ func TemplateList(page string) []string {
 		return append(Expenses, []string{PartialsExpensesCostOfGoodsForm, ExpensesCostOfGoods}...)
 	case ExpensesOther:
 		return append(Expenses, []string{PartialsExpensesOtherForm, ExpensesOther}...)
-	case ForecastOverview:
-		return append(DefaultWithFilters, []string{ForecastOverview}...)
+	case ForecastTotalSales:
+		return append(DefaultWithFilters, []string{ForecastTotalSales}...)
+	case ForecastUnitsSold:
+		return append(DefaultWithFilters, []string{ForecastUnitsSold}...)
+	case HomeLogin:
+		return []string{HomeLogin}
 	case MetricsAdvertisingSpend:
 		return append(DefaultWithFilters, []string{MetricsAdvertisingSpend}...)
 	case MetricsAmazonCosts:
@@ -116,8 +131,8 @@ func TemplateList(page string) []string {
 		return append(DefaultWithFilters, []string{MetricsTotalSales}...)
 	case MetricsUnitsSold:
 		return append(DefaultWithFilters, []string{MetricsUnitsSold}...)
-	case ProfitLossOverview:
-		return append(DefaultWithFilters, []string{ProfitLossOverview}...)
+	case ProfitLossStatement:
+		return append(DefaultWithFilters, []string{ProfitLossStatement}...)
 	case SetupComplete:
 		return append(SetupNav, []string{SetupComplete}...)
 	case SetupSubscribe:
@@ -127,22 +142,36 @@ func TemplateList(page string) []string {
 	}
 }
 
-func RenderTemplate(w http.ResponseWriter, templates []string, data interface{}) {
-	files := compileList(templates)
+func RenderTemplate(w http.ResponseWriter, layout string, templates []string, data interface{}) {
+	baseTpl, layouts := layoutFiles(layout)
+
+	files := compileList(layouts, templates)
 	t, err := template.ParseFiles(files...)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = t.ExecuteTemplate(w, baseTmpl, data)
+
+	err = t.ExecuteTemplate(w, *baseTpl, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-func compileList(fileList []string) []string {
+func layoutFiles(layout string) (*string, []string) {
+	switch layout {
+	case AppLayout:
+		return &appTpl, appLayouts
+	case BareLayout:
+		return &bareTpl, bareLayouts
+	}
+
+	return nil, nil
+}
+
+func compileList(layouts, fileList []string) []string {
 	var container []string
-	container = append(container, baseFiles...)
+	container = append(container, layouts...)
 
 	for _, file := range fileList {
 		container = append(container, filepath.Join(cwd, "./web/templates/"+file+".gohtml"))

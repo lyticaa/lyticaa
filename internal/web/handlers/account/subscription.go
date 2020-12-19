@@ -30,7 +30,7 @@ type Cancellation struct {
 
 func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.AccountSubscription), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.AccountSubscription), session.Values)
 	helpers.ClearFlash(session, r, w)
 }
 

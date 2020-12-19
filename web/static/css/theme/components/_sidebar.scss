@@ -19,9 +19,6 @@
           .link-icon {
             color: $background-color-01 !important;
           }
-          //&:before {
-          //  background: $background-color-01 !important;
-          //}
         }
         .nav-link[role="button"] {
           &:before {
@@ -79,7 +76,7 @@
         }
         .nav-item {
           .nav-link[aria-expanded=true] {
-            color: #bfc3ce !important;
+            color: $background-color-02 !important;
           }
           &:hover {
             .nav-link {

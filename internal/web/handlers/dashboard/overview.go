@@ -12,7 +12,7 @@ import (
 
 func (d *Dashboard) Overview(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(d.sessionStore, d.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.DashboardOverview), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.DashboardOverview), session.Values)
 }
 
 func (d *Dashboard) MetricsByDate(w http.ResponseWriter, r *http.Request) {

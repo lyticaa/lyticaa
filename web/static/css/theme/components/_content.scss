@@ -1,3 +1,42 @@
+@import "../variables";
+
+.login-content {
+  position: relative;
+  background-image: url("../../../web/static/images/backgrounds/generic.svg");
+  background-size: cover;
+  overflow-y: auto;
+
+  .card {
+    border-radius: 0px !important;
+    border: unset !important;
+    background-color: unset !important;
+
+    .card-body {
+      padding: 0 !important;
+
+      .btn {
+        font-family: $font-family-montserrat;
+        font-size: $font-size-large;
+
+        &.btn-primary {
+          &:hover {
+            background-color: $theme-color-02 !important;
+            border-color: $theme-color-02 !important;
+            color: #fff !important;
+          }
+        }
+      }
+    }
+  }
+}
+.login-wrapper {
+  background-image: url("../../../web/static/images/plate.svg"), linear-gradient(202deg, $theme-color-03 0%, $theme-color-04 100%);
+  background-size: 100% auto;
+  padding: 40px;
+  border-radius: 10px;
+  border: 1px solid $theme-color-04;
+}
+
 .page-content {
   position: relative;
   padding: 15px;

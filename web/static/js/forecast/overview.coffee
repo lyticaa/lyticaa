@@ -35,7 +35,7 @@ export default class ForecastOverview
 
     $.ajax(
       type: 'GET'
-      url: d.url.clean() + '/filter/' + $('.date-filter.active').data('range') + '/view/' + $('.view-filter.btn-primary').data('view')
+      url: d.url.clean() + '/filter/' + $('.date-filter.active').data('range')
       timeout: 10000
       statusCode:
         200: (j) ->

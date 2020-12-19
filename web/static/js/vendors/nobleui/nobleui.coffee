@@ -23,14 +23,12 @@ $(document).on 'turbolinks:load', ->
 
       addActiveClass = (element) ->
         if current == ''
-          #for root url
           if element.attr('href').indexOf('index.html') != -1
             element.parents('.nav-item').last().addClass 'active'
             if element.parents('.sub-menu').length
               element.closest('.collapse').addClass 'show'
               element.addClass 'active'
         else
-          #for other url
           if element.attr('href').indexOf(current) != -1
             element.parents('.nav-item').last().addClass 'active'
             if element.parents('.sub-menu').length
@@ -57,7 +55,9 @@ $(document).on 'turbolinks:load', ->
       desktopMedium = window.matchMedia('(min-width:992px) and (max-width: 1199px)')
       desktopMedium.addListener iconSidebar
       iconSidebar desktopMedium
-      current = location.pathname.split('/').slice(-1)[0].replace(/^\/|\/$/g, '')
+
+      url = location.pathname.split('/').slice(1)
+      current = "/" + url[0] + "/" + url[1]
       $('.nav li a', sidebar).each ->
         $this = $(this)
         addActiveClass $this

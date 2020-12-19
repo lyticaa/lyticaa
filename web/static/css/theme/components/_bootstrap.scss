@@ -1,7 +1,6 @@
 @import "../variables";
 
 a {
-  color: $theme-color-01;
   &:hover {
     color: unset !important;
   }

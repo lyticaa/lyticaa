@@ -1,7 +1,7 @@
 {{ define "nav/menu" }}
     <li class="nav-item nav-category">Home</li>
     <li class="nav-item">
-        <a href="/" class="nav-link">
+        <a href="/dashboard" class="nav-link">
             <i class="link-icon" data-feather="anchor"></i>
             <span class="link-title">Dashboard</span>
         </a>
@@ -72,10 +72,21 @@
         </div>
     </li>
     <li class="nav-item">
-        <a href="/forecast" class="nav-link main-menu">
-            <i class="link-icon" data-feather="bar-chart"></i>
+        <a class="nav-link" data-toggle="collapse" href="#forecast" role="button" aria-expanded="false" aria-controls="forecast">
+            <i class="link-icon" data-feather="umbrella"></i>
             <span class="link-title">Forecast</span>
+            <i class="link-arrow" data-feather="chevron-down"></i>
         </a>
+        <div class="collapse" id="forecast">
+            <ul class="nav sub-menu">
+                <li class="nav-item">
+                    <a href="/forecast/total_sales" class="nav-link">Total Sales</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/cohorts/units_sold" class="nav-link">Units Sold</a>
+                </li>
+            </ul>
+        </div>
     </li>
     <li class="nav-item">
         <a class="nav-link" data-toggle="collapse" href="#expenses" role="button" aria-expanded="false" aria-controls="expenses">
@@ -95,9 +106,17 @@
         </div>
     </li>
     <li class="nav-item">
-        <a href="/profit_loss" class="nav-link main-menu">
+        <a class="nav-link" data-toggle="collapse" href="#profit_loss" role="button" aria-expanded="false" aria-controls="profit_loss">
             <i class="link-icon" data-feather="dollar-sign"></i>
             <span class="link-title">Profit & Loss</span>
+            <i class="link-arrow" data-feather="chevron-down"></i>
         </a>
+        <div class="collapse" id="profit_loss">
+            <ul class="nav sub-menu">
+                <li class="nav-item">
+                    <a href="/profit_loss/statement" class="nav-link">Statement</a>
+                </li>
+            </ul>
+        </div>
     </li>
 {{ end }}

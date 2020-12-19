@@ -20,7 +20,7 @@ func (a *Admin) Overview(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, os.Getenv("BASE_URL"), 302)
 	}
 
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.AdminOverview), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.AdminOverview), session.Values)
 }
 
 func (a *Admin) UsersByDate(w http.ResponseWriter, r *http.Request) {

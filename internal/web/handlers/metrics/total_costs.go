@@ -12,7 +12,7 @@ import (
 
 func (m *Metrics) TotalCosts(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(m.sessionStore, m.logger, w, r)
-	helpers.RenderTemplate(w, helpers.TemplateList(helpers.MetricsTotalCosts), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.MetricsTotalCosts), session.Values)
 }
 
 func (m *Metrics) TotalCostsByDate(w http.ResponseWriter, r *http.Request) {

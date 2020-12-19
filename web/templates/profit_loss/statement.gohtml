@@ -1,7 +1,10 @@
 {{ define "breadcrumbs" }}
     <nav class="page-breadcrumb">
         <ol class="breadcrumb pt-2">
-            <li class="breadcrumb-item active" aria-current="page">Profit & Loss</li>
+            <li class="breadcrumb-item">
+                <a href="/">Profit & Loss</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Statement</li>
         </ol>
     </nav>
 {{ end }}
@@ -15,12 +18,12 @@
 {{ end }}
 
 {{ define "content" }}
-    <input type="hidden" class="location" data-section="profit-loss"/>
+    <input type="hidden" class="location" data-section="profit-loss-statement"/>
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
-            <div class="alert alert-icon-danger text-center pt-3 w-100 profit-loss-load-error" style="display: none;">
+            <div class="alert alert-icon-danger text-center pt-3 w-100 profit-loss-statement-load-error" style="display: none;">
                 <i data-feather="alert-triangle"></i>
-                Loading your profit and loss has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+                Loading your profit and loss statement has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
             </div>
         </div>
     </div>
