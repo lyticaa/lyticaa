@@ -1,4 +1,4 @@
-{{ define "css-extra-top" }}
+{{ define "css/top" }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css"/>
 {{ end }}
 
@@ -51,7 +51,7 @@
     </div>
 {{ end }}
 
-{{ define "js-extra-bottom" }}
+{{ define "js/bottom" }}
     <script type="application/javascript">
         $(document).on('ready turbolinks:load', function() {
             $('.dropify').dropify({

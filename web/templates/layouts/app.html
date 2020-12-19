@@ -1,22 +1,19 @@
-{{ define "js-extra-top" }}
+{{ define "css/top" }}
 {{ end }}
 
-{{ define "css-extra-top" }}
+{{ define "admin/impersonate" }}
 {{ end }}
 
 {{ define "breadcrumbs" }}
 {{ end }}
 
-{{ define "flash" }}
-{{ end }}
-
 {{ define "filters" }}
 {{ end }}
 
-{{ define "js-extra-bottom" }}
+{{ define "flash" }}
 {{ end }}
 
-{{ define "admin/impersonate" }}
+{{ define "js/bottom" }}
 {{ end }}
 
 {{ define "app" }}
@@ -30,11 +27,9 @@
             <script src="../../static/js/app.coffee"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"></script>
 
-            {{ template "js-extra-top" . }}
-
             <link rel="stylesheet" href="../../static/css/app.scss">
 
-            {{ template "css-extra-top" . }}
+            {{ template "css/top" . }}
 
             <link rel="icon" href="../../static/images/favicon.ico" sizes="16x16" type="image/x-icon">
         </head>
@@ -101,7 +96,7 @@
             {{ else }}
                 <div class="hide intercom" data-intercom-id="{{.Config.IntercomID}}" data-email="{{.User.Email}}" data-created-at="{{.User.CreatedAt}}"></div>
             {{ end }}
-            {{ template "js-extra-bottom" . }}
+            {{ template "js/bottom" . }}
         </body>
     </html>
 {{ end }}
