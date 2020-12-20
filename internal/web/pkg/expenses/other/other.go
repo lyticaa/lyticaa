@@ -23,7 +23,7 @@ func FetchExpensesOther(ctx context.Context, expenseID string, db *sqlx.DB) mode
 func ExpensesOthers(ctx context.Context, userID string, expenses *types.Expenses, filter *models.Filter, db *sqlx.DB) {
 	var otherModel models.ExpensesOtherModel
 
-	var data map[string]interface{}
+	data := make(map[string]interface{})
 	data["UserID"] = userID
 
 	others := otherModel.FetchAll(ctx, data, filter, db).([]models.ExpensesOtherModel)

@@ -23,7 +23,7 @@ func FetchExpensesCostOfGood(ctx context.Context, expenseID string, db *sqlx.DB)
 func ExpensesCostOfGoods(ctx context.Context, userID string, expenses *types.Expenses, filter *models.Filter, db *sqlx.DB) {
 	var costOfGoodModel models.ExpensesCostOfGoodModel
 
-	var data map[string]interface{}
+	data := make(map[string]interface{})
 	data["UserID"] = userID
 
 	costOfGoods := costOfGoodModel.FetchAll(ctx, data, filter, db).([]models.ExpensesCostOfGoodModel)

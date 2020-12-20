@@ -3,7 +3,6 @@ package accounts
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -28,7 +27,7 @@ var (
 
 func ChangePlan(ctx context.Context, user *models.UserModel, planID string, db *sqlx.DB) error {
 	if user.StripePlanID.String == planID {
-		return errors.New(fmt.Sprintf("user %v already on plan %v", user.UserID, user.StripePlanID))
+		return fmt.Errorf("user %v already on plan %v", user.UserID, user.StripePlanID)
 	}
 
 	if err := payments.NewStripePayments().ChangePlan(user.StripeSubscriptionID.String, planID); err != nil {
@@ -64,7 +63,7 @@ func CancelSubscription(ctx context.Context, user *models.UserModel, db *sqlx.DB
 
 func Subscribe(ctx context.Context, user *models.UserModel, planID string, db *sqlx.DB) error {
 	if user.StripePlanID.String == planID {
-		return errors.New(fmt.Sprintf("user %v already on plan %v", user.UserID, user.StripePlanID))
+		return fmt.Errorf("user %v already on plan %v", user.UserID, user.StripePlanID)
 	}
 
 	sub, err := payments.NewStripePayments().CreateSubscription(user.StripeUserID.String, planID)

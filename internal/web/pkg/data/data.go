@@ -6,11 +6,6 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-const (
-	expensesCostOfGoods = "expenses_cost_of_goods"
-	expensesOther       = "expenses_other"
-)
-
 type Data struct {
 	chart *chart.Chart
 	db    *sqlx.DB
