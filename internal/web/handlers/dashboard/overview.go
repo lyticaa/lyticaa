@@ -16,7 +16,7 @@ func (d *Dashboard) Overview(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *Dashboard) MetricsByDate(w http.ResponseWriter, r *http.Request) {
-	user := helpers.GetSessionUser(helpers.GetSession(d.sessionStore, d.logger, w, r))
+	_ = helpers.GetSessionUser(helpers.GetSession(d.sessionStore, d.logger, w, r))
 
 	params := mux.Vars(r)
 	dateRange := params["dateRange"]
@@ -28,11 +28,8 @@ func (d *Dashboard) MetricsByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var dashboard types.Dashboard
-	d.data.Dashboard(user.UserID, dateRange, &dashboard)
-
 	js, err := json.Marshal(dashboard)
 	if err != nil {
-		d.logger.Error().Err(err).Msg("failed to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

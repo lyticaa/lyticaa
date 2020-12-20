@@ -16,7 +16,7 @@ func (m *Metrics) AmazonCosts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Metrics) AmazonCostsByDate(w http.ResponseWriter, r *http.Request) {
-	user := helpers.GetSessionUser(helpers.GetSession(m.sessionStore, m.logger, w, r))
+	_ = helpers.GetSessionUser(helpers.GetSession(m.sessionStore, m.logger, w, r))
 
 	params := mux.Vars(r)
 	dateRange := params["dateRange"]
@@ -30,10 +30,8 @@ func (m *Metrics) AmazonCostsByDate(w http.ResponseWriter, r *http.Request) {
 	var byDate types.AmazonCosts
 	byDate.Draw = helpers.DtDraw(r)
 
-	m.data.MetricsAmazonCosts(user.UserID, dateRange, &byDate, helpers.BuildFilter(r))
 	js, err := json.Marshal(byDate)
 	if err != nil {
-		m.logger.Error().Err(err).Msg("unable to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

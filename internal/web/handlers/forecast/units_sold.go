@@ -16,7 +16,7 @@ func (f *Forecast) UnitsSold(w http.ResponseWriter, r *http.Request) {
 }
 
 func (f *Forecast) UnitsSoldByDate(w http.ResponseWriter, r *http.Request) {
-	user := helpers.GetSessionUser(helpers.GetSession(f.sessionStore, f.logger, w, r))
+	_ = helpers.GetSessionUser(helpers.GetSession(f.sessionStore, f.logger, w, r))
 
 	params := mux.Vars(r)
 	dateRange := params["dateRange"]
@@ -28,11 +28,8 @@ func (f *Forecast) UnitsSoldByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var byDate types.Forecast
-
-	f.data.ForecastUnitsSold(user.UserID, dateRange, &byDate)
 	js, err := json.Marshal(byDate)
 	if err != nil {
-		f.logger.Error().Err(err).Msg("failed to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

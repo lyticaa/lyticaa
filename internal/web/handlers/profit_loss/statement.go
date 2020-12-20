@@ -21,7 +21,6 @@ func (p *ProfitLoss) StatementByDate(w http.ResponseWriter, r *http.Request) {
 
 	js, err := json.Marshal(byDate)
 	if err != nil {
-		p.logger.Error().Err(err).Msg("unable to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

@@ -1,21 +1,12 @@
 package cohorts
 
 import (
-	"github.com/lyticaa/lyticaa-app/internal/web/pkg/data"
-
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"
 	"gopkg.in/boj/redistore.v1"
 )
 
-const (
-	highMargin     = "high_margin"
-	lowMargin      = "low_margin"
-	negativeMargin = "negative_margin"
-)
-
 type Cohorts struct {
-	data         *data.Data
 	db           *sqlx.DB
 	sessionStore *redistore.RediStore
 	logger       zerolog.Logger
@@ -23,7 +14,6 @@ type Cohorts struct {
 
 func NewCohorts(db *sqlx.DB, sessionStore *redistore.RediStore, log zerolog.Logger) *Cohorts {
 	return &Cohorts{
-		data:         data.NewData(db),
 		sessionStore: sessionStore,
 		logger:       log,
 		db:           db,
