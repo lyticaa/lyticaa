@@ -2,9 +2,9 @@ package account
 
 import (
 	"encoding/json"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/accounts"
 	"net/http"
 
-	"github.com/lyticaa/lyticaa-app/internal/models"
 	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 )
@@ -17,36 +17,17 @@ func (a *Account) Notifications(w http.ResponseWriter, r *http.Request) {
 func (a *Account) NotificationsByDate(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(a.sessionStore, a.logger, w, r))
 
-	js, err := json.Marshal(a.loadNotifications(user.ID, r))
+	var notifications types.Notifications
+	accounts.Notifications(r.Context(), &notifications, helpers.BuildFilter(r), user.ID, a.db)
+
+	notifications.Draw = helpers.DtDraw(r)
+
+	js, err := json.Marshal(notifications)
 	if err != nil {
-		a.logger.Error().Err(err).Msg("unable to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(js)
-}
-
-func (a *Account) loadNotifications(userID int64, r *http.Request) types.Notifications {
-	notifications := models.LoadNotificationsByUser(userID, helpers.BuildFilter(r), a.db)
-	var byDate types.Notifications
-
-	for _, notification := range *notifications {
-		t := types.NotificationTable{
-			Notification: notification.Notification,
-			Date:         notification.CreatedAt,
-		}
-
-		byDate.Data = append(byDate.Data, t)
-	}
-
-	if len(byDate.Data) == 0 {
-		byDate.Data = []types.NotificationTable{}
-	}
-
-	byDate.Draw = helpers.DtDraw(r)
-	byDate.RecordsTotal = models.TotalNotificationsByUser(userID, a.db)
-
-	return byDate
 }

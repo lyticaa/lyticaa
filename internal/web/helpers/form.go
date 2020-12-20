@@ -3,6 +3,7 @@ package helpers
 import (
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/rs/zerolog"
 	"gopkg.in/go-playground/validator.v9"
@@ -14,6 +15,20 @@ type ValidateDateRange struct {
 
 type ValidateUserID struct {
 	UserID string `validate:"required,uuid4"`
+}
+
+type ValidateExpensesCostOfGood struct {
+	ProductID   string    `validate:"required,uuid4"`
+	Description string    `validate:"required,min=3"`
+	FromDate    time.Time `validate:"required"`
+	Amount      float64   `validate:"required,gt=0"`
+}
+
+type ValidateExpensesOther struct {
+	CurrencyID  string    `validate:"required,uuid4"`
+	Description string    `validate:"required,min=3"`
+	DateTime    time.Time `validate:"required"`
+	Amount      float64   `validate:"required,gt=0"`
 }
 
 func ValidateInput(data interface{}, l *zerolog.Logger) (bool, map[string]string) {

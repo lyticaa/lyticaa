@@ -24,23 +24,23 @@ func GetSession(store *redistore.RediStore, logger zerolog.Logger, w http.Respon
 	return session
 }
 
-func GetSessionUser(session *sessions.Session) models.User {
-	user := session.Values["User"].(models.User)
+func GetSessionUser(session *sessions.Session) *models.UserModel {
+	user := session.Values["User"].(models.UserModel)
 	if user.Impersonate != nil && user.Admin {
-		return *user.Impersonate
+		return user.Impersonate
 	}
 
-	return user
+	return &user
 }
 
-func SetSessionUser(user models.User, session *sessions.Session, w http.ResponseWriter, r *http.Request) {
-	var pUser models.User
+func SetSessionUser(user *models.UserModel, session *sessions.Session, w http.ResponseWriter, r *http.Request) {
+	var pUser models.UserModel
 
-	pUser = session.Values["User"].(models.User)
+	pUser = session.Values["User"].(models.UserModel)
 	if user.UserID != pUser.UserID {
-		pUser.Impersonate = &user
+		pUser.Impersonate = user
 	} else {
-		pUser = user
+		pUser = *user
 	}
 
 	session.Values["User"] = pUser

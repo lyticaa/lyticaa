@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/lyticaa/lyticaa-app/internal/models"
 	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 )
@@ -15,8 +14,7 @@ func (p *ProfitLoss) Statement(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *ProfitLoss) StatementByDate(w http.ResponseWriter, r *http.Request) {
-	session := helpers.GetSession(p.sessionStore, p.logger, w, r)
-	_ = session.Values["User"].(models.User)
+	_ = helpers.GetSessionUser(helpers.GetSession(p.sessionStore, p.logger, w, r))
 
 	var table []types.StatementTable
 	byDate := types.Statement{Data: table}

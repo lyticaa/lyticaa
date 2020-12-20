@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-func (a *App) ForceSsl(next http.Handler) http.Handler {
+func (a *App) ForceSSL(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if helpers.Production() && r.Header.Get("x-forwarded-proto") != "https" {
 			http.Redirect(w, r, fmt.Sprintf("https://%s%s", r.Host, r.RequestURI), http.StatusTemporaryRedirect)
@@ -38,7 +38,7 @@ func (a *App) Admin(w http.ResponseWriter, r *http.Request, next http.HandlerFun
 		http.Redirect(w, r, helpers.RootRoute(), http.StatusFound)
 	}
 
-	user := session.Values["User"].(models.User)
+	user := session.Values["User"].(models.UserModel)
 	if !user.Admin {
 		http.Redirect(w, r, helpers.DashboardRoute(), http.StatusFound)
 	} else {

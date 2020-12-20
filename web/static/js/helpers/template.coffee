@@ -11,9 +11,9 @@ import feather from 'feather-icons'
 export default class TemplateHelper
   constructor: ->
 
-#
-# Render icons.
-#
+  #
+  # Render icons.
+  #
   renderIcons: ->
     feather.replace()
     $('[data-toggle="tooltip"]').tooltip()

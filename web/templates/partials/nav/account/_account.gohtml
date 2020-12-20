@@ -5,12 +5,12 @@
                 <a class="nav-link dropdown-toggle" href="#" id="profile-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     {{ if .User.Impersonate }}
                         {{ if .User.Impersonate.UserID }}
-                            <img class="profile-image-thumb" src="{{.User.Impersonate.Picture.String}}" alt="profile">
+                            <img class="profile-image-thumb" src="{{.User.Impersonate.AvatarURL.String}}" alt="profile">
                         {{ else }}
-                            <img class="profile-image-thumb" src="{{.User.Picture.String}}" alt="profile">
+                            <img class="profile-image-thumb" src="{{.User.AvatarURL.String}}" alt="profile">
                         {{ end }}
                     {{ else }}
-                        <img class="profile-image-thumb" src="{{.User.Picture.String}}" alt="profile">
+                        <img class="profile-image-thumb" src="{{.User.AvatarURL.String}}" alt="profile">
                     {{ end }}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="profile-dropdown">
@@ -18,12 +18,12 @@
                         <div class="figure mb-3">
                             {{ if .User.Impersonate }}
                                 {{ if .User.Impersonate.UserID }}
-                                    <img class="profile-image" rel="" src="{{.User.Impersonate.Picture.String}}" alt="">
+                                    <img class="profile-image" rel="" src="{{.User.Impersonate.AvatarURL.String}}" alt="">
                                 {{ else }}
-                                    <img class="profile-image" rel="" src="{{.User.Picture.String}}" alt="">
+                                    <img class="profile-image" rel="" src="{{.User.AvatarURL.String}}" alt="">
                                 {{ end }}
                             {{ else }}
-                                <img class="profile-image" rel="" src="{{.User.Picture.String}}" alt="">
+                                <img class="profile-image" rel="" src="{{.User.AvatarURL.String}}" alt="">
                             {{ end }}
                         </div>
                         <div class="info text-center">

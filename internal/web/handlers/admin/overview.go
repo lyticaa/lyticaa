@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/lyticaa/lyticaa-app/internal/models"
 	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/admin"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/users"
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 
 	"github.com/gorilla/mux"
@@ -14,7 +15,7 @@ import (
 
 func (a *Admin) Overview(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(a.sessionStore, a.logger, w, r))
 
 	if !user.Admin {
 		http.Redirect(w, r, os.Getenv("BASE_URL"), 302)
@@ -24,9 +25,11 @@ func (a *Admin) Overview(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Admin) UsersByDate(w http.ResponseWriter, r *http.Request) {
-	js, err := json.Marshal(a.paintUsers(r))
+	var adminList types.Admin
+	admin.Users(r.Context(), &adminList, helpers.BuildFilter(r), a.db)
+
+	js, err := json.Marshal(adminList)
 	if err != nil {
-		a.logger.Error().Err(err).Msg("failed to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -37,10 +40,12 @@ func (a *Admin) UsersByDate(w http.ResponseWriter, r *http.Request) {
 
 func (a *Admin) Impersonate(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(a.sessionStore, a.logger, w, r))
 
 	params := mux.Vars(r)
-	user.Impersonate = models.LoadUser(params["user"], a.db)
+
+	impersonate := users.FetchUser(r.Context(), params["user"], a.db)
+	user.Impersonate = &impersonate
 	session.Values["User"] = user
 	_ = session.Save(r, w)
 
@@ -49,36 +54,10 @@ func (a *Admin) Impersonate(w http.ResponseWriter, r *http.Request) {
 
 func (a *Admin) LogOut(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
-	user := session.Values["User"].(models.User)
+	user := helpers.GetSessionUser(helpers.GetSession(a.sessionStore, a.logger, w, r))
 
-	session.Values["User"] = models.LoadUser(user.UserID, a.db)
+	session.Values["User"] = users.FetchUser(r.Context(), user.UserID, a.db)
 	_ = session.Save(r, w)
 
 	http.Redirect(w, r, "/admin", http.StatusSeeOther)
-}
-
-func (a *Admin) paintUsers(r *http.Request) types.Admin {
-	filter := helpers.BuildFilter(r)
-	users := models.LoadUsers(filter, a.db)
-	var byDate types.Admin
-
-	for _, user := range *users {
-		t := types.AdminTable{
-			RowID:   user.UserID,
-			Email:   user.Email,
-			Created: user.CreatedAt.Format("2006-01-02"),
-		}
-
-		byDate.Data = append(byDate.Data, t)
-	}
-
-	if len(byDate.Data) == 0 {
-		byDate.Data = []types.AdminTable{}
-	}
-
-	byDate.Draw = helpers.DtDraw(r)
-	byDate.RecordsTotal = models.TotalUsers(filter, a.db)
-	byDate.RecordsFiltered = byDate.RecordsTotal
-
-	return byDate
 }

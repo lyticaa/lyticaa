@@ -6,19 +6,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lyticaa/lyticaa-app/internal/models"
 	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
+	cog "github.com/lyticaa/lyticaa-app/internal/web/pkg/expenses/cost_of_goods"
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 
 	"github.com/gorilla/mux"
 )
-
-type ValidateCostOfGood struct {
-	ProductID   string    `validate:"required,uuid4"`
-	Description string    `validate:"required,min=3"`
-	FromDate    time.Time `validate:"required"`
-	Amount      float64   `validate:"required,gt=0"`
-}
 
 func (e *Expenses) CostOfGoods(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(e.sessionStore, e.logger, w, r)
@@ -28,13 +21,12 @@ func (e *Expenses) CostOfGoods(w http.ResponseWriter, r *http.Request) {
 func (e *Expenses) CostOfGoodsByUser(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
-	var byUser types.Expenses
-	byUser.Draw = helpers.DtDraw(r)
+	var expenses types.Expenses
+	expenses.Draw = helpers.DtDraw(r)
 
-	e.data.ExpensesCostOfGoods(user.UserID, &byUser, helpers.BuildFilter(r))
-	js, err := json.Marshal(byUser)
+	cog.ExpensesCostOfGoods(r.Context(), user.UserID, &expenses, helpers.BuildFilter(r), e.db)
+	js, err := json.Marshal(expenses)
 	if err != nil {
-		e.logger.Error().Err(err).Msg("failed to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -47,7 +39,7 @@ func (e *Expenses) NewCostOfGood(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	productID := r.FormValue("product")
-	ok, product := e.isProductOwner(user.UserID, productID)
+	ok, product := cog.ProductOwner(r.Context(), user.ID, productID, e.db)
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -57,11 +49,19 @@ func (e *Expenses) NewCostOfGood(w http.ResponseWriter, r *http.Request) {
 	fromDate, _ := time.Parse("2006-01-02", r.FormValue("fromDate"))
 	amount, _ := strconv.ParseFloat(r.FormValue("amount"), 64)
 
-	ok, res := e.validateCostOfGood(productID, description, fromDate, amount)
+	ok, result := helpers.ValidateInput(
+		helpers.ValidateExpensesCostOfGood{
+			ProductID:   productID,
+			Description: description,
+			FromDate:    fromDate,
+			Amount:      amount,
+		},
+		&e.logger,
+	)
+
 	if !ok {
-		js, err := json.Marshal(res)
+		js, err := json.Marshal(result)
 		if err != nil {
-			e.logger.Error().Err(err).Msg("failed to marshal data")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -72,8 +72,7 @@ func (e *Expenses) NewCostOfGood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := models.CreateExpensesCostOfGood(product.ID, description, amount, fromDate, e.db); err != nil {
-		e.logger.Error().Err(err).Msg("failed to create the expense")
+	if err := cog.CreateExpensesCostOfGood(r.Context(), product.ID, description, amount, fromDate, e.db); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -84,9 +83,9 @@ func (e *Expenses) NewCostOfGood(w http.ResponseWriter, r *http.Request) {
 func (e *Expenses) Products(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
-	js, err := json.Marshal(e.paintProducts(user.UserID))
+	products := cog.Products(r.Context(), user.ID, nil, e.db)
+	js, err := json.Marshal(products)
 	if err != nil {
-		e.logger.Error().Err(err).Msg("failed to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -100,6 +99,7 @@ func (e *Expenses) EditCostOfGood(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	expenseID := params["expense"]
+	productID := params["product"]
 
 	ok, _ := helpers.ValidateInput(ValidateExpense{ExpenseID: expenseID}, &e.logger)
 	if !ok {
@@ -107,9 +107,14 @@ func (e *Expenses) EditCostOfGood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	expense := models.LoadExpensesCostOfGood(expenseID, e.db)
-	ok, _ = e.isProductOwner(user.UserID, expense.ProductID)
+	expense := cog.FetchExpensesCostOfGood(r.Context(), expenseID, e.db)
+	ok, product := cog.ProductOwner(r.Context(), user.ID, productID, e.db)
 	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if product.ID != expense.ProductID {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -118,9 +123,18 @@ func (e *Expenses) EditCostOfGood(w http.ResponseWriter, r *http.Request) {
 	fromDate, _ := time.Parse("2006-01-02", r.FormValue("fromDate"))
 	amount, _ := strconv.ParseFloat(r.FormValue("amount"), 64)
 
-	ok, res := e.validateCostOfGood(expense.ProductID, description, fromDate, amount)
+	ok, result := helpers.ValidateInput(
+		helpers.ValidateExpensesCostOfGood{
+			ProductID:   product.ProductID,
+			Description: description,
+			FromDate:    fromDate,
+			Amount:      amount,
+		},
+		&e.logger,
+	)
+
 	if !ok {
-		js, err := json.Marshal(res)
+		js, err := json.Marshal(result)
 		if err != nil {
 			e.logger.Error().Err(err).Msg("failed to marshal data")
 			w.WriteHeader(http.StatusInternalServerError)
@@ -133,12 +147,7 @@ func (e *Expenses) EditCostOfGood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	expense.Description = description
-	expense.FromDate = fromDate
-	expense.Amount = amount
-
-	if err := expense.Save(e.db); err != nil {
-		e.logger.Error().Err(err).Msg("failed to update the expense")
+	if err := cog.UpdateExpensesCostOfGood(r.Context(), &expense, description, amount, fromDate, e.db); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -151,6 +160,7 @@ func (e *Expenses) DeleteCostOfGood(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	expenseID := params["expense"]
+	productID := params["product"]
 
 	ok, _ := helpers.ValidateInput(ValidateExpense{ExpenseID: expenseID}, &e.logger)
 	if !ok {
@@ -158,60 +168,23 @@ func (e *Expenses) DeleteCostOfGood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	expense := models.LoadExpensesCostOfGood(expenseID, e.db)
-	ok, _ = e.isProductOwner(user.UserID, expense.ProductID)
+	expense := cog.FetchExpensesCostOfGood(r.Context(), expenseID, e.db)
+	ok, product := cog.ProductOwner(r.Context(), user.ID, productID, e.db)
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	if err := expense.Delete(e.db); err != nil {
+	if product.ID != expense.ProductID {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if err := cog.DeleteExpensesCostOfGood(r.Context(), &expense, e.db); err != nil {
 		e.logger.Error().Err(err).Msgf("failed to delete the expense %v", expenseID)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-}
-
-func (e *Expenses) paintProducts(userID string) *[]types.Product {
-	var productList []types.Product
-
-	products := models.LoadProducts(userID, e.db)
-	for _, product := range *products {
-		productList = append(productList, types.Product{
-			ProductID:   product.ProductID,
-			SKU:         product.SKU,
-			Marketplace: product.Marketplace,
-			Description: product.Description,
-		})
-	}
-
-	if len(productList) == 0 {
-		productList = []types.Product{}
-	}
-
-	return &productList
-}
-
-func (e *Expenses) isProductOwner(userID, productID string) (bool, *models.Product) {
-	isProductOwner := false
-
-	product := models.LoadProduct(userID, productID, e.db)
-	if product.UserID == userID {
-		isProductOwner = true
-	}
-
-	return isProductOwner, product
-}
-
-func (e *Expenses) validateCostOfGood(productID, description string, fromDate time.Time, amount float64) (bool, map[string]string) {
-	return helpers.ValidateInput(
-		ValidateCostOfGood{
-			ProductID:   productID,
-			Description: description,
-			FromDate:    fromDate,
-			Amount:      amount,
-		},
-		&e.logger)
 }

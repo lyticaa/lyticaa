@@ -1,15 +1,16 @@
 package models
 
 import (
+	"context"
 	"time"
 
 	"github.com/jmoiron/sqlx"
 )
 
-type Product struct {
+type ProductModel struct {
 	ID          int64     `db:"id"`
 	ProductID   string    `db:"product_id"`
-	UserID      string    `db:"user_id"`
+	UserID      int64     `db:"user_id"`
 	SKU         string    `db:"sku"`
 	Marketplace string    `db:"marketplace"`
 	Description string    `db:"description"`
@@ -17,17 +18,8 @@ type Product struct {
 	UpdatedAt   time.Time `db:"updated_at"`
 }
 
-func LoadProducts(userID string, db *sqlx.DB) *[]Product {
-	var products []Product
-
-	query := `SELECT product_id, sku, marketplace, description, created_at, updated_at FROM products WHERE user_id = $1`
-	_ = db.Select(&products, query, userID)
-
-	return &products
-}
-
-func LoadProduct(userID, productID string, db *sqlx.DB) *Product {
-	var product Product
+func (pm *ProductModel) FetchOne(ctx context.Context, db *sqlx.DB) interface{} {
+	var product ProductModel
 
 	query := `SELECT id,
        product_id,
@@ -38,22 +30,13 @@ func LoadProduct(userID, productID string, db *sqlx.DB) *Product {
        created_at,
        updated_at FROM products WHERE user_id = $1 
                                   AND product_id = $2`
-	_ = db.QueryRow(query, userID, productID).Scan(
-		&product.ID,
-		&product.ProductID,
-		&product.UserID,
-		&product.SKU,
-		&product.Marketplace,
-		&product.Description,
-		&product.CreatedAt,
-		&product.UpdatedAt,
-	)
+	_ = db.QueryRowxContext(ctx, query, pm.UserID, pm.ProductID).StructScan(&product)
 
-	return &product
+	return product
 }
 
-func LoadProductByID(userID string, productID int64, db *sqlx.DB) *Product {
-	var product Product
+func (pm *ProductModel) FetchBy(ctx context.Context, db *sqlx.DB) interface{} {
+	var product ProductModel
 
 	query := `SELECT id,
        product_id,
@@ -64,35 +47,40 @@ func LoadProductByID(userID string, productID int64, db *sqlx.DB) *Product {
        created_at,
        updated_at FROM products WHERE user_id = $1 
                                   AND id = $2`
-	_ = db.QueryRow(query, userID, productID).Scan(
-		&product.ID,
-		&product.ProductID,
-		&product.UserID,
-		&product.SKU,
-		&product.Marketplace,
-		&product.Description,
-		&product.CreatedAt,
-		&product.UpdatedAt,
-	)
+	_ = db.QueryRowxContext(ctx, query, pm.UserID, pm.ProductID).StructScan(&product)
 
-	return &product
+	return product
 }
 
-func (p *Product) Save(db *sqlx.DB) error {
+func (pm *ProductModel) FetchAll(ctx context.Context, data map[string]interface{}, filter *Filter, db *sqlx.DB) interface{} {
+	var products []ProductModel
+
+	query := `SELECT product_id, sku, marketplace, description, created_at, updated_at FROM products WHERE user_id = $1`
+	_ = db.SelectContext(ctx, &products, query, pm.UserID)
+
+	return &products
+}
+
+func (pm *ProductModel) Count(ctx context.Context, data map[string]interface{}, db *sqlx.DB) int64 {
+	return int64(0)
+}
+func (pm *ProductModel) Create(ctx context.Context, db *sqlx.DB) error { return nil }
+
+func (pm *ProductModel) Update(ctx context.Context, db *sqlx.DB) error {
 	query := `UPDATE products SET
                     sku = :sku,
                     marketplace = :marketplace,
                     description = :description,
                     updated_at = :updated_at WHERE user_id = :user_id
                                                AND product_id = :product_id`
-	_, err := db.NamedExec(query,
+	_, err := db.NamedExecContext(ctx, query,
 		map[string]interface{}{
-			"sku":         p.SKU,
-			"marketplace": p.Marketplace,
-			"description": p.Description,
+			"sku":         pm.SKU,
+			"marketplace": pm.Marketplace,
+			"description": pm.Description,
 			"updated_at":  time.Now(),
-			"user_id":     p.UserID,
-			"product_id":  p.ProductID,
+			"user_id":     pm.UserID,
+			"product_id":  pm.ProductID,
 		})
 	if err != nil {
 		return err
@@ -100,3 +88,5 @@ func (p *Product) Save(db *sqlx.DB) error {
 
 	return nil
 }
+
+func (pm *ProductModel) Delete(ctx context.Context, db *sqlx.DB) error { return nil }

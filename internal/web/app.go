@@ -48,7 +48,7 @@ func NewApp() *App {
 	gob.Register(map[string]interface{}{})
 	gob.Register(types.Flash{})
 	gob.Register(types.Config{})
-	gob.Register(models.User{})
+	gob.Register(models.UserModel{})
 
 	sentryOpts := sentry.ClientOptions{
 		Dsn: os.Getenv("SENTRY_DSN"),

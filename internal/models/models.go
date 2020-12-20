@@ -1,7 +1,11 @@
 package models
 
 import (
+	"context"
+	"fmt"
 	"time"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type Filter struct {
@@ -28,8 +32,22 @@ const (
 	NetMargin          = "net_margin"
 )
 
+type Model interface {
+	FetchOne(context.Context, *sqlx.DB) interface{}
+	FetchBy(context.Context, *sqlx.DB) interface{}
+	FetchAll(context.Context, map[string]interface{}, *Filter, *sqlx.DB) interface{}
+	Count(context.Context, map[string]interface{}, *sqlx.DB) int64
+	Create(context.Context, *sqlx.DB) error
+	Update(context.Context, *sqlx.DB) error
+	Delete(context.Context, *sqlx.DB) error
+}
+
 func NewFilter() *Filter {
 	return &Filter{}
+}
+
+func OrderBy(mapping map[int64]string, filter *Filter) string {
+	return fmt.Sprintf("%v %v", sortColumn(mapping, filter.Sort), filter.Dir)
 }
 
 func sortColumn(columnMap map[int64]string, columnIDx int64) string {

@@ -11,7 +11,7 @@ import (
 
 func (a *App) Start() {
 	a.Monitoring.Logger.Info().Msgf("starting on %v....", ":"+os.Getenv("PORT"))
-	a.HTTP.Router.Use(a.ForceSsl)
+	a.HTTP.Router.Use(a.ForceSSL)
 
 	a.initializeHandlers()
 

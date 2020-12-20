@@ -7,7 +7,7 @@ CREATE TABLE users
     stripe_subscription_id  VARCHAR NULL,
     stripe_plan_id          VARCHAR NULL,
     nickname                VARCHAR NULL,
-    picture                 VARCHAR NULL,
+    avatar_url              VARCHAR NULL,
     setup_completed         BOOLEAN NOT NULL,
     mailing_list            BOOLEAN NOT NULL,
     admin                   BOOLEAN NOT NULL DEFAULT false,

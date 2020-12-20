@@ -1,27 +1,14 @@
 package account
 
 import (
-	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/accounts"
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 
 	"github.com/gorilla/mux"
-	"golang.org/x/text/currency"
-)
-
-var (
-	invoiceStatusMap = map[string]string{
-		"draft":         "badge-info",
-		"open":          "badge-warning",
-		"paid":          "badge-success",
-		"void":          "badge-info",
-		"uncollectible": "badge-danger",
-	}
 )
 
 type Cancellation struct {
@@ -37,7 +24,16 @@ func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 func (a *Account) InvoicesByUser(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(a.sessionStore, a.logger, w, r))
 
-	js, err := json.Marshal(a.paintInvoices(user.StripeUserID.String, r))
+	var invoices types.Invoices
+	accounts.Invoices(&invoices, user.StripeUserID.String)
+
+	invoices.Draw = helpers.DtDraw(r)
+
+	amount := int64(len(invoices.Data))
+	invoices.RecordsTotal = amount
+	invoices.RecordsFiltered = amount
+
+	js, err := json.Marshal(invoices)
 	if err != nil {
 		a.logger.Error().Err(err).Msg("unable to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -52,30 +48,12 @@ func (a *Account) ChangePlan(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := helpers.GetSessionUser(session)
 
-	planID := mux.Vars(r)["planID"]
-	if user.StripePlanID.String == planID {
-		a.logger.Error().Msgf("user %v already on plan %v", user.UserID, user.StripePlanID)
+	if err := accounts.ChangePlan(r.Context(), user, mux.Vars(r)["planID"], a.db); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
-	if err := a.stripe.ChangePlan(user.StripeSubscriptionID.String, planID); err != nil {
-		a.logger.Error().Err(err).Msg("unable to change the plan")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	var plan sql.NullString
-	if err := plan.Scan(planID); err != nil {
-		a.logger.Error().Err(err).Msg("unable to assign stripe plan id")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	user.StripePlanID = plan
-	_ = user.Save(a.db)
 
 	helpers.SetSessionUser(user, session, w, r)
-
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -92,19 +70,12 @@ func (a *Account) CancelSubscription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := a.stripe.CancelSubscription(user.StripeSubscriptionID.String)
-	if err != nil {
-		a.logger.Error().Err(err).Msg("unable to cancel subscription")
+	if err := accounts.CancelSubscription(r.Context(), user, a.db); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	user.StripeSubscriptionID = sql.NullString{}
-	user.StripePlanID = sql.NullString{}
-	_ = user.Save(a.db)
-
 	helpers.SetSessionUser(user, session, w, r)
-
 	_ = helpers.SetFlash("success", types.FlashMessages["account"]["subscription"]["cancel"], session, r, w)
 	w.WriteHeader(http.StatusOK)
 }
@@ -113,75 +84,11 @@ func (a *Account) Subscribe(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := helpers.GetSessionUser(session)
 
-	planID := mux.Vars(r)["planID"]
-	if user.StripePlanID.String == planID {
-		a.logger.Error().Msgf("user %v already on plan %v", user.UserID, user.StripePlanID)
+	if err := accounts.Subscribe(r.Context(), user, mux.Vars(r)["planID"], a.db); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
-	s, err := a.stripe.CreateSubscription(user.StripeUserID.String, planID)
-	if err != nil {
-		a.logger.Error().Err(err).Msg("unable to subscribe")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	var subscription sql.NullString
-	if err := subscription.Scan(s.ID); err != nil {
-		a.logger.Error().Err(err).Msg("unable to assign stripe plan id")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	var plan sql.NullString
-	if err := plan.Scan(planID); err != nil {
-		a.logger.Error().Err(err).Msg("unable to assign stripe plan id")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	user.StripeSubscriptionID = subscription
-	user.StripePlanID = plan
-	_ = user.Save(a.db)
 
 	helpers.SetSessionUser(user, session, w, r)
-
 	w.WriteHeader(http.StatusOK)
-}
-
-func (a *Account) paintInvoices(stripeUserID string, r *http.Request) types.Invoices {
-	var byUser types.Invoices
-
-	invoices := a.stripe.InvoicesByUser(stripeUserID)
-	for _, invoice := range *invoices {
-		unit, _ := currency.ParseISO(string(invoice.Currency))
-
-		t := types.InvoiceTable{
-			Number:      invoice.Number,
-			Date:        invoice.Date.Format("2006-01-02"),
-			Amount:      fmt.Sprintf("%v %v", currency.Symbol(unit), invoice.Amount),
-			Status:      strings.ToUpper(string(invoice.Status)),
-			StatusClass: a.invoiceClass(string(invoice.Status)),
-			PDF:         invoice.PDF,
-		}
-
-		byUser.Data = append(byUser.Data, t)
-	}
-
-	if len(byUser.Data) == 0 {
-		byUser.Data = []types.InvoiceTable{}
-	}
-
-	byUser.Draw = helpers.DtDraw(r)
-
-	amount := int64(len(byUser.Data))
-	byUser.RecordsTotal = amount
-	byUser.RecordsFiltered = amount
-
-	return byUser
-}
-
-func (a *Account) invoiceClass(status string) string {
-	return invoiceStatusMap[status]
 }
