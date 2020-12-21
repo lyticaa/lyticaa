@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/lyticaa/lyticaa-app/internal/web/pkg/accounts"
-	"github.com/lyticaa/lyticaa-app/internal/web/pkg/payments"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/accounts/payments"
 
 	"github.com/stripe/stripe-go/v72"
 )

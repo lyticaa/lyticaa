@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
-	"github.com/lyticaa/lyticaa-app/internal/web/pkg/iam"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/auth/iam"
 	"github.com/lyticaa/lyticaa-app/internal/web/pkg/users"
 
 	"github.com/coreos/go-oidc"

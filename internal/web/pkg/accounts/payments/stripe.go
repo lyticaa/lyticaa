@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/lyticaa/lyticaa-app/internal/web/pkg/payments/types"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/accounts/payments/types"
 
 	"github.com/stripe/stripe-go/v72"
 	"github.com/stripe/stripe-go/v72/checkout/session"

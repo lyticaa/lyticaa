@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/lyticaa/lyticaa-app/internal/models"
-	"github.com/lyticaa/lyticaa-app/internal/web/pkg/payments"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/accounts/payments"
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 
 	"github.com/jmoiron/sqlx"

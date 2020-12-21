@@ -16,7 +16,7 @@ import (
 	"github.com/lyticaa/lyticaa-app/internal/web/handlers/profit_loss"
 	"github.com/lyticaa/lyticaa-app/internal/web/handlers/reports"
 	"github.com/lyticaa/lyticaa-app/internal/web/handlers/webhooks"
-	"github.com/lyticaa/lyticaa-app/internal/web/pkg/payments"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/accounts/payments"
 
 	"github.com/urfave/negroni"
 )
