@@ -118,7 +118,8 @@ func (ec *ExpensesCostOfGoodModel) Update(ctx context.Context, db *sqlx.DB) erro
                                   description = :description,
                                   amount = :amount,
                                   from_date = :from_date,
-                                  updated_at = :updated_at WHERE expense_id = :expense_id`
+                                  updated_at = :updated_at WHERE expense_id = :expense_id
+                                                             AND product_id = :product_id`
 	_, err := db.NamedExecContext(ctx, query,
 		map[string]interface{}{
 			"description": ec.Description,
@@ -126,6 +127,7 @@ func (ec *ExpensesCostOfGoodModel) Update(ctx context.Context, db *sqlx.DB) erro
 			"from_date":   ec.FromDate,
 			"updated_at":  time.Now(),
 			"expense_id":  ec.ExpenseID,
+			"product_id":  ec.ProductID,
 		})
 	if err != nil {
 		return err

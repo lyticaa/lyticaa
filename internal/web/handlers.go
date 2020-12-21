@@ -217,7 +217,7 @@ func (a *App) forecastHandlers() {
 }
 
 func (a *App) homeHandlers() {
-	h := home.NewHome(a.Data.SessionStore, a.Monitoring.Logger)
+	h := home.NewHome(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
 
 	a.HTTP.Router.Handle("/", negroni.New(
 		negroni.Wrap(http.HandlerFunc(h.Login)),

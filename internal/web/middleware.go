@@ -6,6 +6,7 @@ import (
 
 	"github.com/lyticaa/lyticaa-app/internal/models"
 	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/accounts"
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 
 	"github.com/gorilla/sessions"
@@ -50,7 +51,9 @@ func (a *App) SetupComplete(w http.ResponseWriter, r *http.Request, next http.Ha
 	session := a.getSession(w, r)
 
 	user := helpers.GetSessionUser(session)
-	if !user.SetupCompleted {
+	accountPreferences := accounts.FetchAccountPreferences(r.Context(), user.ID, a.Data.Db)
+
+	if !accountPreferences.SetupCompleted {
 		http.Redirect(w, r, helpers.WelcomeRoute(), http.StatusSeeOther)
 		return
 	} else {

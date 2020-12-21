@@ -47,17 +47,6 @@ func SetSessionUser(user *models.UserModel, session *sessions.Session, w http.Re
 	_ = session.Save(r, w)
 }
 
-func Subscribed(session *sessions.Session) bool {
-	subscribed := false
-
-	user := GetSessionUser(session)
-	if user.StripeSubscriptionID.Valid {
-		subscribed = true
-	}
-
-	return subscribed
-}
-
 func resetFlash(session *sessions.Session) {
 	session.Values["Flash"] = nil
 }

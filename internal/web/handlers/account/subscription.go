@@ -25,7 +25,7 @@ func (a *Account) InvoicesByUser(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(a.sessionStore, a.logger, w, r))
 
 	var invoices types.Invoices
-	accounts.Invoices(&invoices, user.StripeUserID.String)
+	accounts.Invoices(r.Context(), &invoices, user.ID, a.db)
 
 	invoices.Draw = helpers.DtDraw(r)
 
@@ -48,7 +48,7 @@ func (a *Account) ChangePlan(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := helpers.GetSessionUser(session)
 
-	if err := accounts.ChangePlan(r.Context(), user, mux.Vars(r)["planID"], a.db); err != nil {
+	if err := accounts.ChangePlan(r.Context(), user.ID, mux.Vars(r)["planID"], a.db); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -70,7 +70,7 @@ func (a *Account) CancelSubscription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := accounts.CancelSubscription(r.Context(), user, a.db); err != nil {
+	if err := accounts.CancelSubscription(r.Context(), user.ID, a.db); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -84,7 +84,7 @@ func (a *Account) Subscribe(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := helpers.GetSessionUser(session)
 
-	if err := accounts.Subscribe(r.Context(), user, mux.Vars(r)["planID"], a.db); err != nil {
+	if err := accounts.Subscribe(r.Context(), user.ID, mux.Vars(r)["planID"], a.db); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

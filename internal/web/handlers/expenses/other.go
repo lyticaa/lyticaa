@@ -24,7 +24,7 @@ func (e *Expenses) OtherByUser(w http.ResponseWriter, r *http.Request) {
 	var expenses types.Expenses
 	expenses.Draw = helpers.DtDraw(r)
 
-	other.ExpensesOthers(r.Context(), user.UserID, &expenses, helpers.BuildFilter(r), e.db)
+	other.ExpensesOthers(r.Context(), &expenses, helpers.BuildFilter(r), user.UserID, e.db)
 	js, err := json.Marshal(expenses)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

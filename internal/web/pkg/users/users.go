@@ -20,7 +20,7 @@ func FetchUser(ctx context.Context, userID string, db *sqlx.DB) models.UserModel
 }
 
 func CreateUser(ctx context.Context, userID, email, nickname, avatarURL string, db *sqlx.DB) error {
-	userModel := &models.UserModel{
+	user := models.UserModel{
 		UserID: userID,
 		Email:  email,
 	}
@@ -29,15 +29,15 @@ func CreateUser(ctx context.Context, userID, email, nickname, avatarURL string, 
 	if err := userNickname.Scan(nickname); err != nil {
 		return err
 	}
-	userModel.Nickname = userNickname
+	user.Nickname = userNickname
 
 	var userAvatarURL sql.NullString
 	if err := userAvatarURL.Scan(avatarURL); err != nil {
 		return err
 	}
-	userModel.AvatarURL = userAvatarURL
+	user.AvatarURL = userAvatarURL
 
-	if err := (*userModel).Create(ctx, db); err != nil {
+	if err := user.Create(ctx, db); err != nil {
 		return err
 	}
 

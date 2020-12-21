@@ -16,20 +16,15 @@ var (
 )
 
 type UserModel struct {
-	ID                   int64          `db:"id"`
-	UserID               string         `db:"user_id"`
-	Email                string         `db:"email"`
-	StripeUserID         sql.NullString `db:"stripe_user_id"`
-	StripeSubscriptionID sql.NullString `db:"stripe_subscription_id"`
-	StripePlanID         sql.NullString `db:"stripe_plan_id"`
-	Nickname             sql.NullString `db:"nickname"`
-	AvatarURL            sql.NullString `db:"avatar_url"`
-	SetupCompleted       bool           `db:"setup_completed"`
-	MailingList          sql.NullBool   `db:"mailing_list"`
-	Admin                bool           `db:"admin"`
-	Impersonate          *UserModel
-	CreatedAt            time.Time `db:"created_at"`
-	UpdatedAt            time.Time `db:"updated_at"`
+	ID          int64          `db:"id"`
+	UserID      string         `db:"user_id"`
+	Email       string         `db:"email"`
+	Nickname    sql.NullString `db:"nickname"`
+	AvatarURL   sql.NullString `db:"avatar_url"`
+	Admin       bool           `db:"admin"`
+	Impersonate *UserModel
+	CreatedAt   time.Time `db:"created_at"`
+	UpdatedAt   time.Time `db:"updated_at"`
 }
 
 func (um *UserModel) FetchOne(ctx context.Context, db *sqlx.DB) interface{} {
@@ -83,8 +78,6 @@ func (um *UserModel) Create(ctx context.Context, db *sqlx.DB) error {
                   email,
                   nickname,
                   avatar_url,
-                  setup_completed,
-                  mailing_list,
                   admin,
                   created_at,
                   updated_at)
@@ -93,22 +86,18 @@ func (um *UserModel) Create(ctx context.Context, db *sqlx.DB) error {
                           :email,
                           :nickname,
                           :avatar_url,
-                          :setup_completed,
-                          :mailing_list,
                           :admin,
                           :created_at,
                           :updated_at)`
 	_, err := db.NamedExecContext(ctx, query,
 		map[string]interface{}{
-			"user_id":         um.UserID,
-			"email":           um.Email,
-			"nickname":        um.Nickname,
-			"avatar_url":      um.AvatarURL,
-			"setup_completed": false,
-			"mailing_list":    false,
-			"admin":           false,
-			"created_at":      time.Now(),
-			"updated_at":      time.Now(),
+			"user_id":    um.UserID,
+			"email":      um.Email,
+			"nickname":   um.Nickname,
+			"avatar_url": um.AvatarURL,
+			"admin":      false,
+			"created_at": time.Now(),
+			"updated_at": time.Now(),
 		})
 	if err != nil {
 		return err
@@ -120,27 +109,17 @@ func (um *UserModel) Create(ctx context.Context, db *sqlx.DB) error {
 func (um *UserModel) Update(ctx context.Context, db *sqlx.DB) error {
 	query := `UPDATE users SET user_id = :user_id,
                  email = :email,
-                 stripe_user_id = :stripe_user_id,
-                 stripe_subscription_id = :stripe_subscription_id,
-                 stripe_plan_id = :stripe_plan_id,
                  nickname = :nickname,
                  avatar_url = :avatar_url,
-                 setup_completed = :setup_completed,
-                 mailing_list = :mailing_list,
                  updated_at = :updated_at WHERE id = :id`
 	_, err := db.NamedExecContext(ctx, query,
 		map[string]interface{}{
-			"user_id":                um.UserID,
-			"email":                  um.Email,
-			"stripe_user_id":         um.StripeUserID,
-			"stripe_subscription_id": um.StripeSubscriptionID,
-			"stripe_plan_id":         um.StripePlanID,
-			"nickname":               um.Nickname,
-			"avatar_url":             um.AvatarURL,
-			"setup_completed":        um.SetupCompleted,
-			"mailing_list":           um.MailingList,
-			"updated_at":             time.Now(),
-			"id":                     um.ID,
+			"user_id":    um.UserID,
+			"email":      um.Email,
+			"nickname":   um.Nickname,
+			"avatar_url": um.AvatarURL,
+			"updated_at": time.Now(),
+			"id":         um.ID,
 		})
 	if err != nil {
 		return err

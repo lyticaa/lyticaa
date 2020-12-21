@@ -71,8 +71,8 @@ func (pm *ProductModel) Update(ctx context.Context, db *sqlx.DB) error {
                     sku = :sku,
                     marketplace = :marketplace,
                     description = :description,
-                    updated_at = :updated_at WHERE user_id = :user_id
-                                               AND product_id = :product_id`
+                    updated_at = :updated_at WHERE product_id = :product_id
+                                               AND user_id = :user_id`
 	_, err := db.NamedExecContext(ctx, query,
 		map[string]interface{}{
 			"sku":         pm.SKU,

@@ -24,7 +24,7 @@ func (e *Expenses) CostOfGoodsByUser(w http.ResponseWriter, r *http.Request) {
 	var expenses types.Expenses
 	expenses.Draw = helpers.DtDraw(r)
 
-	cog.ExpensesCostOfGoods(r.Context(), user.UserID, &expenses, helpers.BuildFilter(r), e.db)
+	cog.ExpensesCostOfGoods(r.Context(), &expenses, helpers.BuildFilter(r), user.UserID, e.db)
 	js, err := json.Marshal(expenses)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

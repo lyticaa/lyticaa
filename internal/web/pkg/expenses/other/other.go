@@ -20,7 +20,7 @@ func FetchExpensesOther(ctx context.Context, expenseID string, db *sqlx.DB) mode
 	return expenseOther
 }
 
-func ExpensesOthers(ctx context.Context, userID string, expenses *types.Expenses, filter *models.Filter, db *sqlx.DB) {
+func ExpensesOthers(ctx context.Context, expenses *types.Expenses, filter *models.Filter, userID string, db *sqlx.DB) {
 	var otherModel models.ExpensesOtherModel
 
 	data := make(map[string]interface{})

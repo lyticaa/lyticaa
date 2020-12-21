@@ -20,7 +20,7 @@ func FetchExpensesCostOfGood(ctx context.Context, expenseID string, db *sqlx.DB)
 	return expenseCostOfGood
 }
 
-func ExpensesCostOfGoods(ctx context.Context, userID string, expenses *types.Expenses, filter *models.Filter, db *sqlx.DB) {
+func ExpensesCostOfGoods(ctx context.Context, expenses *types.Expenses, filter *models.Filter, userID string, db *sqlx.DB) {
 	var costOfGoodModel models.ExpensesCostOfGoodModel
 
 	data := make(map[string]interface{})
