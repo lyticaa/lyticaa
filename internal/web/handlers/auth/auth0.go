@@ -148,15 +148,15 @@ func (a *Auth) Callback(w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(profile["sub"].(string), "|")
 	userID := parts[1]
 
-	user := users.FetchUser(r.Context(), userID, a.db)
+	user := users.User(r.Context(), userID, a.db)
 	if user.ID == 0 {
-		if err := users.CreateUser(r.Context(), userID, profile["name"].(string), profile["nickname"].(string), profile["picture"].(string), a.db); err != nil {
+		if err := users.Create(r.Context(), userID, profile["name"].(string), profile["nickname"].(string), profile["picture"].(string), a.db); err != nil {
 			a.logger.Err(err).Msg(helpers.ErrorTag)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		user = users.FetchUser(r.Context(), userID, a.db)
+		user = users.User(r.Context(), userID, a.db)
 	}
 
 	session.Values["User"] = user

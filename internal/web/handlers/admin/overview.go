@@ -44,7 +44,7 @@ func (a *Admin) Impersonate(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 
-	impersonate := users.FetchUser(r.Context(), params["user"], a.db)
+	impersonate := users.User(r.Context(), params["user"], a.db)
 	user.Impersonate = &impersonate
 	session.Values["User"] = user
 	_ = session.Save(r, w)
@@ -56,7 +56,7 @@ func (a *Admin) LogOut(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := helpers.GetSessionUser(helpers.GetSession(a.sessionStore, a.logger, w, r))
 
-	session.Values["User"] = users.FetchUser(r.Context(), user.UserID, a.db)
+	session.Values["User"] = users.User(r.Context(), user.UserID, a.db)
 	_ = session.Save(r, w)
 
 	http.Redirect(w, r, "/admin", http.StatusSeeOther)

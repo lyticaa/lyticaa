@@ -91,7 +91,7 @@ func (e *Expenses) EditOther(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	expense := other.FetchExpensesOther(r.Context(), expenseID, e.db)
+	expense := other.ExpensesOther(r.Context(), expenseID, e.db)
 	if expense.UserID != user.ID {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -150,7 +150,7 @@ func (e *Expenses) DeleteOther(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	expense := other.FetchExpensesOther(r.Context(), expenseID, e.db)
+	expense := other.ExpensesOther(r.Context(), expenseID, e.db)
 	if expense.UserID != user.ID {
 		w.WriteHeader(http.StatusBadRequest)
 		return

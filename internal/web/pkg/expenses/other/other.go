@@ -10,7 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func FetchExpensesOther(ctx context.Context, expenseID string, db *sqlx.DB) models.ExpensesOtherModel {
+func ExpensesOther(ctx context.Context, expenseID string, db *sqlx.DB) models.ExpensesOtherModel {
 	expensesOtherModel := &models.ExpensesOtherModel{
 		ExpenseID: expenseID,
 	}

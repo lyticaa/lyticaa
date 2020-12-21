@@ -10,7 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func FetchExpensesCostOfGood(ctx context.Context, expenseID string, db *sqlx.DB) models.ExpensesCostOfGoodModel {
+func ExpensesCostOfGood(ctx context.Context, expenseID string, db *sqlx.DB) models.ExpensesCostOfGoodModel {
 	expensesCostOfGoodModel := &models.ExpensesCostOfGoodModel{
 		ExpenseID: expenseID,
 	}

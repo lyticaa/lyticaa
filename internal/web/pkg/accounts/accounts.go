@@ -182,7 +182,7 @@ func Notifications(ctx context.Context, accountNotifications *types.Notification
 	accountNotifications.RecordsTotal = accountNotificationModel.Count(ctx, nil, db)
 }
 
-func FetchAccountPreferences(ctx context.Context, userID int64, db *sqlx.DB) models.AccountPreferenceModel {
+func AccountPreferences(ctx context.Context, userID int64, db *sqlx.DB) models.AccountPreferenceModel {
 	accountPreferenceModel := models.AccountPreferenceModel{
 		UserID: userID,
 	}

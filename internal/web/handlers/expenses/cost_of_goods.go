@@ -107,7 +107,7 @@ func (e *Expenses) EditCostOfGood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	expense := cog.FetchExpensesCostOfGood(r.Context(), expenseID, e.db)
+	expense := cog.ExpensesCostOfGood(r.Context(), expenseID, e.db)
 	ok, product := cog.ProductOwner(r.Context(), user.ID, productID, e.db)
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)
@@ -168,7 +168,7 @@ func (e *Expenses) DeleteCostOfGood(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	expense := cog.FetchExpensesCostOfGood(r.Context(), expenseID, e.db)
+	expense := cog.ExpensesCostOfGood(r.Context(), expenseID, e.db)
 	ok, product := cog.ProductOwner(r.Context(), user.ID, productID, e.db)
 	if !ok {
 		w.WriteHeader(http.StatusBadRequest)

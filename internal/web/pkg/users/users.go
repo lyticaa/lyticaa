@@ -9,7 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func FetchUser(ctx context.Context, userID string, db *sqlx.DB) models.UserModel {
+func User(ctx context.Context, userID string, db *sqlx.DB) models.UserModel {
 	userModel := models.UserModel{
 		UserID: userID,
 	}
@@ -19,7 +19,7 @@ func FetchUser(ctx context.Context, userID string, db *sqlx.DB) models.UserModel
 	return user
 }
 
-func CreateUser(ctx context.Context, userID, email, nickname, avatarURL string, db *sqlx.DB) error {
+func Create(ctx context.Context, userID, email, nickname, avatarURL string, db *sqlx.DB) error {
 	user := models.UserModel{
 		UserID: userID,
 		Email:  email,
