@@ -10,12 +10,13 @@ import (
 )
 
 func FetchUser(ctx context.Context, userID string, db *sqlx.DB) models.UserModel {
-	var userModel *models.UserModel
+	userModel := models.UserModel{
+		UserID: userID,
+	}
 
-	userModel.UserID = userID
-	user := (*userModel).FetchOne(ctx, db)
+	user := userModel.FetchOne(ctx, db).(models.UserModel)
 
-	return user.(models.UserModel)
+	return user
 }
 
 func CreateUser(ctx context.Context, userID, email, nickname, avatarURL string, db *sqlx.DB) error {
