@@ -46,7 +46,7 @@ type StripeGateway interface {
 	InvoicesByUser(string) *types.Invoices
 	FormatAmount(int64) float64
 	CreateSubscription(string, string) (*stripe.Subscription, error)
-	ChangePlan(string, string) error
+	UpdatePlan(string, string) error
 	CancelSubscription(string) error
 	EventSession(stripe.Event) (stripe.CheckoutSession, error)
 	EventSubscription(stripe.Event) (stripe.Subscription, error)
@@ -191,7 +191,7 @@ func (p *StripePayments) CreateSubscription(customerID, planID string) (*stripe.
 	return subscription, nil
 }
 
-func (p *StripePayments) ChangePlan(subscriptionID, planID string) error {
+func (p *StripePayments) UpdatePlan(subscriptionID, planID string) error {
 	priceID, ok := p.priceIDByPlan(planID)
 	if !ok {
 		return errors.New("failed to find the price for the plan")

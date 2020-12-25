@@ -2,6 +2,8 @@ import AlertsHelper     from '../helpers/alerts'
 import ModalsHelper     from '../helpers/modals'
 import TurbolinksHelper from '../helpers/turbolinks'
 
+import HomeOnboard      from '../home/onboard'
+
 #
 # Reports.
 #
@@ -50,11 +52,29 @@ export default class Reports
               $('.alert.import-success').fadeIn(400, ->
                 r.stop()
                 $('.dropify-clear').trigger 'click'
+                r.setupCompleted()
               )
         ).fail ->
           $('.alert.import-error').fadeIn(400, ->
             r.stop()
+            $('.dropify-clear').trigger 'click'
           )
+
+    return
+
+  #
+  # Setup Completed.
+  #
+  setupCompleted: ->
+    if $('input.location').data('section') != 'home-onboard'
+      return
+
+    csrfToken = $('input[name="gorilla.csrf.Token"]').val()
+
+    o = new HomeOnboard()
+    o.setupCompleted(csrfToken)
+
+    window.location = '/'
 
     return
 

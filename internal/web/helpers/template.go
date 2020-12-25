@@ -41,7 +41,7 @@ var (
 	ForecastTotalSales        = "forecast/total_sales"
 	ForecastUnitsSold         = "forecast/units_sold"
 	HomeLogin                 = "home/login"
-	HomeWelcome               = "home/welcome"
+	HomeOnboard               = "home/onboard"
 	MetricsAdvertisingSpend   = "metrics/advertising_spend"
 	MetricsAmazonCosts        = "metrics/amazon_costs"
 	MetricsGrossMargin        = "metrics/gross_margin"
@@ -110,8 +110,8 @@ func TemplateList(page string) []string {
 		return append(DefaultWithFilters, []string{ForecastUnitsSold}...)
 	case HomeLogin:
 		return []string{HomeLogin}
-	case HomeWelcome:
-		return append(SetupNav, []string{HomeWelcome}...)
+	case HomeOnboard:
+		return append(SetupNav, []string{PartialsFiltersImport, HomeOnboard}...)
 	case MetricsAdvertisingSpend:
 		return append(DefaultWithFilters, []string{MetricsAdvertisingSpend}...)
 	case MetricsAmazonCosts:

@@ -44,11 +44,11 @@ func (a *Account) InvoicesByUser(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(js)
 }
 
-func (a *Account) ChangePlan(w http.ResponseWriter, r *http.Request) {
+func (a *Account) UpdatePlan(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := helpers.GetSessionUser(session)
 
-	if err := accounts.ChangePlan(r.Context(), user.ID, mux.Vars(r)["planID"], a.db); err != nil {
+	if err := accounts.UpdatePlan(r.Context(), user.ID, mux.Vars(r)["planID"], a.db); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

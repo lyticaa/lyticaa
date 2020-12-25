@@ -18,6 +18,7 @@ import ExpensesCostOfGoods        from './expenses/cost_of_goods'
 import ExpensesOther              from './expenses/other'
 import ForecastTotalSales         from './forecast/total_sales'
 import ForecastUnitsSold          from './forecast/units_sold'
+import HomeOnboard                from './home/onboard'
 import MetricsAdvertisingSpend    from './metrics/advertising_spend'
 import MetricsAmazonCosts         from './metrics/amazon_costs'
 import MetricsGrossMargin         from './metrics/gross_margin'
@@ -69,6 +70,9 @@ init = ->
   # Forecast
   forecastTotalSales()
   forecastUnitsSold()
+
+  # Home
+  homeOnboard()
 
   # Metrics
   metricsAdvertisingSpend()
@@ -235,6 +239,18 @@ forecastUnitsSold = ->
 
   f = new ForecastUnitsSold()
   f.init()
+
+  return
+
+#
+# Home: Onboard
+#
+homeOnboard= ->
+  if $('input.location').data('section') != 'home-onboard'
+    return
+
+  m = new HomeOnboard()
+  m.init()
 
   return
 

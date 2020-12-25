@@ -2,10 +2,10 @@ package account
 
 import (
 	"encoding/json"
-	"github.com/lyticaa/lyticaa-app/internal/web/pkg/accounts"
 	"net/http"
 
 	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/accounts"
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 )
 

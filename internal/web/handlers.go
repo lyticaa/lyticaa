@@ -32,6 +32,14 @@ func (a *App) accountHandlers() {
 		negroni.HandlerFunc(a.Authenticated),
 		negroni.Wrap(http.HandlerFunc(acct.NotificationsByDate)),
 	))
+	a.HTTP.Router.Handle("/account/preferences/setup_completed", negroni.New(
+		negroni.HandlerFunc(a.Authenticated),
+		negroni.Wrap(http.HandlerFunc(acct.SetupCompleted)),
+	)).Methods("PUT")
+	a.HTTP.Router.Handle("/account/preferences/mailing_list", negroni.New(
+		negroni.HandlerFunc(a.Authenticated),
+		negroni.Wrap(http.HandlerFunc(acct.MailingList)),
+	)).Methods("PUT")
 	a.HTTP.Router.Handle("/account/subscription", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
 		negroni.Wrap(http.HandlerFunc(acct.Subscription)),
@@ -46,7 +54,7 @@ func (a *App) accountHandlers() {
 	))
 	a.HTTP.Router.Handle("/account/subscription/change/{planID}", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
-		negroni.Wrap(http.HandlerFunc(acct.ChangePlan)),
+		negroni.Wrap(http.HandlerFunc(acct.UpdatePlan)),
 	))
 	a.HTTP.Router.Handle("/account/subscription/invoices", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
@@ -222,9 +230,9 @@ func (a *App) homeHandlers() {
 	a.HTTP.Router.Handle("/", negroni.New(
 		negroni.Wrap(http.HandlerFunc(h.Login)),
 	))
-	a.HTTP.Router.Handle("/welcome", negroni.New(
+	a.HTTP.Router.Handle("/onboard", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
-		negroni.Wrap(http.HandlerFunc(h.Welcome)),
+		negroni.Wrap(http.HandlerFunc(h.Onboard)),
 	))
 }
 

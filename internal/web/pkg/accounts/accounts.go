@@ -25,7 +25,7 @@ var (
 	}
 )
 
-func ChangePlan(ctx context.Context, userID int64, planID string, db *sqlx.DB) error {
+func UpdatePlan(ctx context.Context, userID int64, planID string, db *sqlx.DB) error {
 	accountSubscriptionModel := models.AccountSubscriptionModel{
 		UserID: userID,
 	}
@@ -35,7 +35,7 @@ func ChangePlan(ctx context.Context, userID int64, planID string, db *sqlx.DB) e
 		return fmt.Errorf("user %v already on plan %v", userID, accountSubscription.StripePlanID)
 	}
 
-	if err := payments.NewStripePayments().ChangePlan(accountSubscription.StripeSubscriptionID.String, planID); err != nil {
+	if err := payments.NewStripePayments().UpdatePlan(accountSubscription.StripeSubscriptionID.String, planID); err != nil {
 		return err
 	}
 
@@ -182,7 +182,7 @@ func Notifications(ctx context.Context, accountNotifications *types.Notification
 	accountNotifications.RecordsTotal = accountNotificationModel.Count(ctx, nil, db)
 }
 
-func AccountPreferences(ctx context.Context, userID int64, db *sqlx.DB) models.AccountPreferenceModel {
+func Preferences(ctx context.Context, userID int64, db *sqlx.DB) models.AccountPreferenceModel {
 	accountPreferenceModel := models.AccountPreferenceModel{
 		UserID: userID,
 	}
@@ -190,6 +190,45 @@ func AccountPreferences(ctx context.Context, userID int64, db *sqlx.DB) models.A
 	accountPreferences := accountPreferenceModel.FetchAll(ctx, nil, nil, db).(models.AccountPreferenceModel)
 
 	return accountPreferences
+}
+
+func CreatePreferences(ctx context.Context, userID int64, db *sqlx.DB) error {
+	accountPreferenceModel := models.AccountPreferenceModel{
+		UserID: userID,
+	}
+
+	if err := accountPreferenceModel.Create(ctx, db); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func UpdatePreferences(ctx context.Context, userID int64, preferences map[string]interface{}, db *sqlx.DB) error {
+	accountPreferenceModel := models.AccountPreferenceModel{
+		UserID: userID,
+	}
+
+	accountPreferences := accountPreferenceModel.FetchAll(ctx, nil, nil, db).(models.AccountPreferenceModel)
+
+	if preferences["mailing_list"] == true {
+		var subscribe sql.NullBool
+		if err := subscribe.Scan(preferences["mailing_list"]); err != nil {
+			return err
+		}
+
+		accountPreferences.MailingList = subscribe
+	}
+
+	if preferences["setup_completed"] == true {
+		accountPreferences.SetupCompleted = true
+	}
+
+	if err := accountPreferences.Update(ctx, db); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func invoiceClass(status string) string {

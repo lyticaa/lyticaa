@@ -51,10 +51,10 @@ func (a *App) SetupComplete(w http.ResponseWriter, r *http.Request, next http.Ha
 	session := a.getSession(w, r)
 
 	user := helpers.GetSessionUser(session)
-	accountPreferences := accounts.AccountPreferences(r.Context(), user.ID, a.Data.Db)
+	accountPreferences := accounts.Preferences(r.Context(), user.ID, a.Data.Db)
 
 	if !accountPreferences.SetupCompleted {
-		http.Redirect(w, r, helpers.WelcomeRoute(), http.StatusSeeOther)
+		http.Redirect(w, r, helpers.OnboardRoute(), http.StatusSeeOther)
 		return
 	} else {
 		next(w, r)

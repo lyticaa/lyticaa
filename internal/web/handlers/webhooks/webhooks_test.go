@@ -51,7 +51,7 @@ func (m *mockGateway) CreateSubscription(customerID string, planID string) (*str
 	return &stripe.Subscription{}, nil
 }
 
-func (m *mockGateway) ChangePlan(customerID string, planID string) error { return nil }
+func (m *mockGateway) UpdatePlan(customerID string, planID string) error { return nil }
 func (m *mockGateway) CancelSubscription(subscriptionID string) error    { return nil }
 
 func (m *mockGateway) EventSession(event stripe.Event) (stripe.CheckoutSession, error) {

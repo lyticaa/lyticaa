@@ -1,3 +1,6 @@
+{{ define "js/top" }}
+{{ end }}
+
 {{ define "css/top" }}
 {{ end }}
 
@@ -26,6 +29,8 @@
 
             <script src="../../static/js/app.coffee"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"></script>
+
+            {{ template "js/top" }}
 
             <link rel="preconnect" href="https://fonts.gstatic.com">
             <link rel="stylesheet" href="../../static/css/app.scss">

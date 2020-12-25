@@ -2,7 +2,7 @@ package helpers
 
 var (
 	rootRoute      = "/"
-	welcomeRoute   = "/welcome"
+	onboardRoute   = "/onboard"
 	dashboardRoute = "/dashboard"
 )
 
@@ -10,8 +10,8 @@ func RootRoute() string {
 	return rootRoute
 }
 
-func WelcomeRoute() string {
-	return welcomeRoute
+func OnboardRoute() string {
+	return onboardRoute
 }
 
 func DashboardRoute() string {

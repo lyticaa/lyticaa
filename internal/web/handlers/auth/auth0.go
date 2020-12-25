@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
+	"github.com/lyticaa/lyticaa-app/internal/web/pkg/accounts"
 	"github.com/lyticaa/lyticaa-app/internal/web/pkg/auth/iam"
 	"github.com/lyticaa/lyticaa-app/internal/web/pkg/users"
 
@@ -157,6 +158,11 @@ func (a *Auth) Callback(w http.ResponseWriter, r *http.Request) {
 		}
 
 		user = users.User(r.Context(), userID, a.db)
+		if err := accounts.CreatePreferences(r.Context(), user.ID, a.db); err != nil {
+			a.logger.Err(err).Msg(helpers.ErrorTag)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
 
 	session.Values["User"] = user
