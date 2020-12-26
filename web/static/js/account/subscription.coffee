@@ -2,10 +2,11 @@ import $ from 'jquery'
 window.jQuery = $
 window.$ = $
 
-import AlertsHelper   from '../helpers/alerts'
-import TablesHelper   from '../helpers/tables'
-import TemplateHelper from '../helpers/template'
-import URLHelper      from '../helpers/url'
+import AlertsHelper     from '../helpers/alerts'
+import TablesHelper     from '../helpers/tables'
+import TemplateHelper   from '../helpers/template'
+import TurbolinksHelper from '../helpers/turbolinks'
+import URLHelper        from '../helpers/url'
 
 require('datatables.net') window, $
 require('datatables.net-bs4') window, $
@@ -18,6 +19,7 @@ export default class AccountSubscription
     this.alerts = new AlertsHelper()
     this.tables = new TablesHelper()
     this.template = new TemplateHelper()
+    this.turbolinks = new TurbolinksHelper()
     this.url = new URLHelper()
 
   #
@@ -38,7 +40,7 @@ export default class AccountSubscription
 
     $('button.loading').fadeIn()
 
-    $('table').DataTable
+    $('table.account-subscription-invoice-table').DataTable
       'serverSide': true,
       'bFilter': false
       'ordering': false
@@ -88,7 +90,7 @@ export default class AccountSubscription
       'drawCallback': ->
         s.template.renderIcons()
 
-    this.tables.cleanup($('table'))
+    this.tables.cleanup($('table.account-subscription-invoice-table'))
 
     return
 
@@ -107,12 +109,14 @@ export default class AccountSubscription
       $('button.processing').fadeIn()
       $('button.subscribe').attr('disabled', true)
 
+      csrfToken = $('input[name="gorilla.csrf.Token"]').val()
       planId = $(this).data('stripe-plan')
 
       $.ajax(
         type: 'POST'
         url: s.url.clean() + '/subscribe/' + planId
         timeout: 10000
+        headers: 'X-CSRF-Token': csrfToken
         statusCode:
           200: ->
             s.turbolinks.stop()

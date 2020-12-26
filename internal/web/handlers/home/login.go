@@ -12,5 +12,6 @@ func (h *Home) Login(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, helpers.DashboardRoute(), http.StatusFound)
 	}
 
+	helpers.SetSessionHandler(helpers.HomeLogin, session, w, r)
 	helpers.RenderTemplate(w, helpers.BareLayout, helpers.TemplateList(helpers.HomeLogin), session.Values)
 }

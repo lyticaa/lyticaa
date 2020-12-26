@@ -67,7 +67,7 @@ func (ap *AccountPreferenceModel) Update(ctx context.Context, db *sqlx.DB) error
 	_, err := db.NamedExecContext(ctx, query,
 		map[string]interface{}{
 			"setup_completed":       ap.SetupCompleted,
-			"mailing_list":          ap.MailingList,
+			"mailing_list":          ap.MailingList.Bool,
 			"updated_at":            time.Now(),
 			"account_preference_id": ap.AccountPreferenceID,
 			"user_id":               ap.UserID,

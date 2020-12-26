@@ -20,17 +20,17 @@ type AccountSubscriptionModel struct {
 }
 
 func (as *AccountSubscriptionModel) FetchOne(ctx context.Context, db *sqlx.DB) interface{} {
-	return nil
-}
-func (as *AccountSubscriptionModel) FetchBy(ctx context.Context, db *sqlx.DB) interface{} { return nil }
-
-func (as *AccountSubscriptionModel) FetchAll(ctx context.Context, data map[string]interface{}, filter *Filter, db *sqlx.DB) interface{} {
-	var accountSubscription []AccountSubscriptionModel
+	var accountSubscription AccountSubscriptionModel
 
 	query := `SELECT * FROM account_subscriptions WHERE user_id = $1`
-	_ = db.SelectContext(ctx, &accountSubscription, query, as.UserID)
+	_ = db.QueryRowxContext(ctx, query, as.UserID).StructScan(&accountSubscription)
 
 	return accountSubscription
+}
+
+func (as *AccountSubscriptionModel) FetchBy(ctx context.Context, db *sqlx.DB) interface{} { return nil }
+func (as *AccountSubscriptionModel) FetchAll(ctx context.Context, data map[string]interface{}, filter *Filter, db *sqlx.DB) interface{} {
+	return nil
 }
 
 func (as *AccountSubscriptionModel) Count(ctx context.Context, data map[string]interface{}, db *sqlx.DB) int64 {

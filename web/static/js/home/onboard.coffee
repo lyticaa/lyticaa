@@ -39,7 +39,7 @@ export default class HomeOnboard
     $('button.mailing-list').on 'click', (e) ->
       e.preventDefault()
 
-      subscribe = $(this).attr('data-subscribe')
+      subscribe = $(this).data('subscribe')
       csrfToken = $('input[name="gorilla.csrf.Token"]').val()
 
       $.ajax(

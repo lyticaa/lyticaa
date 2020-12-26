@@ -16,5 +16,6 @@ func (h *Home) Onboard(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, helpers.DashboardRoute(), http.StatusFound)
 	}
 
+	helpers.SetSessionHandler(helpers.HomeOnboard, session, w, r)
 	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.HomeOnboard), session.Values)
 }

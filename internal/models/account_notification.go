@@ -55,7 +55,7 @@ func (an *AccountNotificationModel) Count(ctx context.Context, data map[string]i
 	var count int64
 
 	query := `SELECT COUNT(id) FROM account_notifications WHERE user_id = $1`
-	_ = db.QueryRowContext(ctx, query, data["UserID"].(string)).Scan(&count)
+	_ = db.QueryRowContext(ctx, query, data["UserID"].(int64)).Scan(&count)
 
 	return count
 }

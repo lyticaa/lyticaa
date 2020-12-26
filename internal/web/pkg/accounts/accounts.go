@@ -25,12 +25,20 @@ var (
 	}
 )
 
+func Subscription(ctx context.Context, userID int64, db *sqlx.DB) models.AccountSubscriptionModel {
+	accountSubscriptionModel := models.AccountSubscriptionModel{
+		UserID: userID,
+	}
+
+	return accountSubscriptionModel.FetchOne(ctx, db).(models.AccountSubscriptionModel)
+}
+
 func UpdatePlan(ctx context.Context, userID int64, planID string, db *sqlx.DB) error {
 	accountSubscriptionModel := models.AccountSubscriptionModel{
 		UserID: userID,
 	}
 
-	accountSubscription := accountSubscriptionModel.FetchAll(ctx, nil, nil, db).(models.AccountSubscriptionModel)
+	accountSubscription := accountSubscriptionModel.FetchOne(ctx, db).(models.AccountSubscriptionModel)
 	if accountSubscription.StripePlanID.String == planID {
 		return fmt.Errorf("user %v already on plan %v", userID, accountSubscription.StripePlanID)
 	}
@@ -57,7 +65,7 @@ func CancelSubscription(ctx context.Context, userID int64, db *sqlx.DB) error {
 		UserID: userID,
 	}
 
-	accountSubscription := accountSubscriptionModel.FetchAll(ctx, nil, nil, db).(models.AccountSubscriptionModel)
+	accountSubscription := accountSubscriptionModel.FetchOne(ctx, db).(models.AccountSubscriptionModel)
 	if err := payments.NewStripePayments().CancelSubscription(accountSubscription.StripeSubscriptionID.String); err != nil {
 		return err
 	}
@@ -76,7 +84,7 @@ func Subscribe(ctx context.Context, userID int64, planID string, db *sqlx.DB) er
 		UserID: userID,
 	}
 
-	accountSubscription := accountSubscriptionModel.FetchAll(ctx, nil, nil, db).(models.AccountSubscriptionModel)
+	accountSubscription := accountSubscriptionModel.FetchOne(ctx, db).(models.AccountSubscriptionModel)
 	sub, err := payments.NewStripePayments().CreateSubscription(accountSubscription.StripeUserID.String, planID)
 	if err != nil {
 		return err
@@ -106,7 +114,7 @@ func Invoices(ctx context.Context, accountInvoices *types.Invoices, userID int64
 		UserID: userID,
 	}
 
-	accountSubscription := accountSubscriptionModel.FetchAll(ctx, nil, nil, db).(models.AccountSubscriptionModel)
+	accountSubscription := accountSubscriptionModel.FetchOne(ctx, db).(models.AccountSubscriptionModel)
 
 	invoices := payments.NewStripePayments().InvoicesByUser(accountSubscription.StripeUserID.String)
 	for _, invoice := range *invoices {
@@ -179,7 +187,10 @@ func Notifications(ctx context.Context, accountNotifications *types.Notification
 		accountNotifications.Data = append(accountNotifications.Data, table)
 	}
 
-	accountNotifications.RecordsTotal = accountNotificationModel.Count(ctx, nil, db)
+	data := make(map[string]interface{})
+	data["UserID"] = userID
+
+	accountNotifications.RecordsTotal = accountNotificationModel.Count(ctx, data, db)
 }
 
 func Preferences(ctx context.Context, userID int64, db *sqlx.DB) models.AccountPreferenceModel {

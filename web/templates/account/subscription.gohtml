@@ -15,6 +15,7 @@
 
 {{ define "content" }}
     <input type="hidden" class="location" data-section="account-subscription"/>
+    {{ .csrfField }}
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
             <div class="alert alert-icon-danger text-center pt-3 w-100 account-subscription-change-error" style="display: none;">
@@ -40,65 +41,206 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12 grid-margin stretch-card">
+        <div class="col-md-12 col-xs-12 grid-margin stretch-card">
             <div class="card">
+                <div class="card-header d-flex justify-content-center">
+                    <div class="img-lg card-img-top rounded subscription-img"></div>
+                </div>
                 <div class="card-body">
-                    <h4 class="text-center mb-3 mt-4">Your Subscription</h4>
-                    <p class="text-muted text-center mb-4 pb-2">Upgrade, downgrade or cancel your subscription.</p>
-                    <div class="container">
+                    <div class="container-fluid">
+                        {{ if ne .User.Status "active" }}
+                            <div class="row">
+                                <div class="col d-flex justify-content-center mb-5">
+                                    {{ if eq .User.Status "trial" }}
+                                        <p class="text-secondary">You are currently on a free trial. Please upgrade to one of the plans below.</p>
+                                    {{ else if eq .User.Status "expired" }}
+                                        <p class="text-secondary">Your free trial has expired. Please upgrade to one of the plans below to continue.</p>
+                                    {{ else if eq .User.Status "canceled" }}
+                                        <p class="text-secondary">Your account is no longer active. Please subscribe to one of the plans below to continue.</p>
+                                    {{ end }}
+                                </div>
+                            </div>
+                        {{ end }}
                         <div class="row">
-                            <div class="offset-md-2 col-md-8 stretch-card grid-margin grid-margin-md-0">
-                                <div class="alert alert-info text-justify">
-                                    <p>Upgrades and downgrades will be performed immediately and a pro-rata will be applied based off your previous payments. Cancellations are also performed immediately, however you will retain use of your account until your anniversary date.</p>
-                                    <hr>
-                                    <p>Please contact our support team by clicking <a href="#" class="contact-support">here</a> if you have any questions regarding upgrading, downgrading or cancelling your account.</p>
+                            <div class="offset-md-2 col-md-8 stretch-card grid-margin grid-margin-md-0 mb-4">
+                                <div class="card features">
+                                    <div class="card-body">
+                                        <h5 class="text-uppercase text-center mt-3 mb-4">Features</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            Products
+                                                            <i class="btn-icon-prepend" data-feather="help-circle" data-toggle="tooltip" data-placement="top" title="Individual SKU's, UPC's or EAN's."></i>
+                                                        </td>
+                                                        <td class="text-right">Unlimited</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Orders / Transactions
+                                                            <i class="btn-icon-prepend" data-feather="help-circle" data-toggle="tooltip" data-placement="top" title="Orders, storage fees, shipping and advertising charges and all other types of transactions."></i>
+                                                        </td>
+                                                        <td class="text-right">Unlimited</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Data Retention
+                                                            <i class="btn-icon-prepend" data-feather="help-circle" data-toggle="tooltip" data-placement="top" title="How long your data is stored for."></i>
+                                                        </td>
+                                                        <td class="text-right">Lifetime</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Amazon
+                                                            <i class="btn-icon-prepend" data-feather="help-circle" data-toggle="tooltip" data-placement="top" title="FBA and FBM."></i>
+                                                        </td>
+                                                        <td class="text-right">All Marketplaces</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Shopify</td>
+                                                        <td class="text-right">Coming Q1 2021</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Support
+                                                            <i class="btn-icon-prepend" data-feather="help-circle" data-toggle="tooltip" data-placement="top" title="24/7/365."></i>
+                                                        </td>
+                                                        <td class="text-right">Email and Live Chat</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Community
+                                                            <i class="btn-icon-prepend" data-feather="help-circle" data-toggle="tooltip" data-placement="top" title="Access to our private, members-only community."></i>
+                                                        </td>
+                                                        <td class="text-right">Discord</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="offset-md-2 col-md-4 stretch-card grid-margin grid-margin-md-0">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="text-center text-uppercase mt-3 mb-4">Monthly</h5>
-                                        <h3 class="text-center font-weight-light">$150</h3>
-                                        {{ if .User.StripePlanID.String }}
-                                            {{ if eq .User.StripePlanID.String .Config.Stripe.MonthlyPlanID }}
-                                                <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">Downgrade</button>
-                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
+                                <div class="card monthly">
+                                    <div class="card-body subscription text-center">
+                                        <h5 class="text-uppercase mt-3 mb-4">Monthly</h5>
+                                        <h3 class="font-weight-bold">$149.97</h3>
+                                        <ul class="list-unstyled font-weight-bold mt-4">
+                                            <li>Cancel Anytime</li>
+                                        </ul>
+                                        {{ if .Subscription.StripePlanID.String }}
+                                            {{ if eq .Subscription.StripePlanID.String .Config.Stripe.MonthlyPlanID }}
+                                                <button class="btn btn-primary btn-icon-text mx-auto mt-2 change hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">
+                                                    <i class="btn-icon-prepend mr-0" data-feather="arrow-down"></i>
+                                                    Downgrade
+                                                </button>
+                                                <button class="btn btn-primary btn-icon-text mx-auto mt-2 cancel" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">
+                                                    <i class="btn-icon-prepend mr-0" data-feather="x-octagon"></i>
+                                                    Cancel
+                                                </button>
                                             {{ else }}
-                                                <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">Downgrade</button>
-                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel hide"data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
+                                                <button class="btn btn-primary btn-icon-text mx-auto mt-2 change" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">
+                                                    <i class="btn-icon-prepend mr-0" data-feather="arrow-down"></i>
+                                                    Downgrade
+                                                </button>
+                                                <button class="btn btn-primary btn-icon-text mx-auto mt-2 cancel hide"data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">
+                                                    <i class="btn-icon-prepend mr-0" data-feather="x-octagon"></i>
+                                                    Cancel
+                                                </button>
                                             {{ end }}
                                         {{ else }}
-                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">Subscribe</button>
-                                            <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">Downgrade</button>
-                                            <button class="btn btn-warning d-block mx-auto mt-4 cancel hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
+                                            <button class="btn btn-primary btn-icon-text mx-auto mt-2 subscribe" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">
+                                                <i class="btn-icon-prepend mr-0" data-feather="shopping-cart"></i>
+                                                Subscribe
+                                            </button>
+                                            <button class="btn btn-primary btn-icon-text mx-auto mt-2 change hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">
+                                                <i class="btn-icon-prepend mr-0" data-feather="arrow-down"></i>
+                                                Downgrade
+                                            </button>
+                                            <button class="btn btn-primary btn-icon-text mx-auto mt-2 cancel hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">
+                                                <i class="btn-icon-prepend mr-0" data-feather="x-octagon"></i>
+                                                Cancel
+                                            </button>
                                         {{ end }}
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4 stretch-card">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="text-center text-uppercase mt-3 mb-4">
-                                            Annual
-                                        </h5>
-                                        <h3 class="text-center font-weight-light">$1500</h3>
-                                        {{ if .User.StripePlanID.String }}
-                                            {{ if eq .User.StripePlanID.String .Config.Stripe.AnnualPlanID }}
-                                                <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">Upgrade</button>
-                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
+                                <div class="best-value text-uppercase text-center">
+                                    Best Value
+                                </div>
+                                <div class="card annual most-popular">
+                                    <div class="card-body subscription text-center">
+                                        <h5 class="text-uppercase mt-3 mb-4">Annual</h5>
+                                        <h3 class="font-weight-bold">$1249.97</h3>
+                                        <ul class="list-unstyled font-weight-bold mt-4">
+                                            <li>Cancel Anytime</li>
+                                        </ul>
+                                        {{ if .Subscription.StripePlanID.String }}
+                                            {{ if eq .Subscription.StripePlanID.String .Config.Stripe.AnnualPlanID }}
+                                                <button class="btn btn-primary btn-icon-text mx-auto mt-2 change hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">
+                                                    <i class="btn-icon-prepend mr-0" data-feather="arrow-up"></i>
+                                                    Upgrade
+                                                </button>
+                                                <button class="btn btn-primary btn-icon-text mx-auto mt-2 cancel" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">
+                                                    <i class="btn-icon-prepend mr-0" data-feather="x-octagon"></i>
+                                                    Cancel
+                                                </button>
                                             {{ else }}
-                                                <button class="btn btn-primary d-block mx-auto mt-4 change" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">Upgrade</button>
-                                                <button class="btn btn-warning d-block mx-auto mt-4 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
+                                                <button class="btn btn-primary btn-icon-text mx-auto mt-2 change" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">
+                                                    <i class="btn-icon-prepend mr-0" data-feather="arrow-up"></i>
+                                                    Upgrade
+                                                </button>
+                                                <button class="btn btn-warning btn-icon-text mx-auto mt-2 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">
+                                                    <i class="btn-icon-prepend mr-0" data-feather="x-octagon"></i>
+                                                    Cancel
+                                                </button>
                                             {{ end }}
                                         {{ else }}
-                                            <button class="btn btn-primary d-block mx-auto mt-4 subscribe" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">Subscribe</button>
-                                            <button class="btn btn-primary d-block mx-auto mt-4 change hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">Upgrade</button>
-                                            <button class="btn btn-warning d-block mx-auto mt-4 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">Cancel</button>
+                                            <button class="btn btn-primary btn-icon-text mx-auto mt-2 subscribe" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">
+                                                <i class="btn-icon-prepend mr-0" data-feather="shopping-cart"></i>
+                                                Subscribe
+                                            </button>
+                                            <button class="btn btn-primary btn-icon-text mx-auto mt-2 change hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">
+                                                <i class="btn-icon-prepend mr-0" data-feather="arrow-up"></i>
+                                                Upgrade
+                                            </button>
+                                            <button class="btn btn-primary btn-icon-text mx-auto mt-2 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">
+                                                <i class="btn-icon-prepend mr-0" data-feather="x-octagon"></i>
+                                                Cancel
+                                            </button>
                                         {{ end }}
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col d-flex justify-content-center mt-5">
+                                <div class="powered-by-stripe w-100"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col d-flex justify-content-center mt-5">
+                                <p class="text-secondary text-center">
+                                    Upgrades and downgrades will be performed immediately and a pro-rata will be applied based off your previous payments.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col d-flex justify-content-center mt-3">
+                                <p class="text-secondary text-center">
+                                    Cancellations are also performed immediately, however you will retain use of your account until your anniversary date.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col d-flex justify-content-center mt-3">
+                                <p class="text-secondary text-center">
+                                    Please contact our support team by clicking <strong class="border-bottom"><a href="#" class="contact-support">here</a></strong> if you have any questions regarding your account.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -106,7 +248,8 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    {{ if .Subscription.StripePlanID.String }}
+        <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
             <div class="alert alert-icon-danger text-center pt-3 w-100 account-subscription-invoices-load-error" style="display: none;">
                 <i data-feather="alert-triangle"></i>
@@ -114,7 +257,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+        <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
             <button class="btn btn-primary loading mb-3" type="button" disabled>
                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -122,7 +265,7 @@
             </button>
         </div>
     </div>
-    <div class="row">
+        <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
@@ -145,7 +288,7 @@
             </div>
         </div>
     </div>
-
+    {{ end }}
     <div class="modal fade" id="account-subscription-cancel-modal" tabindex="-1" role="dialog" aria-labelledby="account-subscription-cancel-modal" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

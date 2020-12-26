@@ -7,34 +7,37 @@
                     <div class="img-lg card-img-top rounded welcome-img"></div>
                 </div>
                 <div class="card-body">
-                    <div class="main">
-                        <h3>Welcome!</h3>
-                        <p class="text-secondary font-weight-normal mt-2 w-100">
-                            To get started, upload your Amazon reports.
-                            <br/>
-                            <button class="btn btn-primary btn-icon-text mt-2" data-toggle="modal" data-target="#import-modal">
-                                <i class="btn-icon-prepend mr-0" data-feather="upload"></i>
-                                Upload your Reports
-                            </button>
-                        </p>
-                    </div>
-                    <div class="preferences">
-                        <p class="mt-4 mb-4 w-100">
-                            <hr/>
-                        </p>
-                        <p class="text-secondary font-weight-normal mb-3">
-                            Every month we send a newsletter with product updates, announcements and general commentary. Would you like to receive it? We would love to stay in touch!
-                            <br/>
-                            {{ .csrfField }}
-                            <button class="btn btn-primary btn-icon-text mt-2 mr-2 mailing-list" data-subscribe="true">
-                                <i class="btn-icon-prepend mr-0" data-feather="check-square"></i>
-                                Yes Please
-                            </button>
-                            <button class="btn btn-secondary btn-icon-text mt-2 mailing-list" data-subscribe="false">
-                                <i class="btn-icon-prepend mr-0" data-feather="slash"></i>
-                                No Thanks
-                            </button>
-                        </p>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col mb-2">
+                                <h3>Welcome!</h3>
+                                <p class="text-secondary font-weight-normal mt-2 w-100">
+                                    To get started, upload your Amazon reports.
+                                    <br/>
+                                    <button class="btn btn-primary btn-icon-text mt-2" data-toggle="modal" data-target="#import-modal">
+                                        <i class="btn-icon-prepend mr-0" data-feather="upload"></i>
+                                        Upload your Reports
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row mt-3 border-top preferences">
+                            <div class="col mt-3">
+                                <p class="text-secondary font-weight-normal">
+                                    Every month we send a newsletter with product updates, announcements and general commentary. Would you like to receive it? We would love to stay in touch!
+                                    <br/>
+                                    {{ .csrfField }}
+                                    <button class="btn btn-primary btn-icon-text mt-2 mr-2 mailing-list" data-subscribe="true">
+                                        <i class="btn-icon-prepend mr-0" data-feather="check-square"></i>
+                                        Yes Please
+                                    </button>
+                                    <button class="btn btn-secondary btn-icon-text mt-2 mailing-list" data-subscribe="false">
+                                        <i class="btn-icon-prepend mr-0" data-feather="slash"></i>
+                                        No Thanks
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -22,6 +22,7 @@ type UserModel struct {
 	Nickname    sql.NullString `db:"nickname"`
 	AvatarURL   sql.NullString `db:"avatar_url"`
 	Admin       bool           `db:"admin"`
+	Status      string         `db:"status"`
 	Impersonate *UserModel
 	CreatedAt   time.Time `db:"created_at"`
 	UpdatedAt   time.Time `db:"updated_at"`
@@ -111,6 +112,7 @@ func (um *UserModel) Update(ctx context.Context, db *sqlx.DB) error {
                  email = :email,
                  nickname = :nickname,
                  avatar_url = :avatar_url,
+                 status = :status,
                  updated_at = :updated_at WHERE id = :id`
 	_, err := db.NamedExecContext(ctx, query,
 		map[string]interface{}{
@@ -118,6 +120,7 @@ func (um *UserModel) Update(ctx context.Context, db *sqlx.DB) error {
 			"email":      um.Email,
 			"nickname":   um.Nickname,
 			"avatar_url": um.AvatarURL,
+			"status":     um.Status,
 			"updated_at": time.Now(),
 			"id":         um.ID,
 		})

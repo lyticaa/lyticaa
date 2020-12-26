@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/lyticaa/lyticaa-app/internal/models"
 
@@ -44,6 +45,11 @@ func SetSessionUser(user *models.UserModel, session *sessions.Session, w http.Re
 	}
 
 	session.Values["User"] = pUser
+	_ = session.Save(r, w)
+}
+
+func SetSessionHandler(handler string, session *sessions.Session, w http.ResponseWriter, r *http.Request) {
+	session.Values["Handler"] = strings.Replace(handler, "/", "-", -1)
 	_ = session.Save(r, w)
 }
 

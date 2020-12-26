@@ -5,6 +5,12 @@
     border-bottom: none !important;
   }
 
+  .card-body {
+    a {
+      color: $theme-color-01 !important;
+    }
+  }
+
   .card-title {
     font-size: $font-size-small;
     font-weight: bold;

@@ -1,0 +1,30 @@
+@import "../../variables";
+
+body {
+  &.home-onboard {
+    .card-header {
+      .welcome-img {
+        background-image: url("../../../web/static/images/shuttle.svg"),
+        linear-gradient(147deg, $background-color-01 24%, $background-color-02 100%);
+        background-size: contain;
+        overflow-y: auto;
+        background-repeat: no-repeat;
+        background-position: center;
+        border-radius: 50% !important;
+        border: 3px solid $border-color-02;
+      }
+    }
+
+    .card-body {
+      p {
+        font-family: $font-family-opensans;
+        font-size: $font-size-large;
+      }
+
+      .btn {
+        font-family: $font-family-montserrat;
+        font-size: $font-size-large;
+      }
+    }
+  }
+}

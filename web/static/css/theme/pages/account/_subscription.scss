@@ -1,0 +1,78 @@
+@import "../../variables";
+
+body {
+  &.account-subscription {
+    .card {
+      .best-value {
+        z-index: 99;
+        position: absolute;
+        top: -10px;
+        font-weight: bold;
+        width: auto;
+        margin: 0 auto;
+        background-color: $background-color-04;
+        padding: 0 10px 0 10px;
+        border-radius: 3px;
+      }
+
+      &.most-popular {
+        border: 3px solid $border-color-02;
+      }
+
+      &.monthly, &.features {
+        border-width: 3px !important;
+      }
+
+      .card-header {
+        .subscription-img {
+          background-image: url("../../../web/static/images/shuttle_landing.svg"),
+          linear-gradient(147deg, $background-color-01 24%, $background-color-02 100%);
+          background-size: contain;
+          overflow-y: auto;
+          background-repeat: no-repeat;
+          background-position: center;
+          border-radius: 50% !important;
+          border: 3px solid $border-color-02;
+        }
+      }
+
+      .card-body {
+        p {
+          font-size: $font-size-large;
+        }
+
+        table {
+          overflow-x: scroll !important;
+
+          tbody {
+            tr {
+              &:first-child {
+                td {
+                  border-top: none !important;
+                }
+              }
+
+              td {
+                font-weight: bold;
+                font-size: $font-size-medium;
+              }
+            }
+          }
+        }
+
+        .btn {
+          font-size: $font-size-large;
+        }
+      }
+    }
+
+    .powered-by-stripe {
+      background-image: url("../../../web/static/images/stripe.svg");
+      background-size: contain;
+      overflow-y: auto;
+      background-repeat: no-repeat;
+      background-position: center;
+      height: 35px;
+    }
+  }
+}
