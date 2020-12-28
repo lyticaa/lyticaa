@@ -5,7 +5,7 @@ CREATE TABLE users
     email                   VARCHAR NOT NULL,
     nickname                VARCHAR NULL,
     avatar_url              VARCHAR NULL,
-    status                  VARCHAR NOT NULL DEFAULT 'trial',
+    stripe_customer_id      VARCHAR NULL,
     admin                   BOOLEAN NOT NULL DEFAULT false,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

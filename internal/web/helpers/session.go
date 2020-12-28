@@ -20,7 +20,7 @@ func GetSession(store *redistore.RediStore, logger zerolog.Logger, w http.Respon
 	}
 
 	resetFlash(session)
-	setCSRF(session, r)
+	setCSRF(session, w, r)
 
 	return session
 }
@@ -35,16 +35,16 @@ func GetSessionUser(session *sessions.Session) *models.UserModel {
 }
 
 func SetSessionUser(user *models.UserModel, session *sessions.Session, w http.ResponseWriter, r *http.Request) {
-	var pUser models.UserModel
+	var userModel models.UserModel
 
-	pUser = session.Values["User"].(models.UserModel)
-	if user.UserID != pUser.UserID {
-		pUser.Impersonate = user
+	userModel = session.Values["User"].(models.UserModel)
+	if user.UserID != userModel.UserID {
+		userModel.Impersonate = user
 	} else {
-		pUser = *user
+		userModel = *user
 	}
 
-	session.Values["User"] = pUser
+	session.Values["User"] = userModel
 	_ = session.Save(r, w)
 }
 
@@ -57,6 +57,6 @@ func resetFlash(session *sessions.Session) {
 	session.Values["Flash"] = nil
 }
 
-func setCSRF(session *sessions.Session, r *http.Request) {
+func setCSRF(session *sessions.Session, w http.ResponseWriter, r *http.Request) {
 	session.Values[csrf.TemplateTag] = csrf.TemplateField(r)
 }

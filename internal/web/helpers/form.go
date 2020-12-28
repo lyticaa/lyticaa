@@ -31,6 +31,10 @@ type ValidateExpensesOther struct {
 	Amount      float64   `validate:"required,gt=0"`
 }
 
+type ValidateCancellation struct {
+	Data string `validate:"required,eq=CANCEL"`
+}
+
 func ValidateInput(data interface{}, l *zerolog.Logger) (bool, map[string]string) {
 	validate := validator.New()
 	err := validate.Struct(data)

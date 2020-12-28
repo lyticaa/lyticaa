@@ -30,6 +30,9 @@ const (
 	TotalCosts         = "total_costs"
 	GrossMargin        = "gross_margin"
 	NetMargin          = "net_margin"
+
+	UserStatusTrial  = "trial"
+	UserStatusActive = "active"
 )
 
 type Model interface {

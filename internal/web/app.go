@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
 	"github.com/lyticaa/lyticaa-app/internal/web/types"
 
 	"github.com/getsentry/sentry-go"
@@ -39,6 +40,7 @@ type Monitoring struct {
 }
 
 type App struct {
+	Secure     bool
 	HTTP       HTTP
 	Data       Data
 	Monitoring Monitoring
@@ -86,7 +88,15 @@ func NewApp() *App {
 		panic(err)
 	}
 
+	var secure bool
+	if helpers.Development() {
+		secure = false
+	} else {
+		secure = true
+	}
+
 	return &App{
+		Secure: secure,
 		HTTP: HTTP{
 			Router: mux.NewRouter(),
 			Client: &http.Client{Timeout: 5 * time.Second},

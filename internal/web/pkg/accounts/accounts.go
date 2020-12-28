@@ -23,6 +23,9 @@ var (
 		"void":          "badge-info",
 		"uncollectible": "badge-danger",
 	}
+
+	monthlyPlan = "monthly"
+	annualPlan  = "annual"
 )
 
 func Subscription(ctx context.Context, userID int64, db *sqlx.DB) models.AccountSubscriptionModel {
@@ -33,7 +36,7 @@ func Subscription(ctx context.Context, userID int64, db *sqlx.DB) models.Account
 	return accountSubscriptionModel.FetchOne(ctx, db).(models.AccountSubscriptionModel)
 }
 
-func UpdatePlan(ctx context.Context, userID int64, planID string, db *sqlx.DB) error {
+func UpdateSubscription(ctx context.Context, userID int64, planID string, db *sqlx.DB) error {
 	accountSubscriptionModel := models.AccountSubscriptionModel{
 		UserID: userID,
 	}
@@ -43,7 +46,7 @@ func UpdatePlan(ctx context.Context, userID int64, planID string, db *sqlx.DB) e
 		return fmt.Errorf("user %v already on plan %v", userID, accountSubscription.StripePlanID)
 	}
 
-	if err := payments.NewStripePayments().UpdatePlan(accountSubscription.StripeSubscriptionID.String, planID); err != nil {
+	if err := payments.NewStripePayments().UpdateSubscription(accountSubscription.StripeSubscriptionID.String, planID); err != nil {
 		return err
 	}
 
@@ -70,53 +73,48 @@ func CancelSubscription(ctx context.Context, userID int64, db *sqlx.DB) error {
 		return err
 	}
 
-	accountSubscription.StripeSubscriptionID = sql.NullString{}
-	accountSubscription.StripePlanID = sql.NullString{}
-	if err := accountSubscription.Update(ctx, db); err != nil {
+	if err := accountSubscription.Delete(ctx, db); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func Subscribe(ctx context.Context, userID int64, planID string, db *sqlx.DB) error {
-	accountSubscriptionModel := models.AccountSubscriptionModel{
-		UserID: userID,
-	}
-
-	accountSubscription := accountSubscriptionModel.FetchOne(ctx, db).(models.AccountSubscriptionModel)
-	sub, err := payments.NewStripePayments().CreateSubscription(accountSubscription.StripeUserID.String, planID)
+func ReactivateSubscription(ctx context.Context, user *models.UserModel, planID string, db *sqlx.DB) error {
+	sub, err := payments.NewStripePayments().CreateSubscription(user.StripeCustomerID.String, planID)
 	if err != nil {
 		return err
 	}
+
+	var accountSubscription models.AccountSubscriptionModel
+	accountSubscription.UserID = user.ID
 
 	var subscription sql.NullString
 	if err := subscription.Scan(sub.ID); err != nil {
 		return err
 	}
+	accountSubscription.StripeSubscriptionID = subscription
 
 	var plan sql.NullString
 	if err := plan.Scan(planID); err != nil {
 		return err
 	}
-
-	accountSubscription.StripeSubscriptionID = subscription
 	accountSubscription.StripePlanID = plan
-	if err = accountSubscription.Update(ctx, db); err != nil {
+
+	if err = accountSubscription.Create(ctx, db); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func Invoices(ctx context.Context, accountInvoices *types.Invoices, userID int64, db *sqlx.DB) {
-	accountSubscriptionModel := models.AccountSubscriptionModel{
+func Invoices(ctx context.Context, accountInvoices *types.Invoices, userID string, db *sqlx.DB) {
+	userModel := models.UserModel{
 		UserID: userID,
 	}
+	user := userModel.FetchOne(ctx, db).(models.UserModel)
 
-	accountSubscription := accountSubscriptionModel.FetchOne(ctx, db).(models.AccountSubscriptionModel)
-
-	invoices := payments.NewStripePayments().InvoicesByUser(accountSubscription.StripeUserID.String)
+	invoices := payments.NewStripePayments().InvoicesByUser(user.StripeCustomerID.String)
 	for _, invoice := range *invoices {
 		unit, _ := currency.ParseISO(string(invoice.Currency))
 		table := types.InvoiceTable{
@@ -141,18 +139,15 @@ func Checkout(ctx context.Context, event stripe.Event, db *sqlx.DB) error {
 		return err
 	}
 
-	user := models.UserModel{
+	userModel := models.UserModel{
 		UserID: stripePayments.CustomerRefID(&session),
 	}
-	user.FetchOne(ctx, db)
+	user := userModel.FetchOne(ctx, db).(models.UserModel)
+	if user.ID == 0 {
+		return fmt.Errorf("unable to find the user %v", userModel.UserID)
+	}
 
 	accountSubscription.UserID = user.ID
-
-	var stripeUserID sql.NullString
-	if err := stripeUserID.Scan(*stripePayments.CustomerID(&session)); err != nil {
-		return err
-	}
-	accountSubscription.StripePlanID = stripeUserID
 
 	var subscriptionID sql.NullString
 	if err := subscriptionID.Scan(*stripePayments.SubscriptionID(&session)); err != nil {
@@ -160,8 +155,13 @@ func Checkout(ctx context.Context, event stripe.Event, db *sqlx.DB) error {
 	}
 	accountSubscription.StripeSubscriptionID = subscriptionID
 
+	plan, err := stripePayments.PlanID(&session)
+	if err != nil {
+		return err
+	}
+
 	var planID sql.NullString
-	if err := planID.Scan(*stripePayments.PlanID(&session)); err != nil {
+	if err := planID.Scan(*plan); err != nil {
 		return err
 	}
 	accountSubscription.StripePlanID = planID
@@ -170,7 +170,31 @@ func Checkout(ctx context.Context, event stripe.Event, db *sqlx.DB) error {
 		return err
 	}
 
+	var stripeCustomerID sql.NullString
+	if err := stripeCustomerID.Scan(*stripePayments.CustomerID(&session)); err != nil {
+		return err
+	}
+	user.StripeCustomerID = stripeCustomerID
+
+	if err := user.Update(ctx, db); err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func NewStripeSessions(userID, email, sessionID string) (*string, *string, error) {
+	monthly, err := payments.NewStripePayments().CheckoutSession(userID, email, monthlyPlan, sessionID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	annual, err := payments.NewStripePayments().CheckoutSession(userID, email, annualPlan, sessionID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return &monthly.ID, &annual.ID, nil
 }
 
 func Notifications(ctx context.Context, accountNotifications *types.Notifications, filter *models.Filter, userID int64, db *sqlx.DB) {

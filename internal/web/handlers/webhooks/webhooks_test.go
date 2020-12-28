@@ -17,16 +17,18 @@ import (
 
 type mockGateway struct{}
 
-func (m *mockGateway) CheckoutSessions(string, string) (*[]string, error) { return &[]string{}, nil }
+func (m *mockGateway) CheckoutSessions(string, string, string) (*[]string, error) {
+	return &[]string{}, nil
+}
 
-func (m *mockGateway) CheckoutSession(string, string, string) (*stripe.CheckoutSession, error) {
+func (m *mockGateway) CheckoutSession(string, string, string, string) (*stripe.CheckoutSession, error) {
 	return &stripe.CheckoutSession{}, nil
 }
 
-func (m *mockGateway) CustomerRefID(session *stripe.CheckoutSession) string   { return "" }
-func (m *mockGateway) CustomerID(session *stripe.CheckoutSession) *string     { return nil }
-func (m *mockGateway) SubscriptionID(session *stripe.CheckoutSession) *string { return nil }
-func (m *mockGateway) PlanID(session *stripe.CheckoutSession) *string         { return nil }
+func (m *mockGateway) CustomerRefID(session *stripe.CheckoutSession) string    { return "" }
+func (m *mockGateway) CustomerID(session *stripe.CheckoutSession) *string      { return nil }
+func (m *mockGateway) SubscriptionID(session *stripe.CheckoutSession) *string  { return nil }
+func (m *mockGateway) PlanID(session *stripe.CheckoutSession) (*string, error) { return nil, nil }
 
 func (m *mockGateway) ConstructEvent(body []byte, sig string) (stripe.Event, error) {
 	return stripe.Event{}, nil
@@ -51,8 +53,8 @@ func (m *mockGateway) CreateSubscription(customerID string, planID string) (*str
 	return &stripe.Subscription{}, nil
 }
 
-func (m *mockGateway) UpdatePlan(customerID string, planID string) error { return nil }
-func (m *mockGateway) CancelSubscription(subscriptionID string) error    { return nil }
+func (m *mockGateway) UpdateSubscription(customerID string, planID string) error { return nil }
+func (m *mockGateway) CancelSubscription(subscriptionID string) error            { return nil }
 
 func (m *mockGateway) EventSession(event stripe.Event) (stripe.CheckoutSession, error) {
 	return stripe.CheckoutSession{}, nil

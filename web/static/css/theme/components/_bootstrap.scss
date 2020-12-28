@@ -25,6 +25,32 @@ a {
     -webkit-box-shadow: none !important;
     -moz-box-shadow: none !important;
   }
+  &.contact-support {
+    color: #fff !important;
+    text-decoration: none !important;
+    &:hover {
+      text-decoration: none !important;
+    }
+  }
+}
+
+/* Alerts */
+.alert-icon-success {
+  color: #fff !important;
+  background-color: $background-color-06 !important;
+  border-color: $border-color-06 !important;
+
+  svg {
+    color: #fff !important;
+  }
+}
+
+/* Badges */
+.badge {
+  padding: 4px 5px 3px !important;
+  &.badge-success {
+    background-color: $background-color-06;
+  }
 }
 
 .edit, .delete  {

@@ -3,6 +3,7 @@ window.jQuery = $
 window.$ = $
 
 import AlertsHelper     from '../helpers/alerts'
+import ModalsHelper     from '../helpers/modals'
 import TablesHelper     from '../helpers/tables'
 import TemplateHelper   from '../helpers/template'
 import TurbolinksHelper from '../helpers/turbolinks'
@@ -17,6 +18,7 @@ require('datatables.net-bs4') window, $
 export default class AccountSubscription
   constructor: ->
     this.alerts = new AlertsHelper()
+    this.modals = new ModalsHelper()
     this.tables = new TablesHelper()
     this.template = new TemplateHelper()
     this.turbolinks = new TurbolinksHelper()
@@ -28,7 +30,9 @@ export default class AccountSubscription
   init: ->
     this.drawTable()
     this.subscribe()
+    this.reactivate()
     this.change()
+    this.cancel()
 
     return
 
@@ -40,7 +44,7 @@ export default class AccountSubscription
 
     $('button.loading').fadeIn()
 
-    $('table.account-subscription-invoice-table').DataTable
+    $('table#account-subscription-invoice-table').DataTable
       'serverSide': true,
       'bFilter': false
       'ordering': false
@@ -90,31 +94,46 @@ export default class AccountSubscription
       'drawCallback': ->
         s.template.renderIcons()
 
-    this.tables.cleanup($('table.account-subscription-invoice-table'))
+    this.tables.cleanup($('table#account-subscription-invoice-table'))
 
     return
 
   #
-  # Subscribe.
+  # New.
   #
   subscribe: ->
+    stripe = Stripe($('.stripe-pk').data('stripe-pk'))
+    $('button.subscribe').on 'click', ->
+      $('button.subscribe').attr('disabled', true)
+
+      stripe.redirectToCheckout(sessionId: $(this).data('stripe-session')).then (result) ->
+        $('button.subscribe').removeAttr('disabled')
+        alert result.error.message
+      return
+
+    return
+
+  #
+  # (Re)Subscribe.
+  #
+  reactivate: ->
     s = this
 
-    $('button.subscribe').on 'click', (e) ->
+    $('button.reactivate').on 'click', (e) ->
       e.preventDefault()
 
       s.alerts.reset()
       s.turbolinks.start()
 
       $('button.processing').fadeIn()
-      $('button.subscribe').attr('disabled', true)
+      $('button.reactivate').attr('disabled', true)
 
       csrfToken = $('input[name="gorilla.csrf.Token"]').val()
       planId = $(this).data('stripe-plan')
 
       $.ajax(
-        type: 'POST'
-        url: s.url.clean() + '/subscribe/' + planId
+        type: 'PUT'
+        url: s.url.clean() + '/reactivate/' + planId
         timeout: 10000
         headers: 'X-CSRF-Token': csrfToken
         statusCode:
@@ -122,9 +141,9 @@ export default class AccountSubscription
             s.turbolinks.stop()
 
             $('button.processing').fadeOut()
-            $('button.subscribe').removeAttr('disabled')
+            $('button.reactivate').removeAttr('disabled')
 
-            $('button.subscribe').each () ->
+            $('button.reactivate').each () ->
               $(this).addClass('hide')
 
               if $(this).data('stripe-plan') == planId
@@ -142,14 +161,14 @@ export default class AccountSubscription
 
             $('.alert.account-subscription-change-error').fadeIn(400, ->
               $('button.processing').fadeOut()
-              $('button.subscribe').removeAttr('disabled')
+              $('button.reactivate').removeAttr('disabled')
             )
       ).fail ->
         s.turbolinks.stop()
 
         $('.alert.account-subscription-change-error').fadeIn(400, ->
           $('button.processing').fadeOut()
-          $('button.subscribe').removeAttr('disabled')
+          $('button.reactivate').removeAttr('disabled')
         )
       return
 
@@ -171,11 +190,13 @@ export default class AccountSubscription
       $('button.change, button.cancel').attr('disabled', true)
 
       planId = $(this).data('stripe-plan')
+      csrfToken = $('input[name="gorilla.csrf.Token"]').val()
 
       $.ajax(
         type: 'PUT'
-        url: s.url.clean() + '/change/' + planId
+        url: s.url.clean() + '/update/' + planId
         timeout: 10000
+        headers: 'X-CSRF-Token': csrfToken
         statusCode:
           200: ->
             s.turbolinks.stop()
@@ -226,17 +247,20 @@ export default class AccountSubscription
       $('form#account-subscription-cancel').submit (e) ->
         e.preventDefault()
 
-        s.alerts.reset()
+        s.alerts.resetErrors()
         s.turbolinks.start()
 
         $('button.close-modal').attr('disabled', 'true')
         $('button.submit').html('Processing...').attr('disabled', 'true')
 
+        csrfToken = $('input[name="gorilla.csrf.Token"]').val()
+
         $.ajax(
-          type: 'POST'
+          type: 'PUT'
           url: s.url.clean() + '/cancel'
           data: $('form#account-subscription-cancel').serialize()
           timeout: 10000
+          headers: 'X-CSRF-Token': csrfToken
           statusCode:
             200: ->
               s.turbolinks.stop()

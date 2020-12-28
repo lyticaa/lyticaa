@@ -49,12 +49,28 @@ body {
               &:first-child {
                 td {
                   border-top: none !important;
+                  a {
+                    color: #fff !important;
+                  }
                 }
               }
 
               td {
                 font-weight: bold;
                 font-size: $font-size-medium;
+              }
+            }
+          }
+
+          &.dataTable {
+            tbody {
+              tr {
+                td {
+                  font-weight: normal;
+                  a {
+                    color: #fff !important;
+                  }
+                }
               }
             }
           }

@@ -15,20 +15,21 @@
 
 {{ define "content" }}
     <input type="hidden" class="location" data-section="account-subscription"/>
+    <input type="hidden" class="stripe-pk" data-stripe-pk="{{ .Config.Stripe.PK }}"/>
     {{ .csrfField }}
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
-            <div class="alert alert-icon-danger text-center pt-3 w-100 account-subscription-change-error" style="display: none;">
+            <div class="alert alert-icon-danger text-center font-weight-bold pt-3 w-100 account-subscription-change-error" style="display: none;">
                 <i data-feather="alert-triangle"></i>
-                Unable to update your subscription. Please try again. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+                Unable to update your subscription. Please try again. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support border-bottom">here</a>.
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-12 col-xl-12 stretch-card">
-            <div class="alert alert-icon-success text-center pt-3 w-100 account-subscription-change-success" style="display: none;">
+            <div class="alert alert-icon-success text-center font-weight-bold pt-3 w-100 account-subscription-change-success" style="display: none;">
                 <i data-feather="check-square"></i>
-                Your subscription was updated successfully. If you have any questions regarding this, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+                Your subscription was updated successfully. If you have any questions regarding this, please contact our support team by clicking <a href="#" class="contact-support border-bottom">here</a>.
             </div>
         </div>
     </div>
@@ -48,20 +49,17 @@
                 </div>
                 <div class="card-body">
                     <div class="container-fluid">
-                        {{ if ne .User.Status "active" }}
+                        {{ if not .Subscription.StripeSubscriptionID.String }}
                             <div class="row">
                                 <div class="col d-flex justify-content-center mb-5">
-                                    {{ if eq .User.Status "trial" }}
+                                    {{ if eq .User.StripeCustomerID.String "" }}
                                         <p class="text-secondary">You are currently on a free trial. Please upgrade to one of the plans below.</p>
-                                    {{ else if eq .User.Status "expired" }}
-                                        <p class="text-secondary">Your free trial has expired. Please upgrade to one of the plans below to continue.</p>
-                                    {{ else if eq .User.Status "canceled" }}
+                                    {{ else }}
                                         <p class="text-secondary">Your account is no longer active. Please subscribe to one of the plans below to continue.</p>
                                     {{ end }}
                                 </div>
                             </div>
-                        {{ end }}
-                        <div class="row">
+                            <div class="row">
                             <div class="offset-md-2 col-md-8 stretch-card grid-margin grid-margin-md-0 mb-4">
                                 <div class="card features">
                                     <div class="card-body">
@@ -122,6 +120,7 @@
                                 </div>
                             </div>
                         </div>
+                        {{ end }}
                         <div class="row">
                             <div class="offset-md-2 col-md-4 stretch-card grid-margin grid-margin-md-0">
                                 <div class="card monthly">
@@ -152,10 +151,17 @@
                                                 </button>
                                             {{ end }}
                                         {{ else }}
-                                            <button class="btn btn-primary btn-icon-text mx-auto mt-2 subscribe" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">
-                                                <i class="btn-icon-prepend mr-0" data-feather="shopping-cart"></i>
-                                                Subscribe
-                                            </button>
+                                            {{ if .User.StripeCustomerID.String }}
+                                                <button class="btn btn-primary btn-icon-text mx-auto mt-2 reactivate" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">
+                                                    <i class="btn-icon-prepend mr-0" data-feather="shopping-cart"></i>
+                                                    Subscribe
+                                                </button>
+                                            {{ else }}
+                                                <button class="btn btn-primary btn-icon-text mx-auto mt-2 subscribe" data-stripe-session="{{ .StripeMonthlyID }}">
+                                                    <i class="btn-icon-prepend mr-0" data-feather="shopping-cart"></i>
+                                                    Subscribe
+                                                </button>
+                                            {{ end }}
                                             <button class="btn btn-primary btn-icon-text mx-auto mt-2 change hide" data-stripe-plan="{{ .Config.Stripe.MonthlyPlanID }}">
                                                 <i class="btn-icon-prepend mr-0" data-feather="arrow-down"></i>
                                                 Downgrade
@@ -194,16 +200,23 @@
                                                     <i class="btn-icon-prepend mr-0" data-feather="arrow-up"></i>
                                                     Upgrade
                                                 </button>
-                                                <button class="btn btn-warning btn-icon-text mx-auto mt-2 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">
+                                                <button class="btn btn-primary btn-icon-text mx-auto mt-2 cancel hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}" data-toggle="modal" data-target="#account-subscription-cancel-modal">
                                                     <i class="btn-icon-prepend mr-0" data-feather="x-octagon"></i>
                                                     Cancel
                                                 </button>
                                             {{ end }}
                                         {{ else }}
-                                            <button class="btn btn-primary btn-icon-text mx-auto mt-2 subscribe" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">
-                                                <i class="btn-icon-prepend mr-0" data-feather="shopping-cart"></i>
-                                                Subscribe
-                                            </button>
+                                            {{ if .User.StripeCustomerID.String }}
+                                                <button class="btn btn-primary btn-icon-text mx-auto mt-2 reactivate" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">
+                                                    <i class="btn-icon-prepend mr-0" data-feather="shopping-cart"></i>
+                                                    Subscribe
+                                                </button>
+                                            {{ else }}
+                                                <button class="btn btn-primary btn-icon-text mx-auto mt-2 subscribe" data-stripe-session="{{ .StripeAnnualID }}">
+                                                    <i class="btn-icon-prepend mr-0" data-feather="shopping-cart"></i>
+                                                    Subscribe
+                                                </button>
+                                            {{ end }}
                                             <button class="btn btn-primary btn-icon-text mx-auto mt-2 change hide" data-stripe-plan="{{ .Config.Stripe.AnnualPlanID }}">
                                                 <i class="btn-icon-prepend mr-0" data-feather="arrow-up"></i>
                                                 Upgrade
@@ -239,7 +252,7 @@
                         <div class="row">
                             <div class="col d-flex justify-content-center mt-3">
                                 <p class="text-secondary text-center">
-                                    Please contact our support team by clicking <strong class="border-bottom"><a href="#" class="contact-support">here</a></strong> if you have any questions regarding your account.
+                                    Please contact our support team by clicking <strong class="border-bottom"><a href="#" class="contact-support border-bottom">here</a></strong> if you have any questions regarding your account.
                                 </p>
                             </div>
                         </div>
@@ -250,44 +263,44 @@
     </div>
     {{ if .Subscription.StripePlanID.String }}
         <div class="row">
-        <div class="col-12 col-xl-12 stretch-card">
-            <div class="alert alert-icon-danger text-center pt-3 w-100 account-subscription-invoices-load-error" style="display: none;">
-                <i data-feather="alert-triangle"></i>
-                Loading your invoices has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support">here</a>.
+            <div class="col-12 col-xl-12 stretch-card">
+                <div class="alert alert-icon-danger text-center font-weight-bold pt-3 w-100 account-subscription-invoices-load-error" style="display: none;">
+                    <i data-feather="alert-triangle"></i>
+                    Loading your invoices has failed. Please try again by refreshing the page. Should the problem persist, please contact our support team by clicking <a href="#" class="contact-support border-bottom">here</a>.
+                </div>
             </div>
         </div>
-    </div>
-        <div class="row">
-        <div class="col-12 col-xl-12 stretch-card">
-            <button class="btn btn-primary loading mb-3" type="button" disabled>
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Loading...
-            </button>
+            <div class="row">
+            <div class="col-12 col-xl-12 stretch-card">
+                <button class="btn btn-primary loading mb-3" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Loading...
+                </button>
+            </div>
         </div>
-    </div>
         <div class="row">
-        <div class="col-md-12 grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="account-subscription-invoice-table" class="table w-100">
-                            <thead>
-                            <tr>
-                                <th>Invoice #</th>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Status</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="account-subscription-invoice-table" class="table w-100">
+                                <thead>
+                                <tr>
+                                    <th>Invoice #</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     {{ end }}
     <div class="modal fade" id="account-subscription-cancel-modal" tabindex="-1" role="dialog" aria-labelledby="account-subscription-cancel-modal" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -301,18 +314,21 @@
                 <form id="account-subscription-cancel">
                     <div class="modal-body">
                         <div class="form-group">
-                            <div class="alert alert-warning text-justify">
+                            <div class="alert alert-icon-warning text-justify font-weight-bold">
+                                <i data-feather="alert-triangle"></i>
                                 Your subscription will remain active and your sales data will be processed as per normal until your anniversary date.
                             </div>
-                            <div class="alert alert-danger text-justify validate-cancel" style="display: none;">
+                            <div class="alert alert-icon-danger text-center font-weight-bold account-subscription-cancel-validation-error" style="display: none;">
+                                <i data-feather="alert-triangle"></i>
                                 Please enter the text exactly as shown below.
                             </div>
-                            <div class="alert alert-danger text-justify cancel" style="display: none;">
+                            <div class="alert alert-icon-danger text-center font-weight-bold cancel" style="display: none;">
+                                <i data-feather="alert-triangle"></i>
                                 It appears that something went wrong while trying to cancel your subscription. Please try again and if the problem persists, contact support <a href="mailto:{{.Config.SupportEmail}}">{{.Config.SupportEmail}}</a>
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="alert alert-info">
+                            <div class="alert alert-info text-center font-weight-bold">
                                 Please type <code>CANCEL</code> into the box below.
                             </div>
                         </div>

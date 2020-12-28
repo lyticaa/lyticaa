@@ -2,6 +2,7 @@ package account
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
@@ -11,15 +12,36 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Cancellation struct {
-	Data string `validate:"required,eq=CANCEL"`
-}
+const (
+	successResult = "success"
+	cancelResult  = "cancel"
+)
 
 func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := helpers.GetSessionUser(session)
 
-	session.Values["Subscription"] = accounts.Subscription(r.Context(), user.ID, a.db)
+	subscription := accounts.Subscription(r.Context(), user.ID, a.db)
+	if subscription.ID != 0 {
+		session.Values["Subscription"] = subscription
+	} else {
+		monthly, annual, err := accounts.NewStripeSessions(user.UserID, user.Email, session.ID)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+
+		session.Values["StripeMonthlyID"] = *monthly
+		session.Values["StripeAnnualID"] = *annual
+	}
+
+	if mux.Vars(r)["sessionID"] == session.ID {
+		switch mux.Vars(r)["result"] {
+		case successResult:
+			_ = helpers.SetFlash("success", types.FlashMessages["account"]["subscribe"]["success"], session, r, w)
+		case cancelResult:
+			_ = helpers.SetFlash("error", types.FlashMessages["account"]["subscribe"]["success"], session, r, w)
+		}
+	}
 
 	helpers.SetSessionHandler(helpers.AccountSubscription, session, w, r)
 	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.AccountSubscription), session.Values)
@@ -30,7 +52,7 @@ func (a *Account) InvoicesByUser(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(a.sessionStore, a.logger, w, r))
 
 	var invoices types.Invoices
-	accounts.Invoices(r.Context(), &invoices, user.ID, a.db)
+	accounts.Invoices(r.Context(), &invoices, user.UserID, a.db)
 
 	invoices.Draw = helpers.DtDraw(r)
 
@@ -40,7 +62,6 @@ func (a *Account) InvoicesByUser(w http.ResponseWriter, r *http.Request) {
 
 	js, err := json.Marshal(invoices)
 	if err != nil {
-		a.logger.Error().Err(err).Msg("unable to marshal data")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -49,11 +70,11 @@ func (a *Account) InvoicesByUser(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(js)
 }
 
-func (a *Account) UpdatePlan(w http.ResponseWriter, r *http.Request) {
+func (a *Account) UpdateSubscription(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := helpers.GetSessionUser(session)
 
-	if err := accounts.UpdatePlan(r.Context(), user.ID, mux.Vars(r)["planID"], a.db); err != nil {
+	if err := accounts.UpdateSubscription(r.Context(), user.ID, mux.Vars(r)["planID"], a.db); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -66,10 +87,12 @@ func (a *Account) CancelSubscription(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := helpers.GetSessionUser(session)
 
-	cancel := r.FormValue("cancel")
-	validate := Cancellation{Data: cancel}
+	if err := r.ParseForm(); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
-	ok, _ := helpers.ValidateInput(validate, &a.logger)
+	ok, _ := helpers.ValidateInput(helpers.ValidateCancellation{Data: r.Form.Get("cancel")}, &a.logger)
 	if !ok {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
@@ -85,11 +108,12 @@ func (a *Account) CancelSubscription(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (a *Account) Subscribe(w http.ResponseWriter, r *http.Request) {
+func (a *Account) ReactivateSubscription(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(a.sessionStore, a.logger, w, r)
 	user := helpers.GetSessionUser(session)
 
-	if err := accounts.Subscribe(r.Context(), user.ID, mux.Vars(r)["planID"], a.db); err != nil {
+	if err := accounts.ReactivateSubscription(r.Context(), user, mux.Vars(r)["planID"], a.db); err != nil {
+		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

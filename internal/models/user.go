@@ -16,16 +16,16 @@ var (
 )
 
 type UserModel struct {
-	ID          int64          `db:"id"`
-	UserID      string         `db:"user_id"`
-	Email       string         `db:"email"`
-	Nickname    sql.NullString `db:"nickname"`
-	AvatarURL   sql.NullString `db:"avatar_url"`
-	Admin       bool           `db:"admin"`
-	Status      string         `db:"status"`
-	Impersonate *UserModel
-	CreatedAt   time.Time `db:"created_at"`
-	UpdatedAt   time.Time `db:"updated_at"`
+	ID               int64          `db:"id"`
+	UserID           string         `db:"user_id"`
+	Email            string         `db:"email"`
+	Nickname         sql.NullString `db:"nickname"`
+	AvatarURL        sql.NullString `db:"avatar_url"`
+	StripeCustomerID sql.NullString `db:"stripe_customer_id"`
+	Admin            bool           `db:"admin"`
+	Impersonate      *UserModel
+	CreatedAt        time.Time `db:"created_at"`
+	UpdatedAt        time.Time `db:"updated_at"`
 }
 
 func (um *UserModel) FetchOne(ctx context.Context, db *sqlx.DB) interface{} {
@@ -75,14 +75,14 @@ func (um *UserModel) Count(ctx context.Context, data map[string]interface{}, db 
 
 func (um *UserModel) Create(ctx context.Context, db *sqlx.DB) error {
 	query := `INSERT INTO users (
-                  user_id,
-                  email,
-                  nickname,
-                  avatar_url,
-                  admin,
-                  created_at,
-                  updated_at)
-                  VALUES (
+                   user_id,
+                   email,
+                   nickname,
+                   avatar_url,
+                   admin,
+                   created_at,
+                   updated_at)
+                   VALUES (
                           :user_id,
                           :email,
                           :nickname,
@@ -112,17 +112,17 @@ func (um *UserModel) Update(ctx context.Context, db *sqlx.DB) error {
                  email = :email,
                  nickname = :nickname,
                  avatar_url = :avatar_url,
-                 status = :status,
+                 stripe_customer_id = :stripe_customer_id,
                  updated_at = :updated_at WHERE id = :id`
 	_, err := db.NamedExecContext(ctx, query,
 		map[string]interface{}{
-			"user_id":    um.UserID,
-			"email":      um.Email,
-			"nickname":   um.Nickname,
-			"avatar_url": um.AvatarURL,
-			"status":     um.Status,
-			"updated_at": time.Now(),
-			"id":         um.ID,
+			"user_id":            um.UserID,
+			"email":              um.Email,
+			"nickname":           um.Nickname,
+			"avatar_url":         um.AvatarURL,
+			"stripe_customer_id": um.StripeCustomerID,
+			"updated_at":         time.Now(),
+			"id":                 um.ID,
 		})
 	if err != nil {
 		return err

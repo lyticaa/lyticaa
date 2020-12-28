@@ -12,7 +12,6 @@ type AccountSubscriptionModel struct {
 	ID                    int64          `db:"id"`
 	AccountSubscriptionID string         `db:"account_subscription_id"`
 	UserID                int64          `db:"user_id"`
-	StripeUserID          sql.NullString `db:"stripe_user_id"`
 	StripeSubscriptionID  sql.NullString `db:"stripe_subscription_id"`
 	StripePlanID          sql.NullString `db:"stripe_plan_id"`
 	CreatedAt             time.Time      `db:"created_at"`
@@ -40,14 +39,12 @@ func (as *AccountSubscriptionModel) Count(ctx context.Context, data map[string]i
 func (as *AccountSubscriptionModel) Create(ctx context.Context, db *sqlx.DB) error {
 	query := `INSERT INTO account_subscriptions (
                                    user_id,
-                                   stripe_user_id,
                                    stripe_subscription_id,
                                    stripe_plan_id,
                                    created_at,
                                    updated_at)
                                    VALUES (
                                            :user_id,
-                                           :stripe_user_id,
                                            :stripe_subscription_id,
                                            :stripe_plan_id,
                                            :created_at,
@@ -55,7 +52,6 @@ func (as *AccountSubscriptionModel) Create(ctx context.Context, db *sqlx.DB) err
 	_, err := db.NamedExecContext(ctx, query,
 		map[string]interface{}{
 			"user_id":                as.UserID,
-			"stripe_user_id":         as.StripeUserID,
 			"stripe_subscription_id": as.StripeSubscriptionID,
 			"stripe_plan_id":         as.StripePlanID,
 			"created_at":             time.Now(),
@@ -78,7 +74,7 @@ func (as *AccountSubscriptionModel) Update(ctx context.Context, db *sqlx.DB) err
 			"stripe_subscription_id":  as.StripeSubscriptionID,
 			"stripe_plan_id":          as.StripePlanID,
 			"updated_at":              time.Now(),
-			"account_subscription_id": as.StripeSubscriptionID,
+			"account_subscription_id": as.AccountSubscriptionID,
 			"user_id":                 as.UserID,
 		})
 
@@ -89,4 +85,19 @@ func (as *AccountSubscriptionModel) Update(ctx context.Context, db *sqlx.DB) err
 	return nil
 }
 
-func (as *AccountSubscriptionModel) Delete(ctx context.Context, db *sqlx.DB) error { return nil }
+func (as *AccountSubscriptionModel) Delete(ctx context.Context, db *sqlx.DB) error {
+	query := `DELETE FROM account_subscriptions WHERE id = :id
+                                    AND account_subscription_id = :account_subscription_id
+                                    AND user_id = :user_id`
+	_, err := db.NamedExecContext(ctx, query,
+		map[string]interface{}{
+			"id":                      as.ID,
+			"account_subscription_id": as.AccountSubscriptionID,
+			"user_id":                 as.UserID,
+		})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

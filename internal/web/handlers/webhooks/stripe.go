@@ -1,6 +1,7 @@
 package webhooks
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/lyticaa/lyticaa-app/internal/web/pkg/accounts"
@@ -31,19 +32,19 @@ func (wh *Webhooks) Stripe(w http.ResponseWriter, r *http.Request) {
 }
 
 func (wh *Webhooks) stripeEvent(body []byte, w http.ResponseWriter, r *http.Request) (stripe.Event, error) {
-	e, err := wh.stripe.ConstructEvent(body, r.Header.Get("Stripe-Signature"))
+	event, err := wh.stripe.ConstructEvent(body, r.Header.Get("Stripe-Signature"))
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
 		return stripe.Event{}, err
 	}
 
-	return e, nil
+	return event, nil
 }
 
 func (wh *Webhooks) parseStripeEvent(event stripe.Event, w http.ResponseWriter, r *http.Request) error {
 	switch event.Type {
 	case payments.CheckoutSessionCompleted:
 		if err := accounts.Checkout(r.Context(), event, wh.db); err != nil {
+			fmt.Println(err)
 			return err
 		}
 	}

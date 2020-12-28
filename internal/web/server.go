@@ -2,12 +2,10 @@ package app
 
 import (
 	"context"
-	"github.com/lyticaa/lyticaa-app/internal/web/helpers"
+	"github.com/gorilla/csrf"
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/gorilla/csrf"
 )
 
 func (a *App) Start() {
@@ -16,16 +14,9 @@ func (a *App) Start() {
 
 	a.initializeHandlers()
 
-	var secure bool
-	if helpers.Development() {
-		secure = false
-	} else {
-		secure = true
-	}
-
 	a.HTTP.Server = &http.Server{
 		Addr:         ":" + os.Getenv("PORT"),
-		Handler:      csrf.Protect([]byte(os.Getenv("CSRF_TOKEN")), csrf.Secure(secure))(a.HTTP.Router),
+		Handler:      csrf.Protect([]byte(os.Getenv("CSRF_TOKEN")), csrf.Secure(a.Secure))(a.HTTP.Router),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  15 * time.Second,

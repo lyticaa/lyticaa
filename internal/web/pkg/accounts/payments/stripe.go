@@ -13,7 +13,6 @@ import (
 	"github.com/stripe/stripe-go/v72/checkout/session"
 	"github.com/stripe/stripe-go/v72/invoice"
 	"github.com/stripe/stripe-go/v72/paymentmethod"
-	"github.com/stripe/stripe-go/v72/plan"
 	"github.com/stripe/stripe-go/v72/price"
 	"github.com/stripe/stripe-go/v72/sub"
 	"github.com/stripe/stripe-go/v72/webhook"
@@ -36,17 +35,17 @@ var (
 )
 
 type StripeGateway interface {
-	CheckoutSessions(string, string) (*[]string, error)
-	CheckoutSession(string, string, string) (*stripe.CheckoutSession, error)
+	CheckoutSessions(string, string, string) (*[]string, error)
+	CheckoutSession(string, string, string, string) (*stripe.CheckoutSession, error)
 	CustomerRefID(*stripe.CheckoutSession) string
 	CustomerID(*stripe.CheckoutSession) *string
 	SubscriptionID(*stripe.CheckoutSession) *string
-	PlanID(*stripe.CheckoutSession) *string
+	PlanID(*stripe.CheckoutSession) (*string, error)
 	ConstructEvent([]byte, string) (stripe.Event, error)
 	InvoicesByUser(string) *types.Invoices
 	FormatAmount(int64) float64
 	CreateSubscription(string, string) (*stripe.Subscription, error)
-	UpdatePlan(string, string) error
+	UpdateSubscription(string, string) error
 	CancelSubscription(string) error
 	EventSession(stripe.Event) (stripe.CheckoutSession, error)
 	EventSubscription(stripe.Event) (stripe.Subscription, error)
@@ -63,13 +62,13 @@ func NewStripePayments() *StripePayments {
 	}
 }
 
-func (p *StripePayments) CheckoutSessions(userID, email string) (*[]string, error) {
-	monthly, err := p.CheckoutSession(userID, email, monthlyPaymentPlan)
+func (p *StripePayments) CheckoutSessions(userID, email, sessionID string) (*[]string, error) {
+	monthly, err := p.CheckoutSession(userID, email, monthlyPaymentPlan, sessionID)
 	if err != nil {
 		return nil, err
 	}
 
-	annual, err := p.CheckoutSession(userID, email, annualPaymentPlan)
+	annual, err := p.CheckoutSession(userID, email, annualPaymentPlan, sessionID)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +76,7 @@ func (p *StripePayments) CheckoutSessions(userID, email string) (*[]string, erro
 	return &[]string{monthly.ID, annual.ID}, nil
 }
 
-func (p *StripePayments) CheckoutSession(userID, email string, plan string) (*stripe.CheckoutSession, error) {
+func (p *StripePayments) CheckoutSession(userID, email, plan, sessionID string) (*stripe.CheckoutSession, error) {
 	params := &stripe.CheckoutSessionParams{
 		ClientReferenceID: &userID,
 		CustomerEmail:     &email,
@@ -90,8 +89,18 @@ func (p *StripePayments) CheckoutSession(userID, email string, plan string) (*st
 			}},
 			TrialFromPlan: stripe.Bool(true),
 		},
-		SuccessURL: stripe.String(fmt.Sprintf("%v%v", os.Getenv("BASE_URL"), os.Getenv("STRIPE_SUCCESS_URI"))),
-		CancelURL:  stripe.String(fmt.Sprintf("%v%v", os.Getenv("BASE_URL"), os.Getenv("STRIPE_CANCEL_URI"))),
+		SuccessURL: stripe.String(fmt.Sprintf("%v%v/%v",
+			os.Getenv("BASE_URL"),
+			os.Getenv("STRIPE_SUCCESS_URI"),
+			sessionID,
+		),
+		),
+		CancelURL: stripe.String(fmt.Sprintf("%v%v/%v",
+			os.Getenv("BASE_URL"),
+			os.Getenv("STRIPE_CANCEL_URI"),
+			sessionID,
+		),
+		),
 	}
 
 	return session.New(params)
@@ -117,12 +126,17 @@ func (p *StripePayments) SubscriptionID(session *stripe.CheckoutSession) *string
 	return nil
 }
 
-func (p *StripePayments) PlanID(session *stripe.CheckoutSession) *string {
-	if len(session.LineItems.Data) > 0 {
-		return p.planIDByProduct(session.LineItems.Data[0].Price.Product.ID)
+func (p *StripePayments) PlanID(session *stripe.CheckoutSession) (*string, error) {
+	if session.Subscription != nil {
+		subscription, err := sub.Get(session.Subscription.ID, &stripe.SubscriptionParams{})
+		if err != nil {
+			return nil, err
+		}
+
+		return &subscription.Items.Data[0].Plan.ID, nil
 	}
 
-	return nil
+	return nil, nil
 }
 
 func (p *StripePayments) ConstructEvent(body []byte, sig string) (stripe.Event, error) {
@@ -191,7 +205,7 @@ func (p *StripePayments) CreateSubscription(customerID, planID string) (*stripe.
 	return subscription, nil
 }
 
-func (p *StripePayments) UpdatePlan(subscriptionID, planID string) error {
+func (p *StripePayments) UpdateSubscription(subscriptionID, planID string) error {
 	priceID, ok := p.priceIDByPlan(planID)
 	if !ok {
 		return errors.New("failed to find the price for the plan")
@@ -294,18 +308,6 @@ func (p *StripePayments) priceIDByProduct(productID string) *string {
 	list := price.List(params)
 	for list.Next() {
 		return &list.Price().ID
-	}
-
-	return nil
-}
-
-func (p *StripePayments) planIDByProduct(productID string) *string {
-	params := &stripe.PlanListParams{}
-	params.Filters.AddFilter("product", "", productID)
-
-	list := plan.List(params)
-	for list.Next() {
-		return &list.Plan().ID
 	}
 
 	return nil

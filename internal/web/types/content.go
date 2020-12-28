@@ -2,13 +2,11 @@ package types
 
 var (
 	FlashMessages = map[string]map[string]map[string]string{
-		"setup": {
-			"subscribe": {
-				"success": "Thanks for subscribing. Please click Next to continue.",
-				"error":   "There was an issue while processing your subscription. Please try again.",
-			},
-		},
 		"account": {
+			"subscribe": {
+				"success": "Thanks for subscribing. It may take up to several minutes before your subscription is reflected below.",
+				"cancel":  "Your subscription request was canceled.",
+			},
 			"subscription": {
 				"cancel": "Your cancellation request was processed successfully.",
 			},
