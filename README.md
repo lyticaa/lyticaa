@@ -82,21 +82,23 @@ make install
 
 ### Run the Web App
 
-The web app will require active Redis and Postgres instances. See below for how to start these. 
+The Web App will require active Redis and Postgres instances. See below for how to start these. 
 
 ```bash
 make run-web-service
 ```
 
-The web app will then be accessible on http://localhost:3000.
+The Web App will then listen for incoming requests. It will try and start on port 3000.
 
 ### Run the API
+
+The API will also require active Redis and Postgres instances. See below for how to start these. 
 
 ```bash
 make run-api-service
 ```
 
-The API will then listen for incoming requests. The API will try and start on port 3000.
+The API will then listen for incoming requests. It will try and start on port 3000. You won't be able to run the Web App and the API at the same time, locally.
 
 ## Sessions
 
