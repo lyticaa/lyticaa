@@ -14,9 +14,10 @@ lint-verbose: lint-pre
 
 install: go.sum
 	GO111MODULE=on go install -v ./cmd/webd
+	GO111MODULE=on go install -v ./cmd/apid
 
 clean:
-	rm -f ${GOBIN}/webd
+	rm -f ${GOBIN}/{apid,webd}
 
 tests:
 	@go test -v -coverprofile .testCoverage.txt ./...
@@ -28,6 +29,9 @@ build-assets: setup-yarn
 
 run-web-service: build-assets
 	@webd
+
+run-api-service:
+	@apid
 
 docker-pg:
 	@docker-compose -f ./build/docker-compose.yml run --rm -p 5432:5432 --no-deps pg

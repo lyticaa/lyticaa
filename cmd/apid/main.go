@@ -9,9 +9,9 @@ import (
 
 func main() {
 	a := app.NewApp()
-	a.WebHandlers()
+	a.APIHandlers()
 
-	a.Start(true)
+	a.Start(false)
 
 	defer a.Data.Cache.Quit()
 
