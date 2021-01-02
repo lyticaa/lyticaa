@@ -90,13 +90,13 @@ make run-web-service
 
 The web app will then be accessible on http://localhost:3000.
 
-### Run the Worker
+### Run the API
 
 ```bash
-make run-worker-service
+make run-api-service
 ```
 
-The worker will then connect to RabbitMQ and listen for any incoming messages to process. You will need to ensure a local RabbitMQ instance is running (see below for how to start RabbitMQ).
+The API will then listen for incoming requests. The API will try and start on port 3000.
 
 ## Sessions
 
@@ -139,14 +139,4 @@ Add your migrations to the `db/migrations` folder. To apply the migrations:
 
 ```bash
 make migrate
-```
-
-## Messaging
-
-To communicate with other applications in the Lyticaa network, we use RabbitMQ.
-
-To start a local RabbitMQ instance, run:
-
-```bash
-make docker-rabbitmq
 ```
