@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/lyticaa/lyticaa-app/internal/app/helpers"
-	"github.com/lyticaa/lyticaa-app/internal/app/models"
 	"github.com/lyticaa/lyticaa-app/internal/app/types"
+	"github.com/lyticaa/lyticaa-app/internal/models"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/gorilla/mux"

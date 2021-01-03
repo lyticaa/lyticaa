@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lyticaa/lyticaa-app/internal/app/models"
 	"github.com/lyticaa/lyticaa-app/internal/app/pkg/accounts/payments"
 	"github.com/lyticaa/lyticaa-app/internal/app/types"
+	"github.com/lyticaa/lyticaa-app/internal/models"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/stripe/stripe-go/v72"

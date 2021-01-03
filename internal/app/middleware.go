@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/sessions"
 	"github.com/lyticaa/lyticaa-app/internal/app/helpers"
-	"github.com/lyticaa/lyticaa-app/internal/app/models"
 	"github.com/lyticaa/lyticaa-app/internal/app/pkg/accounts"
+	"github.com/lyticaa/lyticaa-app/internal/models"
+
+	"github.com/gorilla/sessions"
 )
 
 func (a *App) Secured(next http.Handler) http.Handler {

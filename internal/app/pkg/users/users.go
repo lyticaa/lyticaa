@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/lyticaa/lyticaa-app/internal/app/models"
+	"github.com/lyticaa/lyticaa-app/internal/models"
 
 	"github.com/jmoiron/sqlx"
 )
