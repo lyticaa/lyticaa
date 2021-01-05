@@ -1,6 +1,10 @@
-# lyticaa-app
+# lyticaa
 
-Lyticaa Dashboard (web/worker).
+This is the Lyticaa mono-repo for the following services:
+
+* Web App (the main Lyticaa dashboard).
+* API.
+* Data Service (to process file uploads).
 
 ## Setup
 
@@ -48,6 +52,7 @@ STRIPE_PK=
 STRIPE_SK=
 STRIPE_SUCCESS_URI=
 STRIPE_WHSEC=
+GMT=
 ```
 
 If you are unsure as to what these values ought to be, then please check with a colleague.
@@ -96,9 +101,19 @@ make run-api-service
 
 The API will then listen for incoming requests. It will try and start on port 3000. You won't be able to run the Web App and the API at the same time, locally.
 
+### Run the Data Service
+
+The Data Service will require a running Postgres instances. See below for how to start this. 
+
+```bash
+make run-data-service
+```
+
+The Data Service will then listen for any file uploads on S3, to process.
+
 ## Sessions
 
-Session data is stored in Redis. To start a local Redis instance, run:
+Session data (for the Web App) is stored in Redis. To start a local Redis instance, run:
 
 ```bash
 make docker-redis
