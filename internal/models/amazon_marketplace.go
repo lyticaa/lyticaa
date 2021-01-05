@@ -62,10 +62,10 @@ func (am *AmazonMarketplaceModel) Create(ctx context.Context, db *sqlx.DB) error
                                          :updated_at)`
 	_, err := db.NamedExecContext(ctx, query,
 		map[string]interface{}{
-			"name":         am.Name,
+			"name":             am.Name,
 			"exchange_rate_id": am.ExchangeRateID,
-			"created_at":      time.Now(),
-			"updated_at":      time.Now(),
+			"created_at":       time.Now(),
+			"updated_at":       time.Now(),
 		})
 	if err != nil {
 		return err

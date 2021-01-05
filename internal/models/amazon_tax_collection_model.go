@@ -56,9 +56,9 @@ func (at *AmazonTaxCollectionModelModel) Create(ctx context.Context, db *sqlx.DB
                                                   :updated_at)`
 	_, err := db.NamedExecContext(ctx, query,
 		map[string]interface{}{
-			"name":         at.Name,
-			"created_at":      time.Now(),
-			"updated_at":      time.Now(),
+			"name":       at.Name,
+			"created_at": time.Now(),
+			"updated_at": time.Now(),
 		})
 	if err != nil {
 		return err

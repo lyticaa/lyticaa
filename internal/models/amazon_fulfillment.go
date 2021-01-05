@@ -24,7 +24,7 @@ func (af *AmazonFulfillmentModel) FetchOne(ctx context.Context, db *sqlx.DB) int
 	return amazonFulfillment
 }
 
-func (af *AmazonFulfillmentModel) FetchBy(ctx context.Context, db *sqlx.DB) interface{}  { return nil }
+func (af *AmazonFulfillmentModel) FetchBy(ctx context.Context, db *sqlx.DB) interface{} { return nil }
 
 func (af *AmazonFulfillmentModel) FetchAll(ctx context.Context, data map[string]interface{}, filter *Filter, db *sqlx.DB) interface{} {
 	var amazonFulfillments []AmazonFulfillmentModel
@@ -54,9 +54,9 @@ func (af *AmazonFulfillmentModel) Create(ctx context.Context, db *sqlx.DB) error
                                          :updated_at)`
 	_, err := db.NamedExecContext(ctx, query,
 		map[string]interface{}{
-			"name":         af.Name,
-			"created_at":      time.Now(),
-			"updated_at":      time.Now(),
+			"name":       af.Name,
+			"created_at": time.Now(),
+			"updated_at": time.Now(),
 		})
 	if err != nil {
 		return err
