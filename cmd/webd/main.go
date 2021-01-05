@@ -13,7 +13,7 @@ func main() {
 
 	a.Start(true)
 
-	defer a.Data.Cache.Quit()
+	defer a.Database.Memcache.Quit()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)

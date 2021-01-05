@@ -17,10 +17,10 @@ type HTTP struct {
 	Client *http.Client
 }
 
-type Data struct {
-	SessionStore *redistore.RediStore
-	Cache        *mc.Client
-	Db           *sqlx.DB
+type Database struct {
+	Redis    *redistore.RediStore
+	Memcache *mc.Client
+	PG       *sqlx.DB
 }
 
 type Monitoring struct {
@@ -31,6 +31,6 @@ type Monitoring struct {
 type App struct {
 	Secure     bool
 	HTTP       HTTP
-	Data       Data
+	Database   Database
 	Monitoring Monitoring
 }

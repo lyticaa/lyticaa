@@ -24,7 +24,7 @@ import (
 type (
 	App        types.App
 	HTTP       types.HTTP
-	Data       types.Data
+	Database   types.Database
 	Monitoring types.Monitoring
 )
 
@@ -83,10 +83,10 @@ func NewApp() *App {
 			Router: mux.NewRouter(),
 			Client: &http.Client{Timeout: 5 * time.Second},
 		},
-		Data: types.Data{
-			SessionStore: sessionStore,
-			Cache:        cache,
-			Db:           db,
+		Database: types.Database{
+			Redis:    sessionStore,
+			Memcache: cache,
+			PG:       db,
 		},
 		Monitoring: types.Monitoring{
 			Logger:   log.With().Str("module", os.Getenv("APP_NAME")).Logger(),

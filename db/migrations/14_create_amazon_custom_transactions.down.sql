@@ -1,0 +1,1 @@
+DROP TABLE amazon_custom_transactions;

@@ -25,8 +25,8 @@ func (s *appSuite) TestApp(c *C) {
 	c.Assert(s.a.HTTP.Server, NotNil)
 	c.Assert(s.a.HTTP.Router, NotNil)
 	c.Assert(s.a.HTTP.Client, NotNil)
-	c.Assert(s.a.Data.SessionStore, NotNil)
-	c.Assert(s.a.Data.Db, NotNil)
+	c.Assert(s.a.Database.Redis, NotNil)
+	c.Assert(s.a.Database.PG, NotNil)
 }
 
 func (s *appSuite) TearDownSuite(c *C) {

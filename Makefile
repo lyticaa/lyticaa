@@ -13,11 +13,12 @@ lint-verbose: lint-pre
 	@golangci-lint run -v --timeout=5m
 
 install: go.sum
-	GO111MODULE=on go install -v ./cmd/webd
 	GO111MODULE=on go install -v ./cmd/apid
+	GO111MODULE=on go install -v ./cmd/datad
+	GO111MODULE=on go install -v ./cmd/webd
 
 clean:
-	rm -f ${GOBIN}/{apid,webd}
+	rm -f ${GOBIN}/{apid,datad,webd}
 
 tests:
 	@go test -v -coverprofile .testCoverage.txt ./...

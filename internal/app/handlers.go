@@ -43,7 +43,7 @@ func (a *App) APIHandlers() {
 }
 
 func (a *App) account() {
-	acct := account.NewAccount(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger, payments.NewStripePayments())
+	acct := account.NewAccount(a.Database.PG, a.Database.Redis, a.Monitoring.Logger, payments.NewStripePayments())
 
 	a.HTTP.Router.Handle("/account/notifications", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
@@ -102,7 +102,7 @@ func (a *App) account() {
 }
 
 func (a *App) admin() {
-	ad := admin.NewAdmin(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
+	ad := admin.NewAdmin(a.Database.PG, a.Database.Redis, a.Monitoring.Logger)
 
 	a.HTTP.Router.Handle("/admin", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
@@ -138,7 +138,7 @@ func (a *App) api() {
 }
 
 func (a *App) auth() {
-	au := auth.NewAuth(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
+	au := auth.NewAuth(a.Database.PG, a.Database.Redis, a.Monitoring.Logger)
 
 	a.HTTP.Router.HandleFunc("/auth/login", au.Login)
 	a.HTTP.Router.HandleFunc("/auth/logout", au.Logout)
@@ -146,7 +146,7 @@ func (a *App) auth() {
 }
 
 func (a *App) cohorts() {
-	c := cohorts.NewCohorts(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
+	c := cohorts.NewCohorts(a.Database.PG, a.Database.Redis, a.Monitoring.Logger)
 
 	a.HTTP.Router.Handle("/cohorts/high_margin", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
@@ -180,7 +180,7 @@ func (a *App) cohorts() {
 }
 
 func (a *App) dashboard() {
-	dashboard := dashboard.NewDashboard(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
+	dashboard := dashboard.NewDashboard(a.Database.PG, a.Database.Redis, a.Monitoring.Logger)
 
 	a.HTTP.Router.Handle("/dashboard", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
@@ -195,7 +195,7 @@ func (a *App) dashboard() {
 }
 
 func (a *App) expenses() {
-	e := expenses.NewExpenses(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
+	e := expenses.NewExpenses(a.Database.PG, a.Database.Redis, a.Monitoring.Logger)
 
 	a.HTTP.Router.Handle("/expenses/cost_of_goods", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
@@ -259,7 +259,7 @@ func (a *App) expenses() {
 }
 
 func (a *App) forecast() {
-	f := forecast.NewForecast(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
+	f := forecast.NewForecast(a.Database.PG, a.Database.Redis, a.Monitoring.Logger)
 
 	a.HTTP.Router.Handle("/forecast/total_sales", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
@@ -283,7 +283,7 @@ func (a *App) forecast() {
 }
 
 func (a *App) home() {
-	h := home.NewHome(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
+	h := home.NewHome(a.Database.PG, a.Database.Redis, a.Monitoring.Logger)
 
 	a.HTTP.Router.Handle("/", negroni.New(
 		negroni.Wrap(http.HandlerFunc(h.Login)),
@@ -296,7 +296,7 @@ func (a *App) home() {
 }
 
 func (a *App) metrics() {
-	m := metrics.NewMetrics(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
+	m := metrics.NewMetrics(a.Database.PG, a.Database.Redis, a.Monitoring.Logger)
 
 	a.HTTP.Router.Handle("/metrics/total_sales", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
@@ -410,7 +410,7 @@ func (a *App) metrics() {
 }
 
 func (a *App) profitLoss() {
-	p := profit_loss.NewProfitLoss(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
+	p := profit_loss.NewProfitLoss(a.Database.PG, a.Database.Redis, a.Monitoring.Logger)
 
 	a.HTTP.Router.Handle("/profit_loss/statement", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
@@ -424,7 +424,7 @@ func (a *App) profitLoss() {
 }
 
 func (a *App) reports() {
-	r := reports.NewReports(a.Data.Db, a.Data.SessionStore, a.Monitoring.Logger)
+	r := reports.NewReports(a.Database.PG, a.Database.Redis, a.Monitoring.Logger)
 
 	a.HTTP.Router.Handle("/reports/import", negroni.New(
 		negroni.HandlerFunc(a.Authenticated),
@@ -433,9 +433,9 @@ func (a *App) reports() {
 }
 
 func (a *App) webhooks() {
-	wh := webhooks.NewWebhooks(a.Data.Db, a.Monitoring.Logger, payments.NewStripePayments())
+	wh := webhooks.NewWebhooks(a.Database.PG, a.Monitoring.Logger, payments.NewStripePayments())
 
-	a.HTTP.Router.Handle("/webhooks/stripe", negroni.New(
+	a.HTTP.Router.Handle("/api/v1/webhooks/stripe", negroni.New(
 		negroni.Wrap(http.HandlerFunc(wh.Stripe)),
 	))
 }

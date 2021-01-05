@@ -53,7 +53,7 @@ func (a *App) SetupComplete(w http.ResponseWriter, r *http.Request, next http.Ha
 	session := a.getSession(w, r)
 
 	user := helpers.GetSessionUser(session)
-	accountPreferences := accounts.Preferences(r.Context(), user.ID, a.Data.Db)
+	accountPreferences := accounts.Preferences(r.Context(), user.ID, a.Database.PG)
 
 	if !accountPreferences.SetupCompleted {
 		http.Redirect(w, r, helpers.OnboardRoute(), http.StatusSeeOther)
@@ -64,7 +64,7 @@ func (a *App) SetupComplete(w http.ResponseWriter, r *http.Request, next http.Ha
 }
 
 func (a *App) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
-	session, err := a.Data.SessionStore.Get(r, "auth-session")
+	session, err := a.Database.Redis.Get(r, "auth-session")
 	if err != nil {
 		a.Monitoring.Logger.Error().Err(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
