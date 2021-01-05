@@ -28,11 +28,14 @@ setup-yarn:
 
 build-assets: setup-yarn
 
+run-api-service:
+	@apid
+
 run-web-service: build-assets
 	@webd
 
-run-api-service:
-	@apid
+run-data-service:
+	@datad
 
 docker-pg:
 	@docker-compose -f ./build/docker-compose.yml run --rm -p 5432:5432 --no-deps pg
