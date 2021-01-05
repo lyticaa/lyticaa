@@ -2,9 +2,9 @@
 
 This is the Lyticaa mono-repo for the following services:
 
-* Web App (the main Lyticaa dashboard).
 * API.
 * Data Service (to process file uploads).
+* Web App (the main Lyticaa dashboard).
 
 ## Setup
 
@@ -81,16 +81,6 @@ To compile and install the binaries:
 make install
 ```
 
-### Run the Web App
-
-The Web App will require active Redis and Postgres instances. See below for how to start these. 
-
-```bash
-make run-web-service
-```
-
-The Web App will then listen for incoming requests. It will try and start on port 3000.
-
 ### Run the API
 
 The API will also require active Redis and Postgres instances. See below for how to start these. 
@@ -110,6 +100,16 @@ make run-data-service
 ```
 
 The Data Service will then listen for any file uploads on S3, to process.
+
+### Run the Web App
+
+The Web App will require active Redis and Postgres instances. See below for how to start these. 
+
+```bash
+make run-web-service
+```
+
+The Web App will then listen for incoming requests. It will try and start on port 3000.
 
 ## Sessions
 
