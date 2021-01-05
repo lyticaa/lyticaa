@@ -1,9 +1,10 @@
 CREATE TABLE amazon_transaction_types
 (
-    id         BIGSERIAL,
-    name       VARCHAR NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id                          BIGSERIAL,
+    amazon_transaction_type_id  UUID DEFAULT UUID_GENERATE_V4(),
+    name                        VARCHAR NOT NULL,
+    created_at                  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at                  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE (name)
 );

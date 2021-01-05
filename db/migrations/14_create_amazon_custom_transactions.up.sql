@@ -1,6 +1,7 @@
 CREATE TABLE amazon_custom_transactions
 (
     id                              BIGSERIAL NOT NULL,
+    amazon_custom_transaction_id    UUID DEFAULT UUID_GENERATE_V4(),
     user_id                         VARCHAR NOT NULL,
     date_time                       TIMESTAMPTZ NOT NULL,
     settlement_id                   BIGSERIAL NOT NULL,

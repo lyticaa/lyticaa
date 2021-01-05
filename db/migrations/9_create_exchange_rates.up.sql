@@ -1,10 +1,11 @@
 CREATE TABLE exchange_rates
 (
-    id          BIGSERIAL,
-    code        VARCHAR NOT NULL,
-    rate        REAL,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id                  BIGSERIAL,
+    exchange_rate_id    UUID DEFAULT UUID_GENERATE_V4(),
+    code                VARCHAR NOT NULL,
+    rate                REAL,
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 

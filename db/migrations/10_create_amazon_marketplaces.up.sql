@@ -1,10 +1,11 @@
 CREATE TABLE amazon_marketplaces
 (
-    id                  BIGSERIAL,
-    name                VARCHAR NOT NULL,
-    exchange_rate_id    BIGSERIAL references exchange_rates(id),
-    created_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at          TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id                      BIGSERIAL,
+    amazon_marketplace_id   UUID DEFAULT UUID_GENERATE_V4(),
+    name                    VARCHAR NOT NULL,
+    exchange_rate_id        BIGSERIAL references exchange_rates(id),
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE (name)
 );

@@ -29,7 +29,7 @@ func (er *ExchangeRateModel) FetchAll(ctx context.Context, data map[string]inter
 		query,
 	)
 
-	return &exchangeRates
+	return exchangeRates
 }
 
 func (er *ExchangeRateModel) Count(ctx context.Context, data map[string]interface{}, db *sqlx.DB) int64 {

@@ -16,8 +16,14 @@ type AmazonTransactionTypeModel struct {
 }
 
 func (at *AmazonTransactionTypeModel) FetchOne(ctx context.Context, db *sqlx.DB) interface{} {
-	return nil
+	var amazonTransactionType AmazonTransactionTypeModel
+
+	query := `SELECT * FROM amazon_transaction_types WHERE name = $1`
+	_ = db.QueryRowxContext(ctx, query, at.Name).StructScan(&amazonTransactionType)
+
+	return amazonTransactionType
 }
+
 func (at *AmazonTransactionTypeModel) FetchBy(ctx context.Context, db *sqlx.DB) interface{} {
 	return nil
 }
@@ -32,12 +38,34 @@ func (at *AmazonTransactionTypeModel) FetchAll(ctx context.Context, data map[str
 		query,
 	)
 
-	return &amazonTransactionTypes
+	return amazonTransactionTypes
 }
 
 func (at *AmazonTransactionTypeModel) Count(ctx context.Context, data map[string]interface{}, db *sqlx.DB) int64 {
 	return int64(0)
 }
-func (at *AmazonTransactionTypeModel) Create(ctx context.Context, db *sqlx.DB) error { return nil }
+
+func (at *AmazonTransactionTypeModel) Create(ctx context.Context, db *sqlx.DB) error {
+	query := `INSERT INTO amazon_transaction_types (
+                                      name,
+                                      created_at,
+                                      updated_at)
+                                      VALUES (
+                                              :name,
+                                              :created_at,
+                                              :updated_at)`
+	_, err := db.NamedExecContext(ctx, query,
+		map[string]interface{}{
+			"name":         at.Name,
+			"created_at":      time.Now(),
+			"updated_at":      time.Now(),
+		})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (at *AmazonTransactionTypeModel) Update(ctx context.Context, db *sqlx.DB) error { return nil }
 func (at *AmazonTransactionTypeModel) Delete(ctx context.Context, db *sqlx.DB) error { return nil }
