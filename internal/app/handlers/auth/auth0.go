@@ -9,11 +9,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/lyticaa/lyticaa-app/internal/app/helpers"
-	"github.com/lyticaa/lyticaa-app/internal/app/pkg/accounts"
-	"github.com/lyticaa/lyticaa-app/internal/app/pkg/auth/iam"
-	"github.com/lyticaa/lyticaa-app/internal/app/pkg/users"
-	"github.com/lyticaa/lyticaa-app/internal/app/types"
+	"github.com/lyticaa/lyticaa/internal/app/helpers"
+	"github.com/lyticaa/lyticaa/internal/app/pkg/accounts"
+	"github.com/lyticaa/lyticaa/internal/app/pkg/auth/iam"
+	"github.com/lyticaa/lyticaa/internal/app/pkg/users"
+	"github.com/lyticaa/lyticaa/internal/app/types"
 
 	"github.com/coreos/go-oidc"
 )

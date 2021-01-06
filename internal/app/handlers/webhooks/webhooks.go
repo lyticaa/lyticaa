@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/lyticaa/lyticaa-app/internal/app/pkg/accounts/payments"
+	"github.com/lyticaa/lyticaa/internal/app/pkg/accounts/payments"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"

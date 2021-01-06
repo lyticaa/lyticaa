@@ -3,7 +3,7 @@ package data
 import (
 	"os"
 
-	"github.com/lyticaa/lyticaa-app/internal/data/types"
+	"github.com/lyticaa/lyticaa/internal/data/types"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/jmoiron/sqlx"

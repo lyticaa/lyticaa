@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/lyticaa/lyticaa-app/internal/data/reports/ingest/amazon/reports/types"
+	"github.com/lyticaa/lyticaa/internal/data/reports/ingest/amazon/reports/types"
 
 	"github.com/tealeg/xlsx"
 )

@@ -6,9 +6,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/lyticaa/lyticaa-app/internal/app/helpers"
-	"github.com/lyticaa/lyticaa-app/internal/app/types"
-	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa/internal/app/helpers"
+	"github.com/lyticaa/lyticaa/internal/app/types"
+	"github.com/lyticaa/lyticaa/internal/models"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/gorilla/mux"

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/lyticaa/lyticaa-app/internal/data/reports/ingest/amazon"
-	"github.com/lyticaa/lyticaa-app/internal/data/reports/ingest/types"
+	"github.com/lyticaa/lyticaa/internal/data/reports/ingest/amazon"
+	"github.com/lyticaa/lyticaa/internal/data/reports/ingest/types"
 
 	"github.com/aws/aws-sdk-go/service/sqs"
 )

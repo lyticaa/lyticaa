@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa/internal/models"
 )
 
 var (

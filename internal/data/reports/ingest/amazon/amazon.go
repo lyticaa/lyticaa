@@ -1,7 +1,7 @@
 package amazon
 
 import (
-	"github.com/lyticaa/lyticaa-app/internal/data/reports/ingest/amazon/reports"
+	"github.com/lyticaa/lyticaa/internal/data/reports/ingest/amazon/reports"
 
 	"github.com/jmoiron/sqlx"
 )

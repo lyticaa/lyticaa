@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	transactions "github.com/lyticaa/lyticaa-app/internal/data/reports/ingest/amazon/reports/custom_transactions"
-	sponsored "github.com/lyticaa/lyticaa-app/internal/data/reports/ingest/amazon/reports/sponsored_products"
-	"github.com/lyticaa/lyticaa-app/internal/models"
+	transactions "github.com/lyticaa/lyticaa/internal/data/reports/ingest/amazon/reports/custom_transactions"
+	sponsored "github.com/lyticaa/lyticaa/internal/data/reports/ingest/amazon/reports/sponsored_products"
+	"github.com/lyticaa/lyticaa/internal/models"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"

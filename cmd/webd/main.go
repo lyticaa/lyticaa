@@ -4,7 +4,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/lyticaa/lyticaa-app/internal/app"
+	"github.com/lyticaa/lyticaa/internal/app"
 )
 
 func main() {

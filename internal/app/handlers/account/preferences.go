@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/lyticaa/lyticaa-app/internal/app/helpers"
-	"github.com/lyticaa/lyticaa-app/internal/app/pkg/accounts"
+	"github.com/lyticaa/lyticaa/internal/app/helpers"
+	"github.com/lyticaa/lyticaa/internal/app/pkg/accounts"
 )
 
 func (a *Account) SetupCompleted(w http.ResponseWriter, r *http.Request) {

@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/lyticaa/lyticaa-app/internal/app/helpers"
-	"github.com/lyticaa/lyticaa-app/internal/app/pkg/admin"
-	"github.com/lyticaa/lyticaa-app/internal/app/pkg/users"
-	"github.com/lyticaa/lyticaa-app/internal/app/types"
+	"github.com/lyticaa/lyticaa/internal/app/helpers"
+	"github.com/lyticaa/lyticaa/internal/app/pkg/admin"
+	"github.com/lyticaa/lyticaa/internal/app/pkg/users"
+	"github.com/lyticaa/lyticaa/internal/app/types"
 
 	"github.com/gorilla/mux"
 )

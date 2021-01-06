@@ -3,7 +3,7 @@ package data
 import (
 	"sync"
 
-	"github.com/lyticaa/lyticaa-app/internal/data/reports/ingest"
+	"github.com/lyticaa/lyticaa/internal/data/reports/ingest"
 )
 
 type Worker interface {

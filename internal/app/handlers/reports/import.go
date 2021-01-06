@@ -5,9 +5,9 @@ import (
 	"regexp"
 	"sync"
 
-	"github.com/lyticaa/lyticaa-app/internal/app/helpers"
-	"github.com/lyticaa/lyticaa-app/internal/app/pkg/reports/storage/aws"
-	"github.com/lyticaa/lyticaa-app/internal/app/pkg/reports/storage/aws/s3"
+	"github.com/lyticaa/lyticaa/internal/app/helpers"
+	"github.com/lyticaa/lyticaa/internal/app/pkg/reports/storage/aws"
+	"github.com/lyticaa/lyticaa/internal/app/pkg/reports/storage/aws/s3"
 )
 
 var (

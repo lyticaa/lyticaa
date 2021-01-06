@@ -5,9 +5,9 @@ import (
 	"os"
 	"regexp"
 
-	transactions "github.com/lyticaa/lyticaa-app/internal/data/reports/ingest/amazon/reports/custom_transactions"
-	sponsored "github.com/lyticaa/lyticaa-app/internal/data/reports/ingest/amazon/reports/sponsored_products"
-	"github.com/lyticaa/lyticaa-app/internal/data/reports/ingest/amazon/reports/types"
+	transactions "github.com/lyticaa/lyticaa/internal/data/reports/ingest/amazon/reports/custom_transactions"
+	sponsored "github.com/lyticaa/lyticaa/internal/data/reports/ingest/amazon/reports/sponsored_products"
+	"github.com/lyticaa/lyticaa/internal/data/reports/ingest/amazon/reports/types"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"

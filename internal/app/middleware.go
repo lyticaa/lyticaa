@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/lyticaa/lyticaa-app/internal/app/helpers"
-	"github.com/lyticaa/lyticaa-app/internal/app/pkg/accounts"
-	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa/internal/app/helpers"
+	"github.com/lyticaa/lyticaa/internal/app/pkg/accounts"
+	"github.com/lyticaa/lyticaa/internal/models"
 
 	"github.com/gorilla/sessions"
 )

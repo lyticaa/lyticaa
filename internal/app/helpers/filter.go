@@ -3,7 +3,7 @@ package helpers
 import (
 	"net/http"
 
-	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa/internal/models"
 )
 
 func BuildFilter(r *http.Request) *models.Filter {

@@ -1,6 +1,6 @@
-module github.com/lyticaa/lyticaa-app
+module github.com/lyticaa/lyticaa
 
-replace github.com/lyticaa/lyticaa-app => ../lyticaa/lyticaa-app
+replace github.com/lyticaa/lyticaa => ../lyticaa/lyticaa
 
 go 1.14
 

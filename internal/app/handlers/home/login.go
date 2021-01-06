@@ -3,7 +3,7 @@ package home
 import (
 	"net/http"
 
-	"github.com/lyticaa/lyticaa-app/internal/app/helpers"
+	"github.com/lyticaa/lyticaa/internal/app/helpers"
 )
 
 func (h *Home) Login(w http.ResponseWriter, r *http.Request) {

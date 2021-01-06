@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lyticaa/lyticaa-app/internal/app/helpers"
-	"github.com/lyticaa/lyticaa-app/internal/app/pkg/expenses/other"
-	"github.com/lyticaa/lyticaa-app/internal/app/types"
+	"github.com/lyticaa/lyticaa/internal/app/helpers"
+	"github.com/lyticaa/lyticaa/internal/app/pkg/expenses/other"
+	"github.com/lyticaa/lyticaa/internal/app/types"
 
 	"github.com/gorilla/mux"
 )

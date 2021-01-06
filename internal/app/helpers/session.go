@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa/internal/models"
 
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/sessions"

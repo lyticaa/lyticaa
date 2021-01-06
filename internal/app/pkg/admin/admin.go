@@ -3,8 +3,8 @@ package admin
 import (
 	"context"
 
-	"github.com/lyticaa/lyticaa-app/internal/app/types"
-	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa/internal/app/types"
+	"github.com/lyticaa/lyticaa/internal/models"
 
 	"github.com/jmoiron/sqlx"
 )

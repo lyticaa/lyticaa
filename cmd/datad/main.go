@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/lyticaa/lyticaa-app/internal/data"
+	"github.com/lyticaa/lyticaa/internal/data"
 )
 
 func main() {

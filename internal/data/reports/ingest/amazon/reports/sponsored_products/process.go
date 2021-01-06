@@ -2,7 +2,7 @@ package sponsored_products
 
 import (
 	"context"
-	"github.com/lyticaa/lyticaa-app/internal/models"
+	"github.com/lyticaa/lyticaa/internal/models"
 )
 
 const (
