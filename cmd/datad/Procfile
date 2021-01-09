@@ -1,1 +1,1 @@
-web: bin/datad
+worker: bin/datad
