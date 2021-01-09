@@ -2,7 +2,7 @@ module github.com/lyticaa/lyticaa
 
 replace github.com/lyticaa/lyticaa => ../lyticaa/lyticaa
 
-go 1.14
+go 1.15
 
 require (
 	github.com/aws/aws-sdk-go v1.35.24
