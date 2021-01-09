@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/gob"
+	"html/template"
 	"net/http"
 	"os"
 	"time"
@@ -33,6 +34,8 @@ func NewApp() *App {
 	gob.Register(types.Flash{})
 	gob.Register(types.Config{})
 	gob.Register(models.UserModel{})
+	var html template.HTML
+	gob.Register(html)
 
 	sentryOpts := sentry.ClientOptions{
 		Dsn: os.Getenv("SENTRY_DSN"),

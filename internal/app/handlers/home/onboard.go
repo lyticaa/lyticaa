@@ -2,7 +2,6 @@ package home
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/lyticaa/lyticaa/internal/app/helpers"
 	"github.com/lyticaa/lyticaa/internal/app/pkg/accounts"
@@ -17,6 +16,10 @@ func (h *Home) Onboard(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, helpers.DashboardRoute(), http.StatusFound)
 	}
 
-	session.Values["Class"] = strings.Replace(helpers.HomeOnboard, "/", "-", -1)
+	if err := helpers.SetSessionHandler("home-onboard", session, w, r); err != nil {
+		h.logger.Error().Err(err).Msg("unable to set session handler")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.HomeOnboard), session.Values)
 }
