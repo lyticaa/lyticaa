@@ -41,7 +41,11 @@
 
             <link rel="icon" href="../../static/images/favicon.ico" sizes="16x16" type="image/x-icon">
         </head>
+        {{ if .Handler }}
         <body class="sidebar-dark {{ .Handler }}">
+        {{ else }}
+        <body class="sidebar-dark">
+        {{ end }}
             <div class="main-wrapper">
                 <nav class="sidebar">
                     <div class="sidebar-header">
