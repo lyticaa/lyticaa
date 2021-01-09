@@ -16,7 +16,11 @@
 
         <link rel="icon" href="../../static/images/favicon.ico" sizes="16x16" type="image/x-icon">
     </head>
-    <body class="{{ .Handler }}">
+    {{ if .Class }}
+    <body class="{{ .Class }}">
+    {{ else }}
+    <body>
+    {{ end }}
         <div class="main-wrapper">
             <div class="page-wrapper ml-0 w-100">
                 {{ template "content" . }}

@@ -1,10 +1,8 @@
 package helpers
 
 import (
-	"net/http"
-	"strings"
-
 	"github.com/lyticaa/lyticaa/internal/models"
+	"net/http"
 
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/sessions"
@@ -46,15 +44,6 @@ func SetSessionUser(user *models.UserModel, session *sessions.Session, w http.Re
 
 	session.Values["User"] = userModel
 	_ = session.Save(r, w)
-}
-
-func SetSessionHandler(handler string, session *sessions.Session, w http.ResponseWriter, r *http.Request) error {
-	session.Values["Handler"] = strings.Replace(handler, "/", "-", -1)
-	if err := session.Save(r, w); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func resetFlash(session *sessions.Session) {

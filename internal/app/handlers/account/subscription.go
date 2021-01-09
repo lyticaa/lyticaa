@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/lyticaa/lyticaa/internal/app/helpers"
 	"github.com/lyticaa/lyticaa/internal/app/pkg/accounts"
@@ -44,11 +45,7 @@ func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if err := helpers.SetSessionHandler("account-subscription", session, w, r); err != nil {
-		a.logger.Error().Err(err).Msg("unable to set session handler")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	session.Values["Class"] = strings.Replace(helpers.AccountSubscription, "/", "-", -1)
 	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.AccountSubscription), session.Values)
 	helpers.ClearFlash(session, r, w)
 }
