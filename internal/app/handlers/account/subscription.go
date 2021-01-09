@@ -44,7 +44,7 @@ func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if err := helpers.SetSessionHandler("account-subscription", session, w, r); err != nil {
+	if err := helpers.SetSessionHandler(helpers.AccountSubscription, session, w, r); err != nil {
 		a.logger.Error().Err(err).Msg("unable to set session handler")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
