@@ -28,6 +28,7 @@ func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 		monthly, annual, err := accounts.NewStripeSessions(user.UserID, user.Email, session.ID)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 
 		session.Values["StripeMonthlyID"] = *monthly
@@ -43,7 +44,11 @@ func (a *Account) Subscription(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	helpers.SetSessionHandler(helpers.AccountSubscription, session, w, r)
+	if err := helpers.SetSessionHandler(helpers.AccountSubscription, session, w, r); err != nil {
+		a.logger.Error().Err(err).Msg("unable to set session handler")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.AccountSubscription), session.Values)
 	helpers.ClearFlash(session, r, w)
 }

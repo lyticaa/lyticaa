@@ -12,6 +12,10 @@ func (h *Home) Login(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, helpers.DashboardRoute(), http.StatusFound)
 	}
 
-	helpers.SetSessionHandler(helpers.HomeLogin, session, w, r)
+	if err := helpers.SetSessionHandler(helpers.HomeLogin, session, w, r); err != nil {
+		h.logger.Error().Err(err).Msg("unable to set session handler")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	helpers.RenderTemplate(w, helpers.BareLayout, helpers.TemplateList(helpers.HomeLogin), session.Values)
 }
