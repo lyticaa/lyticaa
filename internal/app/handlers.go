@@ -132,6 +132,9 @@ func (a *App) admin() {
 func (a *App) api() {
 	ap := api.NewAPI()
 
+	a.HTTP.Router.Handle("/", negroni.New(
+		negroni.Wrap(http.HandlerFunc(ap.HealthCheck)),
+	))
 	a.HTTP.Router.Handle("/api/health_check", negroni.New(
 		negroni.Wrap(http.HandlerFunc(ap.HealthCheck)),
 	))
