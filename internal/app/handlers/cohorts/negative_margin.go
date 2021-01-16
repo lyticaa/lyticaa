@@ -28,6 +28,7 @@ func (c *Cohorts) NegativeMarginByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var byDate types.Cohort
+	byDate.Data = []types.CohortTable{}
 	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)

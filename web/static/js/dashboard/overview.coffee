@@ -58,55 +58,65 @@ export default class DashboardOverview
               )
             )
 
-          if j.unitsSold.chart.sparkline.data.length > 0
-            d.charts.sparkline('dashboard-units-sold-sparkline', [j.unitsSold.chart.sparkline])
-          else
-            $('#dashboard-units-sold-sparkline').html('')
+          if j.unitsSold.chart.sparkline.data
+            if j.unitsSold.chart.sparkline.data.length > 0
+              d.charts.sparkline('dashboard-units-sold-sparkline', [j.unitsSold.chart.sparkline])
+            else
+              $('#dashboard-units-sold-sparkline').html('')
 
-          if j.amazonCosts.chart.sparkline.data.length > 0
-            d.charts.sparkline('dashboard-amazon-costs-sparkline', [j.amazonCosts.chart.sparkline])
-          else
-            $('#dashboard-amazon-costs-sparkline').html('')
+          if j.amazonCosts.chart.sparkline.data
+            if j.amazonCosts.chart.sparkline.data.length > 0
+              d.charts.sparkline('dashboard-amazon-costs-sparkline', [j.amazonCosts.chart.sparkline])
+            else
+              $('#dashboard-amazon-costs-sparkline').html('')
 
-          if j.productCosts.chart.sparkline.data.length > 0
-            d.charts.sparkline('dashboard-product-costs-sparkline', [j.productCosts.chart.sparkline])
-          else
-            $('#dashboard-product-costs-sparkline').html('')
+          if j.productCosts.chart.sparkline.data
+            if j.productCosts.chart.sparkline.data.length > 0
+              d.charts.sparkline('dashboard-product-costs-sparkline', [j.productCosts.chart.sparkline])
+            else
+              $('#dashboard-product-costs-sparkline').html('')
 
-          if j.advertisingSpend.chart.sparkline.data.length > 0
-            d.charts.sparkline('dashboard-advertising-spend-sparkline', [j.advertisingSpend.chart.sparkline])
-          else
-            $('#dashboard-advertising-spend-sparkline').html('')
+          if j.advertisingSpend.chart.sparkline.data
+            if j.advertisingSpend.chart.sparkline.data.length > 0
+              d.charts.sparkline('dashboard-advertising-spend-sparkline', [j.advertisingSpend.chart.sparkline])
+            else
+              $('#dashboard-advertising-spend-sparkline').html('')
 
-          if j.refunds.chart.sparkline.data.length > 0
-            d.charts.sparkline('dashboard-refunds-sparkline', [j.refunds.chart.sparkline])
-          else
-            $('#dashboard-refunds-sparkline').html('')
+          if j.refunds.chart.sparkline.data
+            if j.refunds.chart.sparkline.data.length > 0
+              d.charts.sparkline('dashboard-refunds-sparkline', [j.refunds.chart.sparkline])
+            else
+              $('#dashboard-refunds-sparkline').html('')
 
-          if j.shippingCredits.chart.sparkline.data.length > 0
-            d.charts.sparkline('dashboard-shipping-credits-sparkline', [j.shippingCredits.chart.sparkline])
-          else
-            $('#dashboard-shipping-credits-sparkline').html('')
+          if j.shippingCredits.chart.sparkline.data
+            if j.shippingCredits.chart.sparkline.data.length > 0
+              d.charts.sparkline('dashboard-shipping-credits-sparkline', [j.shippingCredits.chart.sparkline])
+            else
+              $('#dashboard-shipping-credits-sparkline').html('')
 
-          if j.promotionalRebates.chart.sparkline.data.length > 0
-            d.charts.sparkline('dashboard-promotional-rebates-sparkline', [j.promotionalRebates.chart.sparkline])
-          else
-            $('#dashboard-promotional-rebates-sparkline').html('')
+          if j.promotionalRebates.chart.sparkline.data
+            if j.promotionalRebates.chart.sparkline.data.length > 0
+              d.charts.sparkline('dashboard-promotional-rebates-sparkline', [j.promotionalRebates.chart.sparkline])
+            else
+              $('#dashboard-promotional-rebates-sparkline').html('')
 
-          if j.totalCosts.chart.sparkline.data.length > 0
-            d.charts.sparkline('dashboard-total-costs-sparkline', [j.totalCosts.chart.sparkline])
-          else
-            $('#dashboard-total-costs-sparkline').html('')
+          if j.totalCosts.chart.sparkline.data
+            if j.totalCosts.chart.sparkline.data.length > 0
+              d.charts.sparkline('dashboard-total-costs-sparkline', [j.totalCosts.chart.sparkline])
+            else
+              $('#dashboard-total-costs-sparkline').html('')
 
-          if j.grossMargin.chart.sparkline.data.length > 0
-            d.charts.sparkline('dashboard-gross-margin-sparkline', [j.grossMargin.chart.sparkline])
-          else
-            $('#dashboard-gross-margin-sparkline').html('')
+          if j.grossMargin.chart.sparkline.data
+            if j.grossMargin.chart.sparkline.data.length > 0
+              d.charts.sparkline('dashboard-gross-margin-sparkline', [j.grossMargin.chart.sparkline])
+            else
+              $('#dashboard-gross-margin-sparkline').html('')
 
-          if j.netMargin.chart.sparkline.data.length > 0
-            d.charts.sparkline('dashboard-net-margin-sparkline', [j.netMargin.chart.sparkline])
-          else
-            $('#dashboard-net-margin-sparkline').html('')
+          if j.netMargin.chart.sparkline.data
+            if j.netMargin.chart.sparkline.data.length > 0
+              d.charts.sparkline('dashboard-net-margin-sparkline', [j.netMargin.chart.sparkline])
+            else
+              $('#dashboard-net-margin-sparkline').html('')
 
           d.cards.paint('dashboard-units-sold', j.unitsSold.total.value, j.unitsSold.total.diff)
           d.cards.paint('dashboard-amazon-costs', j.amazonCosts.total.value, j.amazonCosts.total.diff)
