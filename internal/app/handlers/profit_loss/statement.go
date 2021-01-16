@@ -16,8 +16,9 @@ func (p *ProfitLoss) Statement(w http.ResponseWriter, r *http.Request) {
 func (p *ProfitLoss) StatementByDate(w http.ResponseWriter, r *http.Request) {
 	_ = helpers.GetSessionUser(helpers.GetSession(p.sessionStore, p.logger, w, r))
 
-	var table []types.StatementTable
-	byDate := types.Statement{Data: table}
+	var byDate types.Statement
+	byDate.Data = []types.StatementTable{}
+	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)
 	if err != nil {
