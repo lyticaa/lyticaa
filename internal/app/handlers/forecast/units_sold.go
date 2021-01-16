@@ -12,7 +12,7 @@ import (
 
 func (f *Forecast) UnitsSold(w http.ResponseWriter, r *http.Request) {
 	session := helpers.GetSession(f.sessionStore, f.logger, w, r)
-	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.ForecastTotalSales), session.Values)
+	helpers.RenderTemplate(w, helpers.AppLayout, helpers.TemplateList(helpers.ForecastUnitsSold), session.Values)
 }
 
 func (f *Forecast) UnitsSoldByDate(w http.ResponseWriter, r *http.Request) {

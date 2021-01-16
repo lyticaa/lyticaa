@@ -45,8 +45,9 @@ export default class ProfitLossStatement
         'dataSrc': (j) ->
           $('button.loading').fadeOut()
 
-          if j.data.length > 0
-            c.alerts.reset()
+          if j.data
+            if j.data.length > 0
+              c.alerts.reset()
 
           return j.data
         'error': (j) ->
