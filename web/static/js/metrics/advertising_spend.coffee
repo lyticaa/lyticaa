@@ -50,20 +50,22 @@ export default class MetricsAdvertisingSpend
         'url': m.url.clean() + '/filter/all_time'
         'dataSrc': (j) ->
           $('button.loading').fadeOut(400, ->
-            if j.chart.line.categories[0].category.length == 0
-              $('.alert.metrics-advertising-spend-chart-error').fadeIn()
-            else
-              m.charts.line(
-                'metrics-advertising-spend-chart',
-                'AMOUNT',
-                'DATE',
-                j.chart.line.categories,
-                j.chart.line.dataSets
-              )
-          )
+            if j.chart.line.categories
+              if j.chart.line.categories[0].category.length == 0
+                $('.alert.metrics-advertising-spend-chart-error').fadeIn()
+              else
+                m.charts.line(
+                  'metrics-advertising-spend-chart',
+                  'AMOUNT',
+                  'DATE',
+                  j.chart.line.categories,
+                  j.chart.line.dataSets
+                )
+            )
 
-          if j.data.length > 0
-            m.alerts.reset()
+          if j.data
+            if j.data.length > 0
+              m.alerts.reset()
 
           return j.data
         'error': (j) ->
