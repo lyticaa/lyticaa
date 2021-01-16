@@ -70,7 +70,7 @@ func (ec *ExpensesCostOfGoodModel) FetchAll(ctx context.Context, data map[string
 		filter.Start,
 	)
 
-	return &expensesCostOfGoods
+	return expensesCostOfGoods
 }
 
 func (ec *ExpensesCostOfGoodModel) Count(ctx context.Context, data map[string]interface{}, db *sqlx.DB) int64 {

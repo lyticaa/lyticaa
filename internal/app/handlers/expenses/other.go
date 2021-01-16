@@ -22,6 +22,7 @@ func (e *Expenses) OtherByUser(w http.ResponseWriter, r *http.Request) {
 	user := helpers.GetSessionUser(helpers.GetSession(e.sessionStore, e.logger, w, r))
 
 	var expenses types.Expenses
+	expenses.Data = []types.ExpensesTable{}
 	expenses.Draw = helpers.DtDraw(r)
 
 	other.ExpensesOthers(r.Context(), &expenses, helpers.BuildFilter(r), user.UserID, e.db)
