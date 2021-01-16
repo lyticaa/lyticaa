@@ -60,7 +60,9 @@ export default class MetricsNetMargin
                   j.chart.line.categories,
                   j.chart.line.dataSets
                 )
-            )
+            else
+              $('.alert.metrics-net-margin-chart-error').fadeIn()
+          )
 
           if j.data
             if j.data.length > 0

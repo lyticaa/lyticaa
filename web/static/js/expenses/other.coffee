@@ -50,8 +50,9 @@ export default class ExpensesOther
         'dataSrc': (j) ->
           $('button.loading').fadeOut()
 
-          if j.data.length > 0
-            ex.alerts.reset()
+          if j.data
+            if j.data.length > 0
+              ex.alerts.reset()
 
           return j.data
         'error': (j) ->

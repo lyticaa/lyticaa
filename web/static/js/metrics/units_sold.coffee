@@ -60,7 +60,9 @@ export default class MetricsUnitsSold
                   j.chart.line.categories,
                   j.chart.line.dataSets
                 )
-            )
+            else
+              $('.alert.metrics-units-sold-chart-error').fadeIn()
+          )
 
           if j.data
             if j.data.length > 0

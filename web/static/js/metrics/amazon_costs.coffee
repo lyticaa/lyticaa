@@ -60,7 +60,9 @@ export default class MetricsAmazonCosts
                   j.chart.line.categories,
                   j.chart.line.dataSets
                 )
-            )
+            else
+              $('.alert.metrics-amazon-costs-chart-error').fadeIn()
+          )
 
           if j.data
             if j.data.length > 0

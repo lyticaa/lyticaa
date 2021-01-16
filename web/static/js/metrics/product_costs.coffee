@@ -60,7 +60,9 @@ export default class MetricsProductCosts
                   j.chart.line.categories,
                   j.chart.line.dataSets
                 )
-            )
+            else
+              $('.alert.metrics-product-costs-chart-error').fadeIn()
+          )
 
           if j.data
             if j.data.length > 0

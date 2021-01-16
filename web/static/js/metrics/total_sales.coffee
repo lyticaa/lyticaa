@@ -60,7 +60,9 @@ export default class MetricsTotalSales
                   j.chart.line.categories,
                   j.chart.line.dataSets
                 )
-            )
+            else
+              $('.alert.metrics-total-sales-chart-error').fadeIn()
+          )
 
           if j.data
             if j.data.length > 0

@@ -47,30 +47,35 @@ export default class Cohorts
         'url': c.url.clean() + '/filter/all_time'
         'dataSrc': (j) ->
           $('button.loading').fadeOut(400, ->
-            if j.totalSales.chart.sparkline.data.length > 0
-              c.charts.sparkline('cohorts-total-sales-sparkline', [j.totalSales.chart.sparkline])
-            else
-              $('#cohorts-total-sales-sparkline').html('')
+            if j.totalSales.chart.sparkline.data
+              if j.totalSales.chart.sparkline.data.length > 0
+                c.charts.sparkline('cohorts-total-sales-sparkline', [j.totalSales.chart.sparkline])
+              else
+                $('#cohorts-total-sales-sparkline').html('')
 
-            if j.amazonCosts.chart.sparkline.data.length > 0
-              c.charts.sparkline('cohorts-amazon-costs-sparkline', [j.amazonCosts.chart.sparkline])
-            else
-              $('#cohorts-amazon-costs-sparkline').html('')
+            if j.amazonCosts.chart.sparkline.data
+              if j.amazonCosts.chart.sparkline.data.length > 0
+                c.charts.sparkline('cohorts-amazon-costs-sparkline', [j.amazonCosts.chart.sparkline])
+              else
+                $('#cohorts-amazon-costs-sparkline').html('')
 
-            if j.productCosts.chart.sparkline.data.length > 0
-              c.charts.sparkline('cohorts-product-costs-sparkline', [j.productCosts.chart.sparkline])
-            else
-              $('#cohorts-product-costs-sparkline').html('')
+            if j.productCosts.chart.sparkline.data
+              if j.productCosts.chart.sparkline.data.length > 0
+                c.charts.sparkline('cohorts-product-costs-sparkline', [j.productCosts.chart.sparkline])
+              else
+                $('#cohorts-product-costs-sparkline').html('')
 
-            if j.advertisingSpend.chart.sparkline.data.length > 0
-              c.charts.sparkline('cohorts-advertising-spend-sparkline', [j.advertisingSpend.chart.sparkline])
-            else
-              $('#cohorts-advertising-spend-sparkline').html('')
+            if j.advertisingSpend.chart.sparkline.data
+              if j.advertisingSpend.chart.sparkline.data.length > 0
+                c.charts.sparkline('cohorts-advertising-spend-sparkline', [j.advertisingSpend.chart.sparkline])
+              else
+                $('#cohorts-advertising-spend-sparkline').html('')
 
-            if j.netMargin.chart.sparkline.data.length > 0
-              c.charts.sparkline('cohorts-net-margin-sparkline', [j.netMargin.chart.sparkline])
-            else
-              $('#cohorts-net-margin-sparkline').html('')
+            if j.netMargin.chart.sparkline.data
+              if j.netMargin.chart.sparkline.data.length > 0
+                c.charts.sparkline('cohorts-net-margin-sparkline', [j.netMargin.chart.sparkline])
+              else
+                $('#cohorts-net-margin-sparkline').html('')
 
             c.cards.paint('cohorts-total-sales', j.totalSales.total.value, j.totalSales.total.diff)
             c.cards.paint('cohorts-amazon-costs', j.amazonCosts.total.value, j.amazonCosts.total.diff)

@@ -60,7 +60,9 @@ export default class MetricsRefunds
                   j.chart.line.categories,
                   j.chart.line.dataSets
                 )
-            )
+            else
+              $('.alert.metrics-refunds-chart-error').fadeIn()
+          )
 
           if j.data
             if j.data.length > 0

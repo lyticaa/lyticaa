@@ -40,7 +40,10 @@ export default class ForecastOverview
       statusCode:
         200: (j) ->
           $('button.loading').fadeOut(400, ->
-            if j.chart.line.categories[0].category.length == 0
+            if j.chart.line.categories
+              if j.chart.line.categories[0].category.length == 0
+                $('.alert.forecast-chart-error').fadeIn()
+            else
               $('.alert.forecast-chart-error').fadeIn()
           )
         422: ->

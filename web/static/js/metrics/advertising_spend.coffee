@@ -61,7 +61,9 @@ export default class MetricsAdvertisingSpend
                   j.chart.line.categories,
                   j.chart.line.dataSets
                 )
-            )
+            else
+              $('.alert.metrics-advertising-spend-chart-error').fadeIn()
+          )
 
           if j.data
             if j.data.length > 0
