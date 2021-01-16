@@ -28,6 +28,7 @@ func (m *Metrics) TotalCostsByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var byDate types.TotalCosts
+	byDate.Data = []types.TotalCostsTable{}
 	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)

@@ -28,6 +28,7 @@ func (m *Metrics) AdvertisingSpendByDate(w http.ResponseWriter, r *http.Request)
 	}
 
 	var byDate types.AdvertisingSpend
+	byDate.Data = []types.AdvertisingSpendTable{}
 	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)

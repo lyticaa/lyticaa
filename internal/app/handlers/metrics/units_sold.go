@@ -28,6 +28,7 @@ func (m *Metrics) UnitsSoldByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var byDate types.UnitsSold
+	byDate.Data = []types.UnitsSoldTable{}
 	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)

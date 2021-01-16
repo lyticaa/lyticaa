@@ -28,6 +28,7 @@ func (m *Metrics) RefundsByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var byDate types.Refunds
+	byDate.Data = []types.RefundsTable{}
 	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)

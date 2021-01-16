@@ -28,6 +28,7 @@ func (m *Metrics) PromotionalRebatesByDate(w http.ResponseWriter, r *http.Reques
 	}
 
 	var byDate types.PromotionalRebates
+	byDate.Data = []types.PromotionalRebatesTable{}
 	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)

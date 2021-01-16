@@ -28,6 +28,7 @@ func (m *Metrics) AmazonCostsByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var byDate types.AmazonCosts
+	byDate.Data = []types.AmazonCostsTable{}
 	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)

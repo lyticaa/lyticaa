@@ -28,6 +28,7 @@ func (m *Metrics) GrossMarginByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var byDate types.GrossMargin
+	byDate.Data = []types.GrossMarginTable{}
 	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)

@@ -28,6 +28,7 @@ func (m *Metrics) NetMarginByDate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var byDate types.NetMargin
+	byDate.Data = []types.NetMarginTable{}
 	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)

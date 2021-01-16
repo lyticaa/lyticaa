@@ -28,6 +28,7 @@ func (m *Metrics) ShippingCreditsByDate(w http.ResponseWriter, r *http.Request) 
 	}
 
 	var byDate types.ShippingCredits
+	byDate.Data = []types.ShippingCreditsTable{}
 	byDate.Draw = helpers.DtDraw(r)
 
 	js, err := json.Marshal(byDate)
