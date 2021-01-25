@@ -17,7 +17,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/sessions v1.2.1
 	github.com/heroku/x v0.0.26
-	github.com/jmoiron/sqlx v1.2.0
+	github.com/jmoiron/sqlx v1.3.0
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/lib/pq v1.8.0
 	github.com/memcachier/mc v2.0.1+incompatible
