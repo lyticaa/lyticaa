@@ -5,7 +5,7 @@ replace github.com/lyticaa/lyticaa => ../lyticaa/lyticaa
 go 1.15
 
 require (
-	github.com/aws/aws-sdk-go v1.35.24
+	github.com/aws/aws-sdk-go v1.37.14
 	github.com/bufferapp/sqs-worker-go v0.0.0-20181101064454-7e780f286181
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/garyburd/redigo v1.6.0 // indirect
