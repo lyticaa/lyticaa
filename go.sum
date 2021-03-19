@@ -348,6 +348,7 @@ github.com/neo4j-drivers/gobolt v1.7.4/go.mod h1:O9AUbip4Dgre+CD3p40dnMD4a4r52QB
 github.com/neo4j/neo4j-go-driver v1.7.4/go.mod h1:aPO0vVr+WnhEJne+FgFjfsjzAnssPFLucHgGZ76Zb/U=
 github.com/newrelic/go-agent v3.9.0+incompatible h1:W2Zummx9jNATZVX6QVjYksX1TwxJGf4E6x1Wf3CG/jY=
 github.com/newrelic/go-agent v3.9.0+incompatible/go.mod h1:a8Fv1b/fYhFSReoTU6HDkTYIMZeSVNffmoS726Y0LzQ=
+github.com/newrelic/go-agent v3.11.0+incompatible/go.mod h1:a8Fv1b/fYhFSReoTU6HDkTYIMZeSVNffmoS726Y0LzQ=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/oklog/run v1.0.0/go.mod h1:dlhp/R75TPv97u0XWUtDeV/lRKWPKSdTuV0TZvrmrQA=
