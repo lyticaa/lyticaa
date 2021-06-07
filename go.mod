@@ -26,7 +26,7 @@ require (
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/rs/zerolog v1.20.0
 	github.com/stretchr/testify v1.6.1
-	github.com/stripe/stripe-go/v72 v72.23.0
+	github.com/stripe/stripe-go/v72 v72.49.0
 	github.com/tealeg/xlsx v1.0.5
 	github.com/urfave/negroni v1.0.0
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
