@@ -5,7 +5,7 @@ replace github.com/lyticaa/lyticaa => ../lyticaa/lyticaa
 go 1.15
 
 require (
-	github.com/aws/aws-sdk-go v1.35.24
+	github.com/aws/aws-sdk-go v1.40.28
 	github.com/bufferapp/sqs-worker-go v0.0.0-20181101064454-7e780f286181
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/garyburd/redigo v1.6.0 // indirect
@@ -30,7 +30,7 @@ require (
 	github.com/tealeg/xlsx v1.0.5
 	github.com/urfave/negroni v1.0.0
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	golang.org/x/text v0.3.4
+	golang.org/x/text v0.3.6
 	gopkg.in/boj/redistore.v1 v1.0.0-20160128113310-fc113767cd6b
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f
 	gopkg.in/go-playground/validator.v9 v9.31.0
