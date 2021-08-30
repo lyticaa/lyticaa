@@ -24,7 +24,7 @@ require (
 	github.com/newrelic/go-agent v3.9.0+incompatible
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
-	github.com/rs/zerolog v1.20.0
+	github.com/rs/zerolog v1.24.0
 	github.com/stretchr/testify v1.6.1
 	github.com/stripe/stripe-go/v72 v72.23.0
 	github.com/tealeg/xlsx v1.0.5
