@@ -21,7 +21,7 @@ require (
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/lib/pq v1.8.0
 	github.com/memcachier/mc v2.0.1+incompatible
-	github.com/newrelic/go-agent v3.9.0+incompatible
+	github.com/newrelic/go-agent v3.15.2+incompatible
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/rs/zerolog v1.20.0
